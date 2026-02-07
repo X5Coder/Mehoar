@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول - محور</title>
+    <title>محور - منصة التواصل والتجارة الإلكترونية</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,13 +22,13 @@
         }
         
         body {
-            background-color: #f5f5f7;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Tajawal', sans-serif;
             position: relative;
             overflow-x: hidden;
         }
@@ -53,12 +50,12 @@
         }
         
         .loading-spinner {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border: 3px solid rgba(0, 0, 0, 0.1);
             border-radius: 50%;
             border-top-color: #000000;
-            animation: spin 1s ease-in-out infinite;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
             margin-bottom: 20px;
         }
         
@@ -73,84 +70,86 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #ffffff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 999;
             opacity: 1;
-            transition: opacity 0.8s ease;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .welcome-logo {
-            width: 180px;
-            height: 180px;
+            width: 280px;
+            height: 280px;
             border-radius: 40px;
             overflow: hidden;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             animation: logoFloat 3s ease-in-out infinite;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            transform: translateY(0);
+            position: relative;
         }
         
         .welcome-logo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
         
         @keyframes logoFloat {
             0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-10px) scale(1.02); }
+            50% { transform: translateY(-20px) scale(1.05); }
         }
         
         .welcome-text {
             text-align: center;
-            animation: fadeInUp 0.8s ease;
+            animation: fadeInUp 0.8s ease 0.3s both;
+            opacity: 0;
+            transform: translateY(20px);
         }
         
         .welcome-text h1 {
-            font-size: 2.2rem;
+            font-size: 3.5rem;
             font-weight: 800;
-            color: #000;
-            margin-bottom: 8px;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
         
         .welcome-text p {
-            color: #666;
-            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.3rem;
+            font-weight: 300;
+            letter-spacing: 0.5px;
         }
         
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
         
-        /* Main Container with 3D Effect */
+        /* Main Container with Enhanced Glass Effect */
         .glass-container {
             width: 100%;
-            max-width: 420px;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 28px;
-            padding: 40px 30px;
+            max-width: 480px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border-radius: 32px;
+            padding: 50px 40px;
             box-shadow: 
-                0 25px 50px rgba(0, 0, 0, 0.12),
-                0 0 0 1px rgba(0, 0, 0, 0.08),
-                0 0 0 2px rgba(255, 255, 255, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.06);
-            border: 1px solid rgba(0, 0, 0, 0.15);
-            animation: containerAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                0 30px 80px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            animation: containerAppear 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(40px) scale(0.95);
             position: relative;
             overflow: hidden;
             display: none;
@@ -165,69 +164,291 @@
             height: 1px;
             background: linear-gradient(90deg, 
                 transparent, 
-                rgba(255, 255, 255, 0.8), 
+                rgba(255, 255, 255, 0.9), 
                 transparent);
+        }
+        
+        .glass-container::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.2) 50%,
+                transparent 70%
+            );
+            animation: shimmer 8s infinite linear;
+            pointer-events: none;
         }
         
         @keyframes containerAppear {
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
         
         /* Logo in Container */
         .logo-section {
             text-align: center;
-            margin-bottom: 35px;
-        }
-        
-        .logo-image {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 15px;
-            border-radius: 25px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            background: white;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-        }
-        
-        .logo-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
+            margin-bottom: 40px;
+            position: relative;
         }
         
         .logo-text h1 {
-            font-size: 1.8rem;
+            font-size: 2.8rem;
             font-weight: 800;
-            color: #000;
-            margin-bottom: 5px;
+            background: linear-gradient(135deg, #000000, #333333);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
         }
         
         .logo-text p {
             color: #666;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
+            font-weight: 400;
+            line-height: 1.5;
         }
         
         /* Alert Message */
         .alert {
-            padding: 14px 18px;
-            border-radius: 14px;
-            margin-bottom: 25px;
+            padding: 18px 22px;
+            border-radius: 18px;
+            margin-bottom: 30px;
             display: none;
-            animation: slideDown 0.3s ease;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            font-size: 0.9rem;
+            animation: slideDown 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            font-size: 0.95rem;
             text-align: center;
+            backdrop-filter: blur(10px);
         }
         
         @keyframes slideDown {
             from {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .alert-error {
+            background: rgba(255, 50, 50, 0.1);
+            color: #d32f2f;
+            border-color: rgba(211, 47, 47, 0.15);
+        }
+        
+        .alert-success {
+            background: rgba(76, 175, 80, 0.1);
+            color: #2e7d32;
+            border-color: rgba(46, 125, 50, 0.15);
+        }
+        
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #f57c00;
+            border-color: rgba(245, 124, 0, 0.15);
+        }
+        
+        /* Banned User Message */
+        .banned-container {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+        
+        .banned-icon {
+            font-size: 4rem;
+            color: #d32f2f;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .support-link {
+            color: #1976d2;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .support-link:hover {
+            color: #0d47a1;
+        }
+        
+        /* Buttons with Advanced Animations */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 20px 28px;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+            letter-spacing: 0.3px;
+        }
+        
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+        
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: buttonSpin 0.8s linear infinite;
+        }
+        
+        @keyframes buttonSpin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+            color: white;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.2), 
+                transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #000000 0%, #444444 100%);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-primary:hover:not(:disabled)::before {
+            left: 100%;
+        }
+        
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(-1px) scale(0.99);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-google {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            color: #333;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-google::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(0, 0, 0, 0.05), 
+                transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .btn-google:hover:not(:disabled) {
+            background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            border-color: rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-google:hover:not(:disabled)::before {
+            left: 100%;
+        }
+        
+        .btn-google:active:not(:disabled) {
+            transform: translateY(-1px) scale(0.99);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-back {
+            background: rgba(0, 0, 0, 0.03);
+            color: #555;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn-back:hover:not(:disabled) {
+            background: rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+        
+        .btn-icon {
+            margin-left: 12px;
+            font-size: 1.3rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover .btn-icon {
+            transform: translateX(-5px);
+        }
+        
+        /* Form with Professional Email Display */
+        .form-container {
+            display: none;
+            animation: fadeInUpForm 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        @keyframes fadeInUpForm {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -235,234 +456,195 @@
             }
         }
         
-        .alert-error {
-            background: rgba(255, 50, 50, 0.08);
-            color: #d32f2f;
-            border-color: rgba(211, 47, 47, 0.1);
-        }
-        
-        .alert-success {
-            background: rgba(76, 175, 80, 0.08);
-            color: #2e7d32;
-            border-color: rgba(46, 125, 50, 0.1);
-        }
-        
-        /* Buttons */
-        .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 16px 24px;
-            border: none;
-            border-radius: 16px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            margin-bottom: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn:active {
-            transform: scale(0.98);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #1a1a1a, #333333);
-            color: white;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #000000, #2a2a2a);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-        
-        .btn-google {
-            background: white;
-            color: #333;
-            border: 1.5px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-        }
-        
-        .btn-google:hover {
-            background: #f8f9fa;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
-        }
-        
-        .btn-back {
-            background: rgba(0, 0, 0, 0.03);
-            color: #555;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-        
-        .btn-back:hover {
-            background: rgba(0, 0, 0, 0.05);
-            transform: translateY(-2px);
-        }
-        
-        .btn-icon {
-            margin-left: 10px;
-            font-size: 1.2rem;
-        }
-        
-        /* Form */
-        .form-container {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
         .form-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
         
         .form-header h2 {
-            font-size: 1.4rem;
+            font-size: 1.8rem;
             color: #000;
-            margin-bottom: 10px;
-            font-weight: 700;
+            margin-bottom: 12px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
         
         .form-header p {
             color: #666;
-            font-size: 0.9rem;
-            line-height: 1.5;
+            font-size: 1rem;
+            line-height: 1.6;
+            max-width: 90%;
+            margin: 0 auto;
         }
         
-        .user-email {
-            background: rgba(0, 0, 0, 0.03);
-            padding: 14px;
-            border-radius: 14px;
+        .email-display {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.03) 0%, rgba(0, 0, 0, 0.01) 100%);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 35px;
+            border: 2px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        
+        .email-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .email-label {
+            display: block;
             text-align: center;
-            margin-bottom: 25px;
-            color: #333;
-            font-weight: 500;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            color: #666;
             font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .email-value {
+            text-align: center;
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: 600;
             word-break: break-all;
+            direction: ltr;
+            padding: 0 10px;
         }
         
         /* Input Fields */
         .input-group {
-            margin-bottom: 22px;
+            margin-bottom: 28px;
+            position: relative;
         }
         
         .input-label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
+            margin-bottom: 12px;
+            font-weight: 700;
             color: #333;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            letter-spacing: -0.3px;
         }
         
         .input-field {
             width: 100%;
-            padding: 15px 18px;
-            border-radius: 14px;
-            border: 1.5px solid rgba(0, 0, 0, 0.1);
+            padding: 18px 22px;
+            border-radius: 18px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
             background: rgba(255, 255, 255, 0.9);
-            font-size: 0.95rem;
-            color: #333;
-            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: #000;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-weight: 500;
         }
         
         .input-field:focus {
             outline: none;
             border-color: rgba(0, 0, 0, 0.3);
-            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
             background: white;
+            transform: translateY(-2px);
         }
         
         .input-field::placeholder {
             color: #999;
+            font-weight: 400;
         }
         
         .optional-badge {
-            background: rgba(0, 0, 0, 0.05);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.03) 100%);
             color: #666;
-            font-size: 0.8rem;
-            padding: 4px 10px;
-            border-radius: 10px;
-            margin-right: 8px;
+            font-size: 0.85rem;
+            padding: 6px 14px;
+            border-radius: 12px;
+            margin-right: 12px;
+            font-weight: 600;
+            display: inline-block;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
         
         /* Footer */
         .footer {
             text-align: center;
-            margin-top: 25px;
+            margin-top: 35px;
             color: #777;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             border-top: 1px solid rgba(0, 0, 0, 0.05);
-            padding-top: 18px;
-            line-height: 1.5;
+            padding-top: 25px;
+            line-height: 1.6;
         }
         
         /* Responsive Design */
-        @media (max-width: 480px) {
+        @media (max-width: 600px) {
             body {
                 padding: 15px;
             }
             
             .glass-container {
-                padding: 30px 20px;
-                border-radius: 24px;
+                padding: 40px 25px;
+                border-radius: 28px;
                 max-width: 100%;
             }
             
             .welcome-logo {
-                width: 150px;
-                height: 150px;
+                width: 240px;
+                height: 240px;
             }
             
             .welcome-text h1 {
-                font-size: 1.8rem;
+                font-size: 2.8rem;
             }
             
-            .logo-image {
-                width: 90px;
-                height: 90px;
-                border-radius: 20px;
+            .welcome-text p {
+                font-size: 1.1rem;
             }
             
             .logo-text h1 {
-                font-size: 1.6rem;
+                font-size: 2.3rem;
             }
             
             .btn {
-                padding: 14px 20px;
-                font-size: 0.95rem;
+                padding: 18px 24px;
+                font-size: 1.05rem;
             }
             
             .form-header h2 {
-                font-size: 1.3rem;
+                font-size: 1.6rem;
             }
         }
         
-        @media (max-width: 350px) {
+        @media (max-width: 400px) {
             .glass-container {
-                padding: 25px 18px;
-                border-radius: 20px;
+                padding: 35px 20px;
+                border-radius: 24px;
             }
             
             .welcome-logo {
-                width: 130px;
-                height: 130px;
+                width: 200px;
+                height: 200px;
             }
             
-            .logo-image {
-                width: 80px;
-                height: 80px;
+            .welcome-text h1 {
+                font-size: 2.3rem;
+            }
+            
+            .logo-text h1 {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                font-size: 1rem;
+                padding: 16px 20px;
+            }
+            
+            .email-display {
+                padding: 16px;
             }
         }
     </style>
@@ -472,13 +654,14 @@
     <!-- Loading Screen -->
     <div id="loadingScreen">
         <div class="loading-spinner"></div>
-        <p style="color: #666; font-size: 0.9rem; margin-top: 10px;">جاري التحقق من حالة الدخول...</p>
+        <p style="color: #666; font-size: 1rem; margin-top: 15px; font-weight: 500;">جاري التحميل...</p>
     </div>
     
-    <!-- Welcome Screen -->
+    <!-- Welcome Screen with Large Image -->
     <div id="welcomeScreen">
         <div class="welcome-logo">
-            <img src="https://i.ibb.co/rGpgBFBW/1000183766.png" alt="محور" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>';">
+            <img src="https://i.ibb.co/rGpgBFBW/1000183766.png" alt="محور" 
+                 onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23667eea%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22sans-serif%22 font-size=%2240%22 fill=%22white%22>محور</text></svg>';">
         </div>
         <div class="welcome-text">
             <h1>محور</h1>
@@ -491,9 +674,6 @@
         
         <!-- Logo in Container -->
         <div class="logo-section">
-            <div class="logo-image">
-                <img src="https://i.ibb.co/rGpgBFBW/1000183766.png" alt="محور" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>';">
-            </div>
             <div class="logo-text">
                 <h1>محور</h1>
                 <p>منصة التواصل والتجارة الإلكترونية</p>
@@ -502,6 +682,18 @@
         
         <!-- Alert Container -->
         <div class="alert" id="alertMessage"></div>
+        
+        <!-- Banned User Container -->
+        <div class="banned-container" id="bannedContainer">
+            <div class="banned-icon">
+                <i class="fas fa-ban"></i>
+            </div>
+            <h2 style="color: #d32f2f; margin-bottom: 15px;">تم حظر حسابك</h2>
+            <p style="color: #666; margin-bottom: 20px; line-height: 1.6;">
+                تم حظر حسابك من منصة محور. يرجى التواصل مع <span class="support-link" id="supportLink">الدعم</span> 
+                لمعرفة المزيد من التفاصيل.
+            </p>
+        </div>
         
         <!-- Login / Register Section -->
         <div id="loginSection">
@@ -545,7 +737,10 @@
                 <p>أكمل بياناتك للبدء في استخدام محور</p>
             </div>
             
-            <div class="user-email" id="userEmail"></div>
+            <div class="email-display">
+                <div class="email-label">البريد الإلكتروني المسجل به</div>
+                <div class="email-value" id="userEmail"></div>
+            </div>
             
             <div class="input-group">
                 <label class="input-label" for="name">اسم المستخدم</label>
@@ -558,6 +753,9 @@
                     <span class="optional-badge">اختياري</span>
                 </label>
                 <input type="text" id="referral" class="input-field" placeholder="ادخل كود الإحالة المكون من 6 أرقام">
+                <small style="display: block; margin-top: 10px; color: #777; font-size: 0.9rem;">
+                    باستخدام كود إحالة ستحصل على 25 عملة بدلاً من 20، وصاحب الكود يحصل على 5 عملات إضافية
+                </small>
             </div>
             
             <button class="btn btn-primary" id="continueBtn">
@@ -586,6 +784,7 @@
         const auth = firebase.auth();
         const db = firebase.database();
         let currentUser = null;
+        let userData = null;
 
         /* Helper Functions */
         function showAlert(message, type = "error") {
@@ -596,7 +795,7 @@
             
             setTimeout(() => {
                 alertEl.style.display = "none";
-            }, 4000);
+            }, 5000);
         }
 
         function validName(name) {
@@ -638,12 +837,24 @@
             return id;
         }
 
+        function setButtonLoading(buttonId, isLoading) {
+            const button = document.getElementById(buttonId);
+            if (isLoading) {
+                button.classList.add('btn-loading');
+                button.disabled = true;
+            } else {
+                button.classList.remove('btn-loading');
+                button.disabled = false;
+            }
+        }
+
         /* UI Functions */
         function showSection(sectionId) {
             // Hide all sections
             document.getElementById("loginSection").style.display = "none";
             document.getElementById("googleSection").style.display = "none";
             document.getElementById("registrationForm").style.display = "none";
+            document.getElementById("bannedContainer").style.display = "none";
             
             // Show requested section
             document.getElementById(sectionId).style.display = "block";
@@ -669,6 +880,35 @@
             }, 800);
         }
 
+        /* Check if user is banned */
+        async function checkUserBanned(userEmail) {
+            try {
+                const snap = await db.ref("users_mehoar")
+                    .orderByChild("email")
+                    .equalTo(userEmail)
+                    .once("value");
+                
+                if (snap.exists()) {
+                    const userData = snap.val();
+                    const userId = Object.keys(userData)[0];
+                    return userData[userId].banned === true;
+                }
+                return false;
+            } catch (error) {
+                console.error("Error checking user ban status:", error);
+                return false;
+            }
+        }
+
+        /* Support Link to WhatsApp */
+        document.getElementById("supportLink").addEventListener("click", function() {
+            const email = currentUser ? currentUser.email : "Unknown";
+            const userId = userData ? userData.id : "Unknown";
+            const message = `لقد تم حظر حسابي%0AEmail: ${email}%0AId: ${userId}%0Aيرجى التحقق من الأمر وتوضيح سبب الحظر`;
+            const whatsappUrl = `https://wa.me/201009341792?text=${message}`;
+            window.open(whatsappUrl, '_blank');
+        });
+
         /* Event Listeners */
         document.getElementById("loginRegisterBtn").addEventListener("click", () => {
             showSection("googleSection");
@@ -681,11 +921,8 @@
         /* Google Sign In */
         document.getElementById("googleBtn").addEventListener("click", async () => {
             try {
-                // Show loading state
-                const googleBtn = document.getElementById("googleBtn");
-                const originalText = googleBtn.innerHTML;
-                googleBtn.innerHTML = '<span>جاري التحميل...</span>';
-                googleBtn.disabled = true;
+                // Show loading state on button
+                setButtonLoading('googleBtn', true);
                 
                 const provider = new firebase.auth.GoogleAuthProvider();
                 provider.addScope('email');
@@ -694,6 +931,14 @@
                 const result = await auth.signInWithPopup(provider);
                 currentUser = result.user;
 
+                // Check if user is banned
+                const isBanned = await checkUserBanned(currentUser.email);
+                if (isBanned) {
+                    setButtonLoading('googleBtn', false);
+                    showSection("bannedContainer");
+                    return;
+                }
+
                 // Check if user exists in database
                 const snap = await db.ref("users_mehoar")
                     .orderByChild("email")
@@ -701,21 +946,28 @@
                     .once("value");
 
                 if (snap.exists()) {
-                    // User exists, redirect to home
+                    // User exists, get user data and redirect to home
+                    userData = snap.val()[Object.keys(snap.val())[0]];
+                    
+                    // Check if user is banned from database
+                    if (userData.banned === true) {
+                        setButtonLoading('googleBtn', false);
+                        showSection("bannedContainer");
+                        return;
+                    }
+                    
+                    // Redirect to home
                     window.location.href = "home.html";
                 } else {
                     // New user, show registration form
                     document.getElementById("userEmail").textContent = currentUser.email;
+                    setButtonLoading('googleBtn', false);
                     showSection("registrationForm");
                 }
                 
             } catch (error) {
                 console.error("Google sign in error:", error);
-                
-                // Reset button state
-                const googleBtn = document.getElementById("googleBtn");
-                googleBtn.innerHTML = '<span>المتابعة باستخدام Google</span><i class="btn-icon fab fa-google"></i>';
-                googleBtn.disabled = false;
+                setButtonLoading('googleBtn', false);
                 
                 // Handle specific errors
                 if (error.code === 'auth/popup-closed-by-user') {
@@ -741,8 +993,12 @@
                 return;
             }
 
+            // Show loading state
+            setButtonLoading('continueBtn', true);
+
             // Check if name is unique
             if (!(await isNameUnique(name))) {
+                setButtonLoading('continueBtn', false);
                 showAlert("اسم المستخدم هذا مستخدم بالفعل. يرجى اختيار اسم آخر.");
                 return;
             }
@@ -752,6 +1008,7 @@
             // Handle referral code if provided
             if (referral) {
                 if (!/^\d{6}$/.test(referral)) {
+                    setButtonLoading('continueBtn', false);
                     showAlert("كود الإحالة غير صحيح. يجب أن يتكون من 6 أرقام فقط.");
                     return;
                 }
@@ -759,18 +1016,20 @@
                 try {
                     const refSnap = await db.ref("users_mehoar/" + referral).once("value");
                     if (!refSnap.exists()) {
+                        setButtonLoading('continueBtn', false);
                         showAlert("كود الإحالة غير موجود. يرجى التحقق وإعادة المحاولة.");
                         return;
                     }
 
-                    // Add coins to referrer
+                    // Add 5 coins to referrer (not 10 as before)
                     await db.ref("users_mehoar/" + referral).update({
-                        coin: (refSnap.val().coin || 0) + 10
+                        coin: (refSnap.val().coin || 0) + 5
                     });
 
-                    coin = 25;
+                    coin = 25; // New user gets 25 coins instead of 20
                 } catch (error) {
                     console.error("Error handling referral:", error);
+                    setButtonLoading('continueBtn', false);
                     showAlert("حدث خطأ في معالجة كود الإحالة. يرجى المحاولة مرة أخرى.");
                     return;
                 }
@@ -798,12 +1057,13 @@
 
                 showAlert("تم إنشاء حسابك بنجاح! يتم توجيهك الآن...", "success");
                 
-                // Redirect to home page
+                // Redirect to home page after delay
                 setTimeout(() => {
                     window.location.href = "home.html";
                 }, 1500);
             } catch (error) {
                 console.error("Registration error:", error);
+                setButtonLoading('continueBtn', false);
                 showAlert("حدث خطأ أثناء إنشاء الحساب. يرجى المحاولة مرة أخرى.");
             }
         });
@@ -822,7 +1082,21 @@
                                 .once("value");
 
                             if (snap.exists()) {
-                                // User exists, redirect to home after welcome screen
+                                // Get user data
+                                userData = snap.val()[Object.keys(snap.val())[0]];
+                                
+                                // Check if user is banned
+                                if (userData.banned === true) {
+                                    setTimeout(() => {
+                                        showMainInterface();
+                                        setTimeout(() => {
+                                            showSection("bannedContainer");
+                                        }, 500);
+                                    }, 1500);
+                                    return;
+                                }
+                                
+                                // User exists and not banned, redirect to home
                                 setTimeout(() => {
                                     window.location.href = "home.html";
                                 }, 1500);
@@ -836,7 +1110,7 @@
                     // Show welcome screen then main interface
                     setTimeout(() => {
                         showMainInterface();
-                    }, 1500);
+                    }, 2000);
                 });
                 
                 // Fallback in case auth state change doesn't fire
@@ -844,7 +1118,7 @@
                     if (document.getElementById("loadingScreen").style.visibility !== "hidden") {
                         showMainInterface();
                     }
-                }, 3000);
+                }, 4000);
                 
             } catch (error) {
                 console.error("Initialization error:", error);
