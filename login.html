@@ -29,6 +29,8 @@
             --success-color: #2ECC71;
             --error-color: #E74C3C;
             --warning-color: #F39C12;
+            --google-blue: #4285F4;
+            --google-blue-dark: #3367D6;
             --transition-smooth: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             --transition-quick: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             --border-radius: 16px;
@@ -46,18 +48,22 @@
             padding: 20px;
             direction: rtl;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
         
         .login-container {
             width: 100%;
             max-width: 450px;
             opacity: 0;
-            animation: fadeIn 1s ease-out forwards;
+            transform: translateY(30px);
+            animation: containerSlideUp 0.8s ease-out 0.3s forwards;
         }
         
         .login-header {
             text-align: center;
             margin-bottom: 30px;
+            animation: fadeIn 1s ease-out 0.5s forwards;
+            opacity: 0;
         }
         
         .logo {
@@ -69,6 +75,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 10px;
+            letter-spacing: -1px;
         }
         
         .login-title {
@@ -76,15 +83,31 @@
             font-weight: 800;
             color: var(--text-primary);
             margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .login-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            right: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--dark-gradient);
+            border-radius: 2px;
+            animation: widthGrow 0.8s ease-out 1s forwards;
+            width: 0;
         }
         
         .login-subtitle {
             color: var(--text-secondary);
             font-size: 16px;
+            line-height: 1.5;
         }
         
         .image-container {
-            height: 180px;
+            height: 200px;
             margin-bottom: 30px;
             display: flex;
             align-items: center;
@@ -93,6 +116,19 @@
             border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            animation: fadeInUp 0.8s ease-out 0.7s forwards;
+            opacity: 0;
+        }
+        
+        .image-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--dark-gradient);
         }
         
         .login-image {
@@ -107,16 +143,18 @@
             padding: 40px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(0, 0, 0, 0.08);
+            animation: fadeInUp 0.8s ease-out 0.9s forwards;
+            opacity: 0;
         }
         
         .form-group {
             margin-bottom: 25px;
             display: none;
+            animation: fadeInUp 0.5s ease-out;
         }
         
         .form-group.active {
             display: block;
-            animation: fadeInUp 0.5s ease-out;
         }
         
         .form-label {
@@ -125,6 +163,18 @@
             font-weight: 600;
             color: var(--text-primary);
             font-size: 16px;
+        }
+        
+        .email-display {
+            background: #F8F9FA;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 2px solid #E0E0E0;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-primary);
+            animation: fadeIn 0.5s ease-out;
         }
         
         .form-input {
@@ -144,11 +194,13 @@
             border-color: var(--text-primary);
             background: white;
             box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.1);
+            transform: translateY(-2px);
         }
         
         .form-input.error {
             border-color: var(--error-color);
             background: rgba(231, 76, 60, 0.05);
+            animation: shake 0.3s ease-in-out;
         }
         
         .error-message {
@@ -175,12 +227,6 @@
             display: block;
         }
         
-        .form-footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #E0E0E0;
-        }
-        
         .btn {
             width: 100%;
             padding: 16px;
@@ -194,6 +240,8 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            position: relative;
+            overflow: hidden;
         }
         
         .btn-primary {
@@ -211,47 +259,52 @@
         
         .btn-primary:active {
             transform: translateY(-1px) scale(0.98);
-            animation: clickAnimation 0.2s ease;
         }
         
         .google-btn {
-            background: white;
-            color: #333333;
-            border: 2px solid #E0E0E0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            position: relative;
-            overflow: hidden;
+            background: var(--google-blue);
+            color: white;
+            border: 2px solid var(--google-blue);
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
         }
         
-        .google-btn::before {
+        .google-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(66, 133, 244, 0.4);
+            background: var(--google-blue-dark);
+            border-color: var(--google-blue-dark);
+        }
+        
+        .google-btn:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        .google-btn::after {
             content: '';
             position: absolute;
             top: 0;
             right: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.02), transparent);
-            transition: var(--transition-smooth);
-        }
-        
-        .google-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-            border-color: #CCCCCC;
-        }
-        
-        .google-btn:hover::before {
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transform: translateX(-100%);
         }
         
-        .google-btn:active {
-            transform: translateY(-1px) scale(0.98);
-            animation: clickAnimation 0.2s ease;
+        .google-btn:hover::after {
+            animation: shine 1.5s ease;
         }
         
         .google-icon {
-            color: #4285F4;
             font-size: 18px;
+            background: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--google-blue);
+            padding: 5px;
         }
         
         .loading-overlay {
@@ -291,6 +344,7 @@
             font-size: 1.2rem;
             color: var(--text-primary);
             font-weight: 600;
+            animation: pulse 1.5s infinite;
         }
         
         .form-steps {
@@ -306,11 +360,36 @@
             border-radius: 50%;
             background: #E0E0E0;
             transition: var(--transition-quick);
+            position: relative;
         }
         
         .step-dot.active {
             background: var(--text-primary);
             transform: scale(1.2);
+            box-shadow: 0 0 0 4px rgba(51, 51, 51, 0.1);
+        }
+        
+        .step-dot.active::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            bottom: -2px;
+            left: -2px;
+            border: 1px solid var(--text-primary);
+            border-radius: 50%;
+            animation: pulseDot 2s infinite;
+        }
+        
+        @keyframes containerSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         @keyframes fadeIn {
@@ -329,15 +408,45 @@
             }
         }
         
+        @keyframes widthGrow {
+            from { width: 0; }
+            to { width: 60px; }
+        }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
         
-        @keyframes clickAnimation {
-            0% { transform: translateY(-3px) scale(1); }
-            50% { transform: translateY(-3px) scale(0.98); }
-            100% { transform: translateY(-3px) scale(1); }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes pulseDot {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            70% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
         
         @media (max-width: 480px) {
@@ -377,10 +486,10 @@
         </div>
         
         <div class="image-container">
-            <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" 
-                 alt="تسجيل الدخول" 
+            <img src="https://images.unsplash.com/photo-1579546929662-711aa81148cf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" 
+                 alt="تسجيل الدخول عبر Google"
                  class="login-image"
-                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNGMEYyRjUiLz48cGF0aCBkPSJNMTI1IDgwQzE0MS41IDgwIDE1NSA2Ni41IDE1NSA1MEMxNTUgMzMuNSAxNDEuNSAyMCAxMjUgMjBDMTA4LjUgMjAgOTUgMzMuNSA5NSA1MEM5NSA2Ni41IDEwOC41IDgwIDEyNSA4MFoiIGZpbGw9IiNFMEUyRTUiLz48cGF0aCBkPSJNMjAwIDE0MEgyNTBDMjc3LjIgMTQwIDI5MCAxMjcuMiAyOTAgMTEwVjcwQzI5MCA1Mi44IDI3Ny4yIDQwIDI2MCA0MEgxNDBDMTIyLjggNDAgMTEwIDUyLjggMTEwIDcwVjExMEMxMTAgMTI3LjIgMTIyLjggMTQwIDE0MCAxNDBIMjAwWiIgZmlsbD0iI0UwRTJFNSIvPjxjaXJjbGUgY3g9IjIwMCIgY3k9IjExMCIgcj0iMzAiIGZpbGw9IiNFMEUyRTUiLz48L3N2Zz4='">
+                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNGMEYyRjUiLz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIxMDAiIHI9IjYwIiBmaWxsPSIjNDI4NUY0Ii8+PHBhdGggZD0iTTE1MCAxMTBIMjUwVjE0MEgxNTBWNzBIMTgwVjEwMEgyNTBWNzBIMjIwIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg=='">
         </div>
         
         <div class="login-card">
@@ -397,6 +506,11 @@
             </div>
             
             <div id="user-details-form" class="form-group">
+                <div class="email-display" id="user-email-display">
+                    <i class="fas fa-envelope"></i>
+                    <span id="user-email"></span>
+                </div>
+                
                 <div class="form-group" id="name-group">
                     <label class="form-label" for="user-name">اسم المستخدم*</label>
                     <input type="text" id="user-name" class="form-input" placeholder="أدخل اسمك (3-15 حرف)" maxlength="15">
@@ -419,7 +533,7 @@
     </div>
 
     <script>
-        // تكوين Firebase
+        // تكوين Firebase من ملف google-services.json
         const firebaseConfig = {
             apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
             authDomain: "marvel1-654dd.firebaseapp.com",
@@ -436,6 +550,7 @@
         
         let currentUser = null;
         let userData = null;
+        let userEmail = '';
         
         function showLoading(text = 'جاري التحميل...') {
             document.getElementById('loading-text').textContent = text;
@@ -450,7 +565,16 @@
             const errorEl = document.getElementById(elementId);
             errorEl.textContent = message;
             errorEl.classList.add('active');
+            const inputEl = document.getElementById(elementId.replace('-error', ''));
+            if (inputEl) inputEl.classList.add('error');
             setTimeout(() => errorEl.classList.remove('active'), 5000);
+        }
+        
+        function clearError(elementId) {
+            const errorEl = document.getElementById(elementId);
+            errorEl.classList.remove('active');
+            const inputEl = document.getElementById(elementId.replace('-error', ''));
+            if (inputEl) inputEl.classList.remove('error');
         }
         
         function showSuccess(elementId, message) {
@@ -475,7 +599,7 @@
         
         async function checkNameUnique(name) {
             try {
-                const snapshot = await database.ref('users_mehoar').orderByChild('name').equalTo(name).once('value');
+                const snapshot = await database.ref('users').orderByChild('name').equalTo(name).once('value');
                 return !snapshot.exists();
             } catch (error) {
                 console.error('Error checking name uniqueness:', error);
@@ -491,10 +615,20 @@
             }
             
             try {
-                const snapshot = await database.ref('users_mehoar').orderByChild('id').equalTo(code).once('value');
+                const snapshot = await database.ref('users').orderByChild('id').equalTo(code).once('value');
                 if (!snapshot.exists()) {
                     return 'كود الإحالة غير صحيح';
                 }
+                
+                // التحقق من عدم استخدام نفس ID الخاص بالمستخدم
+                const emailSnapshot = await database.ref('users').orderByChild('email').equalTo(userEmail).once('value');
+                if (emailSnapshot.exists()) {
+                    const existingUserId = Object.keys(emailSnapshot.val())[0];
+                    if (code === existingUserId) {
+                        return 'لا يمكن استخدام كود الإحالة الخاص بك';
+                    }
+                }
+                
                 return null;
             } catch (error) {
                 console.error('Error checking referral code:', error);
@@ -517,7 +651,7 @@
                 
                 while (!isUnique) {
                     userId = generateUniqueId();
-                    const snapshot = await database.ref('users_mehoar').orderByChild('id').equalTo(userId).once('value');
+                    const snapshot = await database.ref('users').orderByChild('id').equalTo(userId).once('value');
                     isUnique = !snapshot.exists();
                 }
                 
@@ -528,19 +662,27 @@
                     banned: false,
                     admin: false,
                     referral_used: referralCode || '',
-                    coin: 20
+                    coin: 20 // عملة هدية عند التسجيل
                 };
                 
-                await database.ref(`users_mehoar/${userId}`).set(userData);
+                // حفظ المستخدم الجديد
+                await database.ref(`users/${userId}`).set(userData);
                 
+                // معالجة الإحالة إذا كان هناك كود
                 if (referralCode && referralCode.trim() !== '') {
-                    const referrerRef = database.ref(`users_mehoar/${referralCode}/coin`);
+                    // زيادة 10 عملات لصاحب كود الإحالة
+                    const referrerRef = database.ref(`users/${referralCode}`);
                     const referrerSnapshot = await referrerRef.once('value');
-                    const referrerCoins = referrerSnapshot.val() || 0;
-                    await referrerRef.set(referrerCoins + 10);
                     
-                    await database.ref(`users_mehoar/${userId}/coin`).set(25);
-                    userData.coin = 25;
+                    if (referrerSnapshot.exists()) {
+                        const referrerData = referrerSnapshot.val();
+                        const newCoins = (referrerData.coin || 0) + 10;
+                        await referrerRef.update({ coin: newCoins });
+                        
+                        // زيادة 5 عملات للمستخدم الجديد
+                        await database.ref(`users/${userId}`).update({ coin: 25 });
+                        userData.coin = 25;
+                    }
                 }
                 
                 return userData;
@@ -570,20 +712,32 @@
         }
         
         async function handleGoogleSignIn() {
-            showLoading('جاري تسجيل الدخول...');
+            showLoading('جاري التحقق من حساب Google...');
             
             try {
                 const provider = new firebase.auth.GoogleAuthProvider();
+                provider.addScope('email');
+                provider.addScope('profile');
+                
                 const result = await auth.signInWithPopup(provider);
                 currentUser = result.user;
+                userEmail = currentUser.email;
                 
-                const snapshot = await database.ref('users_mehoar').orderByChild('email').equalTo(currentUser.email).once('value');
+                showLoading('جاري التحقق من حسابك...');
+                
+                // البحث عن المستخدم في قاعدة البيانات باستخدام البريد الإلكتروني
+                const snapshot = await database.ref('users').orderByChild('email').equalTo(userEmail).once('value');
                 
                 if (snapshot.exists()) {
+                    // المستخدم موجود، التوجه إلى الصفحة الرئيسية
                     hideLoading();
-                    window.location.href = 'home.html';
+                    setTimeout(() => {
+                        window.location.href = 'home.html';
+                    }, 500);
                 } else {
+                    // مستخدم جديد، إظهار تفاصيل التسجيل
                     hideLoading();
+                    document.getElementById('user-email').textContent = userEmail;
                     showStep(2);
                 }
             } catch (error) {
@@ -597,35 +751,48 @@
             const name = document.getElementById('user-name').value.trim();
             const referralCode = document.getElementById('referral-code').value.trim();
             
+            // التحقق من صحة الاسم
+            clearError('name-error');
             const nameError = validateName(name);
             if (nameError) {
                 showError('name-error', nameError);
                 return;
             }
             
+            // التحقق من عدم تكرار الاسم
+            showLoading('جاري التحقق من الاسم...');
             const isNameUnique = await checkNameUnique(name);
+            hideLoading();
+            
             if (!isNameUnique) {
                 showError('name-error', 'هذا الاسم مستخدم بالفعل، الرجاء اختيار اسم آخر');
                 return;
             }
             
+            // التحقق من كود الإحالة إذا كان موجوداً
+            clearError('referral-error');
             if (referralCode) {
+                showLoading('جاري التحقق من كود الإحالة...');
                 const referralError = await checkReferralCode(referralCode);
+                hideLoading();
+                
                 if (referralError) {
                     showError('referral-error', referralError);
                     return;
                 }
             }
             
-            showLoading('جاري إنشاء الحساب...');
+            showLoading('جاري إنشاء حسابك...');
             
             try {
+                // حفظ بيانات المستخدم في قاعدة البيانات
                 userData = await saveUserToDatabase(currentUser, name, referralCode);
                 
+                // الانتظار قليلاً ثم التوجه إلى الصفحة الرئيسية
                 setTimeout(() => {
                     hideLoading();
                     window.location.href = 'home.html';
-                }, 2000);
+                }, 1500);
                 
             } catch (error) {
                 hideLoading();
@@ -639,16 +806,14 @@
             document.getElementById('continue-btn').addEventListener('click', handleContinue);
             
             document.getElementById('user-name').addEventListener('input', function() {
-                this.classList.remove('error');
-                document.getElementById('name-error').classList.remove('active');
+                clearError('name-error');
             });
             
             document.getElementById('referral-code').addEventListener('input', function() {
-                this.classList.remove('error');
-                document.getElementById('referral-error').classList.remove('active');
-                document.getElementById('referral-success').classList.remove('active');
+                clearError('referral-error');
             });
             
+            // إضافة event listener لإدخال الاسم عند الضغط على Enter
             document.getElementById('user-name').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     handleContinue();
@@ -663,21 +828,25 @@
         }
         
         function checkAuthState() {
-            showLoading('جاري التحقق من الجلسة...');
+            showLoading('جاري التحقق من جلسة الدخول...');
             
             auth.onAuthStateChanged(async (user) => {
                 if (user) {
                     currentUser = user;
+                    userEmail = user.email;
                     
+                    // التحقق إذا كان المستخدم موجوداً في قاعدة البيانات
                     try {
-                        const snapshot = await database.ref('users_mehoar').orderByChild('email').equalTo(user.email).once('value');
+                        const snapshot = await database.ref('users').orderByChild('email').equalTo(userEmail).once('value');
                         
                         if (snapshot.exists()) {
+                            // المستخدم موجود، التوجه إلى الصفحة الرئيسية
                             setTimeout(() => {
                                 hideLoading();
                                 window.location.href = 'home.html';
                             }, 1000);
                         } else {
+                            // مستخدم جديد ولكن ليس في قاعدة البيانات
                             hideLoading();
                             showStep(1);
                         }
@@ -687,6 +856,7 @@
                         showStep(1);
                     }
                 } else {
+                    // لا يوجد مستخدم مسجل دخول
                     hideLoading();
                     showStep(1);
                 }
@@ -699,6 +869,7 @@
             
             setTimeout(() => {
                 document.querySelector('.login-container').style.opacity = '1';
+                document.querySelector('.login-container').style.transform = 'translateY(0)';
             }, 100);
         });
         
