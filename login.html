@@ -10,6 +10,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -22,35 +25,17 @@
         }
         
         body {
-            background-color: #f8f9fa;
+            background-color: #f5f5f7;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
         }
-        
-        /* Animated Background */
-        body::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(0, 0, 0, 0.02) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(0, 0, 0, 0.02) 0%, transparent 50%);
-            animation: float 20s infinite linear;
-            z-index: -2;
-        }
-        
-        @keyframes float {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        
+
         /* Loading Screen */
         #loadingScreen {
             position: fixed;
@@ -63,17 +48,17 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
         
         .loading-spinner {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border: 3px solid rgba(0, 0, 0, 0.1);
             border-radius: 50%;
             border-top-color: #000000;
-            animation: spin 1.2s ease-in-out infinite;
+            animation: spin 1s ease-in-out infinite;
             margin-bottom: 20px;
         }
         
@@ -88,25 +73,24 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #ffffff;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9998;
+            z-index: 999;
             opacity: 1;
-            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.8s ease;
         }
         
         .welcome-logo {
-            width: 220px;
-            height: 220px;
+            width: 180px;
+            height: 180px;
             border-radius: 40px;
             overflow: hidden;
-            margin-bottom: 30px;
-            transform: scale(0.9);
-            animation: logoEntrance 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            animation-delay: 0.3s;
+            margin-bottom: 25px;
+            animation: logoFloat 3s ease-in-out infinite;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
         
         .welcome-logo img {
@@ -115,70 +99,61 @@
             object-fit: cover;
         }
         
-        @keyframes logoEntrance {
-            0% {
-                transform: scale(0.9) translateY(30px);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1) translateY(0);
-                opacity: 1;
-            }
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.02); }
         }
         
         .welcome-text {
             text-align: center;
-            color: white;
-            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            animation-delay: 0.6s;
-            opacity: 0;
+            animation: fadeInUp 0.8s ease;
         }
         
         .welcome-text h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 8px;
         }
         
         .welcome-text p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            font-weight: 300;
+            color: #666;
+            font-size: 1rem;
         }
         
         @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
             from {
                 opacity: 0;
                 transform: translateY(20px);
             }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
-        /* Glass Container with 3D Effect */
+        /* Main Container with 3D Effect */
         .glass-container {
             width: 100%;
-            max-width: 440px;
+            max-width: 420px;
             background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border-radius: 30px;
-            padding: 45px 35px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 40px 30px;
             box-shadow: 
-                0 20px 60px rgba(0, 0, 0, 0.15),
-                0 0 0 1px rgba(0, 0, 0, 0.05),
+                0 25px 50px rgba(0, 0, 0, 0.12),
+                0 0 0 1px rgba(0, 0, 0, 0.08),
+                0 0 0 2px rgba(255, 255, 255, 0.5),
                 inset 0 1px 0 rgba(255, 255, 255, 0.8),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-            border: 1.5px solid rgba(0, 0, 0, 0.12);
-            animation: containerEntrance 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            transform: translateY(30px) scale(0.95);
+                inset 0 -1px 0 rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            animation: containerAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
-            animation-delay: 1.2s;
+            transform: translateY(20px);
             position: relative;
             overflow: hidden;
+            display: none;
         }
         
         .glass-container::before {
@@ -190,59 +165,73 @@
             height: 1px;
             background: linear-gradient(90deg, 
                 transparent, 
-                rgba(255, 255, 255, 0.9), 
+                rgba(255, 255, 255, 0.8), 
                 transparent);
         }
         
-        .glass-container::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent 30%,
-                rgba(255, 255, 255, 0.4) 50%,
-                transparent 70%
-            );
-            animation: shimmer 3s infinite linear;
-            z-index: -1;
-        }
-        
-        @keyframes containerEntrance {
+        @keyframes containerAppear {
             to {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                transform: translateY(0);
             }
         }
         
-        @keyframes shimmer {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        /* Logo in Container */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        .logo-image {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+            border-radius: 25px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .logo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .logo-text h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 5px;
+        }
+        
+        .logo-text p {
+            color: #666;
+            font-size: 0.9rem;
         }
         
         /* Alert Message */
         .alert {
-            padding: 16px 20px;
-            border-radius: 16px;
+            padding: 14px 18px;
+            border-radius: 14px;
             margin-bottom: 25px;
             display: none;
-            animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: slideDown 0.3s ease;
             border: 1px solid rgba(0, 0, 0, 0.05);
             font-size: 0.9rem;
             text-align: center;
         }
         
-        @keyframes slideIn {
-            from { 
+        @keyframes slideDown {
+            from {
                 opacity: 0;
-                transform: translateY(-20px) scale(0.95);
+                transform: translateY(-10px);
             }
-            to { 
+            to {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                transform: translateY(0);
             }
         }
         
@@ -264,109 +253,84 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            padding: 18px 24px;
+            padding: 16px 24px;
             border: none;
             border-radius: 16px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            margin-bottom: 18px;
+            margin-bottom: 15px;
             position: relative;
             overflow: hidden;
-            transform: translateZ(0);
         }
         
         .btn:active {
             transform: scale(0.98);
         }
         
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%);
-            transform-origin: 50% 50%;
-        }
-        
-        .btn:focus:not(:active)::after {
-            animation: ripple 0.6s ease-out;
-        }
-        
-        @keyframes ripple {
-            0% {
-                transform: scale(0, 0);
-                opacity: 0.5;
-            }
-            100% {
-                transform: scale(40, 40);
-                opacity: 0;
-            }
-        }
-        
         .btn-primary {
-            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+            background: linear-gradient(135deg, #1a1a1a, #333333);
             color: white;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
         
         .btn-primary:hover {
-            background: linear-gradient(135deg, #000 0%, #2a2a2a 100%);
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #000000, #2a2a2a);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
         
         .btn-google {
             background: white;
             color: #333;
             border: 1.5px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
         }
         
         .btn-google:hover {
             background: #f8f9fa;
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
-            border-color: rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .btn-back {
+            background: rgba(0, 0, 0, 0.03);
+            color: #555;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn-back:hover {
+            background: rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
         }
         
         .btn-icon {
-            margin-left: 12px;
+            margin-left: 10px;
             font-size: 1.2rem;
         }
         
         /* Form */
         .form-container {
             display: none;
-            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeIn 0.5s ease;
         }
         
         @keyframes fadeIn {
-            from { 
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         .form-header {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
         
         .form-header h2 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             color: #000;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-weight: 700;
         }
         
@@ -378,26 +342,25 @@
         
         .user-email {
             background: rgba(0, 0, 0, 0.03);
-            padding: 16px;
+            padding: 14px;
             border-radius: 14px;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             color: #333;
             font-weight: 500;
             border: 1px solid rgba(0, 0, 0, 0.05);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             word-break: break-all;
         }
         
         /* Input Fields */
         .input-group {
-            margin-bottom: 25px;
-            position: relative;
+            margin-bottom: 22px;
         }
         
         .input-label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 600;
             color: #333;
             font-size: 0.9rem;
@@ -405,13 +368,13 @@
         
         .input-field {
             width: 100%;
-            padding: 16px 20px;
+            padding: 15px 18px;
             border-radius: 14px;
             border: 1.5px solid rgba(0, 0, 0, 0.1);
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             font-size: 0.95rem;
             color: #333;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.3s ease;
         }
         
         .input-field:focus {
@@ -419,7 +382,6 @@
             border-color: rgba(0, 0, 0, 0.3);
             box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
             background: white;
-            transform: translateY(-2px);
         }
         
         .input-field::placeholder {
@@ -432,17 +394,17 @@
             font-size: 0.8rem;
             padding: 4px 10px;
             border-radius: 10px;
-            margin-right: 10px;
+            margin-right: 8px;
         }
         
         /* Footer */
         .footer {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 25px;
             color: #777;
             font-size: 0.8rem;
             border-top: 1px solid rgba(0, 0, 0, 0.05);
-            padding-top: 20px;
+            padding-top: 18px;
             line-height: 1.5;
         }
         
@@ -453,23 +415,32 @@
             }
             
             .glass-container {
-                padding: 35px 25px;
-                border-radius: 25px;
+                padding: 30px 20px;
+                border-radius: 24px;
                 max-width: 100%;
             }
             
             .welcome-logo {
-                width: 180px;
-                height: 180px;
-                border-radius: 35px;
+                width: 150px;
+                height: 150px;
             }
             
             .welcome-text h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
+            }
+            
+            .logo-image {
+                width: 90px;
+                height: 90px;
+                border-radius: 20px;
+            }
+            
+            .logo-text h1 {
+                font-size: 1.6rem;
             }
             
             .btn {
-                padding: 16px 20px;
+                padding: 14px 20px;
                 font-size: 0.95rem;
             }
             
@@ -480,16 +451,18 @@
         
         @media (max-width: 350px) {
             .glass-container {
-                padding: 30px 20px;
+                padding: 25px 18px;
+                border-radius: 20px;
             }
             
             .welcome-logo {
-                width: 150px;
-                height: 150px;
+                width: 130px;
+                height: 130px;
             }
             
-            .btn {
-                font-size: 0.9rem;
+            .logo-image {
+                width: 80px;
+                height: 80px;
             }
         }
     </style>
@@ -499,12 +472,13 @@
     <!-- Loading Screen -->
     <div id="loadingScreen">
         <div class="loading-spinner"></div>
+        <p style="color: #666; font-size: 0.9rem; margin-top: 10px;">جاري التحقق من حالة الدخول...</p>
     </div>
     
     <!-- Welcome Screen -->
     <div id="welcomeScreen">
         <div class="welcome-logo">
-            <img src="https://i.ibb.co/rGpgBFBW/1000183766.png" alt="محور">
+            <img src="https://i.ibb.co/rGpgBFBW/1000183766.png" alt="محور" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>';">
         </div>
         <div class="welcome-text">
             <h1>محور</h1>
@@ -513,7 +487,18 @@
     </div>
     
     <!-- Main Container -->
-    <div class="glass-container" id="mainContainer" style="display: none;">
+    <div class="glass-container" id="mainContainer">
+        
+        <!-- Logo in Container -->
+        <div class="logo-section">
+            <div class="logo-image">
+                <img src="https://i.ibb.co/rGpgBFBW/1000183766.png" alt="محور" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>';">
+            </div>
+            <div class="logo-text">
+                <h1>محور</h1>
+                <p>منصة التواصل والتجارة الإلكترونية</p>
+            </div>
+        </div>
         
         <!-- Alert Container -->
         <div class="alert" id="alertMessage"></div>
@@ -527,7 +512,7 @@
             
             <button class="btn btn-primary" id="loginRegisterBtn">
                 <span>تسجيل الدخول / إنشاء حساب</span>
-                <i class="btn-icon fas fa-user-circle"></i>
+                <i class="btn-icon fas fa-user-plus"></i>
             </button>
             
             <div class="footer">
@@ -547,7 +532,7 @@
                 <i class="btn-icon fab fa-google"></i>
             </button>
             
-            <button class="btn" id="backBtn" style="background: rgba(0, 0, 0, 0.03); color: #555; border: 1px solid rgba(0, 0, 0, 0.08);">
+            <button class="btn btn-back" id="backBtn">
                 <span>رجوع للخلف</span>
                 <i class="btn-icon fas fa-arrow-right"></i>
             </button>
@@ -600,7 +585,7 @@
 
         const auth = firebase.auth();
         const db = firebase.database();
-        let currentUser;
+        let currentUser = null;
 
         /* Helper Functions */
         function showAlert(message, type = "error") {
@@ -611,7 +596,7 @@
             
             setTimeout(() => {
                 alertEl.style.display = "none";
-            }, 5000);
+            }, 4000);
         }
 
         function validName(name) {
@@ -620,11 +605,16 @@
         }
 
         async function isNameUnique(name) {
-            const snap = await db.ref("users_mehoar")
-                .orderByChild("name")
-                .equalTo(name)
-                .once("value");
-            return !snap.exists();
+            try {
+                const snap = await db.ref("users_mehoar")
+                    .orderByChild("name")
+                    .equalTo(name)
+                    .once("value");
+                return !snap.exists();
+            } catch (error) {
+                console.error("Error checking name uniqueness:", error);
+                return false;
+            }
         }
 
         function generateId() {
@@ -633,41 +623,50 @@
 
         async function generateUniqueId() {
             let id, exists = true;
-            while (exists) {
+            let attempts = 0;
+            while (exists && attempts < 10) {
                 id = generateId();
-                const snap = await db.ref("users_mehoar/" + id).once("value");
-                exists = snap.exists();
+                try {
+                    const snap = await db.ref("users_mehoar/" + id).once("value");
+                    exists = snap.exists();
+                    attempts++;
+                } catch (error) {
+                    console.error("Error generating unique ID:", error);
+                    exists = true;
+                }
             }
             return id;
         }
 
         /* UI Functions */
         function showSection(sectionId) {
+            // Hide all sections
             document.getElementById("loginSection").style.display = "none";
             document.getElementById("googleSection").style.display = "none";
             document.getElementById("registrationForm").style.display = "none";
             
+            // Show requested section
             document.getElementById(sectionId).style.display = "block";
         }
 
-        /* Welcome Screen Animation */
+        /* Welcome Screen Transition */
         function showMainInterface() {
             const welcomeScreen = document.getElementById("welcomeScreen");
             const loadingScreen = document.getElementById("loadingScreen");
             const mainContainer = document.getElementById("mainContainer");
             
-            // Hide loading screen first
+            // Hide loading screen
             loadingScreen.style.opacity = "0";
             loadingScreen.style.visibility = "hidden";
             
-            // Then hide welcome screen with delay
+            // Wait a bit then hide welcome screen and show main container
             setTimeout(() => {
                 welcomeScreen.style.opacity = "0";
                 welcomeScreen.style.visibility = "hidden";
                 
                 // Show main container
                 mainContainer.style.display = "block";
-            }, 500);
+            }, 800);
         }
 
         /* Event Listeners */
@@ -682,10 +681,20 @@
         /* Google Sign In */
         document.getElementById("googleBtn").addEventListener("click", async () => {
             try {
+                // Show loading state
+                const googleBtn = document.getElementById("googleBtn");
+                const originalText = googleBtn.innerHTML;
+                googleBtn.innerHTML = '<span>جاري التحميل...</span>';
+                googleBtn.disabled = true;
+                
                 const provider = new firebase.auth.GoogleAuthProvider();
+                provider.addScope('email');
+                provider.addScope('profile');
+                
                 const result = await auth.signInWithPopup(provider);
                 currentUser = result.user;
 
+                // Check if user exists in database
                 const snap = await db.ref("users_mehoar")
                     .orderByChild("email")
                     .equalTo(currentUser.email)
@@ -699,16 +708,24 @@
                     document.getElementById("userEmail").textContent = currentUser.email;
                     showSection("registrationForm");
                 }
+                
             } catch (error) {
                 console.error("Google sign in error:", error);
+                
+                // Reset button state
+                const googleBtn = document.getElementById("googleBtn");
+                googleBtn.innerHTML = '<span>المتابعة باستخدام Google</span><i class="btn-icon fab fa-google"></i>';
+                googleBtn.disabled = false;
                 
                 // Handle specific errors
                 if (error.code === 'auth/popup-closed-by-user') {
                     showAlert("تم إغلاق نافذة تسجيل الدخول. يرجى المحاولة مرة أخرى.");
                 } else if (error.code === 'auth/cancelled-popup-request') {
-                    // Ignore cancelled popup request
+                    // Do nothing, user cancelled
+                } else if (error.code === 'auth/network-request-failed') {
+                    showAlert("خطأ في الاتصال بالشبكة. يرجى التحقق من اتصالك بالإنترنت.");
                 } else {
-                    showAlert("حدث خطأ أثناء تسجيل الدخول باستخدام Google. يرجى المحاولة مرة أخرى.");
+                    showAlert("حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.");
                 }
             }
         });
@@ -718,11 +735,13 @@
             const name = document.getElementById("name").value.trim();
             const referral = document.getElementById("referral").value.trim();
 
+            // Validate name
             if (!validName(name)) {
                 showAlert("اسم المستخدم يجب أن يكون بين 3 و15 حرفًا، ويمكن أن يحتوي على أحرف عربية، إنجليزية، أرقام ومسافات فقط.");
                 return;
             }
 
+            // Check if name is unique
             if (!(await isNameUnique(name))) {
                 showAlert("اسم المستخدم هذا مستخدم بالفعل. يرجى اختيار اسم آخر.");
                 return;
@@ -730,28 +749,42 @@
 
             let coin = 20;
 
+            // Handle referral code if provided
             if (referral) {
                 if (!/^\d{6}$/.test(referral)) {
                     showAlert("كود الإحالة غير صحيح. يجب أن يتكون من 6 أرقام فقط.");
                     return;
                 }
 
-                const refSnap = await db.ref("users_mehoar/" + referral).once("value");
-                if (!refSnap.exists()) {
-                    showAlert("كود الإحالة غير موجود. يرجى التحقق وإعادة المحاولة.");
+                try {
+                    const refSnap = await db.ref("users_mehoar/" + referral).once("value");
+                    if (!refSnap.exists()) {
+                        showAlert("كود الإحالة غير موجود. يرجى التحقق وإعادة المحاولة.");
+                        return;
+                    }
+
+                    // Add coins to referrer
+                    await db.ref("users_mehoar/" + referral).update({
+                        coin: (refSnap.val().coin || 0) + 10
+                    });
+
+                    coin = 25;
+                } catch (error) {
+                    console.error("Error handling referral:", error);
+                    showAlert("حدث خطأ في معالجة كود الإحالة. يرجى المحاولة مرة أخرى.");
                     return;
                 }
-
-                await db.ref("users_mehoar/" + referral).update({
-                    coin: (refSnap.val().coin || 0) + 10
-                });
-
-                coin = 25;
             }
 
             try {
+                // Generate unique user ID
                 const userId = await generateUniqueId();
+                
+                if (!userId) {
+                    throw new Error("فشل في إنشاء معرف مستخدم فريد");
+                }
 
+                // Create user record
                 await db.ref("users_mehoar/" + userId).set({
                     id: userId,
                     name: name,
@@ -759,11 +792,13 @@
                     banned: false,
                     admin: false,
                     referral_used: referral || "",
-                    coin: coin
+                    coin: coin,
+                    created_at: new Date().toISOString()
                 });
 
                 showAlert("تم إنشاء حسابك بنجاح! يتم توجيهك الآن...", "success");
                 
+                // Redirect to home page
                 setTimeout(() => {
                     window.location.href = "home.html";
                 }, 1500);
@@ -774,32 +809,45 @@
         });
 
         /* Check Authentication State on Load */
-        window.addEventListener("load", async () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             try {
-                // First, show welcome screen after loading
-                setTimeout(() => {
-                    showMainInterface();
-                }, 1500);
-
-                // Check if user is already logged in
+                // First check if user is already logged in
                 auth.onAuthStateChanged(async (user) => {
                     if (user) {
                         // User is signed in, check if they exist in database
-                        const snap = await db.ref("users_mehoar")
-                            .orderByChild("email")
-                            .equalTo(user.email)
-                            .once("value");
+                        try {
+                            const snap = await db.ref("users_mehoar")
+                                .orderByChild("email")
+                                .equalTo(user.email)
+                                .once("value");
 
-                        if (snap.exists()) {
-                            // User exists, redirect to home after showing welcome screen
-                            setTimeout(() => {
-                                window.location.href = "home.html";
-                            }, 2000);
+                            if (snap.exists()) {
+                                // User exists, redirect to home after welcome screen
+                                setTimeout(() => {
+                                    window.location.href = "home.html";
+                                }, 1500);
+                                return;
+                            }
+                        } catch (dbError) {
+                            console.error("Database error:", dbError);
                         }
                     }
+                    
+                    // Show welcome screen then main interface
+                    setTimeout(() => {
+                        showMainInterface();
+                    }, 1500);
                 });
+                
+                // Fallback in case auth state change doesn't fire
+                setTimeout(() => {
+                    if (document.getElementById("loadingScreen").style.visibility !== "hidden") {
+                        showMainInterface();
+                    }
+                }, 3000);
+                
             } catch (error) {
-                console.error("Auth check error:", error);
+                console.error("Initialization error:", error);
                 showMainInterface();
             }
         });
@@ -815,726 +863,16 @@
             this.value = this.value.replace(/\D/g, '').substring(0, 6);
         });
         
-        /* Add keyboard shortcuts */
+        /* Enter key to submit */
         document.addEventListener('keydown', function(e) {
-            // Enter key submits form
             if (e.key === 'Enter') {
                 if (document.getElementById("registrationForm").style.display === 'block') {
                     document.getElementById("continueBtn").click();
                 } else if (document.getElementById("googleSection").style.display === 'block') {
                     document.getElementById("googleBtn").click();
-                } else if (document.getElementById("loginSection").style.display === 'block') {
-                    document.getElementById("loginRegisterBtn").click();
-                }
-            }
-            
-            // Escape key goes back
-            if (e.key === 'Escape') {
-                if (document.getElementById("googleSection").style.display === 'block') {
-                    document.getElementById("backBtn").click();
                 }
             }
         });
-    </script>
-</body>
-</html>        .glass-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.8), 
-                transparent);
-        }
-        
-        .glass-container::after {
-            content: '';
-            position: absolute;
-            top: -100px;
-            left: -100px;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-            z-index: -1;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px) scale(0.98);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        
-        /* Logo Section with Image */
-        .logo-section {
-            text-align: center;
-            margin-bottom: 45px;
-            position: relative;
-        }
-        
-        .logo-image {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 20px;
-            border-radius: 28px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            position: relative;
-            background: white;
-        }
-        
-        .logo-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        
-        .logo-text {
-            margin-top: 5px;
-        }
-        
-        .logo-text h1 {
-            font-size: 2.4rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #000000, #333333);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-            font-family: 'Tajawal', 'Cairo', sans-serif;
-        }
-        
-        .logo-text p {
-            color: #666;
-            font-size: 1.05rem;
-            font-weight: 400;
-            line-height: 1.5;
-        }
-        
-        /* Buttons */
-        .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 18px 24px;
-            border: none;
-            border-radius: 18px;
-            font-size: 1.15rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            font-family: 'Cairo', sans-serif;
-            letter-spacing: -0.2px;
-        }
-        
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .btn:hover::before {
-            opacity: 1;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #0a0a0a, #262626);
-            color: white;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #000000, #1f1f1f);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
-        }
-        
-        .btn-primary:active {
-            transform: translateY(0);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
-        }
-        
-        .btn-google {
-            background: rgba(255, 255, 255, 0.95);
-            color: #333;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.06);
-        }
-        
-        .btn-google:hover {
-            background: white;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border-color: rgba(0, 0, 0, 0.12);
-        }
-        
-        .btn-google:active {
-            transform: translateY(0);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-        }
-        
-        .btn-icon {
-            margin-left: 12px;
-            font-size: 1.3rem;
-        }
-        
-        /* Form */
-        .form-container {
-            display: none;
-            animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
-        @keyframes fadeIn {
-            from { 
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .form-header {
-            text-align: center;
-            margin-bottom: 35px;
-        }
-        
-        .form-header h2 {
-            font-size: 1.8rem;
-            color: #000;
-            margin-bottom: 10px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-        }
-        
-        .form-header p {
-            color: #666;
-            font-size: 1rem;
-            line-height: 1.6;
-            max-width: 90%;
-            margin: 0 auto;
-        }
-        
-        .user-email {
-            background: rgba(0, 0, 0, 0.03);
-            padding: 16px;
-            border-radius: 16px;
-            text-align: center;
-            margin-bottom: 30px;
-            color: #333;
-            font-weight: 500;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            font-size: 1.05rem;
-        }
-        
-        /* Input Fields */
-        .input-group {
-            margin-bottom: 28px;
-        }
-        
-        .input-label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #2a2a2a;
-            font-size: 1rem;
-        }
-        
-        .input-field {
-            width: 100%;
-            padding: 18px 22px;
-            border-radius: 18px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            background: rgba(255, 255, 255, 0.8);
-            font-size: 1.05rem;
-            color: #1a1a1a;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            backdrop-filter: blur(10px);
-            font-family: 'Cairo', sans-serif;
-        }
-        
-        .input-field:focus {
-            outline: none;
-            border-color: rgba(0, 0, 0, 0.2);
-            box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.04);
-            background: rgba(255, 255, 255, 0.95);
-            transform: translateY(-1px);
-        }
-        
-        .input-field::placeholder {
-            color: #999;
-            font-weight: 400;
-        }
-        
-        .optional-badge {
-            background: rgba(0, 0, 0, 0.05);
-            color: #666;
-            font-size: 0.85rem;
-            padding: 5px 12px;
-            border-radius: 12px;
-            margin-right: 10px;
-            font-weight: 500;
-        }
-        
-        /* Alert Message */
-        .alert {
-            padding: 16px 20px;
-            border-radius: 18px;
-            margin-bottom: 25px;
-            display: none;
-            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            font-weight: 500;
-        }
-        
-        @keyframes slideIn {
-            from { 
-                opacity: 0;
-                transform: translateY(-15px) scale(0.98);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        
-        .alert-error {
-            background: rgba(255, 50, 50, 0.08);
-            color: #d32f2f;
-            border-color: rgba(211, 47, 47, 0.1);
-        }
-        
-        .alert-success {
-            background: rgba(76, 175, 80, 0.08);
-            color: #2e7d32;
-            border-color: rgba(46, 125, 50, 0.1);
-        }
-        
-        /* Footer */
-        .footer {
-            text-align: center;
-            margin-top: 35px;
-            color: #777;
-            font-size: 0.9rem;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            padding-top: 22px;
-            line-height: 1.6;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 480px) {
-            body {
-                padding: 15px;
-            }
-            
-            .glass-container {
-                padding: 35px 25px;
-                border-radius: 24px;
-                max-width: 100%;
-            }
-            
-            .logo-image {
-                width: 100px;
-                height: 100px;
-                border-radius: 22px;
-            }
-            
-            .logo-text h1 {
-                font-size: 2rem;
-            }
-            
-            .btn {
-                padding: 16px 20px;
-                font-size: 1.1rem;
-            }
-            
-            .form-header h2 {
-                font-size: 1.6rem;
-            }
-        }
-        
-        @media (max-width: 350px) {
-            .glass-container {
-                padding: 30px 20px;
-            }
-            
-            .logo-text h1 {
-                font-size: 1.8rem;
-            }
-            
-            .btn {
-                font-size: 1rem;
-            }
-            
-            .input-field {
-                padding: 16px 18px;
-            }
-        }
-        
-        /* Smooth scroll and focus styles */
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        *:focus {
-            outline: none;
-        }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 0, 0, 0.3);
-        }
-    </style>
-</head>
-<body>
-    
-    <!-- Loading Screen -->
-    <div id="loadingScreen">
-        <div class="loading-spinner"></div>
-        <p class="loading-text">جاري التحقق من حالة الدخول...</p>
-    </div>
-    
-    <!-- Main Content -->
-    <div class="glass-container" id="mainContainer">
-        <!-- Logo with Image -->
-        <div class="logo-section">
-            <div class="logo-image">
-                <img src="https://i.ibb.co/rGpgBFBW/1000183766.png" alt="محور" onerror="this.onerror=null; this.src='https://via.placeholder.com/120/000/fff?text=محور';">
-            </div>
-            <div class="logo-text">
-                <h1>محور</h1>
-                <p>منصة التواصل والتجارة الإلكترونية المتكاملة</p>
-            </div>
-        </div>
-        
-        <!-- Alert Container -->
-        <div class="alert" id="alertMessage"></div>
-        
-        <!-- Login / Register Section -->
-        <div id="loginSection">
-            <div class="form-header">
-                <h2>مرحباً بك في محور</h2>
-                <p>انضم إلى مجتمعنا وابدأ رحلتك في عالم التجارة الإلكترونية والتواصل</p>
-            </div>
-            
-            <button class="btn btn-primary" id="loginRegisterBtn">
-                <span>تسجيل الدخول / إنشاء حساب</span>
-                <i class="btn-icon fas fa-user-circle"></i>
-            </button>
-            
-            <div class="footer">
-                <p>بالنقر على الزر أعلاه، فأنت توافق على <a href="#" style="color: #333; text-decoration: none; font-weight: 600;">شروط الاستخدام</a> و <a href="#" style="color: #333; text-decoration: none; font-weight: 600;">سياسة الخصوصية</a></p>
-            </div>
-        </div>
-        
-        <!-- Google Sign In -->
-        <div id="googleSection" style="display: none;">
-            <div class="form-header">
-                <h2>تسجيل الدخول</h2>
-                <p>اختر طريقة التسجيل المفضلة لديك للمتابعة</p>
-            </div>
-            
-            <button class="btn btn-google" id="googleBtn">
-                <span>المتابعة باستخدام Google</span>
-                <i class="btn-icon fab fa-google"></i>
-            </button>
-            
-            <button class="btn" id="backBtn" style="background: rgba(0, 0, 0, 0.03); color: #555; border: 1px solid rgba(0, 0, 0, 0.08);">
-                <span>رجوع للخلف</span>
-                <i class="btn-icon fas fa-arrow-right"></i>
-            </button>
-        </div>
-        
-        <!-- Registration Form -->
-        <div class="form-container" id="registrationForm">
-            <div class="form-header">
-                <h2>إكمال التسجيل</h2>
-                <p>أكمل بياناتك للبدء في استخدام محور والاستفادة من جميع المميزات</p>
-            </div>
-            
-            <div class="user-email" id="userEmail"></div>
-            
-            <div class="input-group">
-                <label class="input-label" for="name">اسم المستخدم</label>
-                <input type="text" id="name" class="input-field" placeholder="ادخل اسم مستخدم من 3 إلى 15 حرف">
-            </div>
-            
-            <div class="input-group">
-                <label class="input-label" for="referral">
-                    <span>كود الإحالة</span>
-                    <span class="optional-badge">اختياري</span>
-                </label>
-                <input type="text" id="referral" class="input-field" placeholder="ادخل كود الإحالة المكون من 6 أرقام">
-                <small style="display: block; margin-top: 8px; color: #777; font-size: 0.85rem;">
-                    باستخدام كود إحالة صحيح ستحصل على 25 عملة بدلاً من 20
-                </small>
-            </div>
-            
-            <button class="btn btn-primary" id="continueBtn">
-                <span>متابعة وتسجيل الدخول</span>
-                <i class="btn-icon fas fa-arrow-left"></i>
-            </button>
-            
-            <div class="footer">
-                <p>سيتم منحك <strong>20 عملة</strong> عند التسجيل، و<strong>25 عملة</strong> عند استخدام كود إحالة صحيح</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        /* Firebase Configuration */
-        firebase.initializeApp({
-            apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
-            authDomain: "marvel1-654dd.firebaseapp.com",
-            databaseURL: "https://marvel1-654dd-default-rtdb.firebaseio.com",
-            projectId: "marvel1-654dd",
-            storageBucket: "marvel1-654dd.appspot.com",
-            messagingSenderId: "189921979866",
-            appId: "1:189921979866:android:95f48de58a69756be924e3"
-        });
-
-        const auth = firebase.auth();
-        const db = firebase.database();
-        let currentUser;
-
-        /* Helper Functions */
-        function showAlert(message, type = "error") {
-            const alertEl = document.getElementById("alertMessage");
-            alertEl.textContent = message;
-            alertEl.className = `alert alert-${type}`;
-            alertEl.style.display = "block";
-            
-            setTimeout(() => {
-                alertEl.style.display = "none";
-            }, 5000);
-        }
-
-        function validName(name) {
-            if (name.length < 3 || name.length > 15) return false;
-            return /^[\u0600-\u06FFa-zA-Z0-9 ]+$/.test(name);
-        }
-
-        async function isNameUnique(name) {
-            const snap = await db.ref("users_mehoar")
-                .orderByChild("name")
-                .equalTo(name)
-                .once("value");
-            return !snap.exists();
-        }
-
-        function generateId() {
-            return Math.floor(100000 + Math.random() * 900000).toString();
-        }
-
-        async function generateUniqueId() {
-            let id, exists = true;
-            while (exists) {
-                id = generateId();
-                const snap = await db.ref("users_mehoar/" + id).once("value");
-                exists = snap.exists();
-            }
-            return id;
-        }
-
-        /* UI Functions */
-        function showSection(sectionId) {
-            document.getElementById("loginSection").style.display = "none";
-            document.getElementById("googleSection").style.display = "none";
-            document.getElementById("registrationForm").style.display = "none";
-            
-            document.getElementById(sectionId).style.display = "block";
-        }
-
-        /* Event Listeners */
-        document.getElementById("loginRegisterBtn").addEventListener("click", () => {
-            showSection("googleSection");
-        });
-
-        document.getElementById("backBtn").addEventListener("click", () => {
-            showSection("loginSection");
-        });
-
-        /* Google Sign In */
-        document.getElementById("googleBtn").addEventListener("click", async () => {
-            try {
-                const provider = new firebase.auth.GoogleAuthProvider();
-                const res = await auth.signInWithPopup(provider);
-                currentUser = res.user;
-
-                const snap = await db.ref("users_mehoar")
-                    .orderByChild("email")
-                    .equalTo(currentUser.email)
-                    .once("value");
-
-                if (snap.exists()) {
-                    // User exists, redirect to home
-                    window.location.href = "home.html";
-                } else {
-                    // New user, show registration form
-                    document.getElementById("userEmail").textContent = currentUser.email;
-                    showSection("registrationForm");
-                }
-            } catch (error) {
-                console.error("Google sign in error:", error);
-                showAlert("حدث خطأ أثناء تسجيل الدخول باستخدام Google. يرجى المحاولة مرة أخرى.");
-            }
-        });
-
-        /* Continue Registration */
-        document.getElementById("continueBtn").addEventListener("click", async () => {
-            const name = document.getElementById("name").value.trim();
-            const referral = document.getElementById("referral").value.trim();
-
-            if (!validName(name)) {
-                showAlert("اسم المستخدم يجب أن يكون بين 3 و15 حرفًا، ويمكن أن يحتوي على أحرف عربية، إنجليزية، أرقام ومسافات فقط.");
-                return;
-            }
-
-            if (!(await isNameUnique(name))) {
-                showAlert("اسم المستخدم هذا مستخدم بالفعل. يرجى اختيار اسم آخر.");
-                return;
-            }
-
-            let coin = 20;
-
-            if (referral) {
-                if (!/^\d{6}$/.test(referral)) {
-                    showAlert("كود الإحالة غير صحيح. يجب أن يتكون من 6 أرقام فقط.");
-                    return;
-                }
-
-                const refSnap = await db.ref("users_mehoar/" + referral).once("value");
-                if (!refSnap.exists()) {
-                    showAlert("كود الإحالة غير موجود. يرجى التحقق وإعادة المحاولة.");
-                    return;
-                }
-
-                await db.ref("users_mehoar/" + referral).update({
-                    coin: (refSnap.val().coin || 0) + 10
-                });
-
-                coin = 25;
-            }
-
-            try {
-                const userId = await generateUniqueId();
-
-                await db.ref("users_mehoar/" + userId).set({
-                    id: userId,
-                    name: name,
-                    email: currentUser.email,
-                    banned: false,
-                    admin: false,
-                    referral_used: referral || "",
-                    coin: coin
-                });
-
-                showAlert("تم إنشاء حسابك بنجاح! يتم توجيهك الآن...", "success");
-                
-                setTimeout(() => {
-                    window.location.href = "home.html";
-                }, 1500);
-            } catch (error) {
-                console.error("Registration error:", error);
-                showAlert("حدث خطأ أثناء إنشاء الحساب. يرجى المحاولة مرة أخرى.");
-            }
-        });
-
-        /* Check Authentication State on Load */
-        window.addEventListener("load", async () => {
-            try {
-                // Check if user is already logged in
-                auth.onAuthStateChanged(async (user) => {
-                    if (user) {
-                        // User is signed in, check if they exist in database
-                        const snap = await db.ref("users_mehoar")
-                            .orderByChild("email")
-                            .equalTo(user.email)
-                            .once("value");
-
-                        if (snap.exists()) {
-                            // User exists, redirect to home
-                            setTimeout(() => {
-                                window.location.href = "home.html";
-                            }, 1000);
-                        } else {
-                            // User is signed in but doesn't exist in database
-                            setTimeout(() => {
-                                document.getElementById("loadingScreen").style.opacity = "0";
-                                document.getElementById("loadingScreen").style.visibility = "hidden";
-                                showSection("loginSection");
-                            }, 1000);
-                        }
-                    } else {
-                        // No user is signed in
-                        setTimeout(() => {
-                            document.getElementById("loadingScreen").style.opacity = "0";
-                            document.getElementById("loadingScreen").style.visibility = "hidden";
-                            showSection("loginSection");
-                        }, 1000);
-                    }
-                });
-            } catch (error) {
-                console.error("Auth check error:", error);
-                document.getElementById("loadingScreen").style.opacity = "0";
-                document.getElementById("loadingScreen").style.visibility = "hidden";
-                showSection("loginSection");
-            }
-        });
-
-        /* Input field validation */
-        document.getElementById("name").addEventListener("input", function() {
-            if (this.value.length > 15) {
-                this.value = this.value.substring(0, 15);
-            }
-        });
-
-        document.getElementById("referral").addEventListener("input", function() {
-            this.value = this.value.replace(/\D/g, '').substring(0, 6);
-        });
-        
-        /* Add subtle animation to logo on load */
-        setTimeout(() => {
-            const logoImage = document.querySelector('.logo-image');
-            if (logoImage) {
-                logoImage.style.transform = 'scale(1)';
-                logoImage.style.opacity = '1';
-            }
-        }, 100);
     </script>
 </body>
 </html>
