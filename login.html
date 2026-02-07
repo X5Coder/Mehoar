@@ -1,115 +1,142 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>تسجيل الدخول - محور</title>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسجيل الدخول - محور</title>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<button id="googleBtn">تسجيل عبر Google</button>
+
+<div id="form" style="display:none">
+    <p id="email"></p>
+    <input id="name" placeholder="اسم المستخدم">
+    <input id="referral" placeholder="كود الإحالة (اختياري)">
+    <button id="continue">متابعة</button>
+</div>
+
+<script>
+/* Firebase */
+firebase.initializeApp({
+    apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
+    authDomain: "marvel1-654dd.firebaseapp.com",
+    databaseURL: "https://marvel1-654dd-default-rtdb.firebaseio.com",
+    projectId: "marvel1-654dd",
+    storageBucket: "marvel1-654dd.appspot.com",
+    messagingSenderId: "189921979866",
+    appId: "1:189921979866:android:95f48de58a69756be924e3"
+});
+
+const auth = firebase.auth();
+const db = firebase.database();
+let currentUser;
+
+/* Helpers */
+function validName(name) {
+    if (name.length < 3 || name.length > 15) return false;
+    return /^[\u0600-\u06FFa-zA-Z0-9 ]+$/.test(name);
+}
+
+async function isNameUnique(name) {
+    const snap = await db.ref("users_mehoar")
+        .orderByChild("name")
+        .equalTo(name)
+        .once("value");
+    return !snap.exists();
+}
+
+function generateId() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+async function generateUniqueId() {
+    let id, exists = true;
+    while (exists) {
+        id = generateId();
+        const snap = await db.ref("users_mehoar/" + id).once("value");
+        exists = snap.exists();
+    }
+    return id;
+}
+
+/* Google Sign In */
+document.getElementById("googleBtn").onclick = async () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const res = await auth.signInWithPopup(provider);
+    currentUser = res.user;
+
+    const snap = await db.ref("users_mehoar")
+        .orderByChild("email")
+        .equalTo(currentUser.email)
+        .once("value");
+
+    if (snap.exists()) {
+        location.href = "home.html";
+    } else {
+        document.getElementById("email").innerText = currentUser.email;
+        document.getElementById("form").style.display = "block";
+    }
+};
+
+/* Continue */
+document.getElementById("continue").onclick = async () => {
+    const name = document.getElementById("name").value.trim();
+    const referral = document.getElementById("referral").value.trim();
+
+    if (!validName(name)) {
+        alert("اسم غير صالح");
+        return;
+    }
+
+    if (!(await isNameUnique(name))) {
+        alert("الاسم مستخدم بالفعل");
+        return;
+    }
+
+    let coin = 20;
+
+    if (referral) {
+        if (!/^\d{6}$/.test(referral)) {
+            alert("كود الإحالة غير صحيح");
+            return;
         }
-        
-        :root {
-            --bg-color: #FFFFFF;
-            --card-color: #FFFFFF;
-            --text-primary: #000000;
-            --text-secondary: #666666;
-            --black-gradient: linear-gradient(135deg, #222222, #444444, #222222);
-            --black-gradient-hover: linear-gradient(135deg, #333333, #555555, #333333);
-            --dark-gray: #333333;
-            --medium-gray: #555555;
-            --light-gray: #EEEEEE;
-            --border-gray: #DDDDDD;
-            --accent-color: #000000;
-            --error-color: #FF3B30;
-            --success-color: #34C759;
-            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            --border-radius: 20px;
-            --border-radius-large: 25px;
-            --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.12);
-            --shadow-heavy: 0 12px 40px rgba(0, 0, 0, 0.15);
+
+        const refSnap = await db.ref("users_mehoar/" + referral).once("value");
+        if (!refSnap.exists()) {
+            alert("كود الإحالة غير موجود");
+            return;
         }
-        
-        body {
-            font-family: 'Tajawal', 'Almarai', -apple-system, sans-serif;
-            background: var(--bg-color);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            direction: rtl;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-        
-        .login-container {
-            width: 100%;
-            max-width: 480px;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: containerSlideUp 0.8s ease-out 0.3s forwards;
-        }
-        
-        .login-header {
-            text-align: center;
-            margin-bottom: 40px;
-            animation: fadeIn 1s ease-out 0.5s forwards;
-            opacity: 0;
-        }
-        
-        .logo {
-            font-family: 'Tajawal', sans-serif;
-            font-weight: 900;
-            font-size: 52px;
-            background: var(--black-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 15px;
-            letter-spacing: -2px;
-            line-height: 1;
-        }
-        
-        .login-title {
-            font-size: 32px;
-            font-weight: 900;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-            position: relative;
-            display: inline-block;
-        }
-        
-        .login-title::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            right: 0;
-            width: 70px;
-            height: 4px;
-            background: var(--black-gradient);
-            border-radius: 2px;
-            animation: widthGrow 0.8s ease-out 1s forwards;
-            width: 0;
-        }
-        
-        .login-subtitle {
-            color: var(--text-secondary);
-            font-size: 18px;
-            font-weight: 500;
-            line-height: 1.5;
+
+        await db.ref("users_mehoar/" + referral).update({
+            coin: (refSnap.val().coin || 0) + 10
+        });
+
+        coin = 25;
+    }
+
+    const userId = await generateUniqueId();
+
+    await db.ref("users_mehoar/" + userId).set({
+        id: userId,
+        name: name,
+        email: currentUser.email,
+        banned: false,
+        admin: false,
+        referral_used: referral || "",
+        coin: coin
+    });
+
+    location.href = "home.html";
+};
+</script>
+
+</body>
+</html>            line-height: 1.5;
             margin-top: 20px;
         }
         
