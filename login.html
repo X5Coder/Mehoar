@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>تسجيل الدخول | Mahwar</title>
+    <title>تسجيل الدخول - محور</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
     <style>
@@ -20,32 +19,26 @@
         }
         
         :root {
-            --primary-color: #6C63FF;
-            --primary-dark: #554FD8;
-            --primary-light: #8B85FF;
-            --secondary-color: #FF6584;
-            --dark-color: #2D2B55;
-            --light-color: #F8F9FF;
-            --gray-color: #A5A7B5;
-            --gray-light: #EFF0F7;
-            --white-color: #FFFFFF;
-            --success-color: #4CC9A7;
-            --error-color: #FF6B8B;
-            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            --border-radius: 20px;
-            --border-radius-lg: 30px;
-            --shadow-sm: 0 4px 12px rgba(108, 99, 255, 0.08);
-            --shadow-md: 0 10px 30px rgba(108, 99, 255, 0.15);
-            --shadow-lg: 0 20px 50px rgba(108, 99, 255, 0.2);
-            --gradient-primary: linear-gradient(135deg, #6C63FF 0%, #8B85FF 100%);
-            --gradient-dark: linear-gradient(135deg, #2D2B55 0%, #3D3A6B 100%);
+            --bg-color: #E9E8EE;
+            --card-color: #FFFFFF;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --accent-color: #4A47B8;
+            --dark-gradient: linear-gradient(135deg, #333333, #555555);
+            --black-gradient: linear-gradient(135deg, #222222, #444444);
+            --success-color: #2ECC71;
+            --error-color: #E74C3C;
+            --warning-color: #F39C12;
+            --transition-smooth: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-quick: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            --border-radius: 16px;
+            --border-radius-large: 24px;
         }
         
         body {
-            font-family: 'Tajawal', 'Almarai', -apple-system, sans-serif;
-            background: var(--light-color);
-            color: var(--dark-color);
+            font-family: 'Almarai', 'Tajawal', -apple-system, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -53,230 +46,117 @@
             padding: 20px;
             direction: rtl;
             -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-        
-        .background-shapes {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: -1;
-            overflow: hidden;
-        }
-        
-        .shape {
-            position: absolute;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-            opacity: 0.1;
-            animation: float 20s infinite linear;
-        }
-        
-        .shape-1 {
-            width: 300px;
-            height: 300px;
-            top: -150px;
-            right: -150px;
-            animation-delay: 0s;
-        }
-        
-        .shape-2 {
-            width: 200px;
-            height: 200px;
-            bottom: -100px;
-            left: -100px;
-            animation-delay: -5s;
-            background: linear-gradient(135deg, var(--secondary-color), #FF8BA7);
-        }
-        
-        .shape-3 {
-            width: 150px;
-            height: 150px;
-            top: 50%;
-            left: 10%;
-            animation-delay: -10s;
-            background: linear-gradient(135deg, var(--success-color), #6DE5C9);
         }
         
         .login-container {
             width: 100%;
-            max-width: 480px;
+            max-width: 450px;
             opacity: 0;
-            transform: translateY(20px);
-            animation: slideUp 0.8s ease-out 0.3s forwards;
+            animation: fadeIn 1s ease-out forwards;
         }
         
         .login-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
         
-        .logo-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        
-        .logo-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--gradient-primary);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            font-weight: 900;
-            box-shadow: var(--shadow-md);
-            transform: rotate(-5deg);
-            transition: var(--transition-bounce);
-        }
-        
-        .logo-icon:hover {
-            transform: rotate(0deg) scale(1.1);
-        }
-        
-        .logo-text {
+        .logo {
             font-family: 'Tajawal', sans-serif;
             font-weight: 900;
-            font-size: 42px;
-            background: var(--gradient-dark);
+            font-size: 48px;
+            background: var(--dark-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: -1px;
+            margin-bottom: 10px;
         }
         
         .login-title {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 800;
-            color: var(--dark-color);
-            margin-bottom: 15px;
-            position: relative;
-            display: inline-block;
-        }
-        
-        .login-title::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            right: 0;
-            width: 60px;
-            height: 4px;
-            background: var(--gradient-primary);
-            border-radius: 2px;
+            color: var(--text-primary);
+            margin-bottom: 10px;
         }
         
         .login-subtitle {
-            color: var(--gray-color);
+            color: var(--text-secondary);
             font-size: 16px;
-            line-height: 1.6;
-            max-width: 300px;
-            margin: 0 auto;
         }
         
-        .animation-container {
-            height: 200px;
-            margin-bottom: 40px;
+        .image-container {
+            height: 180px;
+            margin-bottom: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: var(--border-radius-lg);
-            background: var(--white-color);
-            box-shadow: var(--shadow-sm);
-            padding: 20px;
+            background: white;
+            border-radius: var(--border-radius);
             overflow: hidden;
-            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
         
-        .animation-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
+        .login-image {
             width: 100%;
-            height: 4px;
-            background: var(--gradient-primary);
+            height: 100%;
+            object-fit: cover;
         }
         
         .login-card {
-            background: var(--white-color);
-            border-radius: var(--border-radius-lg);
-            padding: 50px;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(108, 99, 255, 0.1);
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .login-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--gradient-primary);
+            background: var(--card-color);
+            border-radius: var(--border-radius-large);
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.08);
         }
         
         .form-group {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             display: none;
-            animation: fadeInUp 0.5s ease-out;
         }
         
         .form-group.active {
             display: block;
+            animation: fadeInUp 0.5s ease-out;
         }
         
         .form-label {
             display: block;
-            margin-bottom: 12px;
-            font-weight: 700;
-            color: var(--dark-color);
-            font-size: 15px;
-            letter-spacing: -0.2px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 16px;
         }
         
         .form-input {
             width: 100%;
-            padding: 18px 20px;
-            border: 2px solid var(--gray-light);
-            border-radius: 15px;
+            padding: 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: var(--border-radius);
             font-size: 16px;
             font-family: inherit;
             transition: var(--transition-smooth);
-            background: var(--light-color);
+            background: #F8F9FA;
             text-align: right;
-            color: var(--dark-color);
         }
         
         .form-input:focus {
             outline: none;
-            border-color: var(--primary-color);
-            background: var(--white-color);
-            box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.1);
-            transform: translateY(-2px);
+            border-color: var(--text-primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.1);
         }
         
         .form-input.error {
             border-color: var(--error-color);
-            background: rgba(255, 107, 139, 0.05);
+            background: rgba(231, 76, 60, 0.05);
         }
         
         .error-message {
             color: var(--error-color);
             font-size: 14px;
-            margin-top: 10px;
+            margin-top: 8px;
             display: none;
             animation: fadeIn 0.3s ease-out;
-            font-weight: 500;
         }
         
         .error-message.active {
@@ -286,35 +166,61 @@
         .success-message {
             color: var(--success-color);
             font-size: 14px;
-            margin-top: 10px;
+            margin-top: 8px;
             display: none;
             animation: fadeIn 0.3s ease-out;
-            font-weight: 500;
         }
         
         .success-message.active {
             display: block;
         }
         
-        .google-btn {
+        .form-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #E0E0E0;
+        }
+        
+        .btn {
             width: 100%;
-            padding: 18px;
+            padding: 16px;
             border: none;
-            border-radius: 15px;
+            border-radius: var(--border-radius);
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            transition: var(--transition-bounce);
+            transition: var(--transition-quick);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            background: var(--white-color);
-            color: var(--dark-color);
-            border: 2px solid var(--gray-light);
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: var(--black-gradient);
+            color: white;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #444444, #666666);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(-1px) scale(0.98);
+            animation: clickAnimation 0.2s ease;
+        }
+        
+        .google-btn {
+            background: white;
+            color: #333333;
+            border: 2px solid #E0E0E0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             position: relative;
             overflow: hidden;
-            box-shadow: var(--shadow-sm);
         }
         
         .google-btn::before {
@@ -324,77 +230,28 @@
             right: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(108, 99, 255, 0.1), rgba(139, 133, 255, 0.05));
-            opacity: 0;
+            background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.02), transparent);
             transition: var(--transition-smooth);
         }
         
         .google-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            border-color: #CCCCCC;
         }
         
         .google-btn:hover::before {
-            opacity: 1;
+            transform: translateX(-100%);
         }
         
         .google-btn:active {
-            transform: translateY(-2px) scale(0.98);
+            transform: translateY(-1px) scale(0.98);
+            animation: clickAnimation 0.2s ease;
         }
         
         .google-icon {
             color: #4285F4;
-            font-size: 20px;
-            transition: var(--transition-smooth);
-        }
-        
-        .google-btn:hover .google-icon {
-            transform: scale(1.2) rotate(5deg);
-        }
-        
-        .btn-primary {
-            width: 100%;
-            padding: 18px;
-            border: none;
-            border-radius: 15px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition-bounce);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            background: var(--gradient-primary);
-            color: var(--white-color);
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-        }
-        
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: 0.8s;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .btn-primary:hover::before {
-            right: 100%;
-        }
-        
-        .btn-primary:active {
-            transform: translateY(-2px) scale(0.98);
+            font-size: 18px;
         }
         
         .loading-overlay {
@@ -403,13 +260,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(248, 249, 255, 0.95);
-            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 10000;
+            z-index: 30000;
             opacity: 0;
             visibility: hidden;
             transition: var(--transition-smooth);
@@ -421,56 +278,39 @@
         }
         
         .loading-spinner {
-            width: 70px;
-            height: 70px;
-            border: 4px solid transparent;
-            border-top: 4px solid var(--primary-color);
-            border-right: 4px solid var(--primary-color);
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--bg-color);
+            border-top-color: var(--text-primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
         .loading-text {
-            font-size: 18px;
-            color: var(--dark-color);
-            font-weight: 700;
-            animation: pulse 1.5s infinite;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            font-weight: 600;
         }
         
         .form-steps {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-bottom: 40px;
+            gap: 10px;
+            margin-bottom: 30px;
         }
         
         .step-dot {
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            background: var(--gray-light);
-            transition: var(--transition-bounce);
-            position: relative;
+            background: #E0E0E0;
+            transition: var(--transition-quick);
         }
         
         .step-dot.active {
-            background: var(--gradient-primary);
-            transform: scale(1.3);
-            box-shadow: 0 0 15px rgba(108, 99, 255, 0.4);
-        }
-        
-        .step-dot.active::after {
-            content: '';
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            bottom: -4px;
-            left: -4px;
-            border: 2px solid var(--primary-color);
-            border-radius: 50%;
-            opacity: 0;
-            animation: pulseDot 2s infinite;
+            background: var(--text-primary);
+            transform: scale(1.2);
         }
         
         @keyframes fadeIn {
@@ -481,18 +321,7 @@
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -505,82 +334,28 @@
             100% { transform: rotate(360deg); }
         }
         
-        @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            25% {
-                transform: translate(20px, -20px) rotate(90deg);
-            }
-            50% {
-                transform: translate(-15px, 15px) rotate(180deg);
-            }
-            75% {
-                transform: translate(10px, -10px) rotate(270deg);
-            }
+        @keyframes clickAnimation {
+            0% { transform: translateY(-3px) scale(1); }
+            50% { transform: translateY(-3px) scale(0.98); }
+            100% { transform: translateY(-3px) scale(1); }
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        @keyframes pulseDot {
-            0% {
-                transform: scale(0.8);
-                opacity: 0.7;
-            }
-            70% {
-                transform: scale(1.2);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-        }
-        
-        @media (max-width: 520px) {
-            .login-card {
-                padding: 35px 25px;
-            }
-            
-            .logo-text {
-                font-size: 36px;
-            }
-            
-            .logo-icon {
-                width: 45px;
-                height: 45px;
-                font-size: 20px;
-            }
-            
-            .login-title {
-                font-size: 28px;
-            }
-            
-            .animation-container {
-                height: 180px;
-                margin-bottom: 30px;
-            }
-        }
-        
-        @media (max-width: 380px) {
+        @media (max-width: 480px) {
             .login-card {
                 padding: 30px 20px;
             }
             
-            .logo-text {
-                font-size: 32px;
+            .logo {
+                font-size: 36px;
             }
             
             .login-title {
                 font-size: 24px;
             }
-        }
-        
-        .fade-transition {
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            
+            .image-container {
+                height: 150px;
+            }
         }
         
         .g_id_signin {
@@ -589,12 +364,6 @@
     </style>
 </head>
 <body>
-    <div class="background-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
-    </div>
-
     <div class="loading-overlay" id="loading-overlay">
         <div class="loading-spinner"></div>
         <div class="loading-text" id="loading-text">جاري التحميل...</div>
@@ -602,23 +371,16 @@
 
     <div class="login-container">
         <div class="login-header">
-            <div class="logo-wrapper">
-                <div class="logo-icon">م</div>
-                <div class="logo-text">محور</div>
-            </div>
-            <h1 class="login-title">تسجيل الدخول</h1>
-            <p class="login-subtitle">ادخل إلى عالم إبداعي لا ينتهي مع منصتنا المميزة</p>
+            <div class="logo">محور</div>
+            <h1 class="login-title">مرحباً بعودتك</h1>
+            <p class="login-subtitle">سجل الدخول للوصول إلى جميع المميزات</p>
         </div>
         
-        <div class="animation-container">
-            <lottie-player
-                src="https://assets2.lottiefiles.com/packages/lf20_khznia7p.json"
-                background="transparent"
-                speed="1"
-                style="width: 100%; height: 100%;"
-                loop
-                autoplay>
-            </lottie-player>
+        <div class="image-container">
+            <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" 
+                 alt="تسجيل الدخول" 
+                 class="login-image"
+                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNGMEYyRjUiLz48cGF0aCBkPSJNMTI1IDgwQzE0MS41IDgwIDE1NSA2Ni41IDE1NSA1MEMxNTUgMzMuNSAxNDEuNSAyMCAxMjUgMjBDMTA4LjUgMjAgOTUgMzMuNSA5NSA1MEM5NSA2Ni41IDEwOC41IDgwIDEyNSA4MFoiIGZpbGw9IiNFMEUyRTUiLz48cGF0aCBkPSJNMjAwIDE0MEgyNTBDMjc3LjIgMTQwIDI5MCAxMjcuMiAyOTAgMTEwVjcwQzI5MCA1Mi44IDI3Ny4yIDQwIDI2MCA0MEgxNDBDMTIyLjggNDAgMTEwIDUyLjggMTEwIDcwVjExMEMxMTAgMTI3LjIgMTIyLjggMTQwIDE0MCAxNDBIMjAwWiIgZmlsbD0iI0UwRTJFNSIvPjxjaXJjbGUgY3g9IjIwMCIgY3k9IjExMCIgcj0iMzAiIGZpbGw9IiNFMEUyRTUiLz48L3N2Zz4='">
         </div>
         
         <div class="login-card">
@@ -628,42 +390,36 @@
             </div>
             
             <div id="google-signin-container" class="form-group active">
-                <button class="google-btn" id="google-signin-btn">
+                <button class="btn google-btn" id="google-signin-btn">
                     <i class="fab fa-google google-icon"></i>
-                    <span>استمرار باستخدام Google</span>
+                    <span>تسجيل الدخول باستخدام Google</span>
                 </button>
-                
-                <div class="form-footer" style="margin-top: 30px; padding-top: 25px; border-top: 2px dashed var(--gray-light);">
-                    <p class="referral-note" style="color: var(--gray-color); font-size: 14px; text-align: center; line-height: 1.6;">
-                        انضم إلى مجتمعنا المميز واستمتع بتجربة فريدة تواكب أحدث التقنيات
-                    </p>
-                </div>
             </div>
             
             <div id="user-details-form" class="form-group">
                 <div class="form-group" id="name-group">
-                    <label class="form-label" for="user-name">اسم المستخدم</label>
-                    <input type="text" id="user-name" class="form-input" placeholder="كيف تود أن نناديك؟" maxlength="15">
+                    <label class="form-label" for="user-name">اسم المستخدم*</label>
+                    <input type="text" id="user-name" class="form-input" placeholder="أدخل اسمك (3-15 حرف)" maxlength="15">
                     <div class="error-message" id="name-error"></div>
                 </div>
                 
                 <div class="form-group" id="referral-group">
-                    <label class="form-label" for="referral-code">كود الدعوة</label>
-                    <input type="text" id="referral-code" class="form-input" placeholder="إن كان لديك كود دعوة">
+                    <label class="form-label" for="referral-code">كود الإحالة (اختياري)</label>
+                    <input type="text" id="referral-code" class="form-input" placeholder="أدخل كود الإحالة (6 أرقام)">
                     <div class="error-message" id="referral-error"></div>
                     <div class="success-message" id="referral-success"></div>
                 </div>
                 
                 <button class="btn btn-primary" id="continue-btn">
-                    <i class="fas fa-rocket"></i>
-                    ابدأ الرحلة
+                    <i class="fas fa-check"></i>
+                    متابعة
                 </button>
             </div>
         </div>
     </div>
 
     <script>
-        // تكوين Firebase الجديد
+        // تكوين Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
             authDomain: "marvel1-654dd.firebaseapp.com",
@@ -719,7 +475,7 @@
         
         async function checkNameUnique(name) {
             try {
-                const snapshot = await database.ref('users').orderByChild('name').equalTo(name).once('value');
+                const snapshot = await database.ref('users_mehoar').orderByChild('name').equalTo(name).once('value');
                 return !snapshot.exists();
             } catch (error) {
                 console.error('Error checking name uniqueness:', error);
@@ -731,18 +487,18 @@
             if (!code || code.trim() === '') return null;
             
             if (code.length !== 6 || !/^\d+$/.test(code)) {
-                return 'كود الدعوة يجب أن يكون 6 أرقام فقط';
+                return 'كود الإحالة يجب أن يكون 6 أرقام فقط';
             }
             
             try {
-                const snapshot = await database.ref('users').orderByChild('id').equalTo(code).once('value');
+                const snapshot = await database.ref('users_mehoar').orderByChild('id').equalTo(code).once('value');
                 if (!snapshot.exists()) {
-                    return 'كود الدعوة غير صحيح';
+                    return 'كود الإحالة غير صحيح';
                 }
                 return null;
             } catch (error) {
                 console.error('Error checking referral code:', error);
-                return 'حدث خطأ أثناء التحقق من كود الدعوة';
+                return 'حدث خطأ أثناء التحقق من كود الإحالة';
             }
         }
         
@@ -761,7 +517,7 @@
                 
                 while (!isUnique) {
                     userId = generateUniqueId();
-                    const snapshot = await database.ref('users').orderByChild('id').equalTo(userId).once('value');
+                    const snapshot = await database.ref('users_mehoar').orderByChild('id').equalTo(userId).once('value');
                     isUnique = !snapshot.exists();
                 }
                 
@@ -769,32 +525,22 @@
                     id: userId,
                     name: name,
                     email: user.email,
-                    createdAt: new Date().toISOString(),
-                    lastLogin: new Date().toISOString(),
-                    coin: 50,
-                    role: 'user',
-                    status: 'active'
+                    banned: false,
+                    admin: false,
+                    referral_used: referralCode || '',
+                    coin: 20
                 };
                 
-                await database.ref(`users/${userId}`).set(userData);
+                await database.ref(`users_mehoar/${userId}`).set(userData);
                 
                 if (referralCode && referralCode.trim() !== '') {
-                    const referrerRef = database.ref(`users/${referralCode}`);
+                    const referrerRef = database.ref(`users_mehoar/${referralCode}/coin`);
                     const referrerSnapshot = await referrerRef.once('value');
+                    const referrerCoins = referrerSnapshot.val() || 0;
+                    await referrerRef.set(referrerCoins + 10);
                     
-                    if (referrerSnapshot.exists()) {
-                        const referrerData = referrerSnapshot.val();
-                        const newCoins = (referrerData.coin || 0) + 25;
-                        await referrerRef.update({ coin: newCoins });
-                        
-                        await database.ref(`users/${userId}`).update({ coin: 75 });
-                        userData.coin = 75;
-                        
-                        await database.ref(`referrals/${referralCode}/${userId}`).set({
-                            date: new Date().toISOString(),
-                            reward: 25
-                        });
-                    }
+                    await database.ref(`users_mehoar/${userId}/coin`).set(25);
+                    userData.coin = 25;
                 }
                 
                 return userData;
@@ -811,60 +557,34 @@
             const step2Dot = document.getElementById('step2-dot');
             
             if (step === 1) {
-                googleSignin.classList.remove('fade-transition');
-                userDetails.classList.remove('fade-transition');
-                
-                setTimeout(() => {
-                    googleSignin.classList.add('active');
-                    userDetails.classList.remove('active');
-                    step1Dot.classList.add('active');
-                    step2Dot.classList.remove('active');
-                    
-                    setTimeout(() => {
-                        googleSignin.classList.add('fade-transition');
-                        userDetails.classList.add('fade-transition');
-                    }, 50);
-                }, 10);
+                googleSignin.classList.add('active');
+                userDetails.classList.remove('active');
+                step1Dot.classList.add('active');
+                step2Dot.classList.remove('active');
             } else {
-                googleSignin.classList.remove('fade-transition');
-                userDetails.classList.remove('fade-transition');
-                
-                setTimeout(() => {
-                    googleSignin.classList.remove('active');
-                    userDetails.classList.add('active');
-                    step1Dot.classList.remove('active');
-                    step2Dot.classList.add('active');
-                    
-                    setTimeout(() => {
-                        googleSignin.classList.add('fade-transition');
-                        userDetails.classList.add('fade-transition');
-                    }, 50);
-                }, 10);
+                googleSignin.classList.remove('active');
+                userDetails.classList.add('active');
+                step1Dot.classList.remove('active');
+                step2Dot.classList.add('active');
             }
         }
         
         async function handleGoogleSignIn() {
-            showLoading('جاري التحضير...');
+            showLoading('جاري تسجيل الدخول...');
             
             try {
                 const provider = new firebase.auth.GoogleAuthProvider();
-                provider.addScope('profile');
-                provider.addScope('email');
-                
                 const result = await auth.signInWithPopup(provider);
                 currentUser = result.user;
                 
-                const snapshot = await database.ref('users').orderByChild('email').equalTo(currentUser.email).once('value');
+                const snapshot = await database.ref('users_mehoar').orderByChild('email').equalTo(currentUser.email).once('value');
                 
                 if (snapshot.exists()) {
-                    const userId = Object.keys(snapshot.val())[0];
-                    await database.ref(`users/${userId}/lastLogin`).set(new Date().toISOString());
-                    
                     hideLoading();
                     window.location.href = 'home.html';
                 } else {
                     hideLoading();
-                    setTimeout(() => showStep(2), 300);
+                    showStep(2);
                 }
             } catch (error) {
                 hideLoading();
@@ -897,7 +617,7 @@
                 }
             }
             
-            showLoading('جاري إعداد حسابك...');
+            showLoading('جاري إنشاء الحساب...');
             
             try {
                 userData = await saveUserToDatabase(currentUser, name, referralCode);
@@ -905,7 +625,7 @@
                 setTimeout(() => {
                     hideLoading();
                     window.location.href = 'home.html';
-                }, 1500);
+                }, 2000);
                 
             } catch (error) {
                 hideLoading();
@@ -943,23 +663,20 @@
         }
         
         function checkAuthState() {
-            showLoading('جاري التحقق...');
+            showLoading('جاري التحقق من الجلسة...');
             
             auth.onAuthStateChanged(async (user) => {
                 if (user) {
                     currentUser = user;
                     
                     try {
-                        const snapshot = await database.ref('users').orderByChild('email').equalTo(user.email).once('value');
+                        const snapshot = await database.ref('users_mehoar').orderByChild('email').equalTo(user.email).once('value');
                         
                         if (snapshot.exists()) {
-                            const userId = Object.keys(snapshot.val())[0];
-                            await database.ref(`users/${userId}/lastLogin`).set(new Date().toISOString());
-                            
                             setTimeout(() => {
                                 hideLoading();
                                 window.location.href = 'home.html';
-                            }, 800);
+                            }, 1000);
                         } else {
                             hideLoading();
                             showStep(1);
@@ -982,7 +699,6 @@
             
             setTimeout(() => {
                 document.querySelector('.login-container').style.opacity = '1';
-                document.querySelector('.login-container').style.transform = 'translateY(0)';
             }, 100);
         });
         
