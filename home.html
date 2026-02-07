@@ -963,7 +963,7 @@
     </div>
     
     <!-- Main Content -->
-    <div class="main-content">
+    <div class="main-content" style="display: none;" id="main-content">
         <!-- Current Page Indicator -->
         <div class="current-page-indicator">
             <i class="fas fa-home"></i>
@@ -1066,19 +1066,17 @@
     </div>
     
     <script>
-        // تكوين Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAX8O7jMPikO13-2LWLkdBZ_96QKeuLIt0",
-            authDomain: "kimo-pro-29933.firebaseapp.com",
-            databaseURL: "https://kimo-pro-29933-default-rtdb.firebaseio.com",
-            projectId: "kimo-pro-29933",
-            storageBucket: "kimo-pro-29933.appspot.com",
-            messagingSenderId: "992320660439",
-            appId: "1:992320660439:android:569954fb845c3d5c22e192"
-        };
+        // استخدام نفس إعدادات Firebase من login.html
+        firebase.initializeApp({
+            apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
+            authDomain: "marvel1-654dd.firebaseapp.com",
+            databaseURL: "https://marvel1-654dd-default-rtdb.firebaseio.com",
+            projectId: "marvel1-654dd",
+            storageBucket: "marvel1-654dd.appspot.com",
+            messagingSenderId: "189921979866",
+            appId: "1:189921979866:android:95f48de58a69756be924e3"
+        });
 
-        // تهيئة Firebase
-        firebase.initializeApp(firebaseConfig);
         pdfjsLib.GlobalWorkerOptions.workerSrc = 
             'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -1109,6 +1107,7 @@
             confirmSection: document.getElementById('confirm-section'),
             loadingOverlay: document.getElementById('loading-overlay'),
             loadingText: document.getElementById('loading-text'),
+            mainContent: document.getElementById('main-content'),
             
             // زرود القائمة
             homeBtn: document.getElementById('home-btn'),
@@ -1168,6 +1167,7 @@
             try {
                 const user = auth.currentUser;
                 if (!user) {
+                    // إذا لم يكن مسجل الدخول، توجيه فوري لصفحة login
                     window.location.href = 'login.html';
                     return;
                 }
@@ -1175,7 +1175,7 @@
                 currentUser = user;
                 
                 // جلب بيانات المستخدم من قاعدة البيانات
-                const snapshot = await database.ref('users_mehoar')
+                const snapshot = await database.ref('users_Awn')
                     .orderByChild('email')
                     .equalTo(user.email)
                     .once('value');
@@ -1184,6 +1184,13 @@
                     snapshot.forEach((childSnapshot) => {
                         userData = childSnapshot.val();
                         
+                        // التحقق من حالة الحظر
+                        if (userData.banned === true) {
+                            // إذا كان محظوراً، توجيه للصفحة الرئيسية
+                            window.location.href = 'index.html';
+                            return;
+                        }
+                        
                         // تحديث واجهة المستخدم
                         elements.userName.textContent = userData.name || 'مستخدم';
                         elements.userEmail.textContent = user.email;
@@ -1191,16 +1198,22 @@
                         elements.coinsCount.textContent = userData.coin || 0;
                     });
                 } else {
-                    // إذا لم يوجد المستخدم في قاعدة البيانات
-                    showMessage('لم يتم العثور على بيانات المستخدم. سيتم تسجيل الخروج.', 'error');
-                    setTimeout(() => {
-                        auth.signOut();
-                        window.location.href = 'login.html';
-                    }, 2000);
+                    // إذا لم يوجد المستخدم في قاعدة البيانات، تسجيل خروج
+                    await auth.signOut();
+                    window.location.href = 'login.html';
+                    return;
                 }
+                
+                // إظهار المحتوى الرئيسي
+                elements.mainContent.style.display = 'block';
+                
             } catch (error) {
                 console.error('Error loading user data:', error);
-                showMessage('حدث خطأ في تحميل بيانات المستخدم', 'error');
+                // في حالة حدوث خطأ، تسجيل خروج وإعادة توجيه
+                try {
+                    await auth.signOut();
+                } catch (e) {}
+                window.location.href = 'login.html';
             }
         }
 
@@ -1291,12 +1304,10 @@
             try {
                 showLoading('جاري إرسال الملف إلى الذكاء الاصطناعي...');
                 
+                // استخدام API Key الحقيقي - هذه نسخة تجريبية فقط
                 const apiKey = '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';
                 
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('prompt', `
-SYSTEM MODE: CONTROLLED EXECUTION ENGINE
+                const prompt = `SYSTEM MODE: CONTROLLED EXECUTION ENGINE
 
 You are a non-conversational processing engine. You do not behave as a chatbot. You execute tasks.
 
@@ -1356,9 +1367,11 @@ Replace the values only.
 
 TASK FAILURE POLICY (OVERRIDES GLOBAL FAILURE RULE): If the PDF is empty, unreadable, or corrupted, return:
 { "Page": 0, "Topic": "Invalid PDF Content" }
-                `);
 
-                // استخدام Fetch API لإرسال الطلب
+FILE: ${file.name}
+CONTENT: [سيتم قراءة محتوى PDF]`;
+
+                // إرسال الطلب إلى OpenAI
                 const response = await fetch('https://api.openai.com/v1/chat/completions', {
                     method: 'POST',
                     headers: {
@@ -1370,11 +1383,11 @@ TASK FAILURE POLICY (OVERRIDES GLOBAL FAILURE RULE): If the PDF is empty, unread
                         messages: [
                             {
                                 role: "system",
-                                content: "You are a PDF analysis assistant."
+                                content: "You are a PDF analysis assistant that returns JSON only."
                             },
                             {
                                 role: "user",
-                                content: `Analyze this PDF file: ${file.name}\n\nReturn JSON in this exact format:\n{ "Page": 0, "Topic": "" }`
+                                content: prompt
                             }
                         ],
                         max_tokens: 1000
@@ -1430,6 +1443,7 @@ TASK FAILURE POLICY (OVERRIDES GLOBAL FAILURE RULE): If the PDF is empty, unread
                     aiPage: aiResult.Page,
                     aiTopic: aiResult.Topic,
                     requiredCoins: analysisData.requiredCoins,
+                    coinsUsed: analysisData.requiredCoins,
                     timestamp: new Date().toISOString(),
                     status: 'completed'
                 };
@@ -1439,7 +1453,7 @@ TASK FAILURE POLICY (OVERRIDES GLOBAL FAILURE RULE): If the PDF is empty, unread
                 
                 // تحديث رصيد المستخدم
                 const newCoinBalance = userData.coin - analysisData.requiredCoins;
-                await database.ref(`users_mehoar/${userData.id}`).update({
+                await database.ref(`users_Awn/${userData.id}`).update({
                     coin: newCoinBalance
                 });
 
@@ -1495,20 +1509,24 @@ TASK FAILURE POLICY (OVERRIDES GLOBAL FAILURE RULE): If the PDF is empty, unread
                 window.location.href = 'account.html';
             });
 
-            elements.changeUserBtn.addEventListener('click', () => {
+            elements.changeUserBtn.addEventListener('click', async () => {
                 elements.settingsMenu.classList.remove('active');
-                showLoading('جاري تسجيل الخروج...');
-                auth.signOut().then(() => {
-                    window.location.href = 'login.html';
-                });
+                try {
+                    await auth.signOut();
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+                window.location.href = 'login.html';
             });
 
-            elements.logoutBtn.addEventListener('click', () => {
+            elements.logoutBtn.addEventListener('click', async () => {
                 elements.settingsMenu.classList.remove('active');
-                showLoading('جاري تسجيل الخروج...');
-                auth.signOut().then(() => {
-                    window.location.href = 'index.html';
-                });
+                try {
+                    await auth.signOut();
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+                window.location.href = 'index.html';
             });
 
             // الشعار
@@ -1642,24 +1660,25 @@ TASK FAILURE POLICY (OVERRIDES GLOBAL FAILURE RULE): If the PDF is empty, unread
             });
         }
 
-        // التحقق من حالة المصادقة وتحميل البيانات
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                await loadUserData();
-                setupEventListeners();
-                
-                // إخفاء شاشة التحميل
-                setTimeout(() => {
+        // التحقق من حالة المصادقة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    // المستخدم مسجل الدخول، تحميل البيانات
+                    await loadUserData();
+                    setupEventListeners();
                     hideLoading();
-                }, 500);
-            } else {
-                // إذا لم يكن المستخدم مسجل الدخول
-                window.location.href = 'login.html';
-            }
+                } else {
+                    // المستخدم غير مسجل، توجيه فوري لصفحة login
+                    window.location.href = 'login.html';
+                }
+            });
+            
+            // إخفاء شاشة التحميل بعد 5 ثوان كحد أقصى
+            setTimeout(() => {
+                hideLoading();
+            }, 5000);
         });
-
-        // إظهار شاشة التحميل عند بدء التشغيل
-        showLoading('جاري تحميل البيانات...');
     </script>
 </body>
 </html>
