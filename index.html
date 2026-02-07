@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>محور - مساعدتك الأول للتعلم</title>
+    <!-- إضافة Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
     <style>
@@ -1051,6 +1055,25 @@
     </div>
 
     <script>
+        // تكوين Firebase - استخدم المعلومات المرفقة
+        const firebaseConfig = {
+            apiKey: "AIzaSyAX8O7jMPikO13-2LWLkdBZ_96QKeuLIt0",
+            authDomain: "kimo-pro-29933.firebaseapp.com",
+            databaseURL: "https://kimo-pro-29933-default-rtdb.firebaseio.com",
+            projectId: "kimo-pro-29933",
+            storageBucket: "kimo-pro-29933.appspot.com",
+            messagingSenderId: "992320660439",
+            appId: "1:992320660439:android:569954fb845c3d5c22e192"
+        };
+
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        let currentUser = null;
+        let userData = null;
+
         function createBooksBackground() {
             const booksBg = document.getElementById('books-bg');
             const bookCount = 35;
@@ -1086,7 +1109,46 @@
         function hideLoading() {
             document.getElementById('loading-overlay').classList.remove('active');
         }
-        
+
+        // دالة التحقق من تسجيل الدخول
+        function checkAuthState() {
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    currentUser = user;
+                    
+                    // جلب بيانات المستخدم من قاعدة البيانات
+                    try {
+                        const snapshot = await database.ref('users_mehoar').orderByChild('email').equalTo(user.email).once('value');
+                        if (snapshot.exists()) {
+                            // جلب بيانات المستخدم
+                            snapshot.forEach((childSnapshot) => {
+                                userData = childSnapshot.val();
+                                // تحديث عرض العملات
+                                document.getElementById('coins-count').textContent = userData.coin || 0;
+                                // تغيير نص زر التسجيل إلى "حسابي"
+                                document.getElementById('register-btn').textContent = 'حسابي';
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error fetching user data:', error);
+                    }
+                } else {
+                    // المستخدم ليس مسجل دخول
+                    document.getElementById('coins-count').textContent = '0';
+                    document.getElementById('register-btn').textContent = 'سجل الآن';
+                }
+            });
+        }
+
+        // دالة تسجيل الخروج
+        function handleLogout() {
+            auth.signOut().then(() => {
+                window.location.reload();
+            }).catch((error) => {
+                console.error('Logout error:', error);
+            });
+        }
+
         function initEventListeners() {
             document.getElementById('settings-btn').addEventListener('click', () => {
                 document.getElementById('settings-menu').classList.add('active');
@@ -1096,8 +1158,17 @@
                 document.getElementById('settings-menu').classList.remove('active');
             });
             
+            // تحديث زر التسجيل/الحساب
             document.getElementById('register-btn').addEventListener('click', () => {
-                window.location.href = 'login.html';
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        // إذا كان مسجل دخول، الانتقال إلى صفحة الحساب
+                        window.location.href = 'account.html';
+                    } else {
+                        // إذا لم يكن مسجل دخول، الانتقال إلى صفحة التسجيل
+                        window.location.href = 'login.html';
+                    }
+                });
             });
             
             document.getElementById('create-account-btn').addEventListener('click', () => {
@@ -1116,7 +1187,15 @@
             });
             
             document.getElementById('get-started-btn').addEventListener('click', () => {
-                window.location.href = 'login.html';
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        // إذا كان مسجل دخول، الانتقال إلى صفحة home
+                        window.location.href = 'home.html';
+                    } else {
+                        // إذا لم يكن مسجل دخول، الانتقال إلى صفحة التسجيل
+                        window.location.href = 'login.html';
+                    }
+                });
             });
             
             document.getElementById('logo').addEventListener('click', () => {
@@ -1141,6 +1220,16 @@
             
             featureCards.forEach(card => {
                 card.addEventListener('click', function() {
+                    auth.onAuthStateChanged((user) => {
+                        if (user) {
+                            // إذا كان مسجل دخول، الانتقال إلى الخدمات
+                            window.location.href = 'services.html';
+                        } else {
+                            // إذا لم يكن مسجل دخول، الانتقال إلى التسجيل
+                            window.location.href = 'login.html';
+                        }
+                    });
+                    
                     this.style.animation = 'clickAnimation 0.2s ease';
                     setTimeout(() => {
                         this.style.animation = '';
@@ -1172,6 +1261,7 @@
         
         window.addEventListener('load', () => {
             createBooksBackground();
+            checkAuthState();
             initEventListeners();
             
             setTimeout(() => {
