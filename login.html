@@ -19,26 +19,30 @@
         }
         
         :root {
-            --bg-color: #E9E8EE;
+            --bg-color: #FFFFFF;
             --card-color: #FFFFFF;
-            --text-primary: #333333;
+            --text-primary: #000000;
             --text-secondary: #666666;
-            --accent-color: #4A47B8;
-            --dark-gradient: linear-gradient(135deg, #333333, #555555);
-            --black-gradient: linear-gradient(135deg, #222222, #444444);
-            --success-color: #2ECC71;
-            --error-color: #E74C3C;
-            --warning-color: #F39C12;
-            --google-blue: #4285F4;
-            --google-blue-dark: #3367D6;
-            --transition-smooth: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            --transition-quick: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            --border-radius: 16px;
-            --border-radius-large: 24px;
+            --black-gradient: linear-gradient(135deg, #222222, #444444, #222222);
+            --black-gradient-hover: linear-gradient(135deg, #333333, #555555, #333333);
+            --dark-gray: #333333;
+            --medium-gray: #555555;
+            --light-gray: #EEEEEE;
+            --border-gray: #DDDDDD;
+            --accent-color: #000000;
+            --error-color: #FF3B30;
+            --success-color: #34C759;
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --border-radius: 20px;
+            --border-radius-large: 25px;
+            --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --shadow-heavy: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
         
         body {
-            font-family: 'Almarai', 'Tajawal', -apple-system, sans-serif;
+            font-family: 'Tajawal', 'Almarai', -apple-system, sans-serif;
             background: var(--bg-color);
             color: var(--text-primary);
             min-height: 100vh;
@@ -53,7 +57,7 @@
         
         .login-container {
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             opacity: 0;
             transform: translateY(30px);
             animation: containerSlideUp 0.8s ease-out 0.3s forwards;
@@ -61,7 +65,7 @@
         
         .login-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             animation: fadeIn 1s ease-out 0.5s forwards;
             opacity: 0;
         }
@@ -69,20 +73,21 @@
         .logo {
             font-family: 'Tajawal', sans-serif;
             font-weight: 900;
-            font-size: 48px;
-            background: var(--dark-gradient);
+            font-size: 52px;
+            background: var(--black-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 10px;
-            letter-spacing: -1px;
+            margin-bottom: 15px;
+            letter-spacing: -2px;
+            line-height: 1;
         }
         
         .login-title {
-            font-size: 28px;
-            font-weight: 800;
+            font-size: 32px;
+            font-weight: 900;
             color: var(--text-primary);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             position: relative;
             display: inline-block;
         }
@@ -90,11 +95,11 @@
         .login-title::after {
             content: '';
             position: absolute;
-            bottom: -5px;
+            bottom: -8px;
             right: 0;
-            width: 60px;
-            height: 3px;
-            background: var(--dark-gradient);
+            width: 70px;
+            height: 4px;
+            background: var(--black-gradient);
             border-radius: 2px;
             animation: widthGrow 0.8s ease-out 1s forwards;
             width: 0;
@@ -102,21 +107,24 @@
         
         .login-subtitle {
             color: var(--text-secondary);
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: 500;
             line-height: 1.5;
+            margin-top: 20px;
         }
         
         .image-container {
-            height: 200px;
-            margin-bottom: 30px;
+            height: 220px;
+            margin-bottom: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: white;
             border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-heavy);
             position: relative;
+            border: 3px solid var(--dark-gray);
             animation: fadeInUp 0.8s ease-out 0.7s forwards;
             opacity: 0;
         }
@@ -127,8 +135,9 @@
             top: 0;
             right: 0;
             width: 100%;
-            height: 4px;
-            background: var(--dark-gradient);
+            height: 5px;
+            background: var(--black-gradient);
+            z-index: 2;
         }
         
         .login-image {
@@ -140,15 +149,26 @@
         .login-card {
             background: var(--card-color);
             border-radius: var(--border-radius-large);
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 50px;
+            box-shadow: var(--shadow-heavy);
+            border: 3px solid var(--dark-gray);
             animation: fadeInUp 0.8s ease-out 0.9s forwards;
             opacity: 0;
+            position: relative;
+        }
+        
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--black-gradient);
         }
         
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             display: none;
             animation: fadeInUp 0.5s ease-out;
         }
@@ -159,56 +179,66 @@
         
         .form-label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
+            margin-bottom: 12px;
+            font-weight: 800;
             color: var(--text-primary);
-            font-size: 16px;
+            font-size: 18px;
+            letter-spacing: -0.5px;
         }
         
         .email-display {
-            background: #F8F9FA;
-            padding: 15px;
+            background: var(--light-gray);
+            padding: 20px;
             border-radius: var(--border-radius);
-            border: 2px solid #E0E0E0;
-            margin-bottom: 20px;
+            border: 2px solid var(--border-gray);
+            margin-bottom: 25px;
             text-align: center;
-            font-weight: 600;
-            color: var(--text-primary);
+            font-weight: 700;
+            color: var(--dark-gray);
             animation: fadeIn 0.5s ease-out;
+            font-size: 16px;
+        }
+        
+        .email-display i {
+            color: var(--dark-gray);
+            margin-left: 10px;
         }
         
         .form-input {
             width: 100%;
-            padding: 16px;
-            border: 2px solid #E0E0E0;
+            padding: 18px 20px;
+            border: 3px solid var(--border-gray);
             border-radius: var(--border-radius);
-            font-size: 16px;
+            font-size: 18px;
             font-family: inherit;
+            font-weight: 600;
             transition: var(--transition-smooth);
-            background: #F8F9FA;
+            background: var(--light-gray);
             text-align: right;
+            color: var(--text-primary);
         }
         
         .form-input:focus {
             outline: none;
-            border-color: var(--text-primary);
+            border-color: var(--dark-gray);
             background: white;
-            box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.1);
-            transform: translateY(-2px);
+            box-shadow: 0 0 0 4px rgba(51, 51, 51, 0.1);
+            transform: translateY(-3px);
         }
         
         .form-input.error {
             border-color: var(--error-color);
-            background: rgba(231, 76, 60, 0.05);
-            animation: shake 0.3s ease-in-out;
+            background: rgba(255, 59, 48, 0.05);
+            animation: shake 0.4s ease-in-out;
         }
         
         .error-message {
             color: var(--error-color);
-            font-size: 14px;
-            margin-top: 8px;
+            font-size: 15px;
+            margin-top: 10px;
             display: none;
             animation: fadeIn 0.3s ease-out;
+            font-weight: 600;
         }
         
         .error-message.active {
@@ -217,10 +247,11 @@
         
         .success-message {
             color: var(--success-color);
-            font-size: 14px;
-            margin-top: 8px;
+            font-size: 15px;
+            margin-top: 10px;
             display: none;
             animation: fadeIn 0.3s ease-out;
+            font-weight: 600;
         }
         
         .success-message.active {
@@ -229,82 +260,69 @@
         
         .btn {
             width: 100%;
-            padding: 16px;
+            padding: 20px;
             border: none;
             border-radius: var(--border-radius);
-            font-size: 16px;
-            font-weight: 700;
+            font-size: 18px;
+            font-weight: 800;
             cursor: pointer;
-            transition: var(--transition-quick);
+            transition: var(--transition-bounce);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
             position: relative;
             overflow: hidden;
+            letter-spacing: -0.5px;
         }
         
         .btn-primary {
             background: var(--black-gradient);
             color: white;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-medium);
+            border: 2px solid var(--dark-gray);
         }
         
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            background: linear-gradient(135deg, #444444, #666666);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-heavy);
+            background: var(--black-gradient-hover);
         }
         
         .btn-primary:active {
-            transform: translateY(-1px) scale(0.98);
+            transform: translateY(-2px) scale(0.98);
         }
         
         .google-btn {
-            background: var(--google-blue);
-            color: white;
-            border: 2px solid var(--google-blue);
-            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+            background: white;
+            color: var(--text-primary);
+            border: 3px solid var(--border-gray);
+            box-shadow: var(--shadow-light);
+            font-weight: 800;
         }
         
         .google-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(66, 133, 244, 0.4);
-            background: var(--google-blue-dark);
-            border-color: var(--google-blue-dark);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--medium-gray);
+            background: #FAFAFA;
         }
         
         .google-btn:active {
-            transform: translateY(-1px) scale(0.98);
-        }
-        
-        .google-btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transform: translateX(-100%);
-        }
-        
-        .google-btn:hover::after {
-            animation: shine 1.5s ease;
+            transform: translateY(-2px) scale(0.98);
         }
         
         .google-icon {
-            font-size: 18px;
+            color: #000000;
+            font-size: 22px;
             background: white;
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--google-blue);
-            padding: 5px;
+            border: 2px solid var(--border-gray);
         }
         
         .loading-overlay {
@@ -313,13 +331,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 30000;
+            z-index: 10000;
             opacity: 0;
             visibility: hidden;
             transition: var(--transition-smooth);
@@ -331,54 +349,44 @@
         }
         
         .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid var(--bg-color);
-            border-top-color: var(--text-primary);
+            width: 70px;
+            height: 70px;
+            border: 5px solid var(--light-gray);
+            border-top-color: var(--dark-gray);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .loading-text {
-            font-size: 1.2rem;
+            font-size: 20px;
             color: var(--text-primary);
-            font-weight: 600;
+            font-weight: 800;
             animation: pulse 1.5s infinite;
         }
         
         .form-steps {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 30px;
+            gap: 15px;
+            margin-bottom: 35px;
         }
         
         .step-dot {
-            width: 12px;
-            height: 12px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            background: #E0E0E0;
-            transition: var(--transition-quick);
+            background: var(--light-gray);
+            transition: var(--transition-bounce);
             position: relative;
+            border: 2px solid var(--border-gray);
         }
         
         .step-dot.active {
-            background: var(--text-primary);
-            transform: scale(1.2);
-            box-shadow: 0 0 0 4px rgba(51, 51, 51, 0.1);
-        }
-        
-        .step-dot.active::after {
-            content: '';
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            bottom: -2px;
-            left: -2px;
-            border: 1px solid var(--text-primary);
-            border-radius: 50%;
-            animation: pulseDot 2s infinite;
+            background: var(--black-gradient);
+            transform: scale(1.3);
+            border-color: var(--dark-gray);
+            box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
         }
         
         @keyframes containerSlideUp {
@@ -400,7 +408,7 @@
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -410,7 +418,7 @@
         
         @keyframes widthGrow {
             from { width: 0; }
-            to { width: 60px; }
+            to { width: 70px; }
         }
         
         @keyframes spin {
@@ -423,33 +431,41 @@
             50% { opacity: 0.5; }
         }
         
-        @keyframes pulseDot {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            70% {
-                transform: scale(1.5);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 0;
-            }
-        }
-        
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
         }
         
-        @keyframes shine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+        @media (max-width: 520px) {
+            .login-card {
+                padding: 35px 25px;
+            }
+            
+            .logo {
+                font-size: 42px;
+            }
+            
+            .login-title {
+                font-size: 28px;
+            }
+            
+            .login-subtitle {
+                font-size: 16px;
+            }
+            
+            .image-container {
+                height: 180px;
+                margin-bottom: 30px;
+            }
+            
+            .form-input, .btn {
+                font-size: 16px;
+                padding: 16px;
+            }
         }
         
-        @media (max-width: 480px) {
+        @media (max-width: 380px) {
             .login-card {
                 padding: 30px 20px;
             }
@@ -463,7 +479,7 @@
             }
             
             .image-container {
-                height: 150px;
+                height: 160px;
             }
         }
         
@@ -482,14 +498,14 @@
         <div class="login-header">
             <div class="logo">محور</div>
             <h1 class="login-title">مرحباً بعودتك</h1>
-            <p class="login-subtitle">سجل الدخول للوصول إلى جميع المميزات</p>
+            <p class="login-subtitle">سجل الدخول لتجربة عالم من الإمكانيات اللا محدودة</p>
         </div>
         
         <div class="image-container">
-            <img src="https://images.unsplash.com/photo-1579546929662-711aa81148cf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" 
-                 alt="تسجيل الدخول عبر Google"
+            <img src="https://i.ibb.co/0yB6fmMw/1000183747.jpg" 
+                 alt="تسجيل الدخول"
                  class="login-image"
-                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNGMEYyRjUiLz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIxMDAiIHI9IjYwIiBmaWxsPSIjNDI4NUY0Ii8+PHBhdGggZD0iTTE1MCAxMTBIMjUwVjE0MEgxNTBWNzBIMTgwVjEwMEgyNTBWNzBIMjIwIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg=='">
+                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyMCIgdmlld0JveD0iMCAwIDQwMCAyMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMjAiIGZpbGw9IiMzMzMzMzMiLz48cGF0aCBkPSJNMTUwIDgwQzE2NS41IDgwIDE4MCA2NS41IDE4MCA1MEMxODAgMzQuNSAxNjUuNSAyMCAxNTAgMjBDMTM0LjUgMjAgMTIwIDM0LjUgMTIwIDUwQzEyMCA2NS41IDEzNC41IDgwIDE1MCA4MFoiIGZpbGw9IiM1NTU1NTUiLz48cGF0aCBkPSJNMjAwIDE2MEgyNTBDMjczLjIgMTYwIDI5MCAxNDMuMiAyOTAgMTMwVjkwQzI5MCA3Ni44IDI3My4yIDYwIDI2MCA2MEgxNDBDMTI2LjggNjAgMTEwIDc2LjggMTEwIDkwVjEzMEMxMTAgMTQzLjIgMTI2LjggMTYwIDE0MCAxNjBIMjAwWiIgZmlsbD0iIzU1NTU1NSIvPjxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iMzUiIGZpbGw9IiMzMzMzMzMiLz48L3N2Zz4='">
         </div>
         
         <div class="login-card">
@@ -525,7 +541,7 @@
                 </div>
                 
                 <button class="btn btn-primary" id="continue-btn">
-                    <i class="fas fa-check"></i>
+                    <i class="fas fa-arrow-left"></i>
                     متابعة
                 </button>
             </div>
@@ -533,7 +549,7 @@
     </div>
 
     <script>
-        // تكوين Firebase من ملف google-services.json
+        // تكوين Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
             authDomain: "marvel1-654dd.firebaseapp.com",
@@ -551,6 +567,7 @@
         let currentUser = null;
         let userData = null;
         let userEmail = '';
+        let isCheckingAuth = false;
         
         function showLoading(text = 'جاري التحميل...') {
             document.getElementById('loading-text').textContent = text;
@@ -567,7 +584,10 @@
             errorEl.classList.add('active');
             const inputEl = document.getElementById(elementId.replace('-error', ''));
             if (inputEl) inputEl.classList.add('error');
-            setTimeout(() => errorEl.classList.remove('active'), 5000);
+            setTimeout(() => {
+                errorEl.classList.remove('active');
+                if (inputEl) inputEl.classList.remove('error');
+            }, 5000);
         }
         
         function clearError(elementId) {
@@ -575,13 +595,6 @@
             errorEl.classList.remove('active');
             const inputEl = document.getElementById(elementId.replace('-error', ''));
             if (inputEl) inputEl.classList.remove('error');
-        }
-        
-        function showSuccess(elementId, message) {
-            const successEl = document.getElementById(elementId);
-            successEl.textContent = message;
-            successEl.classList.add('active');
-            setTimeout(() => successEl.classList.remove('active'), 5000);
         }
         
         function validateName(name) {
@@ -620,15 +633,6 @@
                     return 'كود الإحالة غير صحيح';
                 }
                 
-                // التحقق من عدم استخدام نفس ID الخاص بالمستخدم
-                const emailSnapshot = await database.ref('users').orderByChild('email').equalTo(userEmail).once('value');
-                if (emailSnapshot.exists()) {
-                    const existingUserId = Object.keys(emailSnapshot.val())[0];
-                    if (code === existingUserId) {
-                        return 'لا يمكن استخدام كود الإحالة الخاص بك';
-                    }
-                }
-                
                 return null;
             } catch (error) {
                 console.error('Error checking referral code:', error);
@@ -662,15 +666,12 @@
                     banned: false,
                     admin: false,
                     referral_used: referralCode || '',
-                    coin: 20 // عملة هدية عند التسجيل
+                    coin: 20
                 };
                 
-                // حفظ المستخدم الجديد
                 await database.ref(`users/${userId}`).set(userData);
                 
-                // معالجة الإحالة إذا كان هناك كود
                 if (referralCode && referralCode.trim() !== '') {
-                    // زيادة 10 عملات لصاحب كود الإحالة
                     const referrerRef = database.ref(`users/${referralCode}`);
                     const referrerSnapshot = await referrerRef.once('value');
                     
@@ -679,7 +680,6 @@
                         const newCoins = (referrerData.coin || 0) + 10;
                         await referrerRef.update({ coin: newCoins });
                         
-                        // زيادة 5 عملات للمستخدم الجديد
                         await database.ref(`users/${userId}`).update({ coin: 25 });
                         userData.coin = 25;
                     }
@@ -712,7 +712,7 @@
         }
         
         async function handleGoogleSignIn() {
-            showLoading('جاري التحقق من حساب Google...');
+            showLoading('جاري تسجيل الدخول...');
             
             try {
                 const provider = new firebase.auth.GoogleAuthProvider();
@@ -725,17 +725,12 @@
                 
                 showLoading('جاري التحقق من حسابك...');
                 
-                // البحث عن المستخدم في قاعدة البيانات باستخدام البريد الإلكتروني
                 const snapshot = await database.ref('users').orderByChild('email').equalTo(userEmail).once('value');
                 
                 if (snapshot.exists()) {
-                    // المستخدم موجود، التوجه إلى الصفحة الرئيسية
                     hideLoading();
-                    setTimeout(() => {
-                        window.location.href = 'home.html';
-                    }, 500);
+                    window.location.href = 'home.html';
                 } else {
-                    // مستخدم جديد، إظهار تفاصيل التسجيل
                     hideLoading();
                     document.getElementById('user-email').textContent = userEmail;
                     showStep(2);
@@ -751,15 +746,15 @@
             const name = document.getElementById('user-name').value.trim();
             const referralCode = document.getElementById('referral-code').value.trim();
             
-            // التحقق من صحة الاسم
             clearError('name-error');
+            clearError('referral-error');
+            
             const nameError = validateName(name);
             if (nameError) {
                 showError('name-error', nameError);
                 return;
             }
             
-            // التحقق من عدم تكرار الاسم
             showLoading('جاري التحقق من الاسم...');
             const isNameUnique = await checkNameUnique(name);
             hideLoading();
@@ -769,8 +764,6 @@
                 return;
             }
             
-            // التحقق من كود الإحالة إذا كان موجوداً
-            clearError('referral-error');
             if (referralCode) {
                 showLoading('جاري التحقق من كود الإحالة...');
                 const referralError = await checkReferralCode(referralCode);
@@ -785,10 +778,8 @@
             showLoading('جاري إنشاء حسابك...');
             
             try {
-                // حفظ بيانات المستخدم في قاعدة البيانات
                 userData = await saveUserToDatabase(currentUser, name, referralCode);
                 
-                // الانتظار قليلاً ثم التوجه إلى الصفحة الرئيسية
                 setTimeout(() => {
                     hideLoading();
                     window.location.href = 'home.html';
@@ -813,7 +804,6 @@
                 clearError('referral-error');
             });
             
-            // إضافة event listener لإدخال الاسم عند الضغط على Enter
             document.getElementById('user-name').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     handleContinue();
@@ -828,25 +818,23 @@
         }
         
         function checkAuthState() {
-            showLoading('جاري التحقق من جلسة الدخول...');
+            if (isCheckingAuth) return;
+            isCheckingAuth = true;
+            
+            showLoading('جاري التحقق من الحساب...');
             
             auth.onAuthStateChanged(async (user) => {
                 if (user) {
                     currentUser = user;
                     userEmail = user.email;
                     
-                    // التحقق إذا كان المستخدم موجوداً في قاعدة البيانات
                     try {
                         const snapshot = await database.ref('users').orderByChild('email').equalTo(userEmail).once('value');
                         
                         if (snapshot.exists()) {
-                            // المستخدم موجود، التوجه إلى الصفحة الرئيسية
-                            setTimeout(() => {
-                                hideLoading();
-                                window.location.href = 'home.html';
-                            }, 1000);
+                            hideLoading();
+                            window.location.href = 'home.html';
                         } else {
-                            // مستخدم جديد ولكن ليس في قاعدة البيانات
                             hideLoading();
                             showStep(1);
                         }
@@ -856,21 +844,21 @@
                         showStep(1);
                     }
                 } else {
-                    // لا يوجد مستخدم مسجل دخول
                     hideLoading();
                     showStep(1);
                 }
+                isCheckingAuth = false;
             });
         }
         
         window.addEventListener('load', () => {
             initEventListeners();
-            checkAuthState();
             
             setTimeout(() => {
+                checkAuthState();
                 document.querySelector('.login-container').style.opacity = '1';
                 document.querySelector('.login-container').style.transform = 'translateY(0)';
-            }, 100);
+            }, 500);
         });
         
         window.addEventListener('error', function(e) {
