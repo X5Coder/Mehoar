@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محور - المنصة التعليمية</title>
+    <title>عَون - المنصة التعليمية</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -571,8 +571,8 @@
         <!-- Logo Section with Large Image -->
         <div class="logo-section">
             <div class="logo-image">
-                <img src="https://i.ibb.co/rGpgBFBW/1000183766.png" alt="محور" 
-                     onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%231e293b%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22sans-serif%22 font-size=%2240%22 fill=%22white%22>محور</text></svg>';">
+                <img src="https://i.ibb.co/rGpgBFBW/1000183766.png" alt="عَون" 
+                     onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%231e293b%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22sans-serif%22 font-size=%2240%22 fill=%22white%22>عَون</text></svg>';">
             </div>
         </div>
         
@@ -586,7 +586,7 @@
             </div>
             <h2 style="color: #dc2626; margin-bottom: 15px; font-size: 1.6rem; font-weight: 700;">حسابك محظور</h2>
             <p style="color: #64748b; margin-bottom: 15px; line-height: 1.6; font-size: 1rem;">
-                عذرًا، تم تعطيل الوصول إلى حسابك في منصة محور.
+                عذرًا، تم تعطيل الوصول إلى حسابك في منصة عَون.
             </p>
             <p style="color: #64748b; margin-bottom: 25px; line-height: 1.6; font-size: 0.95rem;">
                 للاستفسار عن سبب الحظر أو للمساعدة، يمكنك التواصل مع 
@@ -615,7 +615,7 @@
         <div id="googleSection" style="display: none;">
             <div class="google-section">
                 <h2>التسجيل بحساب جوجل</h2>
-                <p>منصة محور المساعد التعليمي المدعوم بالذكاء الاصتناعي</p>
+                <p>منصة عَون المساعد التعليمي المدعوم بالذكاء الاصتناعي</p>
             </div>
             
             <button class="btn btn-google" id="googleBtn">
@@ -633,7 +633,7 @@
         <div class="form-container" id="registrationForm">
             <div class="form-header">
                 <h2>إكمال التسجيل</h2>
-                <p>أكمل بياناتك للبدء في استخدام محور</p>
+                <p>أكمل بياناتك للبدء في استخدام عَون</p>
             </div>
             
             <div class="email-display">
@@ -704,7 +704,7 @@
 
         async function isNameUnique(name) {
             try {
-                const snap = await db.ref("users_mehoar")
+                const snap = await db.ref("users_Awn")
                     .orderByChild("name")
                     .equalTo(name)
                     .once("value");
@@ -725,7 +725,7 @@
             while (exists && attempts < 10) {
                 id = generateId();
                 try {
-                    const snap = await db.ref("users_mehoar/" + id).once("value");
+                    const snap = await db.ref("users_Awn/" + id).once("value");
                     exists = snap.exists();
                     attempts++;
                 } catch (error) {
@@ -782,7 +782,7 @@
         /* Check if user is banned */
         async function checkUserBanned(userEmail) {
             try {
-                const snap = await db.ref("users_mehoar")
+                const snap = await db.ref("users_Awn")
                     .orderByChild("email")
                     .equalTo(userEmail)
                     .once("value");
@@ -857,7 +857,7 @@
                 }
 
                 // Check if user exists in database
-                const snap = await db.ref("users_mehoar")
+                const snap = await db.ref("users_Awn")
                     .orderByChild("email")
                     .equalTo(currentUser.email)
                     .once("value");
@@ -933,7 +933,7 @@
                 }
 
                 try {
-                    const refSnap = await db.ref("users_mehoar/" + referral).once("value");
+                    const refSnap = await db.ref("users_Awn/" + referral).once("value");
                     if (!refSnap.exists()) {
                         setButtonLoading('continueBtn', false);
                         showAlert("كود الإحالة غير موجود. يرجى التحقق وإعادة المحاولة.");
@@ -941,7 +941,7 @@
                     }
 
                     // Add 5 coins to referrer
-                    await db.ref("users_mehoar/" + referral).update({
+                    await db.ref("users_Awn/" + referral).update({
                         coin: (refSnap.val().coin || 0) + 5
                     });
 
@@ -963,7 +963,7 @@
                 }
 
                 // Create user record
-                await db.ref("users_mehoar/" + userId).set({
+                await db.ref("users_Awn/" + userId).set({
                     id: userId,
                     name: name,
                     email: currentUser.email,
@@ -995,7 +995,7 @@
                     if (user) {
                         // User is signed in, check if they exist in database
                         try {
-                            const snap = await db.ref("users_mehoar")
+                            const snap = await db.ref("users_Awn")
                                 .orderByChild("email")
                                 .equalTo(user.email)
                                 .once("value");
