@@ -1,3 +1,5 @@
+[file name]: login.html
+[file content begin]
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -684,7 +686,6 @@
         const db = firebase.database();
         let currentUser = null;
         let userData = null;
-        let authCheckDone = false;
 
         /* Helper Functions */
         function showAlert(message, type = "error") {
@@ -781,18 +782,51 @@
         }
 
         /* Check if user is banned */
-        async function checkUserBanned(userId) {
+        async function checkUserBanned(userEmail) {
             try {
-                const snap = await db.ref("users_Awn/" + userId).once("value");
+                const snap = await db.ref("users_Awn")
+                    .orderByChild("email")
+                    .equalTo(userEmail)
+                    .once("value");
                 
                 if (snap.exists()) {
                     const userData = snap.val();
-                    return userData.banned === true;
+                    const userId = Object.keys(userData)[0];
+                    return userData[userId].banned === true;
                 }
                 return false;
             } catch (error) {
                 console.error("Error checking user ban status:", error);
                 return false;
+            }
+        }
+
+        /* Find the next available referral slot (ref1, ref2, ref3, ...) */
+        async function findNextAvailableReferralSlot(referrerId) {
+            try {
+                // Get the referrer's data
+                const referrerSnapshot = await db.ref(`users_Awn/${referrerId}`).once("value");
+                const referrerData = referrerSnapshot.val();
+                
+                if (!referrerData) {
+                    return "ref1"; // Start with ref1 if referrer doesn't exist (shouldn't happen)
+                }
+                
+                // Look for the next available slot
+                let slotNumber = 1;
+                let slotName = `ref${slotNumber}`;
+                
+                // Keep looking until we find an empty slot
+                while (referrerData[slotName] !== undefined) {
+                    slotNumber++;
+                    slotName = `ref${slotNumber}`;
+                }
+                
+                return slotName;
+                
+            } catch (error) {
+                console.error("Error finding referral slot:", error);
+                return "ref1"; // Default to ref1 on error
             }
         }
 
@@ -823,7 +857,6 @@
                 // Reset any state if needed
                 currentUser = null;
                 userData = null;
-                authCheckDone = false;
             }).catch((error) => {
                 console.error("Sign out error:", error);
                 // Still show login section even if sign out fails
@@ -844,8 +877,8 @@
                 const result = await auth.signInWithPopup(provider);
                 currentUser = result.user;
 
-                // Check if user is banned using auth.uid
-                const isBanned = await checkUserBanned(currentUser.uid);
+                // Check if user is banned
+                const isBanned = await checkUserBanned(currentUser.email);
                 if (isBanned) {
                     setButtonLoading('googleBtn', false);
                     // Hide logo when showing banned message
@@ -854,12 +887,15 @@
                     return;
                 }
 
-                // Check if user exists in database using auth.uid
-                const snap = await db.ref("users_Awn/" + currentUser.uid).once("value");
+                // Check if user exists in database
+                const snap = await db.ref("users_Awn")
+                    .orderByChild("email")
+                    .equalTo(currentUser.email)
+                    .once("value");
 
                 if (snap.exists()) {
-                    // User exists, get user data
-                    userData = snap.val();
+                    // User exists, get user data and redirect to home
+                    userData = snap.val()[Object.keys(snap.val())[0]];
                     
                     // Check if user is banned from database
                     if (userData.banned === true) {
@@ -870,8 +906,8 @@
                         return;
                     }
                     
-                    // Redirect to home using replace
-                    window.location.replace("home.html");
+                    // Redirect to home
+                    window.location.href = "home.html";
                 } else {
                     // New user, show registration form
                     document.getElementById("userEmail").textContent = currentUser.email;
@@ -918,6 +954,7 @@
             }
 
             let coin = 20;
+            let referrerId = null;
 
             // Handle referral code if provided
             if (referral) {
@@ -935,8 +972,10 @@
                         return;
                     }
 
+                    referrerId = referral;
+
                     // Add 5 coins to referrer
-                    await db.ref("users_Awn/" + referral).update({
+                    await db.ref("users_Awn/" + referrerId).update({
                         coin: (refSnap.val().coin || 0) + 5
                     });
 
@@ -950,15 +989,15 @@
             }
 
             try {
-                // Use auth.uid as user ID
-                const userId = currentUser.uid;
+                // Generate unique user ID
+                const userId = await generateUniqueId();
                 
                 if (!userId) {
-                    throw new Error("فشل في الحصول على معرف المستخدم");
+                    throw new Error("فشل في إنشاء معرف مستخدم فريد");
                 }
 
-                // Create user record using auth.uid as the key
-                await db.ref("users_Awn/" + userId).set({
+                // Create user record
+                const userRecord = {
                     id: userId,
                     name: name,
                     email: currentUser.email,
@@ -967,13 +1006,25 @@
                     referral_used: referral || "",
                     coin: coin,
                     created_at: new Date().toISOString()
-                });
+                };
+
+                // Save user to database
+                await db.ref("users_Awn/" + userId).set(userRecord);
+
+                // If there's a referrer, add the new user to referrer's referral list
+                if (referrerId) {
+                    // Find the next available referral slot (ref1, ref2, ref3, ...)
+                    const referralSlot = await findNextAvailableReferralSlot(referrerId);
+                    
+                    // Add the new user's ID to the referrer's referral slot
+                    await db.ref(`users_Awn/${referrerId}/${referralSlot}`).set(userId);
+                }
 
                 showAlert("تم إنشاء حسابك بنجاح! يتم توجيهك الآن...", "success");
                 
-                // Redirect to home page using replace
+                // Redirect to home page after delay
                 setTimeout(() => {
-                    window.location.replace("home.html");
+                    window.location.href = "home.html";
                 }, 1500);
             } catch (error) {
                 console.error("Registration error:", error);
@@ -984,44 +1035,62 @@
 
         /* Check Authentication State on Load */
         document.addEventListener('DOMContentLoaded', async () => {
-            const unsubscribe = auth.onAuthStateChanged(async (user) => {
-                if (authCheckDone) return;
-                authCheckDone = true;
-                
-                if (user) {
-                    try {
-                        // استخدام auth.uid للبحث في قاعدة البيانات
-                        const userSnap = await db.ref("users_Awn/" + user.uid).once("value");
-                        
-                        if (userSnap.exists()) {
-                            const userData = userSnap.val();
-                            
-                            if (userData.banned === true) {
+            try {
+                // First check if user is already logged in
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        // User is signed in, check if they exist in database
+                        try {
+                            const snap = await db.ref("users_Awn")
+                                .orderByChild("email")
+                                .equalTo(user.email)
+                                .once("value");
+
+                            if (snap.exists()) {
+                                // Get user data
+                                userData = snap.val()[Object.keys(snap.val())[0]];
+                                
+                                // Check if user is banned
+                                if (userData.banned === true) {
+                                    setTimeout(() => {
+                                        showMainInterface();
+                                        setTimeout(() => {
+                                            // Hide logo when showing banned message
+                                            document.querySelector('.logo-section').style.display = 'none';
+                                            showSection("bannedContainer");
+                                        }, 500);
+                                    }, 1000);
+                                    return;
+                                }
+                                
+                                // User exists and not banned, redirect to home
                                 setTimeout(() => {
-                                    showMainInterface();
-                                    document.querySelector('.logo-section').style.display = 'none';
-                                    showSection("bannedContainer");
+                                    window.location.href = "home.html";
                                 }, 1000);
                                 return;
                             }
-                            
-                            // توجيه إلى home باستخدام replace لمنع loop
-                            window.location.replace("home.html");
-                            return;
+                        } catch (dbError) {
+                            console.error("Database error:", dbError);
                         }
-                    } catch (error) {
-                        console.error("Auth check error:", error);
                     }
-                }
+                    
+                    // Show main interface after delay
+                    setTimeout(() => {
+                        showMainInterface();
+                    }, 1500);
+                });
                 
-                // إظهار واجهة تسجيل الدخول
+                // Fallback in case auth state change doesn't fire
                 setTimeout(() => {
-                    showMainInterface();
-                }, 1500);
+                    if (document.getElementById("loadingScreen").style.visibility !== "hidden") {
+                        showMainInterface();
+                    }
+                }, 3000);
                 
-                // إلغاء الاشتراك بعد التحقق لمنع التنفيذ المتكرر
-                setTimeout(() => unsubscribe(), 100);
-            });
+            } catch (error) {
+                console.error("Initialization error:", error);
+                showMainInterface();
+            }
         });
 
         /* Show Main Interface */
@@ -1063,3 +1132,4 @@
     </script>
 </body>
 </html>
+[file content end]
