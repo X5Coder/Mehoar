@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>عَون - المنصة الذكية</title>
+    <title>عَون - الخدمات</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -892,7 +892,7 @@
         
         .copyright {
             font-family: 'Tajawal', sans-serif;
-            font-size: 1rem;
+            font-size: 1.1rem;
             line-height: 1.8;
             margin-bottom: 40px;
             font-weight: 500;
@@ -1499,9 +1499,10 @@
             }
         }
 
-        // تحديث شريط التنقل
+        // تحديث شريط التنقل بناءً على صلاحيات المستخدم
         function updateNavbar(userData) {
             if (isAdmin) {
+                // وضع الأدمن: يظهر العملات ولوحة التحكم والإعدادات
                 elements.navRight.innerHTML = `
                     <div class="admin-badge" id="admin-panel-btn">لوحة التحكم</div>
                     <div class="coins-display">
@@ -1513,6 +1514,7 @@
                     </button>
                 `;
             } else {
+                // وضع المستخدم العادي: يظهر العملات فقط والإعدادات
                 elements.navRight.innerHTML = `
                     <div class="coins-display">
                         <i class="fas fa-coins"></i>
@@ -1525,9 +1527,10 @@
             }
         }
 
-        // تحديث خيارات القائمة
+        // تحديث خيارات القائمة بناءً على صلاحيات المستخدم
         function updateMenuOptions() {
             if (isAdmin) {
+                // قائمة الأدمن: تشمل لوحة التحكم بالإضافة إلى الخيارات العادية
                 elements.menuOptions.innerHTML = `
                     <button class="menu-option current" id="home-btn">
                         الرئيسية
@@ -1555,6 +1558,7 @@
                     </button>
                 `;
             } else {
+                // قائمة المستخدم العادي: بدون لوحة التحكم
                 elements.menuOptions.innerHTML = `
                     <button class="menu-option current" id="home-btn">
                         الرئيسية
@@ -1855,14 +1859,20 @@
             displayUsers(filteredUsers);
         }
 
-        // التبديل بين واجهة المستخدم وواجهة الإدارة
+        // التبديل إلى واجهة المستخدم
         function switchToUserInterface() {
             elements.userContent.style.display = 'block';
             elements.adminSection.style.display = 'none';
             document.title = 'عَون - الخدمات';
         }
 
+        // التبديل إلى لوحة التحكم
         function switchToAdminInterface() {
+            if (!isAdmin) {
+                showToast('ليس لديك صلاحية للوصول إلى لوحة التحكم', 3000);
+                return;
+            }
+            
             elements.userContent.style.display = 'none';
             elements.adminSection.style.display = 'block';
             document.title = 'عَون - لوحة التحكم';
@@ -1901,6 +1911,7 @@
 
             // خيارات القائمة
             document.addEventListener('click', (e) => {
+                // زر الرئيسية
                 if (e.target.closest('#home-btn')) {
                     elements.settingsMenu.classList.remove('active');
                     document.querySelectorAll('.menu-option').forEach(option => {
@@ -1910,26 +1921,31 @@
                     switchToUserInterface();
                 }
                 
+                // زر لوحة التحكم (فقط للأدمن)
                 if (e.target.closest('#admin-menu-btn') || e.target.closest('#admin-panel-btn')) {
                     elements.settingsMenu.classList.remove('active');
                     switchToAdminInterface();
                 }
                 
+                // زر السجلات
                 if (e.target.closest('#logs-btn')) {
                     elements.settingsMenu.classList.remove('active');
                     window.location.href = 'log.html';
                 }
                 
+                // زر حسابي
                 if (e.target.closest('#account-btn')) {
                     elements.settingsMenu.classList.remove('active');
                     window.location.href = 'account.html';
                 }
                 
+                // زر احالاتي
                 if (e.target.closest('#referral-btn')) {
                     elements.settingsMenu.classList.remove('active');
                     window.location.href = 'referral.html';
                 }
                 
+                // زر متجر عَون
                 if (e.target.closest('#store-btn')) {
                     elements.settingsMenu.classList.remove('active');
                     window.open('https://salla.sa/Aaw-2026', '_blank');
@@ -2029,11 +2045,15 @@
                 const success = await loadUserData();
                 if (!success) return;
 
+                // بناء واجهة المستخدم المناسبة بناءً على الصلاحيات
                 updateMenuOptions();
                 setupEventListeners();
                 
-                // عرض واجهة المستخدم افتراضيًا
+                // عرض واجهة المستخدم العادية افتراضيًا
                 switchToUserInterface();
+                
+                // إذا كان المستخدم أدمن، يمكنه التبديل إلى لوحة التحكم
+                // من خلال زر "لوحة التحكم" في القائمة أو شريط التنقل
             });
         }
 
