@@ -1,4 +1,3 @@
- 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -671,7 +670,7 @@
 
     <script>
         /* Firebase Configuration */
-        firebase.initializeApp({
+        const firebaseConfig = {
             apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
             authDomain: "marvel1-654dd.firebaseapp.com",
             databaseURL: "https://marvel1-654dd-default-rtdb.firebaseio.com",
@@ -679,12 +678,14 @@
             storageBucket: "marvel1-654dd.appspot.com",
             messagingSenderId: "189921979866",
             appId: "1:189921979866:android:95f48de58a69756be924e3"
-        });
+        };
 
+        firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
+        
         let currentUser = null;
-        let userData = null;
+        let isRegistering = false;
 
         /* Helper Functions */
         function showAlert(message, type = "error") {
@@ -750,13 +751,10 @@
 
         /* UI Functions */
         function showSection(sectionId) {
-            // Hide all sections
             document.getElementById("loginSection").style.display = "none";
             document.getElementById("googleSection").style.display = "none";
             document.getElementById("registrationForm").style.display = "none";
             document.getElementById("bannedContainer").style.display = "none";
-            
-            // Show requested section
             document.getElementById(sectionId).style.display = "block";
         }
 
@@ -764,15 +762,12 @@
             const fromSection = document.getElementById(fromSectionId);
             const toSection = document.getElementById(toSectionId);
             
-            // Add hide animation to current section
             fromSection.classList.add('section-hide');
             
-            // After animation completes, switch sections
             setTimeout(() => {
                 showSection(toSectionId);
                 toSection.classList.add('section-show');
                 
-                // Remove animation classes after completion
                 setTimeout(() => {
                     fromSection.classList.remove('section-hide');
                     toSection.classList.remove('section-show');
@@ -800,15 +795,6 @@
             }
         }
 
-        /* Support Link to WhatsApp */
-        document.getElementById("supportLink").addEventListener("click", function() {
-            const email = currentUser ? currentUser.email : "Unknown";
-            const userId = userData ? userData.id : "Unknown";
-            const message = `لقد تم حظر حسابي%0AEmail: ${email}%0AId: ${userId}%0Aيرجى التحقق من الأمر وتوضيح سبب الحظر`;
-            const whatsappUrl = `https://wa.me/201009341792?text=${message}`;
-            window.open(whatsappUrl, '_blank');
-        });
-
         /* Event Listeners */
         document.getElementById("loginRegisterBtn").addEventListener("click", () => {
             animateSectionTransition("loginSection", "googleSection");
@@ -820,24 +806,27 @@
 
         /* New Account Button for Banned Users */
         document.getElementById("newAccountBtn").addEventListener("click", () => {
-            // Sign out current user
             auth.signOut().then(() => {
-                // Show login section
                 showSection("loginSection");
-                // Reset any state if needed
                 currentUser = null;
-                userData = null;
             }).catch((error) => {
                 console.error("Sign out error:", error);
-                // Still show login section even if sign out fails
                 showSection("loginSection");
             });
+        });
+
+        /* Support Link to WhatsApp */
+        document.getElementById("supportLink").addEventListener("click", function() {
+            const email = currentUser ? currentUser.email : "Unknown";
+            const userId = currentUser ? currentUser.uid : "Unknown";
+            const message = `لقد تم حظر حسابي%0AEmail: ${email}%0AId: ${userId}%0Aيرجى التحقق من الأمر وتوضيح سبب الحظر`;
+            const whatsappUrl = `https://wa.me/201009341792?text=${message}`;
+            window.open(whatsappUrl, '_blank');
         });
 
         /* Google Sign In */
         document.getElementById("googleBtn").addEventListener("click", async () => {
             try {
-                // Show loading state on button
                 setButtonLoading('googleBtn', true);
                 
                 const provider = new firebase.auth.GoogleAuthProvider();
@@ -847,39 +836,31 @@
                 const result = await auth.signInWithPopup(provider);
                 currentUser = result.user;
 
-                // Check if user is banned
                 const isBanned = await checkUserBanned(currentUser.email);
                 if (isBanned) {
                     setButtonLoading('googleBtn', false);
-                    // Hide logo when showing banned message
                     document.querySelector('.logo-section').style.display = 'none';
                     showSection("bannedContainer");
                     return;
                 }
 
-                // Check if user exists in database
                 const snap = await db.ref("users_Awn")
                     .orderByChild("email")
                     .equalTo(currentUser.email)
                     .once("value");
 
                 if (snap.exists()) {
-                    // User exists, get user data and redirect to home
                     userData = snap.val()[Object.keys(snap.val())[0]];
                     
-                    // Check if user is banned from database
                     if (userData.banned === true) {
                         setButtonLoading('googleBtn', false);
-                        // Hide logo when showing banned message
                         document.querySelector('.logo-section').style.display = 'none';
                         showSection("bannedContainer");
                         return;
                     }
                     
-                    // Redirect to home
                     window.location.href = "home.html";
                 } else {
-                    // New user, show registration form
                     document.getElementById("userEmail").textContent = currentUser.email;
                     setButtonLoading('googleBtn', false);
                     showSection("registrationForm");
@@ -889,7 +870,6 @@
                 console.error("Google sign in error:", error);
                 setButtonLoading('googleBtn', false);
                 
-                // Handle specific errors
                 if (error.code === 'auth/popup-closed-by-user') {
                     showAlert("تم إغلاق نافذة تسجيل الدخول. يرجى المحاولة مرة أخرى.");
                 } else if (error.code === 'auth/cancelled-popup-request') {
@@ -902,14 +882,19 @@
             }
         });
 
-        /* Continue Registration */
+        /* Continue Registration - FIXED VERSION */
         document.getElementById("continueBtn").addEventListener("click", async () => {
+            // Prevent multiple clicks
+            if (isRegistering) return;
+            isRegistering = true;
+            
             const name = document.getElementById("name").value.trim();
             const referral = document.getElementById("referral").value.trim();
 
             // Validate name
             if (!validName(name)) {
                 showAlert("اسم المستخدم يجب أن يكون بين 3 و15 حرفًا، ويمكن أن يحتوي على أحرف عربية، إنجليزية، أرقام ومسافات فقط.");
+                isRegistering = false;
                 return;
             }
 
@@ -920,16 +905,19 @@
             if (!(await isNameUnique(name))) {
                 setButtonLoading('continueBtn', false);
                 showAlert("اسم المستخدم هذا مستخدم بالفعل. يرجى اختيار اسم آخر.");
+                isRegistering = false;
                 return;
             }
 
             let coin = 20;
+            let referralData = {};
 
             // Handle referral code if provided
             if (referral) {
                 if (!/^\d{6}$/.test(referral)) {
                     setButtonLoading('continueBtn', false);
                     showAlert("كود الإحالة غير صحيح. يجب أن يتكون من 6 أرقام فقط.");
+                    isRegistering = false;
                     return;
                 }
 
@@ -938,19 +926,23 @@
                     if (!refSnap.exists()) {
                         setButtonLoading('continueBtn', false);
                         showAlert("كود الإحالة غير موجود. يرجى التحقق وإعادة المحاولة.");
+                        isRegistering = false;
                         return;
                     }
 
                     // Add 5 coins to referrer
+                    const currentRefCoins = refSnap.val().coin || 0;
                     await db.ref("users_Awn/" + referral).update({
-                        coin: (refSnap.val().coin || 0) + 5
+                        coin: parseInt(currentRefCoins) + 5
                     });
 
                     coin = 25; // New user gets 25 coins instead of 20
+                    referralData.referral_used = referral;
                 } catch (error) {
                     console.error("Error handling referral:", error);
                     setButtonLoading('continueBtn', false);
                     showAlert("حدث خطأ في معالجة كود الإحالة. يرجى المحاولة مرة أخرى.");
+                    isRegistering = false;
                     return;
                 }
             }
@@ -963,27 +955,48 @@
                     throw new Error("فشل في إنشاء معرف مستخدم فريد");
                 }
 
-                // Create user record
-                await db.ref("users_Awn/" + userId).set({
+                // Create user data object
+                const userData = {
                     id: userId,
                     name: name,
                     email: currentUser.email,
                     banned: false,
                     admin: false,
-                    referral_used: referral || "",
                     coin: coin,
-                    created_at: new Date().toISOString()
-                });
+                    created_at: firebase.database.ServerValue.TIMESTAMP,
+                    ...referralData
+                };
+
+                // Create user record in Firebase
+                await db.ref("users_Awn/" + userId).set(userData);
 
                 showAlert("تم إنشاء حسابك بنجاح! يتم توجيهك الآن...", "success");
                 
-                // Redirect to home page after delay
-                setTimeout(() => {
-                    window.location.href = "home.html";
+                // تأكد من أن البيانات تم حفظها قبل التحويل
+                setTimeout(async () => {
+                    try {
+                        // تحقق من أن البيانات تم حفظها بالفعل
+                        const checkSnap = await db.ref("users_Awn/" + userId).once("value");
+                        if (checkSnap.exists()) {
+                            console.log("User data saved successfully, redirecting to home...");
+                            // استخدم replace بدلاً من href لمنع مشاكل التحميل
+                            window.location.replace("home.html");
+                        } else {
+                            throw new Error("User data not found after saving");
+                        }
+                    } catch (error) {
+                        console.error("Error verifying user data:", error);
+                        showAlert("حدث خطأ أثناء التحقق من البيانات. جاري إعادة التحميل...", "warning");
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    }
                 }, 1500);
+                
             } catch (error) {
                 console.error("Registration error:", error);
                 setButtonLoading('continueBtn', false);
+                isRegistering = false;
                 showAlert("حدث خطأ أثناء إنشاء الحساب. يرجى المحاولة مرة أخرى.");
             }
         });
@@ -991,10 +1004,8 @@
         /* Check Authentication State on Load */
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                // First check if user is already logged in
                 auth.onAuthStateChanged(async (user) => {
                     if (user) {
-                        // User is signed in, check if they exist in database
                         try {
                             const snap = await db.ref("users_Awn")
                                 .orderByChild("email")
@@ -1002,15 +1013,12 @@
                                 .once("value");
 
                             if (snap.exists()) {
-                                // Get user data
-                                userData = snap.val()[Object.keys(snap.val())[0]];
+                                const userData = snap.val()[Object.keys(snap.val())[0]];
                                 
-                                // Check if user is banned
                                 if (userData.banned === true) {
                                     setTimeout(() => {
                                         showMainInterface();
                                         setTimeout(() => {
-                                            // Hide logo when showing banned message
                                             document.querySelector('.logo-section').style.display = 'none';
                                             showSection("bannedContainer");
                                         }, 500);
@@ -1018,7 +1026,6 @@
                                     return;
                                 }
                                 
-                                // User exists and not banned, redirect to home
                                 setTimeout(() => {
                                     window.location.href = "home.html";
                                 }, 1000);
@@ -1029,13 +1036,11 @@
                         }
                     }
                     
-                    // Show main interface after delay
                     setTimeout(() => {
                         showMainInterface();
                     }, 1500);
                 });
                 
-                // Fallback in case auth state change doesn't fire
                 setTimeout(() => {
                     if (document.getElementById("loadingScreen").style.visibility !== "hidden") {
                         showMainInterface();
@@ -1053,11 +1058,9 @@
             const loadingScreen = document.getElementById("loadingScreen");
             const mainContainer = document.getElementById("mainContainer");
             
-            // Hide loading screen
             loadingScreen.style.opacity = "0";
             loadingScreen.style.visibility = "hidden";
             
-            // Show main container
             setTimeout(() => {
                 mainContainer.style.display = "block";
             }, 300);
@@ -1082,6 +1085,13 @@
                 } else if (document.getElementById("googleSection").style.display === 'block') {
                     document.getElementById("googleBtn").click();
                 }
+            }
+        });
+        
+        // إضافة متغير لحالة التحميل
+        window.addEventListener('beforeunload', function() {
+            if (isRegistering) {
+                return "جاري حفظ بياناتك، هل تريد المغادرة؟";
             }
         });
     </script>
