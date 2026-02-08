@@ -13,6 +13,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    
     <style>
         * {
             margin: 0;
@@ -22,20 +25,20 @@
         }
         
         :root {
-            --bg-color: #F5F7FA;
+            --bg-color: #F8FAFC;
             --card-color: #FFFFFF;
             --text-primary: #1E293B;
             --text-secondary: #64748B;
-            --accent-dark: #1E293B;
-            --black-gradient: linear-gradient(135deg, #1E293B, #0F172A);
-            --border-radius: 20px;
-            --border-radius-large: 28px;
-            --navbar-height: 75px;
-            --transition-quick: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            --accent-dark: #0F172A;
+            --black-gradient: linear-gradient(145deg, #0F172A, #1E293B);
+            --border-radius: 24px;
+            --border-radius-large: 32px;
+            --navbar-height: 80px;
+            --transition-quick: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Tajawal', sans-serif;
+            font-family: 'Almarai', 'Tajawal', -apple-system, sans-serif;
             background: var(--bg-color);
             color: var(--text-primary);
             min-height: 100vh;
@@ -43,106 +46,118 @@
             -webkit-font-smoothing: antialiased;
         }
         
-        /* Navigation Bar */
         .native-navbar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             height: var(--navbar-height);
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: saturate(180%) blur(25px);
-            -webkit-backdrop-filter: saturate(180%) blur(25px);
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: saturate(200%) blur(30px);
+            -webkit-backdrop-filter: saturate(200%) blur(30px);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 28px;
             z-index: 10000;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-            border-radius: 0 0 28px 28px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            margin: 0 16px;
-            top: 12px;
-            width: calc(100% - 32px);
-            border: 2px solid #1E293B;
+            border-bottom: 2px solid rgba(15, 23, 42, 0.1);
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+            margin: 0 20px;
+            top: 15px;
+            width: calc(100% - 40px);
+            border: 3px solid #0F172A;
+            border-radius: 28px;
         }
         
         .logo {
-            font-family: 'Tajawal', sans-serif;
+            font-family: 'Almarai', sans-serif;
             font-weight: 900;
-            font-size: 36px;
-            background: linear-gradient(135deg, #1E293B, #0F172A);
+            font-size: 42px;
+            background: linear-gradient(145deg, #0F172A, #334155);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: -1px;
+            letter-spacing: -1.5px;
             cursor: pointer;
             transition: var(--transition-quick);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         .logo:hover {
-            transform: translateY(-2px);
+            transform: scale(1.05);
         }
         
         .nav-right {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
         }
         
         .coins-display {
-            background: linear-gradient(135deg, #1E293B, #0F172A);
+            background: var(--black-gradient);
             color: white;
-            padding: 10px 20px;
-            border-radius: 16px;
-            font-weight: 700;
-            font-size: 15px;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 16px rgba(30, 41, 59, 0.15);
-            border: 2px solid #1E293B;
+            gap: 12px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
+            border: 3px solid #0F172A;
+            transition: var(--transition-quick);
+        }
+        
+        .coins-display:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.3);
+        }
+        
+        .coins-display i {
+            font-size: 20px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
         }
         
         .settings-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 16px;
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
             background: white;
-            border: 2px solid #1E293B;
+            border: 3px solid #0F172A;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: var(--transition-quick);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
         }
         
         .settings-btn i {
-            font-size: 22px;
-            color: #1E293B;
+            font-size: 24px;
+            color: #0F172A;
+            transition: var(--transition-quick);
         }
         
         .settings-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            background: linear-gradient(135deg, #1E293B, #0F172A);
+            transform: translateY(-3px) rotate(15deg);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+            background: var(--black-gradient);
         }
         
         .settings-btn:hover i {
             color: white;
+            transform: scale(1.1);
         }
         
-        /* Settings Menu */
         .settings-menu {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -150,7 +165,7 @@
             z-index: 20000;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .settings-menu.active {
@@ -159,17 +174,17 @@
         }
         
         .menu-content {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
             border-radius: var(--border-radius-large);
-            width: 90%;
-            max-width: 420px;
-            padding: 32px;
-            transform: translateY(40px) scale(0.95);
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
-            border: 3px solid #1E293B;
+            width: 92%;
+            max-width: 450px;
+            padding: 36px;
+            transform: translateY(50px) scale(0.95);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.25);
+            border: 4px solid #0F172A;
         }
         
         .settings-menu.active .menu-content {
@@ -180,24 +195,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid rgba(30, 41, 59, 0.1);
+            margin-bottom: 36px;
+            padding-bottom: 24px;
+            border-bottom: 3px solid rgba(15, 23, 42, 0.12);
         }
         
         .menu-title {
-            font-size: 28px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 32px;
             font-weight: 900;
-            color: #1E293B;
-            letter-spacing: -0.5px;
+            color: #0F172A;
+            letter-spacing: -1px;
         }
         
         .close-menu {
-            width: 48px;
-            height: 48px;
-            border-radius: 16px;
-            background: rgba(30, 41, 59, 0.08);
-            border: 2px solid #1E293B;
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            background: rgba(15, 23, 42, 0.1);
+            border: 3px solid #0F172A;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -207,7 +223,7 @@
         
         .close-menu:hover {
             transform: rotate(90deg);
-            background: #1E293B;
+            background: #0F172A;
         }
         
         .close-menu:hover i {
@@ -217,86 +233,94 @@
         .menu-options {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 18px;
         }
         
         .menu-option {
-            background: rgba(255, 255, 255, 0.8);
-            border: 2px solid #1E293B;
+            background: rgba(255, 255, 255, 0.9);
+            border: 3px solid #0F172A;
             border-radius: var(--border-radius);
-            padding: 22px 24px;
+            padding: 24px;
             text-align: right;
-            font-size: 18px;
-            font-weight: 700;
-            color: #1E293B;
+            font-family: 'Almarai', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: #0F172A;
             cursor: pointer;
             transition: var(--transition-quick);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
         }
         
         .menu-option:hover {
-            transform: translateX(-12px);
-            background: linear-gradient(135deg, #1E293B, #0F172A);
+            transform: translateX(-15px);
+            background: var(--black-gradient);
             color: white;
-            box-shadow: 0 12px 32px rgba(30, 41, 59, 0.2);
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.25);
         }
         
         .menu-option.current {
-            background: linear-gradient(135deg, #1E293B, #0F172A);
+            background: var(--black-gradient);
             color: white;
-            border-color: #1E293B;
+            border-color: #0F172A;
         }
         
-        /* Main Content */
         .main-content {
-            padding-top: calc(var(--navbar-height) + 48px);
-            padding-left: 24px;
-            padding-right: 24px;
-            padding-bottom: 80px;
-            max-width: 1200px;
+            padding-top: calc(var(--navbar-height) + 60px);
+            padding-left: 28px;
+            padding-right: 28px;
+            padding-bottom: 100px;
+            max-width: 1300px;
             margin: 0 auto;
         }
         
         .welcome-section {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 70px;
             animation: fadeIn 0.8s ease-out;
         }
         
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         .welcome-title {
-            font-size: 3rem;
+            font-family: 'Almarai', sans-serif;
+            font-size: 3.5rem;
             font-weight: 900;
-            margin-bottom: 16px;
-            color: #1E293B;
-            letter-spacing: -1px;
+            margin-bottom: 20px;
+            color: #0F172A;
+            letter-spacing: -2px;
+            line-height: 1.2;
         }
         
         .welcome-subtitle {
-            font-size: 1.3rem;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.4rem;
             color: #64748B;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            line-height: 1.6;
+            line-height: 1.7;
+            font-weight: 500;
         }
         
-        /* Services Grid */
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 28px;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 32px;
         }
         
         .service-card {
             background: white;
             border-radius: var(--border-radius-large);
-            padding: 36px 32px;
+            padding: 40px 36px;
             transition: var(--transition-quick);
             cursor: pointer;
-            border: 3px solid #1E293B;
-            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06);
+            border: 4px solid #0F172A;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
             position: relative;
             overflow: hidden;
             display: flex;
@@ -305,8 +329,8 @@
         }
         
         .service-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.12);
+            transform: translateY(-12px);
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.15);
         }
         
         .service-card::before {
@@ -316,150 +340,236 @@
             left: 0;
             right: 0;
             bottom: 0;
-            border: 3px solid transparent;
+            border: 4px solid transparent;
             border-radius: var(--border-radius-large);
-            background: linear-gradient(135deg, #1E293B, #0F172A) border-box;
+            background: linear-gradient(145deg, #0F172A, #1E293B) border-box;
             -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
             pointer-events: none;
         }
         
-        .service-header {
+        .service-content {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
+            align-items: flex-start;
+            gap: 28px;
+            flex: 1;
         }
         
         .service-icon {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, #1E293B, #0F172A);
-            border-radius: 16px;
+            width: 80px;
+            height: 80px;
+            background: var(--black-gradient);
+            border-radius: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            border: 2px solid #1E293B;
+            border: 3px solid #0F172A;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
         }
         
         .service-icon i {
-            font-size: 28px;
+            font-size: 34px;
             color: white;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
         }
         
-        .service-title {
+        .service-details {
             flex: 1;
-            margin-right: 20px;
         }
         
         .service-name {
-            font-size: 1.8rem;
+            font-family: 'Almarai', sans-serif;
+            font-size: 2.2rem;
             font-weight: 900;
-            color: #1E293B;
-            margin-bottom: 6px;
-            letter-spacing: -0.3px;
-        }
-        
-        .service-number {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #64748B;
-            background: rgba(100, 116, 139, 0.1);
-            padding: 4px 12px;
-            border-radius: 20px;
-            display: inline-block;
-            border: 1px solid rgba(100, 116, 139, 0.2);
+            color: #0F172A;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+            line-height: 1.3;
         }
         
         .service-description {
+            font-family: 'Tajawal', sans-serif;
             color: #64748B;
-            font-size: 1.1rem;
-            line-height: 1.7;
-            margin-top: auto;
-            padding-top: 16px;
-            border-top: 2px solid rgba(30, 41, 59, 0.08);
+            font-size: 1.2rem;
+            line-height: 1.8;
+            font-weight: 500;
         }
         
-        /* Footer */
         .footer {
             text-align: center;
-            padding: 40px 24px;
+            padding: 60px 28px 40px;
             color: #64748B;
-            border-top: 2px solid rgba(30, 41, 59, 0.08);
-            margin-top: 80px;
+            border-top: 3px solid rgba(15, 23, 42, 0.1);
+            margin-top: 100px;
         }
         
         .copyright {
-            font-size: 0.95rem;
-            line-height: 1.6;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            font-weight: 500;
         }
         
-        /* Loading Overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: white;
+        .support-section {
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .support-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #0F172A;
+            margin-bottom: 8px;
+        }
+        
+        .support-links {
+            display: flex;
+            gap: 20px;
             justify-content: center;
-            z-index: 30000;
-            opacity: 1;
-            visibility: visible;
-            transition: all 0.5s ease;
         }
         
-        .loading-spinner {
-            width: 64px;
-            height: 64px;
-            border: 4px solid rgba(30, 41, 59, 0.1);
-            border-top-color: #1E293B;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 24px;
+        .support-link {
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            background: var(--black-gradient);
+            border: 3px solid #0F172A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
         }
         
-        .loading-text {
-            font-size: 1.2rem;
-            color: #1E293B;
-            font-weight: 600;
+        .support-link:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.25);
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .support-link i {
+            font-size: 28px;
+            color: white;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .developer-credit {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            color: rgba(100, 116, 139, 0.7);
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(15, 23, 42, 0.05);
+            cursor: pointer;
+            transition: var(--transition-quick);
         }
         
-        /* Responsive Design */
-        @media (max-width: 1024px) {
+        .developer-credit:hover {
+            color: #0F172A;
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 1200px) {
             .services-grid {
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 24px;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 28px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .main-content {
+                padding-top: calc(var(--navbar-height) + 50px);
+                padding-left: 24px;
+                padding-right: 24px;
+                padding-bottom: 80px;
+            }
+            
+            .welcome-title {
+                font-size: 3rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .service-card {
+                padding: 36px 32px;
+            }
+            
+            .service-name {
+                font-size: 2rem;
             }
         }
         
         @media (max-width: 768px) {
-            .main-content {
-                padding-top: calc(var(--navbar-height) + 36px);
-                padding-left: 20px;
-                padding-right: 20px;
-                padding-bottom: 60px;
+            .native-navbar {
+                padding: 0 24px;
+                margin: 0 16px;
+                top: 12px;
+                width: calc(100% - 32px);
+                height: 70px;
             }
             
+            .logo {
+                font-size: 36px;
+            }
+            
+            .coins-display {
+                padding: 10px 20px;
+                font-size: 15px;
+            }
+            
+            .settings-btn {
+                width: 48px;
+                height: 48px;
+            }
+            
+            .main-content {
+                padding-top: calc(70px + 40px);
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .service-content {
+                gap: 24px;
+            }
+            
+            .service-icon {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .service-icon i {
+                font-size: 30px;
+            }
+            
+            .menu-content {
+                padding: 32px 28px;
+                width: 95%;
+            }
+            
+            .menu-title {
+                font-size: 28px;
+            }
+        }
+        
+        @media (max-width: 576px) {
             .native-navbar {
                 padding: 0 20px;
                 margin: 0 12px;
-                top: 8px;
+                top: 10px;
                 width: calc(100% - 24px);
             }
             
@@ -467,14 +577,18 @@
                 font-size: 32px;
             }
             
+            .nav-right {
+                gap: 16px;
+            }
+            
             .coins-display {
                 padding: 8px 16px;
                 font-size: 14px;
             }
             
-            .settings-btn {
-                width: 44px;
-                height: 44px;
+            .main-content {
+                padding-left: 16px;
+                padding-right: 16px;
             }
             
             .welcome-title {
@@ -486,95 +600,72 @@
             }
             
             .service-card {
-                padding: 28px 24px;
+                padding: 32px 28px;
+            }
+            
+            .service-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .service-icon {
+                margin: 0 auto;
+            }
+            
+            .service-name {
+                font-size: 1.8rem;
+            }
+            
+            .service-description {
+                font-size: 1.1rem;
+            }
+            
+            .menu-option {
+                padding: 22px;
+                font-size: 18px;
+            }
+            
+            .support-links {
+                gap: 16px;
+            }
+            
+            .support-link {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .support-link i {
+                font-size: 26px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .coins-display {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+            
+            .coins-display i {
+                font-size: 18px;
+            }
+            
+            .settings-btn {
+                width: 44px;
+                height: 44px;
+            }
+            
+            .settings-btn i {
+                font-size: 22px;
             }
             
             .service-name {
                 font-size: 1.6rem;
             }
-            
-            .service-description {
-                font-size: 1rem;
-            }
-            
-            .menu-content {
-                padding: 28px 24px;
-                width: 95%;
-            }
-            
-            .menu-title {
-                font-size: 24px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .services-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .native-navbar {
-                padding: 0 16px;
-                margin: 0 8px;
-                top: 8px;
-                width: calc(100% - 16px);
-            }
-            
-            .logo {
-                font-size: 28px;
-            }
-            
-            .main-content {
-                padding-left: 16px;
-                padding-right: 16px;
-            }
-            
-            .welcome-title {
-                font-size: 2rem;
-            }
-            
-            .welcome-subtitle {
-                font-size: 1rem;
-            }
-            
-            .service-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 16px;
-            }
-            
-            .service-icon {
-                width: 56px;
-                height: 56px;
-            }
-            
-            .service-icon i {
-                font-size: 24px;
-            }
-            
-            .service-title {
-                margin-right: 0;
-            }
-            
-            .menu-option {
-                padding: 20px;
-                font-size: 16px;
-            }
-        }
-        
-        @media (max-width: 380px) {
-            .coins-display {
-                display: none;
-            }
-            
-            .service-name {
-                font-size: 1.4rem;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
     <nav class="native-navbar">
         <div class="logo" id="logo">عَون</div>
         <div class="nav-right">
@@ -588,7 +679,6 @@
         </div>
     </nav>
     
-    <!-- Settings Menu -->
     <div class="settings-menu" id="settings-menu">
         <div class="menu-content">
             <div class="menu-header">
@@ -610,6 +700,10 @@
                     حسابي
                     <i class="fas fa-user"></i>
                 </button>
+                <button class="menu-option" id="referral-btn">
+                    احالاتي
+                    <i class="fas fa-users"></i>
+                </button>
                 <button class="menu-option" id="store-btn">
                     متجر عَون
                     <i class="fas fa-store"></i>
@@ -618,140 +712,120 @@
         </div>
     </div>
     
-    <!-- Main Content -->
-    <div class="main-content" style="display: none;" id="main-content">
+    <div class="main-content">
         <section class="welcome-section">
-            <h1 class="welcome-title">مرحباً بك في عَون</h1>
-            <p class="welcome-subtitle">منصة الذكاء الاصطناعي المتكاملة لتحويل محتوى PDF إلى تجربة تعليمية متقدمة</p>
+            <h1 class="welcome-title">خدمات منصة عَون الذكية</h1>
+            <p class="welcome-subtitle">مجموعة متكاملة من أدوات الذكاء الاصطناعي المتقدمة لتحويل محتوى PDF إلى تجربة تعليمية استثنائية</p>
         </section>
         
-        <section class="services-grid" id="services-grid">
-            <!-- Service 1: تلخيص -->
+        <section class="services-grid">
             <div class="service-card" data-service="summary">
-                <div class="service-header">
-                    <div class="service-title">
-                        <div class="service-number">الخدمة 1</div>
-                        <h3 class="service-name">تلخيص</h3>
-                    </div>
+                <div class="service-content">
                     <div class="service-icon">
                         <i class="fas fa-file-contract"></i>
                     </div>
+                    <div class="service-details">
+                        <h3 class="service-name">تلخيص</h3>
+                        <p class="service-description">قرائنة محتوى PDF وتلخيصه باستخدام أقوى نماذج الذكاء الاصطناعي المتطورة</p>
+                    </div>
                 </div>
-                <p class="service-description">
-                    قرائنة محتوى PDF وتلخيصه باستخدام أقوى نماذج الذكاء الاصطناعي المتطورة
-                </p>
             </div>
             
-            <!-- Service 2: فلاش كارد -->
             <div class="service-card" data-service="flashcard">
-                <div class="service-header">
-                    <div class="service-title">
-                        <div class="service-number">الخدمة 2</div>
-                        <h3 class="service-name">فلاش كارد</h3>
-                    </div>
+                <div class="service-content">
                     <div class="service-icon">
                         <i class="fas fa-layer-group"></i>
                     </div>
+                    <div class="service-details">
+                        <h3 class="service-name">فلاش كارد</h3>
+                        <p class="service-description">إنشاء أسئلة بنظام الفلاش كارد مع شرح تفصيلي ومبسط لكل سؤال وجواب</p>
+                    </div>
                 </div>
-                <p class="service-description">
-                    إنشاء أسئلة بنظام الفلاش كارد مع شرح تفصيلي ومبسط لكل سؤال وجواب
-                </p>
             </div>
             
-            <!-- Service 3: ترجمة -->
             <div class="service-card" data-service="translate">
-                <div class="service-header">
-                    <div class="service-title">
-                        <div class="service-number">الخدمة 3</div>
-                        <h3 class="service-name">ترجمة PDF</h3>
-                    </div>
+                <div class="service-content">
                     <div class="service-icon">
                         <i class="fas fa-language"></i>
                     </div>
+                    <div class="service-details">
+                        <h3 class="service-name">ترجمة PDF</h3>
+                        <p class="service-description">ترجمة جميع أنواع PDF بأي لغة في العالم مع الحفاظ على التنسيق والمحتوى الأصلي</p>
+                    </div>
                 </div>
-                <p class="service-description">
-                    ترجمة جميع أنواع PDF بأي لغة في العالم مع الحفاظ على التنسيق والمحتوى الأصلي
-                </p>
             </div>
             
-            <!-- Service 4: شات بوت -->
             <div class="service-card" data-service="chat">
-                <div class="service-header">
-                    <div class="service-title">
-                        <div class="service-number">الخدمة 4</div>
-                        <h3 class="service-name">شات بوت</h3>
-                    </div>
+                <div class="service-content">
                     <div class="service-icon">
                         <i class="fas fa-robot"></i>
                     </div>
+                    <div class="service-details">
+                        <h3 class="service-name">شات بوت</h3>
+                        <p class="service-description">تواصل مع مساعد عَون المدعوم بالذكاء الاصطناعي للإجابة على جميع أسئلتك حول محتوى ملف PDF</p>
+                    </div>
                 </div>
-                <p class="service-description">
-                    تواصل مع مساعد عَون المدعوم بالذكاء الاصطناعي للإجابة على جميع أسئلتك حول محتوى ملف PDF
-                </p>
             </div>
             
-            <!-- Service 5: خريطة ذهنية -->
             <div class="service-card" data-service="map">
-                <div class="service-header">
-                    <div class="service-title">
-                        <div class="service-number">الخدمة 5</div>
-                        <h3 class="service-name">خريطة ذهنية</h3>
-                    </div>
+                <div class="service-content">
                     <div class="service-icon">
                         <i class="fas fa-brain"></i>
                     </div>
+                    <div class="service-details">
+                        <h3 class="service-name">خريطة ذهنية</h3>
+                        <p class="service-description">إنشاء خريطة ذهنية تساعدك على فهم محتوى PDF وترتيب المعلومات بدقة عالية</p>
+                    </div>
                 </div>
-                <p class="service-description">
-                    إنشاء خريطة ذهنية تساعدك على فهم محتوى PDF وترتيب المعلومات بدقة عالية
-                </p>
             </div>
             
-            <!-- Service 6: توليد الأسئلة -->
             <div class="service-card" data-service="question">
-                <div class="service-header">
-                    <div class="service-title">
-                        <div class="service-number">الخدمة 6</div>
-                        <h3 class="service-name">توليد الأسئلة</h3>
-                    </div>
+                <div class="service-content">
                     <div class="service-icon">
                         <i class="fas fa-question-circle"></i>
                     </div>
+                    <div class="service-details">
+                        <h3 class="service-name">توليد الأسئلة</h3>
+                        <p class="service-description">تصميم أسئلة متنوعة تشمل الاختيار من متعدد، الصح والخطأ، والأسئلة المقالية، بمستويات صعوبة مختلفة</p>
+                    </div>
                 </div>
-                <p class="service-description">
-                    تصميم أسئلة متنوعة تشمل الاختيار من متعدد، الصح والخطأ، والأسئلة المقالية، بمستويات صعوبة مختلفة
-                </p>
             </div>
             
-            <!-- Service 7: خطة مذاكرة -->
             <div class="service-card" data-service="plan">
-                <div class="service-header">
-                    <div class="service-title">
-                        <div class="service-number">الخدمة 7</div>
-                        <h3 class="service-name">خطة مذاكرة</h3>
-                    </div>
+                <div class="service-content">
                     <div class="service-icon">
                         <i class="fas fa-calendar-alt"></i>
                     </div>
+                    <div class="service-details">
+                        <h3 class="service-name">خطة مذاكرة</h3>
+                        <p class="service-description">إنشاء خطة مذاكرة لملف PDF مرتبة حسب الأهمية، معتمداً على تحليل دقيق باستخدام الذكاء الاصطناعي</p>
+                    </div>
                 </div>
-                <p class="service-description">
-                    إنشاء خطة مذاكرة لملف PDF مرتبة حسب الأهمية، معتمداً على تحليل دقيق باستخدام الذكاء الاصطناعي
-                </p>
             </div>
         </section>
         
         <footer class="footer">
-            <p class="copyright">جميع الحقوق محفوظة لدى منصة عَون 2024</p>
+            <p class="copyright">جميع الحقوق محفوظة لمنصة عَون © 2024</p>
+            
+            <div class="support-section">
+                <div class="support-title">تواصل مع الدعم الفني</div>
+                <div class="support-links">
+                    <a href="https://wa.me/966583617539" target="_blank" class="support-link">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="https://t.me/HNHv1" target="_blank" class="support-link">
+                        <i class="fab fa-telegram"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="developer-credit" id="developer-credit">
+                تم التطوير بواسطة المطور Kimo
+            </div>
         </footer>
     </div>
     
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">جاري التحميل...</div>
-    </div>
-    
     <script>
-        // تهيئة Firebase
         firebase.initializeApp({
             apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
             authDomain: "marvel1-654dd.firebaseapp.com",
@@ -765,69 +839,53 @@
         const auth = firebase.auth();
         const database = firebase.database();
         
-        // عناصر DOM
         const elements = {
             logo: document.getElementById('logo'),
             settingsBtn: document.getElementById('settings-btn'),
             settingsMenu: document.getElementById('settings-menu'),
             closeMenu: document.getElementById('close-menu'),
             coinsCount: document.getElementById('coins-count'),
-            mainContent: document.getElementById('main-content'),
-            loadingOverlay: document.getElementById('loading-overlay'),
-            
-            // عناصر القائمة
             homeBtn: document.getElementById('home-btn'),
             logsBtn: document.getElementById('logs-btn'),
             accountBtn: document.getElementById('account-btn'),
+            referralBtn: document.getElementById('referral-btn'),
             storeBtn: document.getElementById('store-btn'),
-            
-            // الخدمات
-            servicesGrid: document.getElementById('services-grid')
+            developerCredit: document.getElementById('developer-credit')
         };
 
-        // تحميل بيانات المستخدم
         async function loadUserData() {
             try {
                 const user = auth.currentUser;
                 if (!user) {
-                    // إذا لم يكن مسجل الدخول
                     window.location.href = 'login.html';
                     return false;
                 }
 
-                // التحقق من وجود المستخدم في قاعدة البيانات
                 const snapshot = await database.ref('users_Awn')
                     .orderByChild('email')
                     .equalTo(user.email)
                     .once('value');
 
                 if (!snapshot.exists()) {
-                    // إذا لم يوجد المستخدم في قاعدة البيانات
                     await auth.signOut();
                     window.location.href = 'login.html';
                     return false;
                 }
 
-                // جلب بيانات المستخدم
-                let userData = null;
                 snapshot.forEach((childSnapshot) => {
-                    userData = childSnapshot.val();
-                    
-                    // تحديث عرض العملات
+                    const userData = childSnapshot.val();
                     elements.coinsCount.textContent = userData.coin || 0;
                 });
                 
                 return true;
                 
             } catch (error) {
-                console.error('Error loading user data:', error);
+                console.error('Error:', error);
                 return false;
             }
         }
 
-        // إعداد مستمعي الأحداث
         function setupEventListeners() {
-            // قائمة الإعدادات
             elements.settingsBtn.addEventListener('click', () => {
                 elements.settingsMenu.classList.add('active');
             });
@@ -842,10 +900,8 @@
                 }
             });
 
-            // عناصر القائمة
             elements.homeBtn.addEventListener('click', (e) => {
                 elements.settingsMenu.classList.remove('active');
-                // إضافة class للخانة الحالية
                 document.querySelectorAll('.menu-option').forEach(option => {
                     option.classList.remove('current');
                 });
@@ -862,17 +918,24 @@
                 window.location.href = 'account.html';
             });
 
+            elements.referralBtn.addEventListener('click', () => {
+                elements.settingsMenu.classList.remove('active');
+                window.location.href = 'referral.html';
+            });
+
             elements.storeBtn.addEventListener('click', () => {
                 elements.settingsMenu.classList.remove('active');
                 window.open('https://salla.sa/Aaw-2026', '_blank');
             });
 
-            // الشعار
             elements.logo.addEventListener('click', () => {
-                window.location.href = 'index.html';
+                window.location.reload();
             });
 
-            // الخدمات
+            elements.developerCredit.addEventListener('click', () => {
+                window.open('https://t.me/X5Coder', '_blank');
+            });
+
             const serviceCards = document.querySelectorAll('.service-card');
             serviceCards.forEach(card => {
                 card.addEventListener('click', function() {
@@ -894,45 +957,19 @@
             });
         }
 
-        // بدء التطبيق
         async function initApp() {
-            // الانتظار لحالة المصادقة
-            const user = await new Promise((resolve) => {
-                const unsubscribe = auth.onAuthStateChanged((user) => {
-                    unsubscribe();
-                    resolve(user);
-                });
-            });
-            
-            if (!user) {
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            // تحميل بيانات المستخدم
-            const userLoaded = await loadUserData();
-            
-            if (userLoaded) {
-                // إعداد واجهة المستخدم
-                setupEventListeners();
-                elements.mainContent.style.display = 'block';
+            auth.onAuthStateChanged(async (user) => {
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
                 
-                // إخفاء شاشة التحميل مع تأثير
-                setTimeout(() => {
-                    elements.loadingOverlay.style.opacity = '0';
-                    elements.loadingOverlay.style.visibility = 'hidden';
-                }, 300);
-            }
+                await loadUserData();
+                setupEventListeners();
+            });
         }
 
-        // بدء التطبيق عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', initApp);
-        
-        // إخفاء شاشة التحميل بعد 5 ثوان كحد أقصى
-        setTimeout(() => {
-            elements.loadingOverlay.style.opacity = '0';
-            elements.loadingOverlay.style.visibility = 'hidden';
-        }, 5000);
     </script>
 </body>
 </html>
