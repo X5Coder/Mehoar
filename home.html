@@ -1521,6 +1521,8 @@
         let allUsers = [];
         let currentNotification = null;
         let notificationTimeout = null;
+        let publicNotificationsListener = null;
+        let userNotificationsListener = null;
         
         function hideLoadingScreen() {
             setTimeout(() => {
@@ -1555,7 +1557,7 @@
                                 timestamp: userData.timestamp || null,
                                 referral_used: userData.referral_used || '',
                                 referrals: userData.referrals || {},
-                                notu_user: userData.notu_user || {},
+                                noty_user: userData.noty_user || null, // ملاحظة: noty_user بدلاً من notu_user
                                 dbId: userData.id // هذا هو ID المخزن في قاعدة البيانات
                             };
                         }
@@ -1632,6 +1634,9 @@
                 elements.adminPanel.style.display = 'none';
                 elements.userContent.style.display = 'block';
                 setupUserEventListeners();
+                
+                // للمستخدم العادي: مراقبة الإشعارات الشخصية والعامة
+                startMonitoringNotifications();
             }
         }
 
@@ -1707,6 +1712,44 @@
             });
         }
 
+        // مراقبة الإشعارات للمستخدم العادي
+        function startMonitoringNotifications() {
+            if (!currentUser || !currentUser.id) return;
+            
+            // مراقبة الإشعارات العامة
+            publicNotificationsListener = database.ref('users_Awn/noty_publick')
+                .on('value', (snapshot) => {
+                    if (snapshot.exists()) {
+                        const notifications = snapshot.val();
+                        Object.entries(notifications).forEach(([key, notification]) => {
+                            showNotification('إشعار عام', notification, 'info');
+                        });
+                    }
+                });
+            
+            // مراقبة الإشعارات الشخصية
+            userNotificationsListener = database.ref(`users_Awn/${currentUser.id}/noty_user`)
+                .on('value', (snapshot) => {
+                    if (snapshot.exists()) {
+                        const notification = snapshot.val();
+                        if (notification) {
+                            showNotification('إشعار شخصي', notification, 'info');
+                        }
+                    }
+                });
+        }
+
+        function stopMonitoringNotifications() {
+            if (publicNotificationsListener) {
+                database.ref('users_Awn/noty_publick').off('value', publicNotificationsListener);
+            }
+            if (userNotificationsListener) {
+                if (currentUser && currentUser.id) {
+                    database.ref(`users_Awn/${currentUser.id}/noty_user`).off('value', userNotificationsListener);
+                }
+            }
+        }
+
         function setupAdminEventListeners() {
             elements.searchBtn.addEventListener('click', searchUsers);
             elements.searchInput.addEventListener('keypress', (e) => {
@@ -1743,7 +1786,7 @@
                                 timestamp: userData.timestamp || null,
                                 referral_used: userData.referral_used || '',
                                 referrals: userData.referrals || {},
-                                notu_user: userData.notu_user || {},
+                                noty_user: userData.noty_user || null, // ملاحظة: noty_user بدلاً من notu_user
                                 dbId: userData.id // إضافة ID المخزن في قاعدة البيانات
                             };
                             
@@ -1817,38 +1860,27 @@
                 userCard.className = `user-card ${user.banned ? 'banned' : ''}`;
                 
                 let notificationsHTML = '';
-                if (user.notu_user) {
-                    const notificationsCount = Object.keys(user.notu_user).length;
+                if (user.noty_user) {
                     notificationsHTML = `
                         <div class="user-notifications">
                             <div class="user-notifications-title">
-                                <span>الإشعارات</span>
-                                <span>(${notificationsCount})</span>
+                                <span>الإشعار الحالي</span>
+                                <button class="action-btn" style="padding: 4px 8px; font-size: 0.7rem;" onclick="deleteUserNotification('${user.id}')">
+                                    <i class="fas fa-trash"></i>
+                                    حذف الإشعار
+                                </button>
                             </div>
-                            ${Object.entries(user.notu_user).map(([key, notification]) => {
-                                const notificationTime = notification.created_at || notification.timestamp || Date.now();
-                                const date = new Date(notificationTime).toLocaleString('en-US', {
+                            <div class="notification-item">
+                                <div class="notification-message-text">${user.noty_user}</div>
+                                <div class="notification-date">تم التحديث: ${new Date().toLocaleString('en-US', {
                                     year: 'numeric',
                                     month: 'short',
                                     day: 'numeric',
                                     hour: '2-digit',
                                     minute: '2-digit',
                                     hour12: true
-                                });
-                                
-                                return `
-                                    <div class="notification-item" data-notification-id="${key}">
-                                        <div class="notification-message-text">${notification.message || 'لا يوجد نص'}</div>
-                                        <div class="notification-date">${date}</div>
-                                        <div style="margin-top: 8px;">
-                                            <button class="action-btn" style="padding: 4px 8px; font-size: 0.7rem;" onclick="deleteNotification('${user.id}', '${key}')">
-                                                <i class="fas fa-trash"></i>
-                                                حذف الإشعار
-                                            </button>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
+                                })}</div>
+                            </div>
                         </div>
                     `;
                 }
@@ -1983,17 +2015,17 @@
             });
         }
 
-        // وظيفة لحذف إشعار
-        window.deleteNotification = async function(userId, notificationId) {
-            if (!confirm('هل أنت متأكد من حذف هذا الإشعار؟')) return;
+        // وظيفة لحذف إشعار مستخدم
+        window.deleteUserNotification = async function(userId) {
+            if (!confirm('هل أنت متأكد من حذف إشعار هذا المستخدم؟')) return;
             
             try {
-                await database.ref(`users_Awn/${userId}/notu_user/${notificationId}`).remove();
-                showNotification('تم', 'تم حذف الإشعار بنجاح', 'success');
+                await database.ref(`users_Awn/${userId}/noty_user`).remove();
+                showNotification('تم', 'تم حذف إشعار المستخدم بنجاح', 'success');
                 loadAllUsers();
             } catch (error) {
-                console.error('Error deleting notification:', error);
-                showNotification('خطأ', 'فشل في حذف الإشعار', 'error');
+                console.error('Error deleting user notification:', error);
+                showNotification('خطأ', 'فشل في حذف إشعار المستخدم', 'error');
             }
         };
 
@@ -2049,14 +2081,8 @@
             if (!message) return;
             
             try {
-                const notificationId = database.ref().child('notifications').push().key;
-                const notificationData = {
-                    message: message,
-                    created_at: Date.now(),
-                    is_public: false
-                };
-                
-                await database.ref(`users_Awn/${userId}/notu_user/${notificationId}`).set(notificationData);
+                // تحديث الإشعار الموجود أو إنشاء واحد جديد
+                await database.ref(`users_Awn/${userId}/noty_user`).set(message);
                 showNotification('تم', 'تم إرسال الإشعار الفردي', 'success');
                 loadAllUsers();
             } catch (error) {
@@ -2073,39 +2099,16 @@
             }
             
             try {
-                const publicNotificationId = database.ref().child('public_notifications').push().key;
-                const publicNotificationData = {
-                    message: message,
-                    created_at: Date.now()
-                };
+                // إنشاء عقدة جديدة للإشعار العام
+                const notificationId = database.ref().child('notifications').push().key;
                 
-                // حفظ الإشعار العام
-                await database.ref(`users_Awn/noty_publick/${publicNotificationId}`).set(publicNotificationData);
+                // حفظ الإشعار العام في عقدة منفصلة
+                await database.ref(`users_Awn/noty_publick/${notificationId}`).set(message);
                 
-                // إرسال الإشعار لجميع المستخدمين
-                const snapshot = await database.ref('users_Awn').once('value');
-                const updatePromises = [];
-                
-                snapshot.forEach((childSnapshot) => {
-                    if (childSnapshot.key !== 'noty_publick') {
-                        const userId = childSnapshot.key;
-                        const userNotificationId = database.ref().child('notifications').push().key;
-                        const userNotificationData = {
-                            message: message,
-                            created_at: Date.now(),
-                            is_public: true,
-                            public_notification_id: publicNotificationId
-                        };
-                        
-                        updatePromises.push(
-                            database.ref(`users_Awn/${userId}/notu_user/${userNotificationId}`).set(userNotificationData)
-                        );
-                    }
-                });
-                
-                await Promise.all(updatePromises);
                 elements.publicNotificationInput.value = '';
-                showNotification('تم', 'تم إرسال الإشعار العام لجميع المستخدمين', 'success');
+                showNotification('تم', 'تم إرسال الإشعار العام', 'success');
+                
+                // تحديث قائمة المستخدمين لرؤية الإشعارات الجديدة
                 loadAllUsers();
             } catch (error) {
                 console.error('Error sending public notification:', error);
@@ -2114,9 +2117,11 @@
         }
 
         function showNotification(title, message, type = 'info') {
+            // إذا كان هناك إشعار بالفعل، نزيله أولاً
             if (currentNotification) {
                 clearTimeout(notificationTimeout);
                 currentNotification.remove();
+                currentNotification = null;
             }
             
             const notification = document.createElement('div');
@@ -2147,17 +2152,26 @@
             
             setTimeout(() => notification.classList.add('show'), 10);
             
+            // إخفاء الإشعار بعد 4 ثواني
             notificationTimeout = setTimeout(() => {
                 notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 500);
-                currentNotification = null;
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                    currentNotification = null;
+                }, 500);
             }, 4000);
             
             notification.querySelector('.notification-close').addEventListener('click', () => {
                 clearTimeout(notificationTimeout);
                 notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 500);
-                currentNotification = null;
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                    currentNotification = null;
+                }, 500);
             });
             
             setupNotificationDrag(notification);
@@ -2210,10 +2224,15 @@
                 const deltaX = startX - e.clientX;
                 const deltaY = e.clientY - startY;
                 
+                // السماح بالتحريك أفقيًا فقط (يمين/شمال)
                 notification.style.right = `${initialX + deltaX}px`;
-                notification.style.top = `${initialY + deltaY}px`;
+                // لا نغير الـ top للمستخدم العادي، يمكن للمسؤول فقط تحريك لأعلى ولأسفل
+                if (isAdmin) {
+                    notification.style.top = `${initialY + deltaY}px`;
+                }
                 
-                if (Math.abs(deltaX) > 100 || Math.abs(deltaY) > 100) {
+                // إذا تم سحب الإشعار خارج الشاشة بشكل كبير (أكثر من 100px)، نقوم بإغلاقه
+                if (Math.abs(deltaX) > 100) {
                     closeNotification();
                 }
             }
@@ -2225,10 +2244,15 @@
                 const deltaX = startX - e.touches[0].clientX;
                 const deltaY = e.touches[0].clientY - startY;
                 
+                // السماح بالتحريك أفقيًا فقط (يمين/شمال)
                 notification.style.right = `${initialX + deltaX}px`;
-                notification.style.top = `${initialY + deltaY}px`;
+                // لا نغير الـ top للمستخدم العادي، يمكن للمسؤول فقط تحريك لأعلى ولأسفل
+                if (isAdmin) {
+                    notification.style.top = `${initialY + deltaY}px`;
+                }
                 
-                if (Math.abs(deltaX) > 100 || Math.abs(deltaY) > 100) {
+                // إذا تم سحب الإشعار خارج الشاشة بشكل كبير (أكثر من 100px)، نقوم بإغلاقه
+                if (Math.abs(deltaX) > 100) {
                     closeNotification();
                 }
             }
@@ -2241,6 +2265,7 @@
                 document.removeEventListener('touchend', stopDrag);
                 notification.style.cursor = 'grab';
                 
+                // إعادة الإشعار إلى مكانه الأصلي
                 setTimeout(() => {
                     notification.style.transition = 'right 0.3s ease, top 0.3s ease';
                     notification.style.right = '20px';
@@ -2258,29 +2283,41 @@
                 notification.classList.remove('show');
                 
                 setTimeout(() => {
-                    notification.remove();
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
                     currentNotification = null;
                 }, 500);
             }
         }
 
-        async function checkForNotifications() {
-            if (!currentUser || !currentUser.id) return;
+        // عند تحميل الصفحة، نتحقق من وجود إشعارات للمستخدم العادي
+        async function checkExistingNotifications() {
+            if (!currentUser || !currentUser.id || isAdmin) return;
             
             try {
-                const snapshot = await database.ref(`users_Awn/${currentUser.id}/notu_user`).once('value');
-                
-                if (snapshot.exists()) {
-                    snapshot.forEach((childSnapshot) => {
-                        const notification = childSnapshot.val();
-                        if (!notification.read) {
-                            showNotification('إشعار جديد', notification.message, 'info');
-                            database.ref(`users_Awn/${currentUser.id}/notu_user/${childSnapshot.key}/read`).set(true);
-                        }
+                // التحقق من الإشعارات العامة
+                const publicSnap = await database.ref('users_Awn/noty_publick').once('value');
+                if (publicSnap.exists()) {
+                    const publicNotifications = publicSnap.val();
+                    Object.values(publicNotifications).forEach((notification, index) => {
+                        // إظهار الإشعارات العامة بعد فترة زمنية صغيرة
+                        setTimeout(() => {
+                            showNotification('إشعار عام', notification, 'info');
+                        }, index * 1000); // تأخير 1 ثانية بين كل إشعار
                     });
                 }
+                
+                // التحقق من الإشعارات الشخصية
+                const userSnap = await database.ref(`users_Awn/${currentUser.id}/noty_user`).once('value');
+                if (userSnap.exists()) {
+                    const userNotification = userSnap.val();
+                    setTimeout(() => {
+                        showNotification('إشعار شخصي', userNotification, 'info');
+                    }, Object.keys(publicSnap.val() || {}).length * 1000);
+                }
             } catch (error) {
-                console.error('Error checking notifications:', error);
+                console.error('Error checking existing notifications:', error);
             }
         }
 
@@ -2346,8 +2383,7 @@
                         await loadAllUsers();
                     } else {
                         setupUserEventListeners();
-                        checkForNotifications();
-                        setInterval(checkForNotifications, 30000);
+                        checkExistingNotifications();
                     }
                     
                     // إخفاء شاشة التحميل
@@ -2368,6 +2404,11 @@
         history.pushState(null, null, window.location.href);
         window.addEventListener('popstate', function(event) {
             history.pushState(null, null, window.location.href);
+        });
+
+        // إيقاف مراقبة الإشعارات عند مغادرة الصفحة
+        window.addEventListener('beforeunload', function() {
+            stopMonitoringNotifications();
         });
 
         document.addEventListener('DOMContentLoaded', initApp);
