@@ -2,81 +2,56 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>عَون - لوحة التحكم</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عَون - المنصة التعليمية</title>
     
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        :root {
-            --bg-color: #F8FAFC;
-            --card-color: #FFFFFF;
-            --text-primary: #1E293B;
-            --text-secondary: #64748B;
-            --accent-dark: #0F172A;
-            --black-gradient: linear-gradient(145deg, #0F172A, #1E293B);
-            --border-radius: 24px;
-            --border-radius-large: 32px;
-            --navbar-height: 80px;
-            --transition-quick: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --admin-color: #DC2626;
         }
         
         body {
-            font-family: 'Almarai', 'Tajawal', -apple-system, sans-serif;
-            background: var(--bg-color);
-            color: var(--text-primary);
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
-            direction: rtl;
-            -webkit-font-smoothing: antialiased;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Tajawal', sans-serif;
         }
-        
-        .loading-screen {
+
+        #loadingScreen {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--bg-color);
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            z-index: 99999;
-            transition: opacity 0.5s ease;
-        }
-        
-        .loading-logo {
-            font-family: 'Almarai', sans-serif;
-            font-weight: 900;
-            font-size: 64px;
-            background: linear-gradient(145deg, #0F172A, #334155);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 30px;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
         
         .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(15, 23, 42, 0.1);
-            border-left-color: var(--accent-dark);
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            border-top-color: #1e293b;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
             margin-bottom: 20px;
         }
         
@@ -84,1397 +59,598 @@
             to { transform: rotate(360deg); }
         }
         
-        .loading-text {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: 1.2rem;
-        }
-        
-        .notification-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 99998;
-            max-width: 400px;
+        .glass-container {
             width: 100%;
-        }
-        
-        .notification {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            border: 3px solid var(--accent-dark);
-            transform: translateX(120%);
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 12px;
-            cursor: grab;
-            font-size: 0.85rem;
-            opacity: 0;
-        }
-        
-        .notification.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        
-        .notification-content {
-            flex: 1;
-        }
-        
-        .notification-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 0.95rem;
-            font-weight: 800;
-            color: var(--accent-dark);
-            margin-bottom: 6px;
-        }
-        
-        .notification-message {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            line-height: 1.5;
-        }
-        
-        .notification-close {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: var(--transition-quick);
-            padding: 4px;
-        }
-        
-        .notification-close:hover {
-            color: var(--admin-color);
-            transform: rotate(90deg);
-        }
-        
-        .native-navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--navbar-height);
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: saturate(200%) blur(30px);
-            -webkit-backdrop-filter: saturate(200%) blur(30px);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 28px;
-            z-index: 10000;
-            border-bottom: 2px solid rgba(15, 23, 42, 0.1);
-            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
-            margin: 0 20px;
-            top: 15px;
-            width: calc(100% - 40px);
-            border: 3px solid #0F172A;
+            max-width: 480px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border-radius: 28px;
+            padding: 40px 35px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: containerAppear 0.6s ease-out;
+            opacity: 0;
+            transform: translateY(20px);
+            animation-fill-mode: forwards;
         }
         
-        .logo {
-            font-family: 'Almarai', sans-serif;
-            font-weight: 900;
-            font-size: 42px;
-            background: linear-gradient(145deg, #0F172A, #334155);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -1.5px;
+        @keyframes containerAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .logo-image {
+            width: 240px;
+            height: 240px;
+            margin: 0 auto 20px;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+            background: transparent;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        
+        .logo-image:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .welcome-text {
+            display: none;
+        }
+        
+        .alert {
+            padding: 16px 20px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            display: none;
+            animation: slideDown 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .alert-error {
+            background: rgba(239, 68, 68, 0.08);
+            color: #dc2626;
+            border-color: rgba(220, 38, 38, 0.1);
+        }
+        
+        .alert-success {
+            background: rgba(34, 197, 94, 0.08);
+            color: #16a34a;
+            border-color: rgba(22, 163, 74, 0.1);
+        }
+        
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.08);
+            color: #d97706;
+            border-color: rgba(217, 119, 6, 0.1);
+        }
+        
+        .banned-container {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+        
+        .banned-icon {
+            font-size: 4rem;
+            color: #dc2626;
+            margin-bottom: 25px;
+            animation: shake 1.5s ease infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .banned-icon i {
+            filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.3));
+        }
+        
+        .support-link {
+            color: #3b82f6;
+            text-decoration: underline;
             cursor: pointer;
-            transition: var(--transition-quick);
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
         
-        .logo:hover {
-            transform: scale(1.05);
+        .support-link:hover {
+            color: #1d4ed8;
+            text-decoration: none;
         }
         
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .admin-badge {
-            background: linear-gradient(145deg, var(--admin-color), #B91C1C);
+        .btn-new-account {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
-            padding: 12px 24px;
-            border-radius: 20px;
-            font-weight: 900;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 8px 24px rgba(220, 38, 38, 0.2);
-            border: 3px solid var(--admin-color);
-            letter-spacing: -0.5px;
-        }
-        
-        .admin-badge i {
-            font-size: 18px;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-        }
-        
-        .user-nav-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .coins-display {
-            background: var(--black-gradient);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 20px;
-            font-weight: 800;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
-            border: 3px solid #0F172A;
-            transition: var(--transition-quick);
-        }
-        
-        .coins-display:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.3);
-        }
-        
-        .coins-display i {
-            font-size: 18px;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-        }
-        
-        .settings-btn {
-            width: 52px;
-            height: 52px;
-            border-radius: 18px;
-            background: white;
-            border: 3px solid #0F172A;
+            border: none;
+            border-radius: 16px;
+            padding: 16px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-top: 20px;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-new-account:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+        }
+        
+        .btn-new-account:active {
+            transform: translateY(0);
+        }
+        
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 18px 24px;
+            border: none;
+            border-radius: 18px;
+            font-size: 1.05rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: var(--transition-quick);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.2px;
         }
         
-        .settings-btn i {
-            font-size: 24px;
-            color: #0F172A;
-            transition: var(--transition-quick);
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
         }
         
-        .settings-btn:hover {
-            transform: translateY(-3px) rotate(15deg);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-            background: var(--black-gradient);
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
         }
         
-        .settings-btn:hover i {
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: buttonSpin 0.8s linear infinite;
+        }
+        
+        @keyframes buttonSpin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: white;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(30, 41, 59, 0.2);
+        }
+        
+        .btn-login:hover:not(:disabled) {
+            background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(30, 41, 59, 0.3);
+        }
+        
+        .btn-login:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(30, 41, 59, 0.2);
+        }
+        
+        .btn-google {
+            background: white;
+            color: #1e293b;
+            border: 2px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            padding: 17px 24px;
+        }
+        
+        .btn-google:hover:not(:disabled) {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .btn-google:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .google-icon {
+            font-size: 1.3rem;
+            margin-left: 12px;
+            color: #4285F4;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn-google:hover .google-icon {
             transform: scale(1.1);
         }
         
-        .settings-menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 20000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        .btn-back {
+            background: transparent;
+            color: #64748b;
+            border: 2px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            font-weight: 600;
         }
         
-        .settings-menu.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .menu-content {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border-radius: var(--border-radius-large);
-            width: 92%;
-            max-width: 450px;
-            padding: 36px;
-            transform: translateY(50px) scale(0.95);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.25);
-            border: 4px solid #0F172A;
-        }
-        
-        .settings-menu.active .menu-content {
-            transform: translateY(0) scale(1);
-        }
-        
-        .menu-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 36px;
-            padding-bottom: 24px;
-            border-bottom: 3px solid rgba(15, 23, 42, 0.12);
-        }
-        
-        .menu-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 32px;
-            font-weight: 900;
-            color: #0F172A;
-            letter-spacing: -1px;
-        }
-        
-        .close-menu {
-            width: 52px;
-            height: 52px;
-            border-radius: 18px;
-            background: rgba(15, 23, 42, 0.1);
-            border: 3px solid #0F172A;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition-quick);
-        }
-        
-        .close-menu:hover {
-            transform: rotate(90deg);
-            background: #0F172A;
-        }
-        
-        .close-menu:hover i {
-            color: white;
-        }
-        
-        .menu-options {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-        
-        .menu-option {
-            background: rgba(255, 255, 255, 0.9);
-            border: 3px solid #0F172A;
-            border-radius: var(--border-radius);
-            padding: 24px;
-            text-align: right;
-            font-family: 'Almarai', sans-serif;
-            font-size: 18px;
-            font-weight: 800;
-            color: #0F172A;
-            cursor: pointer;
-            transition: var(--transition-quick);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-        }
-        
-        .menu-option:hover {
-            transform: translateX(-15px);
-            background: var(--black-gradient);
-            color: white;
-            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.25);
-        }
-        
-        .menu-option.current {
-            background: var(--black-gradient);
-            color: white;
-            border-color: #0F172A;
-        }
-        
-        .main-content {
-            padding-top: calc(var(--navbar-height) + 60px);
-            padding-left: 28px;
-            padding-right: 28px;
-            padding-bottom: 100px;
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-        
-        .admin-panel {
-            display: none;
-        }
-        
-        .admin-header {
-            text-align: center;
-            margin-bottom: 50px;
-            animation: fadeIn 0.8s ease-out;
-        }
-        
-        .admin-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 3rem;
-            font-weight: 900;
-            margin-bottom: 20px;
-            color: var(--admin-color);
-            letter-spacing: -2px;
-            line-height: 1.2;
-        }
-        
-        .admin-subtitle {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1.3rem;
-            color: var(--text-secondary);
-            max-width: 900px;
-            margin: 0 auto;
-            line-height: 1.7;
-            font-weight: 500;
-        }
-        
-        .search-section {
-            background: white;
-            border-radius: var(--border-radius-large);
-            padding: 30px;
-            margin-bottom: 40px;
-            border: 4px solid var(--accent-dark);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
-        }
-        
-        .search-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--accent-dark);
-            margin-bottom: 20px;
-        }
-        
-        .search-input-group {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .search-input {
-            flex: 1;
-            padding: 15px 20px;
-            border: 3px solid var(--accent-dark);
-            border-radius: var(--border-radius);
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
-            transition: var(--transition-quick);
-        }
-        
-        .search-input:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+        .btn-back:hover:not(:disabled) {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: #1e293b;
             transform: translateY(-2px);
         }
         
-        .search-btn {
-            background: var(--black-gradient);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 0 30px;
-            font-family: 'Almarai', sans-serif;
-            font-size: 1rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: var(--transition-quick);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-width: 120px;
-            justify-content: center;
+        .btn-back:active:not(:disabled) {
+            transform: translateY(0);
         }
         
-        .search-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.25);
-        }
-        
-        .search-hint {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-style: italic;
-        }
-        
-        .admin-controls {
-            background: white;
-            border-radius: var(--border-radius-large);
-            padding: 30px;
-            margin-bottom: 40px;
-            border: 4px solid var(--accent-dark);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .control-group {
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .control-label {
-            display: block;
-            font-family: 'Almarai', sans-serif;
+        .btn-icon {
+            margin-left: 10px;
             font-size: 1.1rem;
-            font-weight: 800;
-            color: var(--accent-dark);
-            margin-bottom: 10px;
+            transition: transform 0.3s ease;
         }
         
-        .control-input {
-            width: 100%;
-            padding: 14px 18px;
-            border: 3px solid var(--accent-dark);
-            border-radius: var(--border-radius);
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1rem;
-            transition: var(--transition-quick);
+        .btn:hover .btn-icon {
+            transform: translateX(-3px);
         }
         
-        .control-input:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+        .section-hide {
+            animation: fadeOut 0.3s ease forwards;
         }
         
-        .control-btn {
-            background: var(--black-gradient);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 14px 28px;
-            font-family: 'Almarai', sans-serif;
-            font-size: 1rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: var(--transition-quick);
-            margin-top: 25px;
-            width: 100%;
+        .section-show {
+            animation: fadeIn 0.4s ease 0.3s forwards;
+            opacity: 0;
         }
         
-        .control-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.25);
-        }
-        
-        .control-btn.admin {
-            background: linear-gradient(145deg, var(--admin-color), #B91C1C);
-            border: 3px solid var(--admin-color);
-        }
-        
-        .users-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 25px;
-            margin-bottom: 50px;
-        }
-        
-        .user-card {
-            background: white;
-            border-radius: var(--border-radius-large);
-            padding: 25px;
-            border: 4px solid var(--accent-dark);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
-            transition: var(--transition-quick);
-        }
-        
-        .user-card.banned {
-            border-color: var(--admin-color);
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(252, 232, 232, 0.95));
-        }
-        
-        .user-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
-        }
-        
-        .user-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid rgba(15, 23, 42, 0.1);
-        }
-        
-        .user-name {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: var(--accent-dark);
-        }
-        
-        .user-badge {
-            background: var(--admin-color);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            display: none;
-        }
-        
-        .user-card.banned .user-badge {
-            display: block;
-        }
-        
-        .user-info {
-            margin-bottom: 20px;
-        }
-        
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        
-        .info-label {
-            font-family: 'Almarai', sans-serif;
-            font-weight: 700;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-        
-        .info-value {
-            font-family: 'Tajawal', sans-serif;
-            font-weight: 500;
-            color: var(--accent-dark);
-            font-size: 0.9rem;
-            direction: ltr;
-            text-align: left;
-        }
-        
-        .copy-btn {
-            background: var(--black-gradient);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 7px 12px;
-            font-family: 'Almarai', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition-quick);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .copy-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
-        }
-        
-        .user-notifications {
-            margin: 15px 0;
-            padding: 15px;
-            background: rgba(15, 23, 42, 0.05);
-            border-radius: 16px;
-            border: 2px solid rgba(15, 23, 42, 0.1);
-        }
-        
-        .user-notifications-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1rem;
-            font-weight: 800;
-            color: var(--accent-dark);
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .notification-item {
-            background: white;
-            border-radius: 12px;
-            padding: 10px 12px;
-            margin-bottom: 8px;
-            border: 2px solid rgba(15, 23, 42, 0.1);
-            font-size: 0.8rem;
-        }
-        
-        .notification-message-text {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-primary);
-            margin-bottom: 5px;
-        }
-        
-        .notification-date {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            direction: ltr;
-            text-align: left;
-        }
-        
-        .user-referrals {
-            margin: 15px 0;
-            padding: 15px;
-            background: rgba(15, 23, 42, 0.05);
-            border-radius: 16px;
-            border: 2px solid rgba(15, 23, 42, 0.1);
-        }
-        
-        .user-referrals-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1rem;
-            font-weight: 800;
-            color: var(--accent-dark);
-            margin-bottom: 10px;
-        }
-        
-        .referral-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-            border-radius: 12px;
-            padding: 8px 12px;
-            margin-bottom: 8px;
-            border: 2px solid rgba(15, 23, 42, 0.1);
-            font-size: 0.85rem;
-        }
-        
-        .referral-label {
-            font-family: 'Almarai', sans-serif;
-            font-weight: 700;
-            color: var(--text-secondary);
-        }
-        
-        .referral-id {
-            font-family: 'Tajawal', sans-serif;
-            font-weight: 500;
-            color: var(--accent-dark);
-            direction: ltr;
-            text-align: left;
-        }
-        
-        .user-actions {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 20px;
-        }
-        
-        .action-btn {
-            padding: 11px;
-            border: none;
-            border-radius: var(--border-radius);
-            font-family: 'Almarai', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: var(--transition-quick);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .ban-btn {
-            background: linear-gradient(145deg, var(--admin-color), #B91C1C);
-            color: white;
-            border: 3px solid var(--admin-color);
-        }
-        
-        .unban-btn {
-            background: linear-gradient(145deg, #059669, #047857);
-            color: white;
-            border: 3px solid #059669;
-        }
-        
-        .coins-btn {
-            background: var(--black-gradient);
-            color: white;
-            border: 3px solid var(--accent-dark);
-        }
-        
-        .notify-btn {
-            background: linear-gradient(145deg, #7C3AED, #6D28D9);
-            color: white;
-            border: 3px solid #7C3AED;
-        }
-        
-        .action-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-        }
-        
-        .public-notification-section {
-            background: white;
-            border-radius: var(--border-radius-large);
-            padding: 30px;
-            margin-bottom: 40px;
-            border: 4px solid var(--accent-dark);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
-        }
-        
-        .public-notification-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--accent-dark);
-            margin-bottom: 20px;
-        }
-        
-        .user-content {
-            display: none;
-        }
-        
-        .welcome-section {
-            text-align: center;
-            margin-bottom: 70px;
-            animation: fadeIn 0.8s ease-out;
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
-        .welcome-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 3rem;
-            font-weight: 900;
-            margin-bottom: 20px;
-            color: #0F172A;
-            letter-spacing: -2px;
-            line-height: 1.2;
+        .google-section {
+            text-align: center;
         }
         
-        .welcome-subtitle {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1.3rem;
-            color: #64748B;
-            max-width: 900px;
-            margin: 0 auto;
-            line-height: 1.7;
-            font-weight: 500;
-        }
-        
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 32px;
-        }
-        
-        .service-card {
-            background: white;
-            border-radius: var(--border-radius-large);
-            padding: 36px 32px;
-            transition: var(--transition-quick);
-            cursor: pointer;
-            border: 4px solid #0F172A;
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        
-        .service-card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.15);
-        }
-        
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border: 4px solid transparent;
-            border-radius: var(--border-radius-large);
-            background: linear-gradient(145deg, #0F172A, #1E293B) border-box;
-            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-        }
-        
-        .service-content {
-            display: flex;
-            align-items: flex-start;
-            gap: 24px;
-            flex: 1;
-        }
-        
-        .service-icon {
-            width: 72px;
-            height: 72px;
-            background: var(--black-gradient);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            border: 3px solid #0F172A;
-            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
-        }
-        
-        .service-icon i {
-            font-size: 30px;
-            color: white;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-        }
-        
-        .service-details {
-            flex: 1;
-        }
-        
-        .service-name {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.9rem;
-            font-weight: 900;
-            color: #0F172A;
+        .google-section h2 {
+            font-size: 1.7rem;
+            color: #1e293b;
             margin-bottom: 10px;
-            letter-spacing: -0.5px;
-            line-height: 1.3;
+            font-weight: 700;
+            letter-spacing: -0.3px;
         }
         
-        .service-description {
-            font-family: 'Tajawal', sans-serif;
-            color: #64748B;
-            font-size: 1.1rem;
-            line-height: 1.8;
+        .google-section p {
+            color: #64748b;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 35px;
+        }
+        
+        .form-container {
+            display: none;
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .form-header h2 {
+            font-size: 1.7rem;
+            color: #1e293b;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        
+        .form-header p {
+            color: #64748b;
+            font-size: 1rem;
+            line-height: 1.5;
+            max-width: 90%;
+            margin: 0 auto;
+        }
+        
+        .email-display {
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 18px;
+            margin-bottom: 30px;
+            border: 2px solid #e2e8f0;
+            position: relative;
+        }
+        
+        .email-label {
+            display: block;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        
+        .email-value {
+            text-align: center;
+            color: #1e293b;
+            font-size: 1.05rem;
+            font-weight: 700;
+            word-break: break-all;
+            direction: ltr;
+            padding: 0 10px;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.95rem;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            font-size: 0.95rem;
+            color: #1e293b;
+            transition: all 0.3s ease;
             font-weight: 500;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #94a3b8;
+            box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.15);
+        }
+        
+        .input-field::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+        }
+        
+        .optional-badge {
+            background: #f1f5f9;
+            color: #64748b;
+            font-size: 0.8rem;
+            padding: 5px 12px;
+            border-radius: 10px;
+            margin-right: 10px;
+            font-weight: 600;
+            display: inline-block;
+            border: 1px solid #e2e8f0;
         }
         
         .footer {
             text-align: center;
-            padding: 60px 28px 40px;
-            color: #64748B;
-            border-top: 3px solid rgba(15, 23, 42, 0.1);
-            margin-top: 100px;
-        }
-        
-        .copyright {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1rem;
-            line-height: 1.8;
-            margin-bottom: 40px;
-            font-weight: 500;
-        }
-        
-        .support-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-        
-        .support-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: #0F172A;
-            margin-bottom: 8px;
-        }
-        
-        .support-links {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-        }
-        
-        .support-link {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            background: var(--black-gradient);
-            border: 3px solid #0F172A;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition-quick);
-            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
-        }
-        
-        .support-link:hover {
-            transform: translateY(-5px) scale(1.1);
-            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.25);
-        }
-        
-        .support-link i {
-            font-size: 26px;
-            color: white;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-        }
-        
-        .developer-credit {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
-            color: rgba(100, 116, 139, 0.7);
             margin-top: 30px;
+            color: #64748b;
+            font-size: 0.85rem;
+            border-top: 1px solid #e2e8f0;
             padding-top: 20px;
-            border-top: 2px solid rgba(15, 23, 42, 0.05);
-            cursor: pointer;
-            transition: var(--transition-quick);
+            line-height: 1.5;
         }
         
-        .developer-credit:hover {
-            color: #0F172A;
-            transform: scale(1.05);
-        }
-        
-        @media (max-width: 1200px) {
-            .services-grid, .users-grid {
-                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-                gap: 28px;
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .main-content {
-                padding-top: calc(var(--navbar-height) + 50px);
-                padding-left: 24px;
-                padding-right: 24px;
-                padding-bottom: 80px;
+        @media (max-width: 500px) {
+            body {
+                padding: 15px;
             }
             
-            .welcome-title, .admin-title {
-                font-size: 2.6rem;
+            .glass-container {
+                padding: 35px 25px;
+                border-radius: 24px;
+                max-width: 100%;
             }
             
-            .welcome-subtitle, .admin-subtitle {
-                font-size: 1.2rem;
+            .logo-image {
+                width: 200px;
+                height: 200px;
             }
             
-            .service-card {
-                padding: 32px 28px;
-            }
-            
-            .service-name {
-                font-size: 1.7rem;
-            }
-            
-            .user-card {
-                padding: 22px;
+            .btn {
+                padding: 16px 20px;
+                font-size: 1rem;
             }
         }
         
-        @media (max-width: 768px) {
-            .native-navbar {
-                padding: 0 24px;
-                margin: 0 16px;
-                top: 12px;
-                width: calc(100% - 32px);
-                height: 70px;
+        @media (max-width: 350px) {
+            .glass-container {
+                padding: 30px 20px;
             }
             
-            .logo {
-                font-size: 36px;
-            }
-            
-            .admin-badge, .coins-display {
-                padding: 10px 20px;
-                font-size: 15px;
-            }
-            
-            .settings-btn {
-                width: 48px;
-                height: 48px;
-            }
-            
-            .main-content {
-                padding-top: calc(70px + 40px);
-                padding-left: 20px;
-                padding-right: 20px;
-            }
-            
-            .services-grid, .users-grid {
-                grid-template-columns: 1fr;
-                gap: 24px;
-            }
-            
-            .service-content {
-                gap: 20px;
-            }
-            
-            .service-icon {
-                width: 64px;
-                height: 64px;
-            }
-            
-            .service-icon i {
-                font-size: 28px;
-            }
-            
-            .search-input-group {
-                flex-direction: column;
-            }
-            
-            .search-btn {
-                width: 100%;
-            }
-            
-            .admin-controls, .public-notification-section {
-                flex-direction: column;
-            }
-            
-            .control-group {
-                min-width: 100%;
-            }
-            
-            .menu-content {
-                padding: 32px 28px;
-                width: 95%;
-            }
-            
-            .menu-title {
-                font-size: 28px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .native-navbar {
-                padding: 0 20px;
-                margin: 0 12px;
-                top: 10px;
-                width: calc(100% - 24px);
-            }
-            
-            .logo {
-                font-size: 32px;
-            }
-            
-            .nav-right, .user-nav-right {
-                gap: 16px;
-            }
-            
-            .admin-badge, .coins-display {
-                padding: 8px 16px;
-                font-size: 14px;
-            }
-            
-            .main-content {
-                padding-left: 16px;
-                padding-right: 16px;
-            }
-            
-            .welcome-title, .admin-title {
-                font-size: 2.2rem;
-            }
-            
-            .welcome-subtitle, .admin-subtitle {
-                font-size: 1.1rem;
-            }
-            
-            .service-card, .search-section, .admin-controls, .public-notification-section {
-                padding: 28px 24px;
-            }
-            
-            .service-content {
-                flex-direction: column;
-                gap: 20px;
-                text-align: center;
-            }
-            
-            .service-icon {
-                margin: 0 auto;
-            }
-            
-            .service-name {
-                font-size: 1.6rem;
-            }
-            
-            .service-description {
-                font-size: 1.05rem;
-            }
-            
-            .user-card {
-                padding: 20px;
-            }
-            
-            .user-actions {
-                grid-template-columns: 1fr;
-            }
-            
-            .menu-option {
-                padding: 20px;
-                font-size: 16px;
-            }
-            
-            .support-links {
-                gap: 16px;
-            }
-            
-            .support-link {
-                width: 52px;
-                height: 52px;
-            }
-            
-            .support-link i {
-                font-size: 24px;
-            }
-        }
-        
-        @media (max-width: 400px) {
-            .admin-badge, .coins-display {
-                padding: 8px 14px;
-                font-size: 13px;
-            }
-            
-            .admin-badge i, .coins-display i {
-                font-size: 16px;
-            }
-            
-            .settings-btn {
-                width: 44px;
-                height: 44px;
-            }
-            
-            .settings-btn i {
-                font-size: 22px;
-            }
-            
-            .service-name {
-                font-size: 1.5rem;
-            }
-            
-            .user-card {
-                padding: 18px;
+            .logo-image {
+                width: 180px;
+                height: 180px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="loading-screen" id="loading-screen">
-        <div class="loading-logo">عَون</div>
+    
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
         <div class="loading-spinner"></div>
-        <div class="loading-text">جاري التحقق من الصلاحيات...</div>
+        <p style="color: #64748b; font-size: 0.95rem; margin-top: 15px; font-weight: 500;">جاري التحميل...</p>
     </div>
     
-    <div class="notification-container" id="notification-container"></div>
-    
-    <nav class="native-navbar" style="display: none;" id="navbar">
-        <div class="logo" id="logo">عَون</div>
-        <div class="nav-right" id="admin-nav">
-            <div class="admin-badge">
-                <i class="fas fa-crown"></i>
-                <span>Admin</span>
+    <!-- Main Container -->
+    <div class="glass-container" id="mainContainer" style="display: none;">
+        
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo-image">
+                <img src="https://i.ibb.co/rGpgBFBW/1000183766.png" alt="عَون" 
+                     onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%231e293b%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22sans-serif%22 font-size=%2240%22 fill=%22white%22>عَون</text></svg>';">
             </div>
         </div>
-        <div class="user-nav-right" id="user-nav">
-            <div class="coins-display">
-                <i class="fas fa-coins"></i>
-                <span id="coins-count">0</span>
+        
+        <!-- Alert Container -->
+        <div class="alert" id="alertMessage"></div>
+        
+        <!-- Banned User Container -->
+        <div class="banned-container" id="bannedContainer">
+            <div class="banned-icon">
+                <i class="fas fa-ban"></i>
             </div>
-            <button class="settings-btn" id="settings-btn">
-                <i class="fas fa-sliders-h"></i>
+            <h2 style="color: #dc2626; margin-bottom: 15px; font-size: 1.6rem; font-weight: 700;">حسابك محظور</h2>
+            <p style="color: #64748b; margin-bottom: 15px; line-height: 1.6; font-size: 1rem;">
+                عذرًا، تم تعطيل الوصول إلى حسابك في منصة عَون.
+            </p>
+            <p style="color: #64748b; margin-bottom: 25px; line-height: 1.6; font-size: 0.95rem;">
+                للاستفسار عن سبب الحظر أو للمساعدة، يمكنك التواصل مع 
+                <span class="support-link" id="supportLink">فريق الدعم الفني</span>
+            </p>
+            
+            <button class="btn-new-account" id="newAccountBtn">
+                <i class="fas fa-user-plus"></i>
+                <span>تسجيل حساب آخر</span>
             </button>
         </div>
-    </nav>
-    
-    <div class="settings-menu" id="settings-menu">
-        <div class="menu-content">
-            <div class="menu-header">
-                <h3 class="menu-title">الإعدادات</h3>
-                <button class="close-menu" id="close-menu">
-                    <i class="fas fa-times"></i>
-                </button>
+        
+        <!-- Login / Register Section -->
+        <div id="loginSection">
+            <button class="btn btn-login" id="loginRegisterBtn">
+                <span>تسجيل الدخول / إنشاء حساب</span>
+                <i class="btn-icon fas fa-sign-in-alt"></i>
+            </button>
+            
+            <div class="footer">
+                <p>بالنقر على الزر أعلاه، فأنت توافق على شروط الاستخدام وسياسة الخصوصية</p>
             </div>
-            <div class="menu-options">
-                <button class="menu-option current" id="home-btn">
-                    الرئيسية
-                    <i class="fas fa-home"></i>
-                </button>
-                <button class="menu-option" id="logs-btn">
-                    السجلات
-                    <i class="fas fa-history"></i>
-                </button>
-                <button class="menu-option" id="account-btn">
-                    حسابي
-                    <i class="fas fa-user"></i>
-                </button>
-                <button class="menu-option" id="referral-btn">
-                    احالاتي
-                    <i class="fas fa-users"></i>
-                </button>
-                <button class="menu-option" id="store-btn">
-                    متجر عَون
-                    <i class="fas fa-store"></i>
-                </button>
+        </div>
+        
+        <!-- Google Sign In Section -->
+        <div id="googleSection" style="display: none;">
+            <div class="google-section">
+                <h2>التسجيل بحساب جوجل</h2>
+                <p>منصة عَون المساعد التعليمي المدعوم بالذكاء الاصتناعي</p>
+            </div>
+            
+            <button class="btn btn-google" id="googleBtn">
+                <span>المتابعة بحساب Google</span>
+                <i class="google-icon fab fa-google"></i>
+            </button>
+            
+            <button class="btn btn-back" id="backBtn">
+                <span>رجوع</span>
+                <i class="btn-icon fas fa-arrow-right"></i>
+            </button>
+        </div>
+        
+        <!-- Registration Form -->
+        <div class="form-container" id="registrationForm">
+            <div class="form-header">
+                <h2>إكمال التسجيل</h2>
+                <p>أكمل بياناتك للبدء في استخدام عَون</p>
+            </div>
+            
+            <div class="email-display">
+                <div class="email-label">البريد الإلكتروني المسجل</div>
+                <div class="email-value" id="userEmail"></div>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label" for="name">اسم المستخدم</label>
+                <input type="text" id="name" class="input-field" placeholder="ادخل اسم مستخدم من 3 إلى 15 حرف">
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label" for="referral">
+                    <span>كود الإحالة</span>
+                    <span class="optional-badge">اختياري</span>
+                </label>
+                <input type="text" id="referral" class="input-field" placeholder="ادخل كود الإحالة المكون من 6 أرقام">
+                <small style="display: block; margin-top: 8px; color: #64748b; font-size: 0.85rem;">
+                    باستخدام كود إحالة ستحصل على 25 عملة بدلاً من 20، وصاحب الكود يحصل على 5 عملات إضافية
+                </small>
+            </div>
+            
+            <button class="btn btn-login" id="continueBtn">
+                <span>متابعة وتسجيل الدخول</span>
+                <i class="btn-icon fas fa-arrow-left"></i>
+            </button>
+            
+            <div class="footer">
+                <p>يتم منح 20 عملة عند التسجيل، و25 عملة عند استخدام كود إحالة صحيح</p>
             </div>
         </div>
     </div>
-    
-    <div class="main-content" style="display: none;" id="main-content">
-        <div class="admin-panel" id="admin-panel">
-            <section class="admin-header">
-                <h1 class="admin-title">لوحة تحكم المسؤول</h1>
-                <p class="admin-subtitle">إدارة المستخدمين والإشعارات وعرض إحصائيات النظام</p>
-            </section>
-            
-            <section class="search-section">
-                <h2 class="search-title">البحث عن مستخدم</h2>
-                <div class="search-input-group">
-                    <input type="text" class="search-input" id="search-input" placeholder="اسم، بريد، أو ID">
-                    <button class="search-btn" id="search-btn">
-                        <i class="fas fa-search"></i>
-                        بحث
-                    </button>
-                </div>
-                <p class="search-hint">يمكنك البحث بأي من المعلومات التالية: الاسم الكامل، البريد الإلكتروني، أو معرف المستخدم</p>
-            </section>
-            
-            <section class="admin-controls">
-                <div class="control-group">
-                    <label class="control-label">عرض جميع المستخدمين</label>
-                    <button class="control-btn" id="load-all-users-btn">
-                        <i class="fas fa-users"></i>
-                        عرض جميع المستخدمين
-                    </button>
-                </div>
-            </section>
-            
-            <div class="users-grid" id="users-grid"></div>
-            
-            <section class="public-notification-section">
-                <h2 class="public-notification-title">الإشعار العام</h2>
-                <input type="text" class="control-input" id="public-notification-input" placeholder="أدخل نص الإشعار العام">
-                <button class="control-btn admin" id="send-public-notification-btn">
-                    <i class="fas fa-bullhorn"></i>
-                    إرسال إشعار عام
-                </button>
-            </section>
-        </div>
-        
-        <div class="user-content" id="user-content">
-            <section class="welcome-section">
-                <h1 class="welcome-title">خدمات منصة عَون الذكية</h1>
-                <p class="welcome-subtitle">مجموعة متكاملة من أدوات الذكاء الاصطناعي المتقدمة لتحويل محتوى PDF إلى تجربة تعليمية استثنائية</p>
-            </section>
-            
-            <section class="services-grid">
-                <div class="service-card" data-service="summary">
-                    <div class="service-content">
-                        <div class="service-icon">
-                            <i class="fas fa-file-contract"></i>
-                        </div>
-                        <div class="service-details">
-                            <h3 class="service-name">تلخيص</h3>
-                            <p class="service-description">قرائنة محتوى PDF وتلخيصه باستخدام أقوى نماذج الذكاء الاصطناعي المتطورة</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="service-card" data-service="flashcard">
-                    <div class="service-content">
-                        <div class="service-icon">
-                            <i class="fas fa-layer-group"></i>
-                        </div>
-                        <div class="service-details">
-                            <h3 class="service-name">فلاش كارد</h3>
-                            <p class="service-description">إنشاء أسئلة بنظام الفلاش كارد مع شرح تفصيلي ومبسط لكل سؤال وجواب</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="service-card" data-service="translate">
-                    <div class="service-content">
-                        <div class="service-icon">
-                            <i class="fas fa-language"></i>
-                        </div>
-                        <div class="service-details">
-                            <h3 class="service-name">ترجمة PDF</h3>
-                            <p class="service-description">ترجمة جميع أنواع PDF بأي لغة في العالم مع الحفاظ على التنسيق والمحتوى الأصلي</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="service-card" data-service="chat">
-                    <div class="service-content">
-                        <div class="service-icon">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div class="service-details">
-                            <h3 class="service-name">شات بوت</h3>
-                            <p class="service-description">تواصل مع مساعد عَون المدعوم بالذكاء الاصطناعي للإجابة على جميع أسئلتك حول محتوى ملف PDF</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="service-card" data-service="map">
-                    <div class="service-content">
-                        <div class="service-icon">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <div class="service-details">
-                            <h3 class="service-name">خريطة ذهنية</h3>
-                            <p class="service-description">إنشاء خريطة ذهنية تساعدك على فهم محتوى PDF وترتيب المعلومات بدقة عالية</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="service-card" data-service="question">
-                    <div class="service-content">
-                        <div class="service-icon">
-                            <i class="fas fa-question-circle"></i>
-                        </div>
-                        <div class="service-details">
-                            <h3 class="service-name">توليد الأسئلة</h3>
-                            <p class="service-description">تصميم أسئلة متنوعة تشمل الاختيار من متعدد، الصح والخطأ، والأسئلة المقالية، بمستويات صعوبة مختلفة</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="service-card" data-service="plan">
-                    <div class="service-content">
-                        <div class="service-icon">
-                            <i class="fas fa-calendar-alt"></i>
-                        </div>
-                        <div class="service-details">
-                            <h3 class="service-name">خطة مذاكرة</h3>
-                            <p class="service-description">إنشاء خطة مذاكرة لملف PDF مرتبة حسب الأهمية، معتمداً على تحليل دقيق باستخدام الذكاء الاصطناعي</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-        <footer class="footer">
-            <p class="copyright">جميع الحقوق محفوظة لمنصة عَون© 2026</p>
-            
-            <div class="support-section">
-                <div class="support-title">تواصل مع الدعم الفني</div>
-                <div class="support-links">
-                    <a href="https://wa.me/966583617539" target="_blank" class="support-link">
-                        <i class="fab fa-whatsapp"></i>
-                    </a>
-                    <a href="https://t.me/HNHv1" target="_blank" class="support-link">
-                        <i class="fab fa-telegram"></i>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="developer-credit" id="developer-credit">
-                برمجة وتصميم المطور 𝐊𝐈𝐌𝐎
-            </div>
-        </footer>
-    </div>
-    
+
     <script>
+        /* Firebase Configuration */
         firebase.initializeApp({
             apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
             authDomain: "marvel1-654dd.firebaseapp.com",
@@ -1486,688 +662,445 @@
         });
 
         const auth = firebase.auth();
-        const database = firebase.database();
-        
-        const elements = {
-            loadingScreen: document.getElementById('loading-screen'),
-            navbar: document.getElementById('navbar'),
-            logo: document.getElementById('logo'),
-            adminNav: document.getElementById('admin-nav'),
-            userNav: document.getElementById('user-nav'),
-            settingsBtn: document.getElementById('settings-btn'),
-            settingsMenu: document.getElementById('settings-menu'),
-            closeMenu: document.getElementById('close-menu'),
-            coinsCount: document.getElementById('coins-count'),
-            homeBtn: document.getElementById('home-btn'),
-            logsBtn: document.getElementById('logs-btn'),
-            accountBtn: document.getElementById('account-btn'),
-            referralBtn: document.getElementById('referral-btn'),
-            storeBtn: document.getElementById('store-btn'),
-            developerCredit: document.getElementById('developer-credit'),
-            adminPanel: document.getElementById('admin-panel'),
-            userContent: document.getElementById('user-content'),
-            mainContent: document.getElementById('main-content'),
-            searchInput: document.getElementById('search-input'),
-            searchBtn: document.getElementById('search-btn'),
-            usersGrid: document.getElementById('users-grid'),
-            publicNotificationInput: document.getElementById('public-notification-input'),
-            sendPublicNotificationBtn: document.getElementById('send-public-notification-btn'),
-            loadAllUsersBtn: document.getElementById('load-all-users-btn'),
-            notificationContainer: document.getElementById('notification-container')
-        };
-
+        const db = firebase.database();
         let currentUser = null;
-        let isAdmin = false;
-        let allUsers = [];
-        let currentNotification = null;
-        let notificationTimeout = null;
+        let userData = null;
 
-        function hideLoadingScreen() {
+        /* Helper Functions */
+        function showAlert(message, type = "error") {
+            const alertEl = document.getElementById("alertMessage");
+            alertEl.textContent = message;
+            alertEl.className = `alert alert-${type}`;
+            alertEl.style.display = "block";
+            
             setTimeout(() => {
-                elements.loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    elements.loadingScreen.style.display = 'none';
-                    elements.navbar.style.display = 'flex';
-                    elements.mainContent.style.display = 'block';
-                }, 500);
-            }, 500);
+                alertEl.style.display = "none";
+            }, 5000);
         }
 
-        async function loadUserData() {
+        function validName(name) {
+            if (name.length < 3 || name.length > 15) return false;
+            return /^[\u0600-\u06FFa-zA-Z0-9 ]+$/.test(name);
+        }
+
+        async function isNameUnique(name) {
             try {
-                const user = auth.currentUser;
-                if (!user) {
-                    window.location.href = 'login.html';
-                    return false;
-                }
-
-                const snapshot = await database.ref('users_Awn')
-                    .orderByChild('email')
-                    .equalTo(user.email)
-                    .once('value');
-
-                if (!snapshot.exists()) {
-                    await auth.signOut();
-                    window.location.href = 'login.html';
-                    return false;
-                }
-
-                snapshot.forEach((childSnapshot) => {
-                    const userData = childSnapshot.val();
-                    currentUser = { ...userData, id: childSnapshot.key };
-                    elements.coinsCount.textContent = userData.coin || 0;
-                    isAdmin = userData.admin === true;
-                });
-                
-                return true;
-                
+                const snap = await db.ref("users_Awn")
+                    .orderByChild("name")
+                    .equalTo(name)
+                    .once("value");
+                return !snap.exists();
             } catch (error) {
-                console.error('Error loading user data:', error);
+                console.error("Error checking name uniqueness:", error);
                 return false;
             }
         }
 
-        function setupUI() {
-            if (isAdmin) {
-                elements.adminNav.style.display = 'flex';
-                elements.userNav.style.display = 'none';
-                elements.adminPanel.style.display = 'block';
-                elements.userContent.style.display = 'none';
-                setupAdminEventListeners();
+        function generateId() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        async function generateUniqueId() {
+            let id, exists = true;
+            let attempts = 0;
+            while (exists && attempts < 10) {
+                id = generateId();
+                try {
+                    const snap = await db.ref("users_Awn/" + id).once("value");
+                    exists = snap.exists();
+                    attempts++;
+                } catch (error) {
+                    console.error("Error generating unique ID:", error);
+                    exists = true;
+                }
+            }
+            return id;
+        }
+
+        function setButtonLoading(buttonId, isLoading) {
+            const button = document.getElementById(buttonId);
+            if (isLoading) {
+                button.classList.add('btn-loading');
+                button.disabled = true;
             } else {
-                elements.adminNav.style.display = 'none';
-                elements.userNav.style.display = 'flex';
-                elements.adminPanel.style.display = 'none';
-                elements.userContent.style.display = 'block';
-                setupUserEventListeners();
+                button.classList.remove('btn-loading');
+                button.disabled = false;
             }
         }
 
-        function setupUserEventListeners() {
-            elements.settingsBtn.addEventListener('click', () => {
-                elements.settingsMenu.classList.add('active');
-            });
-
-            elements.closeMenu.addEventListener('click', () => {
-                elements.settingsMenu.classList.remove('active');
-            });
-
-            elements.settingsMenu.addEventListener('click', (e) => {
-                if (e.target === elements.settingsMenu) {
-                    elements.settingsMenu.classList.remove('active');
-                }
-            });
-
-            elements.homeBtn.addEventListener('click', (e) => {
-                elements.settingsMenu.classList.remove('active');
-                document.querySelectorAll('.menu-option').forEach(option => {
-                    option.classList.remove('current');
-                });
-                e.target.classList.add('current');
-            });
-
-            elements.logsBtn.addEventListener('click', () => {
-                elements.settingsMenu.classList.remove('active');
-                window.location.href = 'log.html';
-            });
-
-            elements.accountBtn.addEventListener('click', () => {
-                elements.settingsMenu.classList.remove('active');
-                window.location.href = 'account.html';
-            });
-
-            elements.referralBtn.addEventListener('click', () => {
-                elements.settingsMenu.classList.remove('active');
-                window.location.href = 'referral.html';
-            });
-
-            elements.storeBtn.addEventListener('click', () => {
-                elements.settingsMenu.classList.remove('active');
-                window.open('https://salla.sa/Aaw-2026', '_blank');
-            });
-
-            elements.logo.addEventListener('click', () => {
-                window.location.reload();
-            });
-
-            elements.developerCredit.addEventListener('click', () => {
-                window.open('https://t.me/X5Coder', '_blank');
-            });
-
-            const serviceCards = document.querySelectorAll('.service-card');
-            serviceCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    const service = this.getAttribute('data-service');
-                    const pageMap = {
-                        'summary': 'summary.html',
-                        'flashcard': 'Flashcard.html',
-                        'translate': 'translate.html',
-                        'chat': 'chat.html',
-                        'map': 'map.html',
-                        'question': 'Question.html',
-                        'plan': 'plan.html'
-                    };
-                    
-                    if (pageMap[service]) {
-                        window.location.href = pageMap[service];
+        /* نظام الإحالة الديناميكي - البحث عن آخر حقل ref وخلق التالي */
+        async function addToReferralChain(referrerId, newUserId, currentLevel = 1) {
+            try {
+                if (!referrerId) return;
+                
+                const refPath = `users_Awn/${referrerId}`;
+                const refSnap = await db.ref(refPath).once("value");
+                
+                if (!refSnap.exists()) return;
+                
+                const userData = refSnap.val();
+                
+                // البحث عن آخر حقل ref موجود
+                let lastRefField = null;
+                let lastRefLevel = 0;
+                
+                // البحث عن أعلى مستوى لـ ref موجود
+                for (let i = 1; i <= 1000; i++) { // حد أعلى آمن
+                    const fieldName = `ref${i}`;
+                    if (userData[fieldName] !== undefined) {
+                        lastRefField = fieldName;
+                        lastRefLevel = i;
+                    } else {
+                        break;
                     }
-                });
-            });
-        }
-
-        function setupAdminEventListeners() {
-            elements.searchBtn.addEventListener('click', searchUsers);
-            elements.searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') searchUsers();
-            });
-            
-            elements.sendPublicNotificationBtn.addEventListener('click', sendPublicNotification);
-            elements.loadAllUsersBtn.addEventListener('click', loadAllUsers);
-            
-            elements.developerCredit.addEventListener('click', () => {
-                window.open('https://t.me/X5Coder', '_blank');
-            });
-        }
-
-        async function loadAllUsers() {
-            try {
-                const snapshot = await database.ref('users_Awn').once('value');
-                allUsers = [];
+                }
                 
-                snapshot.forEach((childSnapshot) => {
-                    const user = childSnapshot.val();
-                    user.id = childSnapshot.key;
-                    allUsers.push(user);
+                let targetField;
+                
+                if (lastRefField) {
+                    // إذا كان هناك حقل ref آخر، نستخدم المستوى التالي
+                    targetField = `ref${lastRefLevel + 1}`;
+                } else {
+                    // إذا لم يكن هناك أي حقول ref، نبدأ من ref1
+                    targetField = `ref1`;
+                }
+                
+                // الحصول على القائمة الحالية (أو إنشاء قائمة جديدة)
+                const currentRefs = userData[targetField] || [];
+                
+                // إضافة ID المستخدم الجديد إلى القائمة
+                const updatedRefs = [...currentRefs, newUserId];
+                
+                // تحديث البيانات في قاعدة البيانات
+                await db.ref(refPath).update({
+                    [targetField]: updatedRefs
                 });
                 
-                displayUsers(allUsers);
+                console.log(`تم إضافة ${newUserId} إلى ${targetField} لـ ${referrerId}`);
+                
+                // البحث عن المستوى التالي في السلسلة (المستخدم الذي أحال هذا المستخدم)
+                const nextReferrerId = userData.referral_used;
+                if (nextReferrerId && nextReferrerId !== referrerId) {
+                    // استدعاء ذاتي للمستوى التالي
+                    await addToReferralChain(nextReferrerId, newUserId, currentLevel + 1);
+                }
+                
+                return true;
             } catch (error) {
-                console.error('Error loading users:', error);
-                showNotification('خطأ', 'فشل في تحميل المستخدمين', 'error');
+                console.error("Error adding to referral chain:", error);
+                return false;
             }
         }
 
-        function searchUsers() {
-            const searchTerm = elements.searchInput.value.trim().toLowerCase();
+        /* UI Functions */
+        function showSection(sectionId) {
+            document.getElementById("loginSection").style.display = "none";
+            document.getElementById("googleSection").style.display = "none";
+            document.getElementById("registrationForm").style.display = "none";
+            document.getElementById("bannedContainer").style.display = "none";
             
-            if (!searchTerm) {
-                loadAllUsers();
-                return;
-            }
-            
-            const filteredUsers = allUsers.filter(user => {
-                return (
-                    (user.name && user.name.toLowerCase().includes(searchTerm)) ||
-                    (user.email && user.email.toLowerCase().includes(searchTerm)) ||
-                    (user.id && user.id.toLowerCase().includes(searchTerm))
-                );
-            });
-            
-            displayUsers(filteredUsers);
+            document.getElementById(sectionId).style.display = "block";
         }
 
-        function displayUsers(users) {
-            elements.usersGrid.innerHTML = '';
+        function animateSectionTransition(fromSectionId, toSectionId) {
+            const fromSection = document.getElementById(fromSectionId);
+            const toSection = document.getElementById(toSectionId);
             
-            if (users.length === 0) {
-                elements.usersGrid.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-secondary);">
-                        <i class="fas fa-users" style="font-size: 48px; margin-bottom: 20px; opacity: 0.5;"></i>
-                        <p style="font-size: 1.2rem;">لا توجد نتائج</p>
-                    </div>
-                `;
-                return;
-            }
+            fromSection.classList.add('section-hide');
             
-            users.forEach(user => {
-                const registrationDate = user.timestamp ? 
-                    new Date(user.timestamp).toLocaleString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true
-                    }) : 'غير متوفر';
-                
-                const referralCount = user.referrals ? Object.keys(user.referrals).length : 0;
-                
-                const userCard = document.createElement('div');
-                userCard.className = `user-card ${user.banned ? 'banned' : ''}`;
-                
-                let notificationsHTML = '';
-                if (user.notu_user) {
-                    notificationsHTML = `
-                        <div class="user-notifications">
-                            <div class="user-notifications-title">
-                                <span>الإشعارات</span>
-                                <span>(${Object.keys(user.notu_user).length})</span>
-                            </div>
-                            ${Object.entries(user.notu_user).map(([key, notification]) => {
-                                const date = notification.created_at ? 
-                                    new Date(notification.created_at).toLocaleString('en-US', {
-                                        year: 'numeric',
-                                        month: 'short',
-                                        day: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit',
-                                        hour12: true
-                                    }) : new Date().toLocaleString('en-US', {
-                                        year: 'numeric',
-                                        month: 'short',
-                                        day: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit',
-                                        hour12: true
-                                    });
-                                
-                                return `
-                                    <div class="notification-item">
-                                        <div class="notification-message-text">${notification.message || 'لا يوجد نص'}</div>
-                                        <div class="notification-date">${date}</div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    `;
-                }
-                
-                let referralsHTML = '';
-                if (user.referrals) {
-                    referralsHTML = `
-                        <div class="user-referrals">
-                            <div class="user-referrals-title">
-                                الإحالات (${Object.keys(user.referrals).length})
-                            </div>
-                            ${Object.entries(user.referrals).map(([refKey, refId], index) => `
-                                <div class="referral-item">
-                                    <span class="referral-label">ref${index + 1}</span>
-                                    <span class="referral-id">${refId}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-                
-                let referralUsedHTML = '';
-                if (user.referral_used) {
-                    referralUsedHTML = `
-                        <div class="info-row">
-                            <span class="info-label">المحيل:</span>
-                            <span class="info-value">${user.referral_used}</span>
-                        </div>
-                    `;
-                }
-                
-                userCard.innerHTML = `
-                    <div class="user-header">
-                        <div class="user-name">${user.name || 'بدون اسم'}</div>
-                        ${user.banned ? '<div class="user-badge">محظور</div>' : ''}
-                    </div>
-                    <div class="user-info">
-                        <div class="info-row">
-                            <span class="info-label">البريد الإلكتروني:</span>
-                            <span class="info-value">${user.email || 'غير متوفر'}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">الـ ID:</span>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span class="info-value">${user.id || 'غير متوفر'}</span>
-                                <button class="copy-btn" data-copy="${user.id || ''}">
-                                    <i class="fas fa-copy"></i>
-                                    نسخ
-                                </button>
-                            </div>
-                        </div>
-                        ${referralUsedHTML}
-                        <div class="info-row">
-                            <span class="info-label">عدد الإحالات:</span>
-                            <span class="info-value">${referralCount}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">تاريخ التسجيل:</span>
-                            <span class="info-value">${registrationDate}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">العملات:</span>
-                            <span class="info-value">${user.coin || 0}</span>
-                        </div>
-                    </div>
-                    ${notificationsHTML}
-                    ${referralsHTML}
-                    <div class="user-actions">
-                        <button class="action-btn ${user.banned ? 'unban-btn' : 'ban-btn'}" data-user-id="${user.id}" data-action="${user.banned ? 'unban' : 'ban'}">
-                            <i class="fas fa-${user.banned ? 'unlock' : 'ban'}"></i>
-                            ${user.banned ? 'إلغاء الحظر' : 'حظر'}
-                        </button>
-                        <button class="action-btn coins-btn" data-user-id="${user.id}" data-action="add-coins">
-                            <i class="fas fa-coins"></i>
-                            زيادة عملات
-                        </button>
-                        <button class="action-btn notify-btn" data-user-id="${user.id}" data-action="notify">
-                            <i class="fas fa-bell"></i>
-                            إرسال إشعار
-                        </button>
-                    </div>
-                `;
-                
-                elements.usersGrid.appendChild(userCard);
-            });
-            
-            document.querySelectorAll('.copy-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const text = btn.getAttribute('data-copy');
-                    if (text) {
-                        navigator.clipboard.writeText(text);
-                        showNotification('تم النسخ', 'تم نسخ النص بنجاح', 'success');
-                    }
-                });
-            });
-            
-            document.querySelectorAll('.action-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const userId = btn.getAttribute('data-user-id');
-                    const action = btn.getAttribute('data-action');
-                    
-                    if (action === 'ban' || action === 'unban') {
-                        toggleBanUser(userId, action === 'ban');
-                    } else if (action === 'add-coins') {
-                        addCoinsToUser(userId);
-                    } else if (action === 'notify') {
-                        sendPrivateNotification(userId);
-                    }
-                });
-            });
-        }
-
-        async function toggleBanUser(userId, ban) {
-            try {
-                await database.ref(`users_Awn/${userId}/banned`).set(ban);
-                showNotification('تم', ban ? 'تم حظر المستخدم' : 'تم إلغاء حظر المستخدم', 'success');
-                loadAllUsers();
-            } catch (error) {
-                console.error('Error toggling ban:', error);
-                showNotification('خطأ', 'فشل في تحديث حالة المستخدم', 'error');
-            }
-        }
-
-        async function addCoinsToUser(userId) {
-            const amount = prompt('أدخل عدد العملات المطلوب إضافتها:');
-            if (!amount || isNaN(amount) || parseInt(amount) <= 0) {
-                showNotification('خطأ', 'الرجاء إدخال رقم صحيح', 'error');
-                return;
-            }
-            
-            try {
-                const userRef = database.ref(`users_Awn/${userId}`);
-                const snapshot = await userRef.once('value');
-                const currentCoins = snapshot.val().coin || 0;
-                const newCoins = parseInt(currentCoins) + parseInt(amount);
-                
-                await userRef.update({ coin: newCoins });
-                showNotification('تم', `تم إضافة ${amount} عملة للمستخدم`, 'success');
-                loadAllUsers();
-            } catch (error) {
-                console.error('Error adding coins:', error);
-                showNotification('خطأ', 'فشل في إضافة العملات', 'error');
-            }
-        }
-
-        async function sendPrivateNotification(userId) {
-            const message = prompt('أدخل نص الإشعار الفردي:');
-            if (!message) return;
-            
-            try {
-                const notificationId = database.ref().child('notifications').push().key;
-                const notificationData = {
-                    message: message,
-                    created_at: Date.now()
-                };
-                
-                await database.ref(`users_Awn/${userId}/notu_user/${notificationId}`).set(notificationData);
-                showNotification('تم', 'تم إرسال الإشعار الفردي', 'success');
-                loadAllUsers();
-            } catch (error) {
-                console.error('Error sending private notification:', error);
-                showNotification('خطأ', 'فشل في إرسال الإشعار', 'error');
-            }
-        }
-
-        async function sendPublicNotification() {
-            const message = elements.publicNotificationInput.value.trim();
-            if (!message) {
-                showNotification('خطأ', 'الرجاء إدخال نص الإشعار', 'error');
-                return;
-            }
-            
-            try {
-                const publicNotificationId = database.ref().child('public_notifications').push().key;
-                const publicNotificationData = {
-                    message: message,
-                    created_at: Date.now()
-                };
-                
-                await database.ref(`users_Awn/noty_publick/${publicNotificationId}`).set(publicNotificationData);
-                
-                const snapshot = await database.ref('users_Awn').once('value');
-                const updatePromises = [];
-                
-                snapshot.forEach((childSnapshot) => {
-                    if (childSnapshot.key !== 'noty_publick') {
-                        const userId = childSnapshot.key;
-                        const userNotificationId = database.ref().child('notifications').push().key;
-                        const userNotificationData = {
-                            message: message,
-                            created_at: Date.now(),
-                            is_public: true
-                        };
-                        
-                        updatePromises.push(
-                            database.ref(`users_Awn/${userId}/notu_user/${userNotificationId}`).set(userNotificationData)
-                        );
-                    }
-                });
-                
-                await Promise.all(updatePromises);
-                elements.publicNotificationInput.value = '';
-                showNotification('تم', 'تم إرسال الإشعار العام لجميع المستخدمين', 'success');
-                loadAllUsers();
-            } catch (error) {
-                console.error('Error sending public notification:', error);
-                showNotification('خطأ', 'فشل في إرسال الإشعار العام', 'error');
-            }
-        }
-
-        function showNotification(title, message, type = 'info') {
-            if (currentNotification) {
-                clearTimeout(notificationTimeout);
-                currentNotification.remove();
-            }
-            
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.style.borderColor = type === 'error' ? 'var(--admin-color)' : 
-                                           type === 'success' ? '#059669' : 'var(--accent-dark)';
-            
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <div class="notification-title">${title}</div>
-                    <div class="notification-message">${message}</div>
-                </div>
-                <button class="notification-close">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            
-            elements.notificationContainer.appendChild(notification);
-            currentNotification = notification;
-            
-            setTimeout(() => notification.classList.add('show'), 10);
-            
-            notificationTimeout = setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 500);
-                currentNotification = null;
-            }, 3000);
-            
-            notification.querySelector('.notification-close').addEventListener('click', () => {
-                clearTimeout(notificationTimeout);
-                notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 500);
-                currentNotification = null;
-            });
-            
-            setupNotificationDrag(notification);
-        }
-
-        function setupNotificationDrag(notification) {
-            let isDragging = false;
-            let startX = 0;
-            let startY = 0;
-            let initialX = 0;
-            let initialY = 0;
-            
-            notification.style.position = 'relative';
-            notification.style.left = '0';
-            notification.style.top = '0';
-            
-            notification.addEventListener('mousedown', startDrag);
-            notification.addEventListener('touchstart', startDragTouch);
-            
-            function startDrag(e) {
-                isDragging = true;
-                startX = e.clientX;
-                startY = e.clientY;
-                initialX = parseInt(notification.style.left) || 0;
-                initialY = parseInt(notification.style.top) || 0;
-                
-                document.addEventListener('mousemove', drag);
-                document.addEventListener('mouseup', stopDrag);
-                notification.style.cursor = 'grabbing';
-            }
-            
-            function startDragTouch(e) {
-                if (e.touches.length === 1) {
-                    e.preventDefault();
-                    isDragging = true;
-                    startX = e.touches[0].clientX;
-                    startY = e.touches[0].clientY;
-                    initialX = parseInt(notification.style.left) || 0;
-                    initialY = parseInt(notification.style.top) || 0;
-                    
-                    document.addEventListener('touchmove', dragTouch);
-                    document.addEventListener('touchend', stopDrag);
-                }
-            }
-            
-            function drag(e) {
-                if (!isDragging) return;
-                e.preventDefault();
-                
-                const deltaX = e.clientX - startX;
-                const deltaY = e.clientY - startY;
-                
-                notification.style.left = `${initialX + deltaX}px`;
-                notification.style.top = `${initialY + deltaY}px`;
-                
-                if (Math.abs(deltaX) > 100) {
-                    closeNotification();
-                }
-            }
-            
-            function dragTouch(e) {
-                if (!isDragging || e.touches.length !== 1) return;
-                e.preventDefault();
-                
-                const deltaX = e.touches[0].clientX - startX;
-                const deltaY = e.touches[0].clientY - startY;
-                
-                notification.style.left = `${initialX + deltaX}px`;
-                notification.style.top = `${initialY + deltaY}px`;
-                
-                if (Math.abs(deltaX) > 100) {
-                    closeNotification();
-                }
-            }
-            
-            function stopDrag() {
-                isDragging = false;
-                document.removeEventListener('mousemove', drag);
-                document.removeEventListener('touchmove', dragTouch);
-                document.removeEventListener('mouseup', stopDrag);
-                document.removeEventListener('touchend', stopDrag);
-                notification.style.cursor = 'grab';
+            setTimeout(() => {
+                showSection(toSectionId);
+                toSection.classList.add('section-show');
                 
                 setTimeout(() => {
-                    notification.style.transition = 'left 0.3s ease, top 0.3s ease';
-                    notification.style.left = '0';
-                    notification.style.top = '0';
-                    
-                    setTimeout(() => {
-                        notification.style.transition = '';
-                    }, 300);
-                }, 100);
-            }
-            
-            function closeNotification() {
-                isDragging = false;
-                clearTimeout(notificationTimeout);
-                notification.classList.remove('show');
-                
-                setTimeout(() => {
-                    notification.remove();
-                    currentNotification = null;
-                }, 500);
-            }
+                    fromSection.classList.remove('section-hide');
+                    toSection.classList.remove('section-show');
+                }, 400);
+            }, 300);
         }
 
-        async function checkForNotifications() {
-            if (!currentUser || !currentUser.id) return;
-            
+        /* Check if user is banned */
+        async function checkUserBanned(userEmail) {
             try {
-                const snapshot = await database.ref(`users_Awn/${currentUser.id}/notu_user`).once('value');
+                const snap = await db.ref("users_Awn")
+                    .orderByChild("email")
+                    .equalTo(userEmail)
+                    .once("value");
                 
-                if (snapshot.exists()) {
-                    snapshot.forEach((childSnapshot) => {
-                        const notification = childSnapshot.val();
-                        if (!notification.read) {
-                            showNotification('إشعار جديد', notification.message, 'info');
-                            database.ref(`users_Awn/${currentUser.id}/notu_user/${childSnapshot.key}/read`).set(true);
-                        }
-                    });
+                if (snap.exists()) {
+                    const userData = snap.val();
+                    const userId = Object.keys(userData)[0];
+                    return userData[userId].banned === true;
                 }
+                return false;
             } catch (error) {
-                console.error('Error checking notifications:', error);
+                console.error("Error checking user ban status:", error);
+                return false;
             }
         }
 
-        async function initApp() {
-            auth.onAuthStateChanged(async (user) => {
-                if (!user) {
-                    window.location.href = 'login.html';
+        /* Event Listeners */
+        document.getElementById("supportLink").addEventListener("click", function() {
+            const email = currentUser ? currentUser.email : "Unknown";
+            const userId = userData ? userData.id : "Unknown";
+            const message = `لقد تم حظر حسابي%0AEmail: ${email}%0AId: ${userId}%0Aيرجى التحقق من الأمر وتوضيح سبب الحظر`;
+            const whatsappUrl = `https://wa.me/201009341792?text=${message}`;
+            window.open(whatsappUrl, '_blank');
+        });
+
+        document.getElementById("loginRegisterBtn").addEventListener("click", () => {
+            animateSectionTransition("loginSection", "googleSection");
+        });
+
+        document.getElementById("backBtn").addEventListener("click", () => {
+            animateSectionTransition("googleSection", "loginSection");
+        });
+
+        document.getElementById("newAccountBtn").addEventListener("click", () => {
+            auth.signOut().then(() => {
+                showSection("loginSection");
+                currentUser = null;
+                userData = null;
+            }).catch((error) => {
+                console.error("Sign out error:", error);
+                showSection("loginSection");
+            });
+        });
+
+        /* Google Sign In */
+        document.getElementById("googleBtn").addEventListener("click", async () => {
+            try {
+                setButtonLoading('googleBtn', true);
+                
+                const provider = new firebase.auth.GoogleAuthProvider();
+                provider.addScope('email');
+                provider.addScope('profile');
+                
+                const result = await auth.signInWithPopup(provider);
+                currentUser = result.user;
+
+                const isBanned = await checkUserBanned(currentUser.email);
+                if (isBanned) {
+                    setButtonLoading('googleBtn', false);
+                    document.querySelector('.logo-section').style.display = 'none';
+                    showSection("bannedContainer");
                     return;
                 }
-                
-                const success = await loadUserData();
-                if (success) {
-                    setupUI();
+
+                const snap = await db.ref("users_Awn")
+                    .orderByChild("email")
+                    .equalTo(currentUser.email)
+                    .once("value");
+
+                if (snap.exists()) {
+                    userData = snap.val()[Object.keys(snap.val())[0]];
                     
-                    if (isAdmin) {
-                        await loadAllUsers();
-                    } else {
-                        setupUserEventListeners();
-                        checkForNotifications();
-                        setInterval(checkForNotifications, 30000);
+                    if (userData.banned === true) {
+                        setButtonLoading('googleBtn', false);
+                        document.querySelector('.logo-section').style.display = 'none';
+                        showSection("bannedContainer");
+                        return;
                     }
                     
-                    hideLoadingScreen();
+                    window.location.href = "home.html";
+                } else {
+                    document.getElementById("userEmail").textContent = currentUser.email;
+                    setButtonLoading('googleBtn', false);
+                    showSection("registrationForm");
                 }
-            });
+                
+            } catch (error) {
+                console.error("Google sign in error:", error);
+                setButtonLoading('googleBtn', false);
+                
+                if (error.code === 'auth/popup-closed-by-user') {
+                    showAlert("تم إغلاق نافذة تسجيل الدخول. يرجى المحاولة مرة أخرى.");
+                } else if (error.code === 'auth/cancelled-popup-request') {
+                    // Do nothing
+                } else if (error.code === 'auth/network-request-failed') {
+                    showAlert("خطأ في الاتصال بالشبكة. يرجى التحقق من اتصالك بالإنترنت.");
+                } else {
+                    showAlert("حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.");
+                }
+            }
+        });
+
+        /* Continue Registration */
+        document.getElementById("continueBtn").addEventListener("click", async () => {
+            const name = document.getElementById("name").value.trim();
+            const referral = document.getElementById("referral").value.trim();
+
+            if (!validName(name)) {
+                showAlert("اسم المستخدم يجب أن يكون بين 3 و15 حرفًا، ويمكن أن يحتوي على أحرف عربية، إنجليزية، أرقام ومسافات فقط.");
+                return;
+            }
+
+            setButtonLoading('continueBtn', true);
+
+            if (!(await isNameUnique(name))) {
+                setButtonLoading('continueBtn', false);
+                showAlert("اسم المستخدم هذا مستخدم بالفعل. يرجى اختيار اسم آخر.");
+                return;
+            }
+
+            let coin = 20;
+            let referrerId = null;
+
+            // Handle referral code if provided
+            if (referral) {
+                if (!/^\d{6}$/.test(referral)) {
+                    setButtonLoading('continueBtn', false);
+                    showAlert("كود الإحالة غير صحيح. يجب أن يتكون من 6 أرقام فقط.");
+                    return;
+                }
+
+                try {
+                    const refSnap = await db.ref("users_Awn/" + referral).once("value");
+                    if (!refSnap.exists()) {
+                        setButtonLoading('continueBtn', false);
+                        showAlert("كود الإحالة غير موجود. يرجى التحقق وإعادة المحاولة.");
+                        return;
+                    }
+
+                    referrerId = referral;
+                    
+                    // Add 5 coins to referrer
+                    await db.ref("users_Awn/" + referral).update({
+                        coin: (refSnap.val().coin || 0) + 5
+                    });
+
+                    coin = 25;
+                } catch (error) {
+                    console.error("Error handling referral:", error);
+                    setButtonLoading('continueBtn', false);
+                    showAlert("حدث خطأ في معالجة كود الإحالة. يرجى المحاولة مرة أخرى.");
+                    return;
+                }
+            }
+
+            try {
+                const userId = await generateUniqueId();
+                
+                if (!userId) {
+                    throw new Error("فشل في إنشاء معرف مستخدم فريد");
+                }
+
+                // إنشاء سجل المستخدم الجديد
+                await db.ref("users_Awn/" + userId).set({
+                    id: userId,
+                    name: name,
+                    email: currentUser.email,
+                    banned: false,
+                    admin: false,
+                    referral_used: referral || "",
+                    coin: coin,
+                    created_at: new Date().toISOString()
+                    // لا ننشئ حقول ref هنا - سيتم إنشاؤها ديناميكيًا عند الحاجة
+                });
+
+                // تشغيل نظام الإحالة الديناميكي إذا كان هناك كود إحالة
+                if (referrerId) {
+                    await addToReferralChain(referrerId, userId);
+                }
+
+                showAlert("تم إنشاء حسابك بنجاح! يتم توجيهك الآن...", "success");
+                
+                setTimeout(() => {
+                    window.location.href = "home.html";
+                }, 1500);
+            } catch (error) {
+                console.error("Registration error:", error);
+                setButtonLoading('continueBtn', false);
+                showAlert("حدث خطأ أثناء إنشاء الحساب. يرجى المحاولة مرة أخرى.");
+            }
+        });
+
+        /* Check Authentication State on Load */
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        try {
+                            const snap = await db.ref("users_Awn")
+                                .orderByChild("email")
+                                .equalTo(user.email)
+                                .once("value");
+
+                            if (snap.exists()) {
+                                userData = snap.val()[Object.keys(snap.val())[0]];
+                                
+                                if (userData.banned === true) {
+                                    setTimeout(() => {
+                                        showMainInterface();
+                                        setTimeout(() => {
+                                            document.querySelector('.logo-section').style.display = 'none';
+                                            showSection("bannedContainer");
+                                        }, 500);
+                                    }, 1000);
+                                    return;
+                                }
+                                
+                                setTimeout(() => {
+                                    window.location.href = "home.html";
+                                }, 1000);
+                                return;
+                            }
+                        } catch (dbError) {
+                            console.error("Database error:", dbError);
+                        }
+                    }
+                    
+                    setTimeout(() => {
+                        showMainInterface();
+                    }, 1500);
+                });
+                
+                setTimeout(() => {
+                    if (document.getElementById("loadingScreen").style.visibility !== "hidden") {
+                        showMainInterface();
+                    }
+                }, 3000);
+                
+            } catch (error) {
+                console.error("Initialization error:", error);
+                showMainInterface();
+            }
+        });
+
+        /* Show Main Interface */
+        function showMainInterface() {
+            const loadingScreen = document.getElementById("loadingScreen");
+            const mainContainer = document.getElementById("mainContainer");
+            
+            loadingScreen.style.opacity = "0";
+            loadingScreen.style.visibility = "hidden";
+            
+            setTimeout(() => {
+                mainContainer.style.display = "block";
+            }, 300);
         }
 
-        document.addEventListener('DOMContentLoaded', initApp);
+        /* Input field validation */
+        document.getElementById("name").addEventListener("input", function() {
+            if (this.value.length > 15) {
+                this.value = this.value.substring(0, 15);
+            }
+        });
+
+        document.getElementById("referral").addEventListener("input", function() {
+            this.value = this.value.replace(/\D/g, '').substring(0, 6);
+        });
+        
+        /* Enter key to submit */
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                if (document.getElementById("registrationForm").style.display === 'block') {
+                    document.getElementById("continueBtn").click();
+                } else if (document.getElementById("googleSection").style.display === 'block') {
+                    document.getElementById("googleBtn").click();
+                }
+            }
+        });
     </script>
 </body>
 </html>
