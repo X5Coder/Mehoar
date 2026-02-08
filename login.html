@@ -684,6 +684,7 @@
         const db = firebase.database();
         let currentUser = null;
         let userData = null;
+        let authCheckDone = false;
 
         /* Helper Functions */
         function showAlert(message, type = "error") {
@@ -780,17 +781,13 @@
         }
 
         /* Check if user is banned */
-        async function checkUserBanned(userEmail) {
+        async function checkUserBanned(userId) {
             try {
-                const snap = await db.ref("users_Awn")
-                    .orderByChild("email")
-                    .equalTo(userEmail)
-                    .once("value");
+                const snap = await db.ref("users_Awn/" + userId).once("value");
                 
                 if (snap.exists()) {
                     const userData = snap.val();
-                    const userId = Object.keys(userData)[0];
-                    return userData[userId].banned === true;
+                    return userData.banned === true;
                 }
                 return false;
             } catch (error) {
@@ -826,6 +823,7 @@
                 // Reset any state if needed
                 currentUser = null;
                 userData = null;
+                authCheckDone = false;
             }).catch((error) => {
                 console.error("Sign out error:", error);
                 // Still show login section even if sign out fails
@@ -846,8 +844,8 @@
                 const result = await auth.signInWithPopup(provider);
                 currentUser = result.user;
 
-                // Check if user is banned
-                const isBanned = await checkUserBanned(currentUser.email);
+                // Check if user is banned using auth.uid
+                const isBanned = await checkUserBanned(currentUser.uid);
                 if (isBanned) {
                     setButtonLoading('googleBtn', false);
                     // Hide logo when showing banned message
@@ -856,15 +854,12 @@
                     return;
                 }
 
-                // Check if user exists in database
-                const snap = await db.ref("users_Awn")
-                    .orderByChild("email")
-                    .equalTo(currentUser.email)
-                    .once("value");
+                // Check if user exists in database using auth.uid
+                const snap = await db.ref("users_Awn/" + currentUser.uid).once("value");
 
                 if (snap.exists()) {
-                    // User exists, get user data and redirect to home
-                    userData = snap.val()[Object.keys(snap.val())[0]];
+                    // User exists, get user data
+                    userData = snap.val();
                     
                     // Check if user is banned from database
                     if (userData.banned === true) {
@@ -875,8 +870,8 @@
                         return;
                     }
                     
-                    // Redirect to home
-                    window.location.href = "home.html";
+                    // Redirect to home using replace
+                    window.location.replace("home.html");
                 } else {
                     // New user, show registration form
                     document.getElementById("userEmail").textContent = currentUser.email;
@@ -901,7 +896,7 @@
             }
         });
 
-        /* Continue Registration - FIXED VERSION */
+        /* Continue Registration */
         document.getElementById("continueBtn").addEventListener("click", async () => {
             const name = document.getElementById("name").value.trim();
             const referral = document.getElementById("referral").value.trim();
@@ -915,21 +910,6 @@
             // Show loading state
             setButtonLoading('continueBtn', true);
 
-            // تحقق من أن currentUser موجود
-            const user = auth.currentUser;
-            if (!user || !user.email) {
-                setButtonLoading('continueBtn', false);
-                showAlert("يبدو أن جلسة التسجيل انتهت. يرجى إعادة تسجيل الدخول.");
-                setTimeout(() => {
-                    auth.signOut().then(() => {
-                        window.location.reload();
-                    });
-                }, 2000);
-                return;
-            }
-
-            const userEmail = user.email;
-
             // Check if name is unique
             if (!(await isNameUnique(name))) {
                 setButtonLoading('continueBtn', false);
@@ -938,7 +918,6 @@
             }
 
             let coin = 20;
-            let referralUsed = "";
 
             // Handle referral code if provided
             if (referral) {
@@ -957,14 +936,11 @@
                     }
 
                     // Add 5 coins to referrer
-                    const refData = refSnap.val();
-                    const currentCoins = refData.coin || 0;
                     await db.ref("users_Awn/" + referral).update({
-                        coin: parseInt(currentCoins) + 5
+                        coin: (refSnap.val().coin || 0) + 5
                     });
 
                     coin = 25; // New user gets 25 coins instead of 20
-                    referralUsed = referral;
                 } catch (error) {
                     console.error("Error handling referral:", error);
                     setButtonLoading('continueBtn', false);
@@ -974,51 +950,31 @@
             }
 
             try {
-                // Generate unique user ID
-                const userId = await generateUniqueId();
+                // Use auth.uid as user ID
+                const userId = currentUser.uid;
                 
                 if (!userId) {
-                    throw new Error("فشل في إنشاء معرف مستخدم فريد");
+                    throw new Error("فشل في الحصول على معرف المستخدم");
                 }
 
-                // Create user record
-                const userData = {
+                // Create user record using auth.uid as the key
+                await db.ref("users_Awn/" + userId).set({
                     id: userId,
                     name: name,
-                    email: userEmail,
+                    email: currentUser.email,
                     banned: false,
                     admin: false,
-                    referral_used: referralUsed,
+                    referral_used: referral || "",
                     coin: coin,
                     created_at: new Date().toISOString()
-                };
+                });
 
-                console.log("Creating user with data:", userData);
-
-                await db.ref("users_Awn/" + userId).set(userData);
-
-                // تأكد من حفظ البيانات
-                setTimeout(async () => {
-                    try {
-                        const checkSnap = await db.ref("users_Awn/" + userId).once("value");
-                        if (checkSnap.exists()) {
-                            console.log("User created successfully, redirecting...");
-                            showAlert("تم إنشاء حسابك بنجاح! يتم توجيهك الآن...", "success");
-                            
-                            // انتظر ثانيتين ثم اذهب للصفحة الرئيسية
-                            setTimeout(() => {
-                                window.location.href = "home.html";
-                            }, 2000);
-                        } else {
-                            throw new Error("لم يتم حفظ البيانات بشكل صحيح");
-                        }
-                    } catch (checkError) {
-                        console.error("Error verifying user creation:", checkError);
-                        setButtonLoading('continueBtn', false);
-                        showAlert("حدث خطأ في التحقق من حفظ البيانات. يرجى المحاولة مرة أخرى.");
-                    }
-                }, 1000);
+                showAlert("تم إنشاء حسابك بنجاح! يتم توجيهك الآن...", "success");
                 
+                // Redirect to home page using replace
+                setTimeout(() => {
+                    window.location.replace("home.html");
+                }, 1500);
             } catch (error) {
                 console.error("Registration error:", error);
                 setButtonLoading('continueBtn', false);
@@ -1028,62 +984,44 @@
 
         /* Check Authentication State on Load */
         document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                // First check if user is already logged in
-                auth.onAuthStateChanged(async (user) => {
-                    if (user) {
-                        // User is signed in, check if they exist in database
-                        try {
-                            const snap = await db.ref("users_Awn")
-                                .orderByChild("email")
-                                .equalTo(user.email)
-                                .once("value");
-
-                            if (snap.exists()) {
-                                // Get user data
-                                userData = snap.val()[Object.keys(snap.val())[0]];
-                                
-                                // Check if user is banned
-                                if (userData.banned === true) {
-                                    setTimeout(() => {
-                                        showMainInterface();
-                                        setTimeout(() => {
-                                            // Hide logo when showing banned message
-                                            document.querySelector('.logo-section').style.display = 'none';
-                                            showSection("bannedContainer");
-                                        }, 500);
-                                    }, 1000);
-                                    return;
-                                }
-                                
-                                // User exists and not banned, redirect to home
+            const unsubscribe = auth.onAuthStateChanged(async (user) => {
+                if (authCheckDone) return;
+                authCheckDone = true;
+                
+                if (user) {
+                    try {
+                        // استخدام auth.uid للبحث في قاعدة البيانات
+                        const userSnap = await db.ref("users_Awn/" + user.uid).once("value");
+                        
+                        if (userSnap.exists()) {
+                            const userData = userSnap.val();
+                            
+                            if (userData.banned === true) {
                                 setTimeout(() => {
-                                    window.location.href = "home.html";
+                                    showMainInterface();
+                                    document.querySelector('.logo-section').style.display = 'none';
+                                    showSection("bannedContainer");
                                 }, 1000);
                                 return;
                             }
-                        } catch (dbError) {
-                            console.error("Database error:", dbError);
+                            
+                            // توجيه إلى home باستخدام replace لمنع loop
+                            window.location.replace("home.html");
+                            return;
                         }
+                    } catch (error) {
+                        console.error("Auth check error:", error);
                     }
-                    
-                    // Show main interface after delay
-                    setTimeout(() => {
-                        showMainInterface();
-                    }, 1500);
-                });
+                }
                 
-                // Fallback in case auth state change doesn't fire
+                // إظهار واجهة تسجيل الدخول
                 setTimeout(() => {
-                    if (document.getElementById("loadingScreen").style.visibility !== "hidden") {
-                        showMainInterface();
-                    }
-                }, 3000);
+                    showMainInterface();
+                }, 1500);
                 
-            } catch (error) {
-                console.error("Initialization error:", error);
-                showMainInterface();
-            }
+                // إلغاء الاشتراك بعد التحقق لمنع التنفيذ المتكرر
+                setTimeout(() => unsubscribe(), 100);
+            });
         });
 
         /* Show Main Interface */
