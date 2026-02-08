@@ -1522,10 +1522,6 @@
         let currentNotification = null;
         let notificationTimeout = null;
         
-        // إضافة هذه المتغيرات لمنع الـ loop
-        let isAuthCheckInProgress = false;
-        let isUserInitialized = false;
-
         function hideLoadingScreen() {
             setTimeout(() => {
                 elements.loadingScreen.style.opacity = '0';
@@ -1537,6 +1533,41 @@
             }, 500);
         }
 
+        async function getUserByEmail(email) {
+            try {
+                const usersRef = database.ref('users_Awn');
+                const snapshot = await usersRef.once('value');
+                
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    
+                    // البحث عن المستخدم بالبريد الإلكتروني
+                    for (const [userId, userData] of Object.entries(users)) {
+                        if (userId !== 'noty_publick' && userData.email === email) {
+                            return {
+                                id: userId,
+                                email: userData.email,
+                                name: userData.name || '',
+                                coin: userData.coin || 0,
+                                admin: userData.admin === true || false,
+                                banned: userData.banned === true || false,
+                                created_at: userData.created_at || null,
+                                timestamp: userData.timestamp || null,
+                                referral_used: userData.referral_used || '',
+                                referrals: userData.referrals || {},
+                                notu_user: userData.notu_user || {},
+                                dbId: userData.id // هذا هو ID المخزن في قاعدة البيانات
+                            };
+                        }
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('Error searching for user by email:', error);
+                return null;
+            }
+        }
+
         async function loadUserData() {
             try {
                 const user = auth.currentUser;
@@ -1545,19 +1576,17 @@
                     return false;
                 }
 
-                // البحث باستخدام auth.uid بدلاً من البريد الإلكتروني
-                const snapshot = await database.ref(`users_Awn/${user.uid}`).once('value');
-
-                if (!snapshot.exists()) {
+                // البحث عن المستخدم باستخدام البريد الإلكتروني بدلاً من auth.uid
+                const userData = await getUserByEmail(user.email);
+                
+                if (!userData) {
                     await auth.signOut();
                     window.location.replace('login.html');
                     return false;
                 }
-
-                const userData = snapshot.val();
                 
                 // التحقق من الحقول الأساسية فقط
-                if (!userData.email || !userData.id) {
+                if (!userData.email || !userData.dbId) {
                     await auth.signOut();
                     window.location.replace('login.html');
                     return false;
@@ -1571,7 +1600,8 @@
                 }
                 
                 currentUser = { 
-                    id: user.uid,
+                    id: userData.id, // استخدام ID من قاعدة البيانات
+                    dbId: userData.dbId, // حفظ ID المخزن في قاعدة البيانات
                     email: userData.email,
                     name: userData.name || '',
                     coin: userData.coin || 0,
@@ -1713,7 +1743,8 @@
                                 timestamp: userData.timestamp || null,
                                 referral_used: userData.referral_used || '',
                                 referrals: userData.referrals || {},
-                                notu_user: userData.notu_user || {}
+                                notu_user: userData.notu_user || {},
+                                dbId: userData.id // إضافة ID المخزن في قاعدة البيانات
                             };
                             
                             allUsers.push(user);
@@ -1740,7 +1771,8 @@
                 return (
                     (user.name && user.name.toLowerCase().includes(searchTerm)) ||
                     (user.email && user.email.toLowerCase().includes(searchTerm)) ||
-                    (user.id && user.id.toLowerCase().includes(searchTerm))
+                    (user.id && user.id.toLowerCase().includes(searchTerm)) ||
+                    (user.dbId && user.dbId.toLowerCase().includes(searchTerm)) // البحث باستخدام ID المخزن
                 );
             });
             
@@ -1860,10 +1892,20 @@
                             <span class="info-value">${user.email || 'غير متوفر'}</span>
                         </div>
                         <div class="info-row">
-                            <span class="info-label">الـ ID:</span>
+                            <span class="info-label">Firebase UID:</span>
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <span class="info-value">${user.id || 'غير متوفر'}</span>
                                 <button class="copy-btn" data-copy="${user.id || ''}">
+                                    <i class="fas fa-copy"></i>
+                                    نسخ
+                                </button>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">معرف المستخدم (DB ID):</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="info-value">${user.dbId || 'غير متوفر'}</span>
+                                <button class="copy-btn" data-copy="${user.dbId || ''}">
                                     <i class="fas fa-copy"></i>
                                     نسخ
                                 </button>
@@ -1954,46 +1996,6 @@
                 showNotification('خطأ', 'فشل في حذف الإشعار', 'error');
             }
         };
-
-        // وظيفة لحذف إشعار عام
-        async function deletePublicNotification(notificationId) {
-            if (!confirm('هل أنت متأكد من حذف هذا الإشعار العام؟')) return;
-            
-            try {
-                await database.ref(`users_Awn/noty_publick/${notificationId}`).remove();
-                
-                // حذف الإشعار من جميع المستخدمين
-                const snapshot = await database.ref('users_Awn').once('value');
-                const updatePromises = [];
-                
-                snapshot.forEach((childSnapshot) => {
-                    if (childSnapshot.key !== 'noty_publick') {
-                        const userId = childSnapshot.key;
-                        updatePromises.push(
-                            database.ref(`users_Awn/${userId}/notu_user`).orderByChild('is_public').equalTo(true).once('value')
-                                .then((notificationsSnap) => {
-                                    const deletePromises = [];
-                                    notificationsSnap.forEach((notificationSnap) => {
-                                        if (notificationSnap.val().message === notificationId) {
-                                            deletePromises.push(
-                                                database.ref(`users_Awn/${userId}/notu_user/${notificationSnap.key}`).remove()
-                                            );
-                                        }
-                                    });
-                                    return Promise.all(deletePromises);
-                                })
-                        );
-                    }
-                });
-                
-                await Promise.all(updatePromises);
-                showNotification('تم', 'تم حذف الإشعار العام بنجاح', 'success');
-                loadAllUsers();
-            } catch (error) {
-                console.error('Error deleting public notification:', error);
-                showNotification('خطأ', 'فشل في حذف الإشعار العام', 'error');
-            }
-        }
 
         async function toggleBanUser(userId, ban) {
             try {
@@ -2111,7 +2113,6 @@
             }
         }
 
-        // إضافة تنسيق جديد للإشعارات في واجهة المستخدم
         function showNotification(title, message, type = 'info') {
             if (currentNotification) {
                 clearTimeout(notificationTimeout);
@@ -2136,7 +2137,6 @@
             elements.notificationContainer.appendChild(notification);
             currentNotification = notification;
             
-            // تنسيق للإشعارات على الهواتف
             if (window.innerWidth <= 768) {
                 notification.style.maxWidth = '300px';
                 notification.style.fontSize = '0.75rem';
@@ -2147,7 +2147,6 @@
             
             setTimeout(() => notification.classList.add('show'), 10);
             
-            // تغيير الوقت إلى 4 ثواني
             notificationTimeout = setTimeout(() => {
                 notification.classList.remove('show');
                 setTimeout(() => notification.remove(), 500);
@@ -2208,13 +2207,12 @@
                 if (!isDragging) return;
                 e.preventDefault();
                 
-                const deltaX = startX - e.clientX; // عكس الاتجاه للعربية
+                const deltaX = startX - e.clientX;
                 const deltaY = e.clientY - startY;
                 
                 notification.style.right = `${initialX + deltaX}px`;
                 notification.style.top = `${initialY + deltaY}px`;
                 
-                // إذا سحب خارج الشاشة بحوالي 100 بكسل
                 if (Math.abs(deltaX) > 100 || Math.abs(deltaY) > 100) {
                     closeNotification();
                 }
@@ -2224,13 +2222,12 @@
                 if (!isDragging || e.touches.length !== 1) return;
                 e.preventDefault();
                 
-                const deltaX = startX - e.touches[0].clientX; // عكس الاتجاه للعربية
+                const deltaX = startX - e.touches[0].clientX;
                 const deltaY = e.touches[0].clientY - startY;
                 
                 notification.style.right = `${initialX + deltaX}px`;
                 notification.style.top = `${initialY + deltaY}px`;
                 
-                // إذا سحب خارج الشاشة بحوالي 100 بكسل
                 if (Math.abs(deltaX) > 100 || Math.abs(deltaY) > 100) {
                     closeNotification();
                 }
@@ -2244,7 +2241,6 @@
                 document.removeEventListener('touchend', stopDrag);
                 notification.style.cursor = 'grab';
                 
-                // إرجاع الإشعار إلى مكانه
                 setTimeout(() => {
                     notification.style.transition = 'right 0.3s ease, top 0.3s ease';
                     notification.style.right = '20px';
@@ -2288,39 +2284,31 @@
             }
         }
 
-        // هذا هو الجزء المصحح لمنع الـ loop
         async function initApp() {
-            // استخدم once بدلاً من onAuthStateChanged لتجنب التكرار
             const unsubscribe = auth.onAuthStateChanged(async (user) => {
-                if (isAuthCheckInProgress) return;
-                isAuthCheckInProgress = true;
-                
                 console.log("Auth check in home.html - User:", user ? "Logged in" : "Not logged in");
                 
                 if (!user) {
-                    // إذا لم يكن هناك مستخدم، التوجيه إلى login باستخدام replace
                     console.log("No user, redirecting to login");
                     window.location.replace('login.html');
                     return;
                 }
                 
                 try {
-                    console.log("Checking user data in database for UID:", user.uid);
+                    console.log("Checking user data using email:", user.email);
                     
-                    // البحث باستخدام auth.uid مباشرة
-                    const snapshot = await database.ref(`users_Awn/${user.uid}`).once('value');
+                    // البحث عن المستخدم باستخدام البريد الإلكتروني
+                    const userData = await getUserByEmail(user.email);
                     
-                    if (!snapshot.exists()) {
+                    if (!userData) {
                         console.log("User not found in database, signing out and redirecting");
                         await auth.signOut();
                         window.location.replace('login.html');
                         return;
                     }
                     
-                    const userData = snapshot.val();
-                    
                     // التحقق من الحقول الأساسية فقط
-                    if (!userData.email || !userData.id) {
+                    if (!userData.email || !userData.dbId) {
                         console.log("Missing required fields (email or id), signing out and redirecting");
                         await auth.signOut();
                         window.location.replace('login.html');
@@ -2337,7 +2325,8 @@
                     
                     // المستخدم صالح، تحميل البيانات
                     currentUser = { 
-                        id: user.uid,
+                        id: userData.id, // استخدام Firebase UID للمراجع
+                        dbId: userData.dbId, // حفظ ID المخزن في قاعدة البيانات
                         email: userData.email,
                         name: userData.name || '',
                         coin: userData.coin || 0,
@@ -2348,6 +2337,7 @@
                     isAdmin = userData.admin === true;
                     
                     console.log("User authenticated successfully. Is admin:", isAdmin);
+                    console.log("User dbId:", userData.dbId);
                     
                     // إعداد واجهة المستخدم
                     setupUI();
@@ -2363,15 +2353,10 @@
                     // إخفاء شاشة التحميل
                     hideLoadingScreen();
                     
-                    // تعيين العلم أن المستخدم تم تهيئته
-                    isUserInitialized = true;
-                    
                 } catch (error) {
                     console.error('Error during auth check:', error);
-                    // في حالة الخطأ، التوجيه إلى login
                     window.location.replace('login.html');
                 } finally {
-                    // إلغاء الاشتراك لمنع التنفيذ المتكرر
                     setTimeout(() => {
                         unsubscribe();
                     }, 100);
@@ -2379,7 +2364,7 @@
             });
         }
 
-        // إضافة منع الرجوع إلى login
+        // منع الرجوع إلى login
         history.pushState(null, null, window.location.href);
         window.addEventListener('popstate', function(event) {
             history.pushState(null, null, window.location.href);
