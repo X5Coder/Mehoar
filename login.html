@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* CSS Reset */
         * {
             margin: 0;
             padding: 0;
@@ -31,7 +30,6 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Tajawal', sans-serif;
         }
 
-        /* Loading Screen */
         #loadingScreen {
             position: fixed;
             top: 0;
@@ -61,7 +59,6 @@
             to { transform: rotate(360deg); }
         }
         
-        /* Main Container */
         .glass-container {
             width: 100%;
             max-width: 480px;
@@ -87,7 +84,6 @@
             }
         }
         
-        /* Logo Section with Large Image */
         .logo-section {
             text-align: center;
             margin-bottom: 40px;
@@ -118,12 +114,10 @@
             display: block;
         }
         
-        /* Welcome Text - تم إزالته حسب الطلب */
         .welcome-text {
             display: none;
         }
         
-        /* Alert Message */
         .alert {
             padding: 16px 20px;
             border-radius: 16px;
@@ -164,7 +158,6 @@
             border-color: rgba(217, 119, 6, 0.1);
         }
         
-        /* Banned User Message - تم التعديل */
         .banned-container {
             text-align: center;
             padding: 30px;
@@ -201,7 +194,6 @@
             text-decoration: none;
         }
         
-        /* New Account Button for Banned Users */
         .btn-new-account {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
@@ -229,7 +221,6 @@
             transform: translateY(0);
         }
         
-        /* Buttons */
         .btn {
             display: flex;
             align-items: center;
@@ -274,7 +265,6 @@
             to { transform: rotate(360deg); }
         }
         
-        /* Login Button */
         .btn-login {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: white;
@@ -295,7 +285,6 @@
             box-shadow: 0 5px 15px rgba(30, 41, 59, 0.2);
         }
         
-        /* Google Button - تم التعديل */
         .btn-google {
             background: white;
             color: #1e293b;
@@ -331,7 +320,6 @@
             transform: scale(1.1);
         }
         
-        /* Back Button */
         .btn-back {
             background: transparent;
             color: #64748b;
@@ -353,7 +341,6 @@
             transform: translateY(0);
         }
         
-        /* Button Icons */
         .btn-icon {
             margin-left: 10px;
             font-size: 1.1rem;
@@ -364,7 +351,6 @@
             transform: translateX(-3px);
         }
         
-        /* Sections Animation */
         .section-hide {
             animation: fadeOut 0.3s ease forwards;
         }
@@ -388,7 +374,6 @@
             }
         }
         
-        /* Google Sign In Section */
         .google-section {
             text-align: center;
         }
@@ -408,7 +393,6 @@
             margin-bottom: 35px;
         }
         
-        /* Form Section */
         .form-container {
             display: none;
         }
@@ -462,7 +446,6 @@
             padding: 0 10px;
         }
         
-        /* Input Fields */
         .input-group {
             margin-bottom: 25px;
             position: relative;
@@ -511,7 +494,6 @@
             border: 1px solid #e2e8f0;
         }
         
-        /* Footer */
         .footer {
             text-align: center;
             margin-top: 30px;
@@ -522,7 +504,41 @@
             line-height: 1.5;
         }
         
-        /* Responsive Design */
+        /* Success Redirect Animation */
+        .success-redirect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            display: none;
+        }
+        
+        .success-icon {
+            font-size: 5rem;
+            color: #10b981;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite alternate;
+        }
+        
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-20px); }
+        }
+        
+        .redirect-countdown {
+            font-size: 1.2rem;
+            color: #1e293b;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+        
         @media (max-width: 500px) {
             body {
                 padding: 15px;
@@ -565,10 +581,22 @@
         <p style="color: #64748b; font-size: 0.95rem; margin-top: 15px; font-weight: 500;">جاري التحميل...</p>
     </div>
     
+    <!-- Success Redirect Screen -->
+    <div class="success-redirect" id="successRedirect">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h2 style="color: #10b981; margin-bottom: 10px; font-size: 1.8rem;">تم التسجيل بنجاح!</h2>
+        <p style="color: #64748b; margin-bottom: 15px; text-align: center; max-width: 300px;">
+            تم إنشاء حسابك بنجاح. جاري توجيهك إلى الصفحة الرئيسية...
+        </p>
+        <div class="redirect-countdown" id="countdown">3</div>
+    </div>
+    
     <!-- Main Container -->
     <div class="glass-container" id="mainContainer" style="display: none;">
         
-        <!-- Logo Section with Large Image -->
+        <!-- Logo Section -->
         <div class="logo-section">
             <div class="logo-image">
                 <img src="https://i.ibb.co/rGpgBFBW/1000183766.png" alt="عَون" 
@@ -747,15 +775,115 @@
             }
         }
 
+        /* نظام الإحالة الديناميكي - البحث عن آخر حقل ref وخلق التالي */
+        async function addToReferralChain(referrerId, newUserId, currentLevel = 1) {
+            try {
+                if (!referrerId) return;
+                
+                const refPath = `users_Awn/${referrerId}`;
+                const refSnap = await db.ref(refPath).once("value");
+                
+                if (!refSnap.exists()) return;
+                
+                const userData = refSnap.val();
+                
+                // البحث عن آخر حقل ref موجود
+                let lastRefField = null;
+                let lastRefLevel = 0;
+                
+                // البحث عن أعلى مستوى لـ ref موجود
+                for (let i = 1; i <= 1000; i++) { // حد أعلى آمن
+                    const fieldName = `ref${i}`;
+                    if (userData[fieldName] !== undefined) {
+                        lastRefField = fieldName;
+                        lastRefLevel = i;
+                    } else {
+                        break;
+                    }
+                }
+                
+                let targetField;
+                
+                if (lastRefField) {
+                    // إذا كان هناك حقل ref آخر، نستخدم المستوى التالي
+                    targetField = `ref${lastRefLevel + 1}`;
+                } else {
+                    // إذا لم يكن هناك أي حقول ref، نبدأ من ref1
+                    targetField = `ref1`;
+                }
+                
+                // الحصول على القائمة الحالية (أو إنشاء قائمة جديدة)
+                const currentRefs = userData[targetField] || [];
+                
+                // إضافة ID المستخدم الجديد إلى القائمة
+                const updatedRefs = [...currentRefs, newUserId];
+                
+                // تحديث البيانات في قاعدة البيانات
+                await db.ref(refPath).update({
+                    [targetField]: updatedRefs
+                });
+                
+                console.log(`تم إضافة ${newUserId} إلى ${targetField} لـ ${referrerId}`);
+                
+                // البحث عن المستوى التالي في السلسلة (المستخدم الذي أحال هذا المستخدم)
+                const nextReferrerId = userData.referral_used;
+                if (nextReferrerId && nextReferrerId !== referrerId) {
+                    // استدعاء ذاتي للمستوى التالي
+                    await addToReferralChain(nextReferrerId, newUserId, currentLevel + 1);
+                }
+                
+                return true;
+            } catch (error) {
+                console.error("Error adding to referral chain:", error);
+                return false;
+            }
+        }
+
+        /* وظيفة إعادة التوجيه مع عرض المؤقت */
+        function redirectToHome() {
+            const successRedirect = document.getElementById("successRedirect");
+            const countdownEl = document.getElementById("countdown");
+            
+            // إظهار شاشة النجاح
+            successRedirect.style.display = "flex";
+            
+            let countdown = 3;
+            countdownEl.textContent = countdown;
+            
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                countdownEl.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    // محاولة إعادة التوجيه
+                    window.location.href = "home.html";
+                    
+                    // إذا فشل التوجيه، عرض رسالة للمستخدم
+                    setTimeout(() => {
+                        // إذا ما زلنا في نفس الصفحة بعد 5 ثوان
+                        if (window.location.pathname.endsWith("index.html") || 
+                            window.location.pathname === "/" ||
+                            window.location.pathname.includes("login")) {
+                            
+                            // إخفاء شاشة النجاح
+                            successRedirect.style.display = "none";
+                            
+                            // عرض رسالة للمستخدم
+                            showAlert("تعذر التوجيه إلى الصفحة الرئيسية. الرجاء النقر على الرابط يدويًا أو التواصل مع الدعم.", "warning");
+                        }
+                    }, 5000);
+                }
+            }, 1000);
+        }
+
         /* UI Functions */
         function showSection(sectionId) {
-            // Hide all sections
             document.getElementById("loginSection").style.display = "none";
             document.getElementById("googleSection").style.display = "none";
             document.getElementById("registrationForm").style.display = "none";
             document.getElementById("bannedContainer").style.display = "none";
             
-            // Show requested section
             document.getElementById(sectionId).style.display = "block";
         }
 
@@ -763,15 +891,12 @@
             const fromSection = document.getElementById(fromSectionId);
             const toSection = document.getElementById(toSectionId);
             
-            // Add hide animation to current section
             fromSection.classList.add('section-hide');
             
-            // After animation completes, switch sections
             setTimeout(() => {
                 showSection(toSectionId);
                 toSection.classList.add('section-show');
                 
-                // Remove animation classes after completion
                 setTimeout(() => {
                     fromSection.classList.remove('section-hide');
                     toSection.classList.remove('section-show');
@@ -787,7 +912,7 @@
                     .equalTo(userEmail)
                     .once("value");
                 
-                if (snap.exists()) {
+                if (nap.exists()) {
                     const userData = snap.val();
                     const userId = Object.keys(userData)[0];
                     return userData[userId].banned === true;
@@ -799,7 +924,7 @@
             }
         }
 
-        /* Support Link to WhatsApp */
+        /* Event Listeners */
         document.getElementById("supportLink").addEventListener("click", function() {
             const email = currentUser ? currentUser.email : "Unknown";
             const userId = userData ? userData.id : "Unknown";
@@ -808,7 +933,6 @@
             window.open(whatsappUrl, '_blank');
         });
 
-        /* Event Listeners */
         document.getElementById("loginRegisterBtn").addEventListener("click", () => {
             animateSectionTransition("loginSection", "googleSection");
         });
@@ -817,18 +941,13 @@
             animateSectionTransition("googleSection", "loginSection");
         });
 
-        /* New Account Button for Banned Users */
         document.getElementById("newAccountBtn").addEventListener("click", () => {
-            // Sign out current user
             auth.signOut().then(() => {
-                // Show login section
                 showSection("loginSection");
-                // Reset any state if needed
                 currentUser = null;
                 userData = null;
             }).catch((error) => {
                 console.error("Sign out error:", error);
-                // Still show login section even if sign out fails
                 showSection("loginSection");
             });
         });
@@ -836,7 +955,6 @@
         /* Google Sign In */
         document.getElementById("googleBtn").addEventListener("click", async () => {
             try {
-                // Show loading state on button
                 setButtonLoading('googleBtn', true);
                 
                 const provider = new firebase.auth.GoogleAuthProvider();
@@ -846,39 +964,32 @@
                 const result = await auth.signInWithPopup(provider);
                 currentUser = result.user;
 
-                // Check if user is banned
                 const isBanned = await checkUserBanned(currentUser.email);
                 if (isBanned) {
                     setButtonLoading('googleBtn', false);
-                    // Hide logo when showing banned message
                     document.querySelector('.logo-section').style.display = 'none';
                     showSection("bannedContainer");
                     return;
                 }
 
-                // Check if user exists in database
                 const snap = await db.ref("users_Awn")
                     .orderByChild("email")
                     .equalTo(currentUser.email)
                     .once("value");
 
                 if (snap.exists()) {
-                    // User exists, get user data and redirect to home
                     userData = snap.val()[Object.keys(snap.val())[0]];
                     
-                    // Check if user is banned from database
                     if (userData.banned === true) {
                         setButtonLoading('googleBtn', false);
-                        // Hide logo when showing banned message
                         document.querySelector('.logo-section').style.display = 'none';
                         showSection("bannedContainer");
                         return;
                     }
                     
-                    // Redirect to home
-                    window.location.href = "home.html";
+                    // توجيه المستخدم الحالي إلى الصفحة الرئيسية
+                    redirectToHome();
                 } else {
-                    // New user, show registration form
                     document.getElementById("userEmail").textContent = currentUser.email;
                     setButtonLoading('googleBtn', false);
                     showSection("registrationForm");
@@ -888,11 +999,10 @@
                 console.error("Google sign in error:", error);
                 setButtonLoading('googleBtn', false);
                 
-                // Handle specific errors
                 if (error.code === 'auth/popup-closed-by-user') {
                     showAlert("تم إغلاق نافذة تسجيل الدخول. يرجى المحاولة مرة أخرى.");
                 } else if (error.code === 'auth/cancelled-popup-request') {
-                    // Do nothing, user cancelled
+                    // Do nothing
                 } else if (error.code === 'auth/network-request-failed') {
                     showAlert("خطأ في الاتصال بالشبكة. يرجى التحقق من اتصالك بالإنترنت.");
                 } else {
@@ -906,16 +1016,13 @@
             const name = document.getElementById("name").value.trim();
             const referral = document.getElementById("referral").value.trim();
 
-            // Validate name
             if (!validName(name)) {
                 showAlert("اسم المستخدم يجب أن يكون بين 3 و15 حرفًا، ويمكن أن يحتوي على أحرف عربية، إنجليزية، أرقام ومسافات فقط.");
                 return;
             }
 
-            // Show loading state
             setButtonLoading('continueBtn', true);
 
-            // Check if name is unique
             if (!(await isNameUnique(name))) {
                 setButtonLoading('continueBtn', false);
                 showAlert("اسم المستخدم هذا مستخدم بالفعل. يرجى اختيار اسم آخر.");
@@ -923,6 +1030,7 @@
             }
 
             let coin = 20;
+            let referrerId = null;
 
             // Handle referral code if provided
             if (referral) {
@@ -940,12 +1048,14 @@
                         return;
                     }
 
+                    referrerId = referral;
+                    
                     // Add 5 coins to referrer
                     await db.ref("users_Awn/" + referral).update({
                         coin: (refSnap.val().coin || 0) + 5
                     });
 
-                    coin = 25; // New user gets 25 coins instead of 20
+                    coin = 25;
                 } catch (error) {
                     console.error("Error handling referral:", error);
                     setButtonLoading('continueBtn', false);
@@ -955,14 +1065,13 @@
             }
 
             try {
-                // Generate unique user ID
                 const userId = await generateUniqueId();
                 
                 if (!userId) {
                     throw new Error("فشل في إنشاء معرف مستخدم فريد");
                 }
 
-                // Create user record
+                // إنشاء سجل المستخدم الجديد
                 await db.ref("users_Awn/" + userId).set({
                     id: userId,
                     name: name,
@@ -972,14 +1081,16 @@
                     referral_used: referral || "",
                     coin: coin,
                     created_at: new Date().toISOString()
+                    // لا ننشئ حقول ref هنا - سيتم إنشاؤها ديناميكيًا عند الحاجة
                 });
 
-                showAlert("تم إنشاء حسابك بنجاح! يتم توجيهك الآن...", "success");
-                
-                // Redirect to home page after delay
-                setTimeout(() => {
-                    window.location.href = "home.html";
-                }, 1500);
+                // تشغيل نظام الإحالة الديناميكي إذا كان هناك كود إحالة
+                if (referrerId) {
+                    await addToReferralChain(referrerId, userId);
+                }
+
+                // إعادة التوجيه مع شاشة المؤقت
+                redirectToHome();
             } catch (error) {
                 console.error("Registration error:", error);
                 setButtonLoading('continueBtn', false);
@@ -990,10 +1101,8 @@
         /* Check Authentication State on Load */
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                // First check if user is already logged in
                 auth.onAuthStateChanged(async (user) => {
                     if (user) {
-                        // User is signed in, check if they exist in database
                         try {
                             const snap = await db.ref("users_Awn")
                                 .orderByChild("email")
@@ -1001,15 +1110,12 @@
                                 .once("value");
 
                             if (snap.exists()) {
-                                // Get user data
                                 userData = snap.val()[Object.keys(snap.val())[0]];
                                 
-                                // Check if user is banned
                                 if (userData.banned === true) {
                                     setTimeout(() => {
                                         showMainInterface();
                                         setTimeout(() => {
-                                            // Hide logo when showing banned message
                                             document.querySelector('.logo-section').style.display = 'none';
                                             showSection("bannedContainer");
                                         }, 500);
@@ -1017,9 +1123,9 @@
                                     return;
                                 }
                                 
-                                // User exists and not banned, redirect to home
+                                // توجيه المستخدم المسجل مسبقًا
                                 setTimeout(() => {
-                                    window.location.href = "home.html";
+                                    redirectToHome();
                                 }, 1000);
                                 return;
                             }
@@ -1028,13 +1134,11 @@
                         }
                     }
                     
-                    // Show main interface after delay
                     setTimeout(() => {
                         showMainInterface();
                     }, 1500);
                 });
                 
-                // Fallback in case auth state change doesn't fire
                 setTimeout(() => {
                     if (document.getElementById("loadingScreen").style.visibility !== "hidden") {
                         showMainInterface();
@@ -1052,11 +1156,9 @@
             const loadingScreen = document.getElementById("loadingScreen");
             const mainContainer = document.getElementById("mainContainer");
             
-            // Hide loading screen
             loadingScreen.style.opacity = "0";
             loadingScreen.style.visibility = "hidden";
             
-            // Show main container
             setTimeout(() => {
                 mainContainer.style.display = "block";
             }, 300);
@@ -1083,6 +1185,11 @@
                 }
             }
         });
+        
+        /* اختصار للتوجيه اليدوي في حالة فشل التوجيه التلقائي */
+        window.manualRedirect = function() {
+            window.location.href = "home.html";
+        };
     </script>
 </body>
 </html>
