@@ -102,8 +102,8 @@
         .notification {
             background: white;
             border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 15px;
+            padding: 16px;
+            margin-bottom: 12px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             border: 3px solid var(--accent-dark);
             transform: translateX(120%);
@@ -111,12 +111,15 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 15px;
-            cursor: move;
+            gap: 12px;
+            cursor: grab;
+            font-size: 0.85rem;
+            opacity: 0;
         }
         
         .notification.show {
             transform: translateX(0);
+            opacity: 1;
         }
         
         .notification-content {
@@ -125,27 +128,27 @@
         
         .notification-title {
             font-family: 'Almarai', sans-serif;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             font-weight: 800;
             color: var(--accent-dark);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         
         .notification-message {
             font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.6;
+            font-size: 0.8rem;
+            line-height: 1.5;
         }
         
         .notification-close {
             background: none;
             border: none;
             color: var(--text-secondary);
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: var(--transition-quick);
-            padding: 5px;
+            padding: 4px;
         }
         
         .notification-close:hover {
@@ -576,7 +579,7 @@
         
         .users-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
             gap: 25px;
             margin-bottom: 50px;
         }
@@ -676,6 +679,90 @@
         .copy-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
+        }
+        
+        .user-notifications {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.05);
+            border-radius: 16px;
+            border: 2px solid rgba(15, 23, 42, 0.1);
+        }
+        
+        .user-notifications-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--accent-dark);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .notification-item {
+            background: white;
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            border: 2px solid rgba(15, 23, 42, 0.1);
+            font-size: 0.8rem;
+        }
+        
+        .notification-message-text {
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+        
+        .notification-date {
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        .user-referrals {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.05);
+            border-radius: 16px;
+            border: 2px solid rgba(15, 23, 42, 0.1);
+        }
+        
+        .user-referrals-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--accent-dark);
+            margin-bottom: 10px;
+        }
+        
+        .referral-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            border-radius: 12px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border: 2px solid rgba(15, 23, 42, 0.1);
+            font-size: 0.85rem;
+        }
+        
+        .referral-label {
+            font-family: 'Almarai', sans-serif;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        
+        .referral-id {
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 500;
+            color: var(--accent-dark);
+            direction: ltr;
+            text-align: left;
         }
         
         .user-actions {
@@ -1643,10 +1730,75 @@
                         hour12: true
                     }) : 'غير متوفر';
                 
-                const referralCount = user.referral_used ? Object.keys(user.referral_used).length : 0;
+                const referralCount = user.referrals ? Object.keys(user.referrals).length : 0;
                 
                 const userCard = document.createElement('div');
                 userCard.className = `user-card ${user.banned ? 'banned' : ''}`;
+                
+                let notificationsHTML = '';
+                if (user.notu_user) {
+                    notificationsHTML = `
+                        <div class="user-notifications">
+                            <div class="user-notifications-title">
+                                <span>الإشعارات</span>
+                                <span>(${Object.keys(user.notu_user).length})</span>
+                            </div>
+                            ${Object.entries(user.notu_user).map(([key, notification]) => {
+                                const date = notification.created_at ? 
+                                    new Date(notification.created_at).toLocaleString('en-US', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: true
+                                    }) : new Date().toLocaleString('en-US', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: true
+                                    });
+                                
+                                return `
+                                    <div class="notification-item">
+                                        <div class="notification-message-text">${notification.message || 'لا يوجد نص'}</div>
+                                        <div class="notification-date">${date}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                }
+                
+                let referralsHTML = '';
+                if (user.referrals) {
+                    referralsHTML = `
+                        <div class="user-referrals">
+                            <div class="user-referrals-title">
+                                الإحالات (${Object.keys(user.referrals).length})
+                            </div>
+                            ${Object.entries(user.referrals).map(([refKey, refId], index) => `
+                                <div class="referral-item">
+                                    <span class="referral-label">ref${index + 1}</span>
+                                    <span class="referral-id">${refId}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                let referralUsedHTML = '';
+                if (user.referral_used) {
+                    referralUsedHTML = `
+                        <div class="info-row">
+                            <span class="info-label">المحيل:</span>
+                            <span class="info-value">${user.referral_used}</span>
+                        </div>
+                    `;
+                }
+                
                 userCard.innerHTML = `
                     <div class="user-header">
                         <div class="user-name">${user.name || 'بدون اسم'}</div>
@@ -1667,6 +1819,7 @@
                                 </button>
                             </div>
                         </div>
+                        ${referralUsedHTML}
                         <div class="info-row">
                             <span class="info-label">عدد الإحالات:</span>
                             <span class="info-value">${referralCount}</span>
@@ -1680,6 +1833,8 @@
                             <span class="info-value">${user.coin || 0}</span>
                         </div>
                     </div>
+                    ${notificationsHTML}
+                    ${referralsHTML}
                     <div class="user-actions">
                         <button class="action-btn ${user.banned ? 'unban-btn' : 'ban-btn'}" data-user-id="${user.id}" data-action="${user.banned ? 'unban' : 'ban'}">
                             <i class="fas fa-${user.banned ? 'unlock' : 'ban'}"></i>
@@ -1765,13 +1920,15 @@
             if (!message) return;
             
             try {
-                const notificationRef = database.ref(`notu_user/${userId}`);
-                await notificationRef.push({
+                const notificationId = database.ref().child('notifications').push().key;
+                const notificationData = {
                     message: message,
-                    timestamp: Date.now(),
-                    read: false
-                });
+                    created_at: Date.now()
+                };
+                
+                await database.ref(`users_Awn/${userId}/notu_user/${notificationId}`).set(notificationData);
                 showNotification('تم', 'تم إرسال الإشعار الفردي', 'success');
+                loadAllUsers();
             } catch (error) {
                 console.error('Error sending private notification:', error);
                 showNotification('خطأ', 'فشل في إرسال الإشعار', 'error');
@@ -1786,25 +1943,37 @@
             }
             
             try {
-                const publicNotificationRef = database.ref('noty_publick');
-                await publicNotificationRef.set({
+                const publicNotificationId = database.ref().child('public_notifications').push().key;
+                const publicNotificationData = {
                     message: message,
-                    timestamp: Date.now()
-                });
+                    created_at: Date.now()
+                };
+                
+                await database.ref(`users_Awn/noty_publick/${publicNotificationId}`).set(publicNotificationData);
                 
                 const snapshot = await database.ref('users_Awn').once('value');
+                const updatePromises = [];
+                
                 snapshot.forEach((childSnapshot) => {
-                    const userNotificationRef = database.ref(`notu_user/${childSnapshot.key}`);
-                    userNotificationRef.push({
-                        message: message,
-                        timestamp: Date.now(),
-                        read: false,
-                        public: true
-                    });
+                    if (childSnapshot.key !== 'noty_publick') {
+                        const userId = childSnapshot.key;
+                        const userNotificationId = database.ref().child('notifications').push().key;
+                        const userNotificationData = {
+                            message: message,
+                            created_at: Date.now(),
+                            is_public: true
+                        };
+                        
+                        updatePromises.push(
+                            database.ref(`users_Awn/${userId}/notu_user/${userNotificationId}`).set(userNotificationData)
+                        );
+                    }
                 });
                 
+                await Promise.all(updatePromises);
                 elements.publicNotificationInput.value = '';
                 showNotification('تم', 'تم إرسال الإشعار العام لجميع المستخدمين', 'success');
+                loadAllUsers();
             } catch (error) {
                 console.error('Error sending public notification:', error);
                 showNotification('خطأ', 'فشل في إرسال الإشعار العام', 'error');
@@ -1850,37 +2019,107 @@
                 currentNotification = null;
             });
             
-            makeDraggable(notification);
+            setupNotificationDrag(notification);
         }
 
-        function makeDraggable(element) {
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            const header = element;
+        function setupNotificationDrag(notification) {
+            let isDragging = false;
+            let startX = 0;
+            let startY = 0;
+            let initialX = 0;
+            let initialY = 0;
             
-            header.onmousedown = dragMouseDown;
+            notification.style.position = 'relative';
+            notification.style.left = '0';
+            notification.style.top = '0';
             
-            function dragMouseDown(e) {
-                e.preventDefault();
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
-            }
+            notification.addEventListener('mousedown', startDrag);
+            notification.addEventListener('touchstart', startDragTouch);
             
-            function elementDrag(e) {
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
+            function startDrag(e) {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                initialX = parseInt(notification.style.left) || 0;
+                initialY = parseInt(notification.style.top) || 0;
                 
-                element.style.top = (element.offsetTop - pos2) + "px";
-                element.style.right = (element.offsetRight + pos1) + "px";
+                document.addEventListener('mousemove', drag);
+                document.addEventListener('mouseup', stopDrag);
+                notification.style.cursor = 'grabbing';
             }
             
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
+            function startDragTouch(e) {
+                if (e.touches.length === 1) {
+                    e.preventDefault();
+                    isDragging = true;
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                    initialX = parseInt(notification.style.left) || 0;
+                    initialY = parseInt(notification.style.top) || 0;
+                    
+                    document.addEventListener('touchmove', dragTouch);
+                    document.addEventListener('touchend', stopDrag);
+                }
+            }
+            
+            function drag(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+                
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                
+                notification.style.left = `${initialX + deltaX}px`;
+                notification.style.top = `${initialY + deltaY}px`;
+                
+                if (Math.abs(deltaX) > 100) {
+                    closeNotification();
+                }
+            }
+            
+            function dragTouch(e) {
+                if (!isDragging || e.touches.length !== 1) return;
+                e.preventDefault();
+                
+                const deltaX = e.touches[0].clientX - startX;
+                const deltaY = e.touches[0].clientY - startY;
+                
+                notification.style.left = `${initialX + deltaX}px`;
+                notification.style.top = `${initialY + deltaY}px`;
+                
+                if (Math.abs(deltaX) > 100) {
+                    closeNotification();
+                }
+            }
+            
+            function stopDrag() {
+                isDragging = false;
+                document.removeEventListener('mousemove', drag);
+                document.removeEventListener('touchmove', dragTouch);
+                document.removeEventListener('mouseup', stopDrag);
+                document.removeEventListener('touchend', stopDrag);
+                notification.style.cursor = 'grab';
+                
+                setTimeout(() => {
+                    notification.style.transition = 'left 0.3s ease, top 0.3s ease';
+                    notification.style.left = '0';
+                    notification.style.top = '0';
+                    
+                    setTimeout(() => {
+                        notification.style.transition = '';
+                    }, 300);
+                }, 100);
+            }
+            
+            function closeNotification() {
+                isDragging = false;
+                clearTimeout(notificationTimeout);
+                notification.classList.remove('show');
+                
+                setTimeout(() => {
+                    notification.remove();
+                    currentNotification = null;
+                }, 500);
             }
         }
 
@@ -1888,15 +2127,17 @@
             if (!currentUser || !currentUser.id) return;
             
             try {
-                const snapshot = await database.ref(`notu_user/${currentUser.id}`).orderByChild('read').equalTo(false).once('value');
+                const snapshot = await database.ref(`users_Awn/${currentUser.id}/notu_user`).once('value');
                 
-                snapshot.forEach((childSnapshot) => {
-                    const notification = childSnapshot.val();
-                    if (!notification.read) {
-                        showNotification('إشعار جديد', notification.message, 'info');
-                        database.ref(`notu_user/${currentUser.id}/${childSnapshot.key}/read`).set(true);
-                    }
-                });
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const notification = childSnapshot.val();
+                        if (!notification.read) {
+                            showNotification('إشعار جديد', notification.message, 'info');
+                            database.ref(`users_Awn/${currentUser.id}/notu_user/${childSnapshot.key}/read`).set(true);
+                        }
+                    });
+                }
             } catch (error) {
                 console.error('Error checking notifications:', error);
             }
