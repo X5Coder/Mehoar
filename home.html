@@ -5,15 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>عَون - لوحة التحكم</title>
     
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     
     <style>
@@ -47,11 +44,57 @@
             -webkit-font-smoothing: antialiased;
         }
         
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-logo {
+            font-family: 'Almarai', sans-serif;
+            font-weight: 900;
+            font-size: 64px;
+            background: linear-gradient(145deg, #0F172A, #334155);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(15, 23, 42, 0.1);
+            border-left-color: var(--accent-dark);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+        
         .notification-container {
             position: fixed;
             top: 20px;
             right: 20px;
-            z-index: 99999;
+            z-index: 99998;
             max-width: 400px;
             width: 100%;
         }
@@ -82,7 +125,7 @@
         
         .notification-title {
             font-family: 'Almarai', sans-serif;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: var(--accent-dark);
             margin-bottom: 8px;
@@ -91,7 +134,7 @@
         .notification-message {
             font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
-            font-size: 1rem;
+            font-size: 0.95rem;
             line-height: 1.6;
         }
         
@@ -99,7 +142,7 @@
             background: none;
             border: none;
             color: var(--text-secondary);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             transition: var(--transition-quick);
             padding: 5px;
@@ -163,17 +206,17 @@
             padding: 12px 24px;
             border-radius: 20px;
             font-weight: 900;
-            font-size: 18px;
+            font-size: 16px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             box-shadow: 0 8px 24px rgba(220, 38, 38, 0.2);
             border: 3px solid var(--admin-color);
             letter-spacing: -0.5px;
         }
         
         .admin-badge i {
-            font-size: 20px;
+            font-size: 18px;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
         
@@ -189,10 +232,10 @@
             padding: 12px 24px;
             border-radius: 20px;
             font-weight: 800;
-            font-size: 16px;
+            font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
             border: 3px solid #0F172A;
             transition: var(--transition-quick);
@@ -204,7 +247,7 @@
         }
         
         .coins-display i {
-            font-size: 20px;
+            font-size: 18px;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
         }
         
@@ -333,7 +376,7 @@
             padding: 24px;
             text-align: right;
             font-family: 'Almarai', sans-serif;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
             color: #0F172A;
             cursor: pointer;
@@ -366,7 +409,6 @@
             margin: 0 auto;
         }
         
-        /* Admin Panel Styles */
         .admin-panel {
             display: none;
         }
@@ -379,7 +421,7 @@
         
         .admin-title {
             font-family: 'Almarai', sans-serif;
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 900;
             margin-bottom: 20px;
             color: var(--admin-color);
@@ -389,7 +431,7 @@
         
         .admin-subtitle {
             font-family: 'Tajawal', sans-serif;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             color: var(--text-secondary);
             max-width: 900px;
             margin: 0 auto;
@@ -408,7 +450,7 @@
         
         .search-title {
             font-family: 'Almarai', sans-serif;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 800;
             color: var(--accent-dark);
             margin-bottom: 20px;
@@ -417,16 +459,16 @@
         .search-input-group {
             display: flex;
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .search-input {
             flex: 1;
-            padding: 18px 24px;
+            padding: 15px 20px;
             border: 3px solid var(--accent-dark);
             border-radius: var(--border-radius);
             font-family: 'Tajawal', sans-serif;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             transition: var(--transition-quick);
         }
         
@@ -441,15 +483,17 @@
             color: white;
             border: none;
             border-radius: var(--border-radius);
-            padding: 0 32px;
+            padding: 0 30px;
             font-family: 'Almarai', sans-serif;
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 800;
             cursor: pointer;
             transition: var(--transition-quick);
             display: flex;
             align-items: center;
             gap: 10px;
+            min-width: 120px;
+            justify-content: center;
         }
         
         .search-btn:hover {
@@ -460,7 +504,7 @@
         .search-hint {
             font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-style: italic;
         }
         
@@ -484,7 +528,7 @@
         .control-label {
             display: block;
             font-family: 'Almarai', sans-serif;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: var(--accent-dark);
             margin-bottom: 10px;
@@ -492,11 +536,11 @@
         
         .control-input {
             width: 100%;
-            padding: 15px 20px;
+            padding: 14px 18px;
             border: 3px solid var(--accent-dark);
             border-radius: var(--border-radius);
             font-family: 'Tajawal', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1rem;
             transition: var(--transition-quick);
         }
         
@@ -510,9 +554,9 @@
             color: white;
             border: none;
             border-radius: var(--border-radius);
-            padding: 15px 30px;
+            padding: 14px 28px;
             font-family: 'Almarai', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 800;
             cursor: pointer;
             transition: var(--transition-quick);
@@ -567,7 +611,7 @@
         
         .user-name {
             font-family: 'Almarai', sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 800;
             color: var(--accent-dark);
         }
@@ -577,7 +621,7 @@
             color: white;
             padding: 5px 12px;
             border-radius: 12px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 700;
             display: none;
         }
@@ -601,14 +645,14 @@
             font-family: 'Almarai', sans-serif;
             font-weight: 700;
             color: var(--text-secondary);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         
         .info-value {
             font-family: 'Tajawal', sans-serif;
             font-weight: 500;
             color: var(--accent-dark);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             direction: ltr;
             text-align: left;
         }
@@ -618,9 +662,9 @@
             color: white;
             border: none;
             border-radius: 12px;
-            padding: 8px 15px;
+            padding: 7px 12px;
             font-family: 'Almarai', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 700;
             cursor: pointer;
             transition: var(--transition-quick);
@@ -642,11 +686,11 @@
         }
         
         .action-btn {
-            padding: 12px;
+            padding: 11px;
             border: none;
             border-radius: var(--border-radius);
             font-family: 'Almarai', sans-serif;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 800;
             cursor: pointer;
             transition: var(--transition-quick);
@@ -685,7 +729,23 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
         
-        /* Normal User Styles */
+        .public-notification-section {
+            background: white;
+            border-radius: var(--border-radius-large);
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 4px solid var(--accent-dark);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+        }
+        
+        .public-notification-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--accent-dark);
+            margin-bottom: 20px;
+        }
+        
         .user-content {
             display: none;
         }
@@ -703,7 +763,7 @@
         
         .welcome-title {
             font-family: 'Almarai', sans-serif;
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 900;
             margin-bottom: 20px;
             color: #0F172A;
@@ -713,7 +773,7 @@
         
         .welcome-subtitle {
             font-family: 'Tajawal', sans-serif;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             color: #64748B;
             max-width: 900px;
             margin: 0 auto;
@@ -730,7 +790,7 @@
         .service-card {
             background: white;
             border-radius: var(--border-radius-large);
-            padding: 40px 36px;
+            padding: 36px 32px;
             transition: var(--transition-quick);
             cursor: pointer;
             border: 4px solid #0F172A;
@@ -766,15 +826,15 @@
         .service-content {
             display: flex;
             align-items: flex-start;
-            gap: 28px;
+            gap: 24px;
             flex: 1;
         }
         
         .service-icon {
-            width: 80px;
-            height: 80px;
+            width: 72px;
+            height: 72px;
             background: var(--black-gradient);
-            border-radius: 22px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -784,7 +844,7 @@
         }
         
         .service-icon i {
-            font-size: 34px;
+            font-size: 30px;
             color: white;
             filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
         }
@@ -795,10 +855,10 @@
         
         .service-name {
             font-family: 'Almarai', sans-serif;
-            font-size: 2.2rem;
+            font-size: 1.9rem;
             font-weight: 900;
             color: #0F172A;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             letter-spacing: -0.5px;
             line-height: 1.3;
         }
@@ -806,7 +866,7 @@
         .service-description {
             font-family: 'Tajawal', sans-serif;
             color: #64748B;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             line-height: 1.8;
             font-weight: 500;
         }
@@ -821,7 +881,7 @@
         
         .copyright {
             font-family: 'Tajawal', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1rem;
             line-height: 1.8;
             margin-bottom: 40px;
             font-weight: 500;
@@ -837,7 +897,7 @@
         
         .support-title {
             font-family: 'Almarai', sans-serif;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 800;
             color: #0F172A;
             margin-bottom: 8px;
@@ -850,9 +910,9 @@
         }
         
         .support-link {
-            width: 60px;
-            height: 60px;
-            border-radius: 18px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
             background: var(--black-gradient);
             border: 3px solid #0F172A;
             display: flex;
@@ -869,14 +929,14 @@
         }
         
         .support-link i {
-            font-size: 28px;
+            font-size: 26px;
             color: white;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
         
         .developer-credit {
             font-family: 'Tajawal', sans-serif;
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: rgba(100, 116, 139, 0.7);
             margin-top: 30px;
             padding-top: 20px;
@@ -906,7 +966,7 @@
             }
             
             .welcome-title, .admin-title {
-                font-size: 3rem;
+                font-size: 2.6rem;
             }
             
             .welcome-subtitle, .admin-subtitle {
@@ -914,11 +974,11 @@
             }
             
             .service-card {
-                padding: 36px 32px;
+                padding: 32px 28px;
             }
             
             .service-name {
-                font-size: 2rem;
+                font-size: 1.7rem;
             }
             
             .user-card {
@@ -941,7 +1001,7 @@
             
             .admin-badge, .coins-display {
                 padding: 10px 20px;
-                font-size: 16px;
+                font-size: 15px;
             }
             
             .settings-btn {
@@ -961,16 +1021,16 @@
             }
             
             .service-content {
-                gap: 24px;
+                gap: 20px;
             }
             
             .service-icon {
-                width: 70px;
-                height: 70px;
+                width: 64px;
+                height: 64px;
             }
             
             .service-icon i {
-                font-size: 30px;
+                font-size: 28px;
             }
             
             .search-input-group {
@@ -979,10 +1039,9 @@
             
             .search-btn {
                 width: 100%;
-                justify-content: center;
             }
             
-            .admin-controls {
+            .admin-controls, .public-notification-section {
                 flex-direction: column;
             }
             
@@ -1018,7 +1077,7 @@
             
             .admin-badge, .coins-display {
                 padding: 8px 16px;
-                font-size: 15px;
+                font-size: 14px;
             }
             
             .main-content {
@@ -1027,14 +1086,14 @@
             }
             
             .welcome-title, .admin-title {
-                font-size: 2.4rem;
+                font-size: 2.2rem;
             }
             
             .welcome-subtitle, .admin-subtitle {
                 font-size: 1.1rem;
             }
             
-            .service-card, .search-section, .admin-controls {
+            .service-card, .search-section, .admin-controls, .public-notification-section {
                 padding: 28px 24px;
             }
             
@@ -1049,11 +1108,11 @@
             }
             
             .service-name {
-                font-size: 1.8rem;
+                font-size: 1.6rem;
             }
             
             .service-description {
-                font-size: 1.1rem;
+                font-size: 1.05rem;
             }
             
             .user-card {
@@ -1065,8 +1124,8 @@
             }
             
             .menu-option {
-                padding: 22px;
-                font-size: 18px;
+                padding: 20px;
+                font-size: 16px;
             }
             
             .support-links {
@@ -1074,23 +1133,23 @@
             }
             
             .support-link {
-                width: 56px;
-                height: 56px;
+                width: 52px;
+                height: 52px;
             }
             
             .support-link i {
-                font-size: 26px;
+                font-size: 24px;
             }
         }
         
         @media (max-width: 400px) {
             .admin-badge, .coins-display {
                 padding: 8px 14px;
-                font-size: 14px;
+                font-size: 13px;
             }
             
             .admin-badge i, .coins-display i {
-                font-size: 18px;
+                font-size: 16px;
             }
             
             .settings-btn {
@@ -1103,7 +1162,7 @@
             }
             
             .service-name {
-                font-size: 1.6rem;
+                font-size: 1.5rem;
             }
             
             .user-card {
@@ -1113,9 +1172,15 @@
     </style>
 </head>
 <body>
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-logo">عَون</div>
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري التحقق من الصلاحيات...</div>
+    </div>
+    
     <div class="notification-container" id="notification-container"></div>
     
-    <nav class="native-navbar">
+    <nav class="native-navbar" style="display: none;" id="navbar">
         <div class="logo" id="logo">عَون</div>
         <div class="nav-right" id="admin-nav">
             <div class="admin-badge">
@@ -1167,8 +1232,7 @@
         </div>
     </div>
     
-    <div class="main-content">
-        <!-- Admin Panel -->
+    <div class="main-content" style="display: none;" id="main-content">
         <div class="admin-panel" id="admin-panel">
             <section class="admin-header">
                 <h1 class="admin-title">لوحة تحكم المسؤول</h1>
@@ -1178,7 +1242,7 @@
             <section class="search-section">
                 <h2 class="search-title">البحث عن مستخدم</h2>
                 <div class="search-input-group">
-                    <input type="text" class="search-input" id="search-input" placeholder="ابحث بواسطة: الاسم، البريد الإلكتروني، أو الـ ID">
+                    <input type="text" class="search-input" id="search-input" placeholder="اسم، بريد، أو ID">
                     <button class="search-btn" id="search-btn">
                         <i class="fas fa-search"></i>
                         بحث
@@ -1189,34 +1253,26 @@
             
             <section class="admin-controls">
                 <div class="control-group">
-                    <label class="control-label">الإشعار العام</label>
-                    <input type="text" class="control-input" id="public-notification-input" placeholder="أدخل نص الإشعار العام">
-                    <button class="control-btn admin" id="send-public-notification-btn">
-                        <i class="fas fa-bullhorn"></i>
-                        إرسال إشعار عام
+                    <label class="control-label">عرض جميع المستخدمين</label>
+                    <button class="control-btn" id="load-all-users-btn">
+                        <i class="fas fa-users"></i>
+                        عرض جميع المستخدمين
                     </button>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">إدارة جميع المستخدمين</label>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button class="control-btn" id="load-all-users-btn">
-                            <i class="fas fa-users"></i>
-                            عرض جميع المستخدمين
-                        </button>
-                        <button class="control-btn admin" id="clear-search-btn">
-                            <i class="fas fa-times"></i>
-                            مسح البحث
-                        </button>
-                    </div>
                 </div>
             </section>
             
-            <div class="users-grid" id="users-grid">
-                <!-- Users will be loaded here dynamically -->
-            </div>
+            <div class="users-grid" id="users-grid"></div>
+            
+            <section class="public-notification-section">
+                <h2 class="public-notification-title">الإشعار العام</h2>
+                <input type="text" class="control-input" id="public-notification-input" placeholder="أدخل نص الإشعار العام">
+                <button class="control-btn admin" id="send-public-notification-btn">
+                    <i class="fas fa-bullhorn"></i>
+                    إرسال إشعار عام
+                </button>
+            </section>
         </div>
         
-        <!-- Normal User Content -->
         <div class="user-content" id="user-content">
             <section class="welcome-section">
                 <h1 class="welcome-title">خدمات منصة عَون الذكية</h1>
@@ -1346,6 +1402,8 @@
         const database = firebase.database();
         
         const elements = {
+            loadingScreen: document.getElementById('loading-screen'),
+            navbar: document.getElementById('navbar'),
             logo: document.getElementById('logo'),
             adminNav: document.getElementById('admin-nav'),
             userNav: document.getElementById('user-nav'),
@@ -1361,13 +1419,13 @@
             developerCredit: document.getElementById('developer-credit'),
             adminPanel: document.getElementById('admin-panel'),
             userContent: document.getElementById('user-content'),
+            mainContent: document.getElementById('main-content'),
             searchInput: document.getElementById('search-input'),
             searchBtn: document.getElementById('search-btn'),
             usersGrid: document.getElementById('users-grid'),
             publicNotificationInput: document.getElementById('public-notification-input'),
             sendPublicNotificationBtn: document.getElementById('send-public-notification-btn'),
             loadAllUsersBtn: document.getElementById('load-all-users-btn'),
-            clearSearchBtn: document.getElementById('clear-search-btn'),
             notificationContainer: document.getElementById('notification-container')
         };
 
@@ -1376,6 +1434,17 @@
         let allUsers = [];
         let currentNotification = null;
         let notificationTimeout = null;
+
+        function hideLoadingScreen() {
+            setTimeout(() => {
+                elements.loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    elements.loadingScreen.style.display = 'none';
+                    elements.navbar.style.display = 'flex';
+                    elements.mainContent.style.display = 'block';
+                }, 500);
+            }, 500);
+        }
 
         async function loadUserData() {
             try {
@@ -1507,10 +1576,6 @@
             
             elements.sendPublicNotificationBtn.addEventListener('click', sendPublicNotification);
             elements.loadAllUsersBtn.addEventListener('click', loadAllUsers);
-            elements.clearSearchBtn.addEventListener('click', () => {
-                elements.searchInput.value = '';
-                loadAllUsers();
-            });
             
             elements.developerCredit.addEventListener('click', () => {
                 window.open('https://t.me/X5Coder', '_blank');
@@ -1578,7 +1643,6 @@
                         hour12: true
                     }) : 'غير متوفر';
                 
-                // Count referrals
                 const referralCount = user.referral_used ? Object.keys(user.referral_used).length : 0;
                 
                 const userCard = document.createElement('div');
@@ -1635,7 +1699,6 @@
                 elements.usersGrid.appendChild(userCard);
             });
             
-            // Add event listeners to buttons
             document.querySelectorAll('.copy-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -1702,7 +1765,8 @@
             if (!message) return;
             
             try {
-                await database.ref(`notu_user/${userId}`).push({
+                const notificationRef = database.ref(`notu_user/${userId}`);
+                await notificationRef.push({
                     message: message,
                     timestamp: Date.now(),
                     read: false
@@ -1722,16 +1786,16 @@
             }
             
             try {
-                // Store in database for all users
-                await database.ref('noty_publick').set({
+                const publicNotificationRef = database.ref('noty_publick');
+                await publicNotificationRef.set({
                     message: message,
                     timestamp: Date.now()
                 });
                 
-                // Send to all users
                 const snapshot = await database.ref('users_Awn').once('value');
                 snapshot.forEach((childSnapshot) => {
-                    database.ref(`notu_user/${childSnapshot.key}`).push({
+                    const userNotificationRef = database.ref(`notu_user/${childSnapshot.key}`);
+                    userNotificationRef.push({
                         message: message,
                         timestamp: Date.now(),
                         read: false,
@@ -1748,7 +1812,6 @@
         }
 
         function showNotification(title, message, type = 'info') {
-            // Clear existing notification
             if (currentNotification) {
                 clearTimeout(notificationTimeout);
                 currentNotification.remove();
@@ -1772,17 +1835,14 @@
             elements.notificationContainer.appendChild(notification);
             currentNotification = notification;
             
-            // Show with animation
             setTimeout(() => notification.classList.add('show'), 10);
             
-            // Auto remove after 3 seconds
             notificationTimeout = setTimeout(() => {
                 notification.classList.remove('show');
                 setTimeout(() => notification.remove(), 500);
                 currentNotification = null;
             }, 3000);
             
-            // Close button
             notification.querySelector('.notification-close').addEventListener('click', () => {
                 clearTimeout(notificationTimeout);
                 notification.classList.remove('show');
@@ -1790,7 +1850,6 @@
                 currentNotification = null;
             });
             
-            // Make draggable
             makeDraggable(notification);
         }
 
@@ -1835,7 +1894,6 @@
                     const notification = childSnapshot.val();
                     if (!notification.read) {
                         showNotification('إشعار جديد', notification.message, 'info');
-                        // Mark as read
                         database.ref(`notu_user/${currentUser.id}/${childSnapshot.key}/read`).set(true);
                     }
                 });
@@ -1859,10 +1917,11 @@
                         await loadAllUsers();
                     } else {
                         setupUserEventListeners();
-                        // Check for notifications every 30 seconds
                         checkForNotifications();
                         setInterval(checkForNotifications, 30000);
                     }
+                    
+                    hideLoadingScreen();
                 }
             });
         }
