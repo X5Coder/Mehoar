@@ -1555,7 +1555,29 @@
                 }
 
                 const userData = snapshot.val();
-                currentUser = { ...userData, id: user.uid };
+                
+                // التحقق من الحقول الأساسية فقط
+                if (!userData.email || !userData.id) {
+                    await auth.signOut();
+                    window.location.replace('login.html');
+                    return false;
+                }
+                
+                // التحقق من إذا كان المستخدم محظور
+                if (userData.banned === true) {
+                    await auth.signOut();
+                    window.location.replace('login.html');
+                    return false;
+                }
+                
+                currentUser = { 
+                    id: user.uid,
+                    email: userData.email,
+                    name: userData.name || '',
+                    coin: userData.coin || 0,
+                    admin: userData.admin === true || false
+                };
+                
                 elements.coinsCount.textContent = userData.coin || 0;
                 isAdmin = userData.admin === true;
                 
@@ -1676,9 +1698,26 @@
                 
                 snapshot.forEach((childSnapshot) => {
                     if (childSnapshot.key !== 'noty_publick') {
-                        const user = childSnapshot.val();
-                        user.id = childSnapshot.key;
-                        allUsers.push(user);
+                        const userData = childSnapshot.val();
+                        
+                        // فقط إضافة المستخدم إذا كان لديه الحقول الأساسية
+                        if (userData.email && userData.id) {
+                            const user = {
+                                id: childSnapshot.key,
+                                email: userData.email,
+                                name: userData.name || '',
+                                coin: userData.coin || 0,
+                                admin: userData.admin === true || false,
+                                banned: userData.banned === true || false,
+                                created_at: userData.created_at || null,
+                                timestamp: userData.timestamp || null,
+                                referral_used: userData.referral_used || '',
+                                referrals: userData.referrals || {},
+                                notu_user: userData.notu_user || {}
+                            };
+                            
+                            allUsers.push(user);
+                        }
                     }
                 });
                 
@@ -2280,6 +2319,14 @@
                     
                     const userData = snapshot.val();
                     
+                    // التحقق من الحقول الأساسية فقط
+                    if (!userData.email || !userData.id) {
+                        console.log("Missing required fields (email or id), signing out and redirecting");
+                        await auth.signOut();
+                        window.location.replace('login.html');
+                        return;
+                    }
+                    
                     // التحقق من إذا كان المستخدم محظور
                     if (userData.banned === true) {
                         console.log("User is banned, signing out and redirecting");
@@ -2289,7 +2336,14 @@
                     }
                     
                     // المستخدم صالح، تحميل البيانات
-                    currentUser = { ...userData, id: user.uid };
+                    currentUser = { 
+                        id: user.uid,
+                        email: userData.email,
+                        name: userData.name || '',
+                        coin: userData.coin || 0,
+                        admin: userData.admin === true || false
+                    };
+                    
                     elements.coinsCount.textContent = userData.coin || 0;
                     isAdmin = userData.admin === true;
                     
