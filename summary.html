@@ -99,7 +99,6 @@
             align-items: center;
             gap: 8px;
             border: 2px solid #0F172A;
-            transition: var(--transition-quick);
         }
         
         .font-size-controls {
@@ -788,10 +787,6 @@
                         <div class="info-label">التكلفة (عملات)</div>
                         <div class="info-value coins-cost" id="coins-cost">-</div>
                     </div>
-                    <div class="info-item">
-                        <div class="info-label">رصيدك الحالي</div>
-                        <div class="info-value" id="current-coins">-</div>
-                    </div>
                 </div>
                 
                 <div class="action-buttons">
@@ -962,19 +957,25 @@
     </div>
 
     <script>
-        // تهيئة Firebase
-        firebase.initializeApp({
-            apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
-            authDomain: "marvel1-654dd.firebaseapp.com",
-            databaseURL: "https://marvel1-654dd-default-rtdb.firebaseio.com",
-            projectId: "marvel1-654dd",
-            storageBucket: "marvel1-654dd.appspot.com",
-            messagingSenderId: "189921979866",
-            appId: "1:189921979866:android:95f48de58a69756be924e3"
-        });
-
-        const auth = firebase.auth();
-        const database = firebase.database();
+        // متغيرات التطبيق
+        let currentFile = null;
+        let fileInfo = {
+            name: '',
+            size: 0,
+            pages: 0,
+            words: 0,
+            coins: 0
+        };
+        let summarySettings = {
+            pages: 1,
+            explanationStyle: 'طفولي',
+            dialect: 'مصري',
+            explainer: 'طالب',
+            outputLanguage: 'عربي',
+            customLanguage: '',
+            comment: ''
+        };
+        let summaryResult = null;
         
         // العناصر الرئيسية
         const elements = {
@@ -996,7 +997,6 @@
             fileSize: document.getElementById('file-size'),
             pageCount: document.getElementById('page-count'),
             coinsCost: document.getElementById('coins-cost'),
-            currentCoins: document.getElementById('current-coins'),
             cancelUpload: document.getElementById('cancel-upload'),
             continueBtn: document.getElementById('continue-btn'),
             
@@ -1021,93 +1021,17 @@
             newSummary: document.getElementById('new-summary')
         };
 
-        // متغيرات التطبيق
-        let currentUser = null;
-        let userCoins = 0;
-        let currentFile = null;
-        let fileInfo = {
-            name: '',
-            size: 0,
-            pages: 0,
-            coins: 0
-        };
-        let summarySettings = {
-            pages: 1,
-            explanationStyle: 'طفولي',
-            dialect: 'مصري',
-            explainer: 'طالب',
-            outputLanguage: 'عربي',
-            customLanguage: '',
-            comment: ''
-        };
-        let summaryResult = null;
-        
         // تهيئة التطبيق عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                // التحقق من المصادقة
-                const user = auth.currentUser;
-                if (!user) {
-                    window.location.href = 'login.html';
-                    return;
-                }
-                
-                // تحميل بيانات المستخدم
-                await loadUserData();
-                
-                // إعداد واجهة المستخدم
-                setupUI();
-                
-            } catch (error) {
-                console.error('خطأ في التهيئة:', error);
-                alert('حدث خطأ في تحميل الصفحة');
-            }
+        document.addEventListener('DOMContentLoaded', () => {
+            setupUI();
         });
-        
-        // تحميل بيانات المستخدم
-        async function loadUserData() {
-            try {
-                const user = auth.currentUser;
-                const snapshot = await database.ref('users_Awn').once('value');
-                const users = snapshot.val();
-                
-                let userData = null;
-                for (const [userId, data] of Object.entries(users)) {
-                    if (userId !== 'noty_publick' && data.email === user.email) {
-                        userData = { id: userId, ...data };
-                        break;
-                    }
-                }
-                
-                if (!userData || userData.banned === true) {
-                    await auth.signOut();
-                    window.location.href = 'login.html';
-                    return;
-                }
-                
-                currentUser = {
-                    id: userData.id,
-                    email: userData.email,
-                    name: userData.name || '',
-                    coin: userData.coin || 0,
-                    admin: userData.admin === true || false
-                };
-                
-                userCoins = userData.coin || 0;
-                elements.coinsCount.textContent = userCoins;
-                elements.currentCoins.textContent = userCoins;
-                
-            } catch (error) {
-                console.error('خطأ في تحميل بيانات المستخدم:', error);
-                throw error;
-            }
-        }
         
         // إعداد واجهة المستخدم
         function setupUI() {
             // شعار المنصة
             elements.logo.addEventListener('click', () => {
-                window.location.href = 'home.html';
+                // يمكن إضافة أي وظيفة هنا
+                console.log('شعار المنصة');
             });
             
             // رفع الملف
@@ -1139,6 +1063,9 @@
             
             // اختيار القيم الافتراضية
             selectDefaultOptions();
+            
+            // تعيين رصيد افتراضي لعرضه فقط (ليس مرتبطاً بأي حساب)
+            elements.coinsCount.textContent = "100";
         }
         
         // إعداد شريط عدد الصفحات
@@ -1231,13 +1158,8 @@
                 // عرض معلومات الملف
                 displayFileInfo();
                 
-                // التحقق من الرصيد
-                if (userCoins >= fileInfo.coins) {
-                    elements.continueBtn.disabled = false;
-                } else {
-                    alert('⚠️ رصيدك غير كافي لإتمام العملية. يرجى شحن رصيدك.');
-                    elements.continueBtn.disabled = true;
-                }
+                // تمكين زر المتابعة
+                elements.continueBtn.disabled = false;
                 
             } catch (error) {
                 console.error('خطأ في تحليل الملف:', error);
@@ -1319,7 +1241,6 @@
             elements.fileSize.textContent = formatFileSize(fileInfo.size);
             elements.pageCount.textContent = fileInfo.pages;
             elements.coinsCost.textContent = fileInfo.coins;
-            elements.currentCoins.textContent = userCoins;
             
             elements.fileInfo.classList.add('show');
         }
@@ -1373,12 +1294,6 @@
                     }
                 }
                 
-                // التحقق من الرصيد
-                if (userCoins < fileInfo.coins) {
-                    alert('⚠️ رصيدك غير كافي لإتمام العملية. يرجى شحن رصيدك.');
-                    return;
-                }
-                
                 // إظهار شاشة المعالجة
                 showProcessing('جاري إنشاء التلخيص...');
                 
@@ -1426,12 +1341,6 @@
                 if (result.Eror) {
                     throw new Error(result.Eror);
                 }
-                
-                // خصم العملات
-                await deductCoins();
-                
-                // حفظ النتيجة
-                await saveResultToFirebase(result);
                 
                 // عرض النتيجة
                 summaryResult = result;
@@ -1533,40 +1442,6 @@ rew : القوانين أو القواعد المذكورة داخل نفس مح
 }`;
         }
         
-        // خصم العملات
-        async function deductCoins() {
-            try {
-                const newCoins = userCoins - fileInfo.coins;
-                await database.ref(`users_Awn/${currentUser.id}/coin`).set(newCoins);
-                userCoins = newCoins;
-                elements.coinsCount.textContent = userCoins;
-            } catch (error) {
-                console.error('خطأ في خصم العملات:', error);
-                throw error;
-            }
-        }
-        
-        // حفظ النتيجة في Firebase
-        async function saveResultToFirebase(result) {
-            try {
-                const recordId = Date.now().toString();
-                const recordData = {
-                    id: currentUser.id,
-                    process: 'ملخص',
-                    data: result,
-                    pages: summarySettings.pages,
-                    timestamp: Date.now(),
-                    fileName: fileInfo.name,
-                    coinsUsed: fileInfo.coins
-                };
-                
-                await database.ref(`records/${recordId}`).set(recordData);
-            } catch (error) {
-                console.error('خطأ في حفظ النتيجة:', error);
-                throw error;
-            }
-        }
-        
         // عرض النتائج
         function displaySummaryResult() {
             elements.settingsSection.classList.remove('show');
@@ -1666,12 +1541,6 @@ rew : القوانين أو القواعد المذكورة داخل نفس مح
         function hideProcessing() {
             elements.processingOverlay.classList.remove('show');
         }
-        
-        // منع العودة للخلف
-        history.pushState(null, null, window.location.href);
-        window.addEventListener('popstate', () => {
-            history.pushState(null, null, window.location.href);
-        });
     </script>
 </body>
 </html>
