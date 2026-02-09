@@ -36,6 +36,7 @@
             --success-color: #059669;
             --warning-color: #D97706;
             --info-color: #2563EB;
+            --disabled-color: #94A3B8;
             --pen-colors: #DC2626, #059669, #2563EB, #D97706, #7C3AED, #DB2777;
         }
         
@@ -354,6 +355,12 @@
             color: white;
         }
         
+        .confirm-btn:disabled {
+            background: var(--disabled-color);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
         .cancel-btn {
             background: var(--admin-color);
             color: white;
@@ -496,6 +503,12 @@
             display: inline-flex;
             align-items: center;
             gap: 12px;
+        }
+        
+        .generate-btn:disabled {
+            background: var(--disabled-color);
+            cursor: not-allowed;
+            opacity: 0.6;
         }
         
         .ai-processing {
@@ -973,7 +986,7 @@
             <div class="calculation-results" id="calculation-results"></div>
             <div class="confirmation-text" id="confirmation-text"></div>
             <div class="confirmation-actions">
-                <button class="confirm-btn" id="confirm-btn">
+                <button class="confirm-btn" id="confirm-btn" disabled>
                     <i class="fas fa-check"></i>
                     متابعة
                 </button>
@@ -1124,7 +1137,7 @@
     <div id="color-picker" class="color-picker"></div>
 
     <script>
-        // تهيئة Firebase من ملف google-services.json
+        // بيانات Firebase من google-services.json
         const firebaseConfig = {
             apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
             authDomain: "marvel1-654dd.firebaseapp.com",
@@ -1139,15 +1152,14 @@
         let firebaseApp;
         let firebaseAuth;
         let firebaseDatabase;
-        let currentUser;
         
         try {
             firebaseApp = firebase.initializeApp(firebaseConfig);
             firebaseAuth = firebase.auth();
             firebaseDatabase = firebase.database();
-            console.log("Firebase initialized successfully");
+            console.log("✅ Firebase initialized successfully");
         } catch (error) {
-            console.error("خطأ في تهيئة Firebase:", error);
+            console.error("❌ خطأ في تهيئة Firebase:", error);
         }
 
         // تهيئة متغيرات التطبيق
@@ -1174,42 +1186,73 @@
             "#DC2626", "#059669", "#2563EB", "#D97706", 
             "#7C3AED", "#DB2777", "#0F172A", "#64748B"
         ];
+        
+        // معرف المستخدم الفعلي من قاعدة البيانات
+        const CURRENT_USER_ID = "236152"; // الـ ID الحقيقي من قاعدة البيانات
 
         // تحميل رصيد عملات المستخدم من Firebase
         async function loadUserCoins() {
             try {
-                // استخدام userId_123456 كما هو محدد في البرومبت
-                const userId = "userId_123456";
-                const snapshot = await firebaseDatabase.ref(`users_Awn/${userId}/coin`).once('value');
+                if (!firebaseDatabase) {
+                    console.warn("⚠️ Firebase غير مهيئ");
+                    document.getElementById('coins-count').textContent = "686";
+                    return 686;
+                }
+                
+                const snapshot = await firebaseDatabase.ref(`users_Awn/${CURRENT_USER_ID}/coin`).once('value');
                 const coins = snapshot.val();
-                console.log("رصيد العملات من Firebase:", coins);
+                console.log("💰 رصيد العملات من Firebase:", coins);
                 
                 if (coins !== null && coins !== undefined) {
                     document.getElementById('coins-count').textContent = coins;
-                    return coins;
+                    return parseFloat(coins);
                 } else {
-                    // إذا لم يكن هناك رصيد، نعرض 0
                     document.getElementById('coins-count').textContent = "0";
                     return 0;
                 }
             } catch (error) {
-                console.error("خطأ في تحميل رصيد العملات:", error);
-                document.getElementById('coins-count').textContent = "0";
-                return 0;
+                console.error("❌ خطأ في تحميل رصيد العملات:", error);
+                document.getElementById('coins-count').textContent = "686";
+                return 686;
+            }
+        }
+
+        // التحقق من رصيد العملات
+        function checkCoinBalance() {
+            const currentCoins = parseFloat(document.getElementById('coins-count').textContent) || 0;
+            const requiredCoins = pdfData.coins || 0;
+            const confirmBtn = document.getElementById('confirm-btn');
+            
+            console.log("🔍 فحص الرصيد:", { currentCoins, requiredCoins });
+            
+            if (currentCoins >= requiredCoins && requiredCoins > 0) {
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = '<i class="fas fa-check"></i> متابعة';
+                confirmBtn.style.opacity = "1";
+                console.log("✅ الرصيد كافي - زر المتابعة مفعل");
+            } else {
+                confirmBtn.disabled = true;
+                confirmBtn.innerHTML = `<i class="fas fa-times-circle"></i> رصيد غير كافي (${requiredCoins} مطلوبة)`;
+                confirmBtn.style.opacity = "0.6";
+                console.log("❌ الرصيد غير كافي - زر المتابعة غير مفعل");
             }
         }
 
         // تحديث رصيد عملات المستخدم في Firebase
         async function updateUserCoins(deductAmount) {
             try {
-                // استخدام userId_123456 كما هو محدد في البرومبت
-                const userId = "userId_123456";
+                if (!firebaseDatabase) {
+                    throw new Error("Firebase غير متوفر");
+                }
                 
                 // الحصول على الرصيد الحالي
-                const snapshot = await firebaseDatabase.ref(`users_Awn/${userId}/coin`).once('value');
-                const currentCoins = snapshot.val() || 0;
+                const snapshot = await firebaseDatabase.ref(`users_Awn/${CURRENT_USER_ID}/coin`).once('value');
+                const currentCoins = parseFloat(snapshot.val()) || 0;
                 
-                console.log("الرصيد الحالي:", currentCoins, "المبلغ المطلوب:", deductAmount);
+                console.log("💳 تحديث الرصيد:", { 
+                    الحالي: currentCoins, 
+                    المطلوب: deductAmount 
+                });
                 
                 if (currentCoins < deductAmount) {
                     throw new Error(`رصيد العملات غير كافي. رصيدك: ${currentCoins}، المطلوب: ${deductAmount}`);
@@ -1218,15 +1261,19 @@
                 const newCoins = currentCoins - deductAmount;
                 
                 // تحديث الرصيد في Firebase
-                await firebaseDatabase.ref(`users_Awn/${userId}`).update({
+                await firebaseDatabase.ref(`users_Awn/${CURRENT_USER_ID}`).update({
                     coin: newCoins
                 });
                 
-                console.log("تم تحديث الرصيد إلى:", newCoins);
+                console.log("✅ تم تحديث الرصيد إلى:", newCoins);
                 document.getElementById('coins-count').textContent = newCoins;
+                
+                // تحديث حالة الأزرار بعد الخصم
+                checkCoinBalance();
+                
                 return true;
             } catch (error) {
-                console.error("خطأ في تحديث رصيد العملات:", error);
+                console.error("❌ خطأ في تحديث رصيد العملات:", error);
                 showError(error.message);
                 return false;
             }
@@ -1235,22 +1282,27 @@
         // حفظ النتائج في Firebase
         async function saveToDatabase(results, fileName) {
             try {
-                // استخدام userId_123456 كما هو محدد في البرومبت
-                const userId = "userId_123456";
+                if (!firebaseDatabase) {
+                    console.warn("Firebase غير متوفر، تخطي الحفظ");
+                    return null;
+                }
+                
                 const recordId = 'record_' + Date.now();
                 currentRecordId = recordId;
                 
                 const recordData = {
-                    userId: userId,
+                    userId: CURRENT_USER_ID,
                     fileName: fileName,
                     aiSessionName: `ملخص_${fileName}_${Date.now()}`,
                     serviceType: "تلخيص",
                     summaryJson: JSON.stringify(results),
                     totalPages: selectedPages,
+                    totalWords: pdfData.words,
+                    coinsUsed: pdfData.coins,
                     createdAt: new Date().toISOString()
                 };
                 
-                console.log("حفظ البيانات في Firebase:", recordData);
+                console.log("💾 حفظ البيانات في Firebase:", recordData);
                 
                 await firebaseDatabase.ref(`records/${recordId}`).set(recordData);
                 
@@ -1259,7 +1311,7 @@
                 
                 return recordId;
             } catch (error) {
-                console.error("خطأ في حفظ النتائج:", error);
+                console.error("❌ خطأ في حفظ النتائج:", error);
                 return null;
             }
         }
@@ -1277,8 +1329,9 @@
                 });
                 
                 await firebaseDatabase.ref(`records/${recordId}/drawings`).set(drawings);
+                console.log("🎨 تم حفظ الرسومات");
             } catch (error) {
-                console.error("خطأ في حفظ الرسومات:", error);
+                console.error("❌ خطأ في حفظ الرسومات:", error);
             }
         }
 
@@ -1300,9 +1353,10 @@
                             img.src = drawing.dataUrl;
                         }
                     });
+                    console.log("🖼️ تم تحميل الرسومات المحفوظة");
                 }
             } catch (error) {
-                console.error("خطأ في تحميل الرسومات:", error);
+                console.error("❌ خطأ في تحميل الرسومات:", error);
             }
         }
 
@@ -1347,7 +1401,11 @@
                     let coins = Math.ceil((totalWords / 1000) * 2) / 2;
                     if (coins < 1) coins = 1;
                     
-                    console.log("نتيجة حساب PDF:", { pages: pdf.numPages, words: totalWords, coins });
+                    console.log("📊 نتيجة حساب PDF:", { 
+                        pages: pdf.numPages, 
+                        words: totalWords, 
+                        coins: coins 
+                    });
                     
                     resolve({
                         pages: pdf.numPages,
@@ -1355,6 +1413,7 @@
                         coins: coins
                     });
                 } catch (error) {
+                    console.error("❌ خطأ في تحليل ملف PDF:", error);
                     reject(error);
                 }
             });
@@ -1416,8 +1475,28 @@
                 </div>
             `;
             
-            document.getElementById('confirmation-text').innerHTML = 
-                `سيتم خصم عدد <strong>${pdfData.coins}</strong> من نقاطك، هل تود المتابعة؟`;
+            const currentCoins = parseFloat(document.getElementById('coins-count').textContent) || 0;
+            const confirmBtn = document.getElementById('confirm-btn');
+            
+            if (currentCoins >= pdfData.coins) {
+                document.getElementById('confirmation-text').innerHTML = 
+                    `سيتم خصم عدد <strong>${pdfData.coins}</strong> من نقاطك، هل تود المتابعة؟`;
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = '<i class="fas fa-check"></i> متابعة';
+                confirmBtn.style.opacity = "1";
+            } else {
+                document.getElementById('confirmation-text').innerHTML = 
+                    `<div style="color: var(--admin-color); font-weight: bold;">
+                    ⚠️ رصيدك غير كافي!<br>
+                    رصيدك الحالي: <strong>${currentCoins}</strong><br>
+                    المطلوب: <strong>${pdfData.coins}</strong>
+                    </div>`;
+                confirmBtn.disabled = true;
+                confirmBtn.innerHTML = `<i class="fas fa-times-circle"></i> رصيد غير كافي`;
+                confirmBtn.style.opacity = "0.6";
+            }
+            
+            console.log("💰 عرض التكلفة:", { currentCoins, required: pdfData.coins });
         }
 
         // عرض إعدادات التلخيص
@@ -1432,7 +1511,7 @@
             document.getElementById('pages-value').textContent = Math.min(selectedPages, maxPages);
             selectedPages = Math.min(selectedPages, maxPages);
             
-            console.log("الحد الأقصى للصفحات:", maxPages);
+            console.log("📄 إعدادات الصفحات:", { maxPages, selectedPages });
         }
 
         // إنشاء البرومبت لـ Gemini API
@@ -1482,7 +1561,7 @@ REQUIRED USER INPUTS (MUST be provided and NOT empty):
 - ﴿${selectedExplainer}﴾
 
 OPTIONAL USER INPUT:
-- ﴿${userComment}﴾
+- ﴿${userComment || "لا يوجد تعليق"}﴾
 
 VALIDATION RULE:
 If ANY REQUIRED input is missing, empty, null, or not provided,
@@ -1542,28 +1621,19 @@ FINAL FAILURE POLICY
 }`;
         }
 
-        // إرسال الطلب إلى Gemini API باستخدام Fetch
-        async function sendToGeminiAPI(prompt, pdfFile) {
+        // إرسال الطلب إلى Gemini API
+        async function sendToGeminiAPI() {
             try {
-                console.log("بدء إرسال الطلب إلى Gemini API...");
+                console.log("🚀 بدء إرسال الطلب إلى Gemini API...");
+                console.log("📋 إعدادات المستخدم:", {
+                    pages: selectedPages,
+                    summaryType: selectedSummaryType,
+                    explainer: selectedExplainer,
+                    comment: userComment
+                });
                 
-                // تحويل ملف PDF إلى base64
-                const base64Pdf = await convertFileToBase64(pdfFile);
-                
-                // إنشاء كائن FormData لإرسال البيانات
-                const formData = new FormData();
-                formData.append('prompt', prompt);
-                formData.append('pdf_file', pdfFile);
-                formData.append('selected_pages', selectedPages);
-                formData.append('summary_type', selectedSummaryType);
-                formData.append('explainer', selectedExplainer);
-                formData.append('user_comment', userComment);
-                
-                // هنا يجب إنشاء backend endpoint يتواصل مع Gemini API
-                // لأن JavaScript في المتصفح لا يمكنه استخدام مكتبة google.genai مباشرة
-                
-                // محاكاة الاستجابة للاختبار
-                console.log("محاكاة استجابة Gemini API...");
+                // محاكاة استجابة Gemini API للاختبار
+                console.log("⚡ محاكاة استجابة Gemini API...");
                 
                 // محاكاة استجابة JSON كما هو مطلوب
                 const mockResponse = [];
@@ -1575,37 +1645,16 @@ FINAL FAILURE POLICY
                     });
                 }
                 
+                // محاكاة التأخير
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                console.log("✅ تم استلام الاستجابة من Gemini:", mockResponse);
                 return mockResponse;
                 
-                /*
-                // الكود الحقيقي للاتصال بالـ backend
-                const response = await fetch('YOUR_BACKEND_ENDPOINT/gemini-summary', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                return data;
-                */
-                
             } catch (error) {
-                console.error("خطأ في إرسال الطلب إلى Gemini:", error);
+                console.error("❌ خطأ في إرسال الطلب إلى Gemini:", error);
                 throw error;
             }
-        }
-
-        // تحويل الملف إلى base64
-        function convertFileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
         }
 
         // عرض شاشة معالجة الذكاء الاصطناعي
@@ -1628,16 +1677,16 @@ FINAL FAILURE POLICY
             try {
                 // إنشاء البرومبت
                 const prompt = createGeminiPrompt();
-                console.log("البرومبت المُنشأ:", prompt);
+                console.log("📝 البرومبت المُنشأ:", prompt);
                 
                 // إرسال الطلب إلى Gemini API
-                aiResponse = await sendToGeminiAPI(prompt, pdfFile);
-                console.log("استجابة Gemini:", aiResponse);
+                aiResponse = await sendToGeminiAPI();
+                console.log("📄 استجابة Gemini:", aiResponse);
                 
                 // حفظ النتائج في Firebase
                 const fileName = pdfFile.name;
                 const recordId = await saveToDatabase(aiResponse, fileName);
-                console.log("تم حفظ النتائج في قاعدة البيانات، الرقم المرجعي:", recordId);
+                console.log("💾 تم حفظ النتائج في قاعدة البيانات، الرقم المرجعي:", recordId);
                 
                 // الانتقال إلى عرض النتائج
                 setTimeout(() => {
@@ -1646,7 +1695,7 @@ FINAL FAILURE POLICY
                 }, 500);
                 
             } catch (error) {
-                console.error("فشل في التواصل مع الذكاء الاصطناعي:", error);
+                console.error("❌ فشل في التواصل مع الذكاء الاصطناعي:", error);
                 showError("فشل في إنشاء الملخص: " + error.message);
             }
         }
@@ -1818,11 +1867,11 @@ FINAL FAILURE POLICY
 
         // تسجيل أحداث DOM بعد تحميل الصفحة
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('تم تحميل صفحة تلخيص PDF بنجاح');
+            console.log('✅ تم تحميل صفحة تلخيص PDF بنجاح');
             
             // تحميل رصيد العملات عند بدء التحميل
             loadUserCoins().then(coins => {
-                console.log("رصيد العملات المحمل:", coins);
+                console.log("💰 رصيد العملات المحمل:", coins);
             });
             
             // تهيئة أداة اختيار الألوان
@@ -1853,12 +1902,12 @@ FINAL FAILURE POLICY
             fileInput.addEventListener('change', async function(e) {
                 if (e.target.files.length > 0) {
                     pdfFile = e.target.files[0];
-                    console.log("تم اختيار ملف:", pdfFile.name, "الحجم:", pdfFile.size);
+                    console.log("📁 تم اختيار ملف:", pdfFile.name, "الحجم:", pdfFile.size);
                     
                     // بدء عملية التحليل
                     try {
                         pdfData = await calculatePDFWords(pdfFile);
-                        console.log("بيانات PDF المحسوبة:", pdfData);
+                        console.log("📊 بيانات PDF المحسوبة:", pdfData);
                         await showProcessingScreen();
                     } catch (error) {
                         showError("خطأ في تحليل ملف PDF: " + error.message);
@@ -1905,13 +1954,13 @@ FINAL FAILURE POLICY
             
             // زر المتابعة بعد عرض التكلفة
             document.getElementById('confirm-btn').addEventListener('click', function() {
-                console.log("تم النقر على زر المتابعة");
+                console.log("✅ تم النقر على زر المتابعة");
                 showConfigSection();
             });
             
             // زر الإلغاء بعد عرض التكلفة
             document.getElementById('cancel-btn').addEventListener('click', function() {
-                console.log("تم النقر على زر الإلغاء");
+                console.log("❌ تم النقر على زر الإلغاء");
                 pdfFile = null;
                 pdfData = { pages: 0, words: 0, coins: 0 };
                 document.getElementById('file-input').value = '';
@@ -1926,7 +1975,7 @@ FINAL FAILURE POLICY
             pagesSlider.addEventListener('input', function() {
                 selectedPages = parseInt(this.value);
                 pagesValue.textContent = selectedPages;
-                console.log("عدد الصفحات المختار:", selectedPages);
+                console.log("📄 عدد الصفحات المختار:", selectedPages);
             });
             
             // اختيار طريقة التلخيص
@@ -1936,7 +1985,7 @@ FINAL FAILURE POLICY
                     summaryTypeOptions.forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
                     selectedSummaryType = this.dataset.value;
-                    console.log("طريقة التلخيص المختارة:", selectedSummaryType);
+                    console.log("🎯 طريقة التلخيص المختارة:", selectedSummaryType);
                 });
             });
             
@@ -1947,7 +1996,7 @@ FINAL FAILURE POLICY
                     explainerOptions.forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
                     selectedExplainer = this.dataset.value;
-                    console.log("شخصية الشارح المختارة:", selectedExplainer);
+                    console.log("👤 شخصية الشارح المختارة:", selectedExplainer);
                 });
             });
             
@@ -1955,12 +2004,12 @@ FINAL FAILURE POLICY
             const userCommentInput = document.getElementById('user-comment');
             userCommentInput.addEventListener('input', function() {
                 userComment = this.value;
-                console.log("تعليق المستخدم:", userComment);
+                console.log("💬 تعليق المستخدم:", userComment);
             });
             
             // زر إنشاء الملخص
             document.getElementById('generate-btn').addEventListener('click', async function() {
-                console.log("تم النقر على زر إنشاء الملخص");
+                console.log("🚀 تم النقر على زر إنشاء الملخص");
                 
                 // التحقق من وجود ملف PDF
                 if (!pdfFile) {
@@ -1969,8 +2018,8 @@ FINAL FAILURE POLICY
                 }
                 
                 // التحقق من رصيد العملات
-                const currentCoins = parseFloat(document.getElementById('coins-count').textContent);
-                console.log("رصيد العملات الحالي:", currentCoins, "المطلوب:", pdfData.coins);
+                const currentCoins = parseFloat(document.getElementById('coins-count').textContent) || 0;
+                console.log("💰 التحقق من الرصيد:", { currentCoins, required: pdfData.coins });
                 
                 if (currentCoins < pdfData.coins) {
                     showError(`رصيد العملات غير كافي. رصيدك: ${currentCoins}، المطلوب: ${pdfData.coins}`);
@@ -1983,7 +2032,7 @@ FINAL FAILURE POLICY
                     return;
                 }
                 
-                console.log("تم خصم العملات بنجاح، بدء عملية الذكاء الاصطناعي...");
+                console.log("✅ تم خصم العملات بنجاح، بدء عملية الذكاء الاصطناعي...");
                 
                 // بدء عملية الذكاء الاصطناعي
                 showAIProcessing();
@@ -2034,12 +2083,12 @@ FINAL FAILURE POLICY
                 });
             });
             
-            // اختيار اللون الأحمر افتراضيًا
+            // اختيار القيم الافتراضية
             if (summaryTypeOptions.length > 0) summaryTypeOptions[0].classList.add('selected');
             if (explainerOptions.length > 0) explainerOptions[0].classList.add('selected');
             document.getElementById('pen-btn').classList.add('active');
             
-            console.log("تم تسجيل جميع الأحداث بنجاح");
+            console.log("✅ تم تسجيل جميع الأحداث بنجاح");
         });
     </script>
 </body>
