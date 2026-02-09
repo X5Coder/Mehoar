@@ -1524,10 +1524,9 @@
         let currentUser = null;
         let isAdmin = false;
         let allUsers = [];
-        let shownNotifications = new Set(); // لتتبع الإشعارات التي تم عرضها بالفعل
-        let activeNotifications = new Map(); // لتتبع الإشعارات النشطة حالياً
-        let notificationTimeouts = new Map(); // لتتبع المؤقتات
-        let hasShownInitialNotifications = false; // للتحقق إذا تم عرض الإشعارات الأولية
+        let activeNotifications = new Map();
+        let notificationTimeouts = new Map();
+        let hasShownNotifications = false;
         
         function hideLoadingScreen() {
             setTimeout(() => {
@@ -1539,8 +1538,8 @@
                     
                     // بعد إخفاء شاشة التحميل بـ 1 ثانية، نعرض الإشعارات
                     setTimeout(() => {
-                        if (!isAdmin && !hasShownInitialNotifications) {
-                            hasShownInitialNotifications = true;
+                        if (!isAdmin && !hasShownNotifications) {
+                            hasShownNotifications = true;
                             checkExistingNotifications();
                         }
                     }, 1000);
@@ -1568,7 +1567,7 @@
                                 created_at: userData.created_at || null,
                                 timestamp: userData.timestamp || null,
                                 referral_used: userData.referral_used || '',
-                                referrals: userData.referrals || {},
+                                referrals: userData.referrals || {}, // الإحالات: ref1, ref2, ref3, إلخ
                                 noty_user: userData.noty_user || null,
                                 dbId: userData.id
                             };
@@ -1644,7 +1643,7 @@
                 elements.userContent.style.display = 'block';
                 setupUserEventListeners();
                 
-                // إعداد مراقبة الإشعارات الجديدة فقط
+                // إعداد مراقبة الإشعارات
                 setupNotificationsMonitoring();
             }
         }
@@ -1721,42 +1720,32 @@
             });
         }
 
-        // إعداد مراقبة الإشعارات الجديدة فقط (وليس القديمة)
+        // إعداد مراقبة الإشعارات الجديدة
         function setupNotificationsMonitoring() {
             if (!currentUser || !currentUser.id) return;
             
             // مراقبة الإشعارات العامة الجديدة فقط
-            database.ref('users_Awn/noty_publick').limitToLast(1).on('child_added', (snapshot) => {
+            database.ref('users_Awn/noty_publick').on('child_added', (snapshot) => {
                 const notification = snapshot.val();
                 const notificationId = snapshot.key;
                 
                 if (notification && typeof notification === 'string') {
-                    // التحقق إذا تم عرض هذا الإشعار من قبل
-                    if (!shownNotifications.has(`public-${notificationId}`)) {
-                        shownNotifications.add(`public-${notificationId}`);
-                        
-                        // تأخير ظهور الإشعار بـ 1 ثانية
-                        setTimeout(() => {
-                            showNotification('إشعار عام', notification, 'info', `public-${notificationId}`);
-                        }, 1000);
-                    }
+                    // عرض الإشعار بعد تأخير
+                    setTimeout(() => {
+                        showNotification('إشعار عام', notification, 'info', `public-${notificationId}`);
+                    }, 1000);
                 }
             });
             
-            // مراقبة الإشعارات الشخصية الجديدة فقط
+            // مراقبة الإشعارات الشخصية
             database.ref(`users_Awn/${currentUser.id}/noty_user`).on('value', (snapshot) => {
                 const notification = snapshot.val();
                 
                 if (notification && typeof notification === 'string') {
-                    // التحقق إذا تم عرض هذا الإشعار من قبل
-                    if (!shownNotifications.has('personal')) {
-                        shownNotifications.add('personal');
-                        
-                        // تأخير ظهور الإشعار بـ 1 ثانية
-                        setTimeout(() => {
-                            showNotification('إشعار شخصي', notification, 'info', 'personal');
-                        }, 1000);
-                    }
+                    // عرض الإشعار بعد تأخير
+                    setTimeout(() => {
+                        showNotification('إشعار شخصي', notification, 'info', 'personal');
+                    }, 1500);
                 }
             });
         }
@@ -1802,7 +1791,7 @@
                                 created_at: userData.created_at || null,
                                 timestamp: userData.timestamp || null,
                                 referral_used: userData.referral_used || '',
-                                referrals: userData.referrals || {},
+                                referrals: userData.referrals || {}, // الإحالات: ref1, ref2, ref3, إلخ
                                 noty_user: userData.noty_user || null,
                                 dbId: userData.id
                             };
@@ -1852,7 +1841,7 @@
                 return;
             }
             
-            users.forEach((user, index) => {
+            users.forEach((user) => {
                 const createdTime = user.created_at || user.timestamp || Date.now();
                 const registrationDate = new Date(createdTime).toLocaleString('en-US', {
                     year: 'numeric',
@@ -1863,12 +1852,23 @@
                     hour12: true
                 });
                 
+                // حساب عدد الإحالات من ref1, ref2, ref3, إلخ
                 let referralCount = 0;
                 const referralsList = [];
-                if (user.referrals) {
+                
+                if (user.referrals && typeof user.referrals === 'object') {
+                    // حساب الإحالات من ref1, ref2, ref3, إلخ
                     referralCount = Object.keys(user.referrals).length;
-                    Object.values(user.referrals).forEach((refId, idx) => {
-                        referralsList.push({ id: refId, number: idx + 1 });
+                    
+                    // إعداد قائمة الإحالات
+                    Object.keys(user.referrals).forEach((refKey, index) => {
+                        const refValue = user.referrals[refKey];
+                        if (refValue) {
+                            referralsList.push({ 
+                                label: refKey, // ref1, ref2, إلخ
+                                id: refValue 
+                            });
+                        }
                     });
                 }
                 
@@ -1910,7 +1910,7 @@
                             </div>
                             ${referralsList.map(ref => `
                                 <div class="referral-item">
-                                    <span class="referral-label">ref${ref.number}</span>
+                                    <span class="referral-label">${ref.label}</span>
                                     <span class="referral-id">${ref.id}</span>
                                 </div>
                             `).join('')}
@@ -2127,8 +2127,23 @@
         }
 
         function showNotification(title, message, type = 'info', notificationId = null) {
-            // إنشاء معرف فريد للإشعار إذا لم يتم تزويده
+            // إنشاء معرف فريد للإشعار
             const uniqueId = notificationId || 'notification-' + Date.now() + '-' + Math.random();
+            
+            // إذا كان هناك إشعار نشط بنفس النص، لا نعرضه مرة أخرى
+            let alreadyExists = false;
+            activeNotifications.forEach((existingNotif, id) => {
+                if (existingNotif && existingNotif.querySelector('.notification-message')) {
+                    const existingMessage = existingNotif.querySelector('.notification-message').textContent;
+                    if (existingMessage === message) {
+                        alreadyExists = true;
+                    }
+                }
+            });
+            
+            if (alreadyExists) {
+                return; // لا تعرض نفس الرسالة مرتين
+            }
             
             // إذا كان هناك مؤقت لهذا الإشعار بالفعل، نلغيه
             if (notificationTimeouts.has(uniqueId)) {
@@ -2161,11 +2176,11 @@
                 </button>
             `;
             
-            // حساب الموضع للإشعار الجديد (تحت الإشعارات الأخرى)
+            // حساب الموضع للإشعار الجديد
             let topPosition = 20;
             activeNotifications.forEach((existingNotif, id) => {
                 if (existingNotif && existingNotif.parentNode) {
-                    const existingHeight = existingNotif.offsetHeight + 12; // 12 هو الـ margin-bottom
+                    const existingHeight = existingNotif.offsetHeight + 12;
                     topPosition += existingHeight;
                 }
             });
@@ -2178,9 +2193,6 @@
             
             elements.notificationContainer.appendChild(notification);
             activeNotifications.set(uniqueId, notification);
-            
-            // تحديث مواضع جميع الإشعارات
-            updateNotificationPositions();
             
             if (window.innerWidth <= 768) {
                 notification.style.maxWidth = '300px';
@@ -2208,18 +2220,6 @@
             });
             
             setupNotificationDrag(notification, uniqueId);
-        }
-
-        function updateNotificationPositions() {
-            let topPosition = 20;
-            
-            activeNotifications.forEach((notification, id) => {
-                if (notification && notification.parentNode) {
-                    notification.style.top = `${topPosition}px`;
-                    const notificationHeight = notification.offsetHeight + 12; // 12 هو الـ margin-bottom
-                    topPosition += notificationHeight;
-                }
-            });
         }
 
         function hideNotificationWithAnimation(notification, notificationId, direction = 'right') {
@@ -2250,6 +2250,18 @@
                 // تحديث مواضع الإشعارات المتبقية
                 updateNotificationPositions();
             }, 500);
+        }
+
+        function updateNotificationPositions() {
+            let topPosition = 20;
+            
+            activeNotifications.forEach((notification, id) => {
+                if (notification && notification.parentNode) {
+                    notification.style.top = `${topPosition}px`;
+                    const notificationHeight = notification.offsetHeight + 12;
+                    topPosition += notificationHeight;
+                }
+            });
         }
 
         function setupNotificationDrag(notification, notificationId) {
@@ -2358,16 +2370,13 @@
                 const publicSnap = await database.ref('users_Awn/noty_publick').once('value');
                 if (publicSnap.exists()) {
                     const publicNotifications = publicSnap.val();
-                    let hasPublicNotification = false;
                     
                     // نأخذ آخر إشعار عام فقط
-                    const lastPublicKey = Object.keys(publicNotifications).pop();
-                    if (lastPublicKey) {
+                    const publicKeys = Object.keys(publicNotifications);
+                    if (publicKeys.length > 0) {
+                        const lastPublicKey = publicKeys[publicKeys.length - 1];
                         const lastPublicNotification = publicNotifications[lastPublicKey];
                         if (lastPublicNotification && typeof lastPublicNotification === 'string') {
-                            hasPublicNotification = true;
-                            shownNotifications.add(`public-${lastPublicKey}`);
-                            
                             setTimeout(() => {
                                 showNotification('إشعار عام', lastPublicNotification, 'info', `public-${lastPublicKey}`);
                             }, 1000);
@@ -2380,11 +2389,9 @@
                 if (userSnap.exists()) {
                     const userNotification = userSnap.val();
                     if (userNotification && typeof userNotification === 'string') {
-                        shownNotifications.add('personal');
-                        
                         setTimeout(() => {
                             showNotification('إشعار شخصي', userNotification, 'info', 'personal');
-                        }, hasPublicNotification ? 2000 : 1000);
+                        }, 1500);
                     }
                 }
             } catch (error) {
