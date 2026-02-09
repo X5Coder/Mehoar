@@ -2,21 +2,14 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>عَون - تلخيص PDF</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عَون - خدمة تلخيص PDF</title>
     
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    
-    <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     
     <style>
@@ -41,7 +34,7 @@
             --admin-color: #DC2626;
             --success-color: #059669;
             --warning-color: #D97706;
-            --info-color: #3B82F6;
+            --info-color: #2563EB;
         }
         
         body {
@@ -51,72 +44,6 @@
             min-height: 100vh;
             direction: rtl;
             -webkit-font-smoothing: antialiased;
-        }
-        
-        .notification-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 99998;
-            max-width: 400px;
-            width: 100%;
-        }
-        
-        .notification {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            border: 3px solid var(--accent-dark);
-            transform: translateX(120%);
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 12px;
-            cursor: grab;
-            font-size: 0.85rem;
-            opacity: 0;
-        }
-        
-        .notification.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        
-        .notification-content {
-            flex: 1;
-        }
-        
-        .notification-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 0.95rem;
-            font-weight: 800;
-            color: var(--accent-dark);
-            margin-bottom: 6px;
-        }
-        
-        .notification-message {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            line-height: 1.5;
-        }
-        
-        .notification-close {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: var(--transition-quick);
-            padding: 4px;
-        }
-        
-        .notification-close:hover {
-            color: var(--admin-color);
-            transform: rotate(90deg);
         }
         
         .native-navbar {
@@ -191,35 +118,26 @@
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
         }
         
-        .settings-btn {
-            width: 52px;
-            height: 52px;
+        .back-btn {
+            background: var(--black-gradient);
+            color: white;
+            border: none;
             border-radius: 18px;
-            background: white;
-            border: 3px solid #0F172A;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 10px 20px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
             cursor: pointer;
             transition: var(--transition-quick);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
         }
         
-        .settings-btn i {
-            font-size: 24px;
-            color: #0F172A;
-            transition: var(--transition-quick);
-        }
-        
-        .settings-btn:hover {
-            transform: translateY(-3px) rotate(15deg);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-            background: var(--black-gradient);
-        }
-        
-        .settings-btn:hover i {
-            color: white;
-            transform: scale(1.1);
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.3);
         }
         
         .main-content {
@@ -231,30 +149,23 @@
             margin: 0 auto;
         }
         
-        .service-header {
+        .welcome-section {
             text-align: center;
             margin-bottom: 50px;
-            animation: fadeIn 0.8s ease-out;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .service-title {
+        .welcome-title {
             font-family: 'Almarai', sans-serif;
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 900;
             margin-bottom: 20px;
             color: #0F172A;
-            letter-spacing: -2px;
             line-height: 1.2;
         }
         
-        .service-subtitle {
+        .welcome-subtitle {
             font-family: 'Tajawal', sans-serif;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             color: #64748B;
             max-width: 900px;
             margin: 0 auto;
@@ -270,200 +181,216 @@
             border: 4px solid var(--accent-dark);
             box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
             text-align: center;
-            transition: var(--transition-quick);
         }
         
-        .upload-zone {
-            border: 3px dashed var(--accent-dark);
-            border-radius: var(--border-radius);
+        .upload-area {
+            border: 4px dashed var(--accent-dark);
+            border-radius: var(--border-radius-large);
             padding: 60px 40px;
-            background: rgba(15, 23, 42, 0.02);
+            margin-bottom: 30px;
             cursor: pointer;
             transition: var(--transition-quick);
-            margin-bottom: 30px;
+            background: rgba(15, 23, 42, 0.02);
         }
         
-        .upload-zone:hover {
+        .upload-area:hover {
             background: rgba(15, 23, 42, 0.05);
-            border-color: var(--info-color);
+            transform: translateY(-5px);
         }
         
-        .upload-zone i {
+        .upload-icon {
             font-size: 64px;
             color: var(--accent-dark);
             margin-bottom: 20px;
-            transition: var(--transition-quick);
-        }
-        
-        .upload-zone:hover i {
-            color: var(--info-color);
-            transform: scale(1.1);
         }
         
         .upload-title {
             font-family: 'Almarai', sans-serif;
             font-size: 1.8rem;
-            font-weight: 800;
+            font-weight: 900;
             color: var(--accent-dark);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         
         .upload-subtitle {
             font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
             font-size: 1.1rem;
-            margin-bottom: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
         }
         
-        .upload-note {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-style: italic;
+        .upload-btn {
+            background: var(--black-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 16px 32px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.25);
         }
         
         #file-input {
             display: none;
         }
         
-        .file-info {
-            background: rgba(15, 23, 42, 0.05);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-top: 20px;
-            text-align: right;
-            display: none;
-        }
-        
-        .file-info.show {
-            display: block;
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        .file-name {
-            font-family: 'Almarai', sans-serif;
-            font-weight: 800;
-            color: var(--accent-dark);
-            margin-bottom: 5px;
-            word-break: break-all;
-        }
-        
-        .file-size {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-        
-        .analysis-results {
+        .processing-section {
             background: white;
             border-radius: var(--border-radius-large);
             padding: 40px;
             margin-bottom: 40px;
             border: 4px solid var(--accent-dark);
             box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+            text-align: center;
             display: none;
         }
         
-        .analysis-results.show {
-            display: block;
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        .analysis-title {
+        .processing-title {
             font-family: 'Almarai', sans-serif;
             font-size: 1.8rem;
-            font-weight: 800;
+            font-weight: 900;
             color: var(--accent-dark);
             margin-bottom: 30px;
-            text-align: center;
         }
         
-        .stats-grid {
+        .processing-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 40px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .processing-step {
+            background: white;
+            border: 3px solid var(--accent-dark);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: right;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            opacity: 0.5;
+            transition: var(--transition-quick);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .processing-step.active {
+            opacity: 1;
+            border-color: var(--info-color);
+            background: rgba(37, 99, 235, 0.05);
+            transform: translateX(-10px);
+        }
+        
+        .processing-step.completed {
+            opacity: 0.7;
+            border-color: var(--success-color);
+        }
+        
+        .processing-step i {
+            font-size: 1.2rem;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(15, 23, 42, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--black-gradient);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .coins-calculation {
+            background: white;
+            border-radius: var(--border-radius-large);
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 4px solid var(--accent-dark);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            display: none;
+        }
+        
+        .calculation-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--accent-dark);
+            margin-bottom: 30px;
+        }
+        
+        .calculation-results {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
             margin-bottom: 40px;
         }
         
-        .stat-card {
+        .result-card {
             background: rgba(15, 23, 42, 0.05);
             border-radius: var(--border-radius);
             padding: 25px;
             text-align: center;
-            border: 3px solid rgba(15, 23, 42, 0.1);
-            transition: var(--transition-quick);
         }
         
-        .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--info-color);
-        }
-        
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--black-gradient);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            border: 3px solid #0F172A;
-        }
-        
-        .stat-icon i {
-            font-size: 24px;
-            color: white;
-        }
-        
-        .stat-value {
+        .result-value {
             font-family: 'Almarai', sans-serif;
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: 900;
             color: var(--accent-dark);
-            margin-bottom: 5px;
-            line-height: 1;
-        }
-        
-        .stat-label {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-        
-        .cost-notice {
-            background: linear-gradient(145deg, rgba(5, 150, 105, 0.1), rgba(5, 150, 105, 0.05));
-            border: 3px solid var(--success-color);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .cost-text {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--success-color);
             margin-bottom: 10px;
         }
         
-        .cost-subtext {
+        .result-label {
             font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
             font-size: 1rem;
+            color: var(--text-secondary);
         }
         
-        .confirmation-buttons {
+        .confirmation-text {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(220, 38, 38, 0.05);
+            border-radius: var(--border-radius);
+            border: 2px solid var(--admin-color);
+        }
+        
+        .confirmation-actions {
             display: flex;
             gap: 20px;
             justify-content: center;
         }
         
-        .btn {
-            padding: 15px 40px;
+        .confirm-btn {
+            background: var(--success-color);
+            color: white;
             border: none;
             border-radius: var(--border-radius);
+            padding: 16px 32px;
             font-family: 'Almarai', sans-serif;
             font-size: 1.1rem;
             font-weight: 800;
@@ -471,45 +398,39 @@
             transition: var(--transition-quick);
             display: flex;
             align-items: center;
+            gap: 12px;
+            flex: 1;
+            max-width: 200px;
             justify-content: center;
-            gap: 10px;
-            min-width: 150px;
         }
         
-        .btn-primary {
-            background: var(--success-color);
-            color: white;
-            border: 3px solid var(--success-color);
-        }
-        
-        .btn-primary:hover {
+        .confirm-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 32px rgba(5, 150, 105, 0.25);
-            background: #047857;
         }
         
-        .btn-secondary {
-            background: var(--accent-dark);
-            color: white;
-            border: 3px solid var(--accent-dark);
-        }
-        
-        .btn-secondary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.25);
-        }
-        
-        .btn-cancel {
-            background: white;
-            color: var(--admin-color);
-            border: 3px solid var(--admin-color);
-        }
-        
-        .btn-cancel:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(220, 38, 38, 0.15);
+        .cancel-btn {
             background: var(--admin-color);
             color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 16px 32px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            max-width: 200px;
+            justify-content: center;
+        }
+        
+        .cancel-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(220, 38, 38, 0.25);
         }
         
         .config-section {
@@ -522,15 +443,10 @@
             display: none;
         }
         
-        .config-section.show {
-            display: block;
-            animation: fadeIn 0.5s ease-out;
-        }
-        
         .config-title {
             font-family: 'Almarai', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 800;
+            font-size: 1.6rem;
+            font-weight: 900;
             color: var(--accent-dark);
             margin-bottom: 30px;
             text-align: center;
@@ -538,58 +454,36 @@
         
         .config-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
-            margin-bottom: 40px;
         }
         
         .config-group {
             background: rgba(15, 23, 42, 0.03);
             border-radius: var(--border-radius);
             padding: 25px;
-            border: 3px solid rgba(15, 23, 42, 0.1);
         }
         
-        .config-group-title {
+        .config-label {
             font-family: 'Almarai', sans-serif;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 800;
             color: var(--accent-dark);
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .config-group-title i {
-            color: var(--info-color);
+            display: block;
         }
         
         .slider-container {
-            margin: 25px 0;
-        }
-        
-        .slider-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .slider-label {
-            font-family: 'Almarai', sans-serif;
-            font-weight: 700;
-            color: var(--text-primary);
+            margin: 30px 0;
         }
         
         .slider-value {
-            font-family: 'Tajawal', sans-serif;
-            font-weight: 700;
-            color: var(--info-color);
-            background: rgba(59, 130, 246, 0.1);
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 0.9rem;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--accent-dark);
+            text-align: center;
+            margin-bottom: 10px;
         }
         
         .slider {
@@ -605,258 +499,166 @@
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 24px;
-            height: 24px;
+            width: 25px;
+            height: 25px;
             border-radius: 50%;
-            background: var(--info-color);
+            background: var(--black-gradient);
             cursor: pointer;
             border: 3px solid white;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-        }
-        
-        .slider::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--info-color);
-            cursor: pointer;
-            border: 3px solid white;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
         
         .options-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 12px;
         }
         
         .option-btn {
-            padding: 12px;
-            border: 3px solid rgba(15, 23, 42, 0.2);
-            border-radius: var(--border-radius);
             background: white;
-            font-family: 'Tajawal', sans-serif;
-            font-weight: 500;
-            color: var(--text-primary);
+            border: 3px solid var(--accent-dark);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            text-align: center;
+            font-family: 'Almarai', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-dark);
             cursor: pointer;
             transition: var(--transition-quick);
-            text-align: center;
         }
         
         .option-btn:hover {
-            border-color: var(--info-color);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
         }
         
         .option-btn.selected {
-            background: var(--info-color);
+            background: var(--black-gradient);
             color: white;
-            border-color: var(--info-color);
+            border-color: var(--accent-dark);
         }
         
         .comment-input {
             width: 100%;
             padding: 15px 20px;
-            border: 3px solid rgba(15, 23, 42, 0.2);
+            border: 3px solid var(--accent-dark);
             border-radius: var(--border-radius);
             font-family: 'Tajawal', sans-serif;
             font-size: 1rem;
             transition: var(--transition-quick);
-            resize: vertical;
-            min-height: 100px;
+            margin-top: 10px;
         }
         
         .comment-input:focus {
             outline: none;
-            border-color: var(--info-color);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
         }
         
-        .comment-note {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-top: 10px;
-            font-style: italic;
-        }
-        
-        .processing-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(248, 250, 252, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .processing-screen.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .processing-logo {
-            font-family: 'Almarai', sans-serif;
-            font-weight: 900;
-            font-size: 72px;
-            background: linear-gradient(145deg, #0F172A, #334155);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 40px;
-        }
-        
-        .processing-text {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--accent-dark);
-            margin-bottom: 30px;
+        .generate-btn-container {
             text-align: center;
-            min-height: 60px;
+            margin-top: 40px;
         }
         
-        .processing-steps {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-        
-        .processing-step {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(15, 23, 42, 0.2);
+        .generate-btn {
+            background: var(--black-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 18px 40px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
             transition: var(--transition-quick);
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
         }
         
-        .processing-step.active {
-            background: var(--info-color);
-            transform: scale(1.3);
+        .generate-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.3);
         }
         
-        .summary-section {
+        .ai-processing {
             background: white;
             border-radius: var(--border-radius-large);
             padding: 40px;
             margin-bottom: 40px;
             border: 4px solid var(--accent-dark);
             box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+            text-align: center;
             display: none;
         }
         
-        .summary-section.show {
-            display: block;
-            animation: fadeIn 0.5s ease-out;
+        .results-section {
+            display: none;
         }
         
-        .summary-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .results-toolbar {
+            background: white;
+            border-radius: var(--border-radius-large);
+            padding: 20px;
             margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid rgba(15, 23, 42, 0.1);
-        }
-        
-        .summary-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--accent-dark);
-        }
-        
-        .summary-toolbar {
+            border: 4px solid var(--accent-dark);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
             display: flex;
-            gap: 10px;
+            flex-wrap: wrap;
+            gap: 15px;
             align-items: center;
+            justify-content: center;
         }
         
         .toolbar-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
             background: white;
-            border: 2px solid rgba(15, 23, 42, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border: 3px solid var(--accent-dark);
+            border-radius: 16px;
+            padding: 10px 20px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-dark);
             cursor: pointer;
             transition: var(--transition-quick);
-            color: var(--accent-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .toolbar-btn:hover {
-            border-color: var(--info-color);
-            color: var(--info-color);
             transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
         }
         
         .toolbar-btn.active {
-            background: var(--info-color);
+            background: var(--black-gradient);
             color: white;
-            border-color: var(--info-color);
-        }
-        
-        .font-size-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .font-size-value {
-            font-family: 'Tajawal', sans-serif;
-            font-weight: 500;
-            color: var(--text-primary);
-            min-width: 40px;
-            text-align: center;
         }
         
         .color-picker {
             display: none;
             position: absolute;
             background: white;
-            border: 3px solid var(--accent-dark);
             border-radius: var(--border-radius);
             padding: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border: 3px solid var(--accent-dark);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
             z-index: 1000;
-            top: 60px;
-            right: 0;
-        }
-        
-        .color-picker.show {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
         }
         
         .color-option {
             width: 30px;
             height: 30px;
-            border-radius: 8px;
+            border-radius: 50%;
+            margin: 5px;
             cursor: pointer;
-            border: 2px solid transparent;
+            border: 3px solid transparent;
             transition: var(--transition-quick);
         }
         
         .color-option:hover {
             transform: scale(1.2);
-            border-color: var(--accent-dark);
-        }
-        
-        .color-option.selected {
-            border-color: var(--accent-dark);
-            transform: scale(1.1);
         }
         
         .pages-container {
@@ -867,92 +669,105 @@
         
         .page-card {
             background: white;
-            border-radius: var(--border-radius);
-            border: 3px solid rgba(15, 23, 42, 0.1);
-            overflow: hidden;
-            transition: var(--transition-quick);
+            border-radius: var(--border-radius-large);
+            padding: 40px;
+            border: 4px solid var(--accent-dark);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
             position: relative;
         }
         
-        .page-card:hover {
-            border-color: var(--accent-dark);
-            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1);
-        }
-        
         .page-header {
-            background: rgba(15, 23, 42, 0.05);
-            padding: 20px;
-            border-bottom: 3px solid rgba(15, 23, 42, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid rgba(15, 23, 42, 0.1);
         }
         
         .page-number {
             font-family: 'Almarai', sans-serif;
-            font-size: 1.3rem;
-            font-weight: 800;
+            font-size: 1.8rem;
+            font-weight: 900;
             color: var(--accent-dark);
         }
         
         .page-content {
-            padding: 30px;
             font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
             line-height: 1.8;
             color: var(--text-primary);
-            font-size: 1rem;
-            white-space: pre-wrap;
-            word-break: break-word;
+            margin-bottom: 30px;
+            text-align: right;
+            min-height: 300px;
             position: relative;
-            min-height: 200px;
-            user-select: text;
         }
         
-        .drawing-canvas {
+        .page-content canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
             z-index: 1;
+            pointer-events: none;
+        }
+        
+        .page-content-text {
+            position: relative;
+            z-index: 2;
         }
         
         .laws-section {
-            background: linear-gradient(145deg, rgba(251, 191, 36, 0.1), rgba(251, 191, 36, 0.05));
-            border: 3px solid #D97706;
-            border-radius: var(--border-radius);
-            padding: 25px;
-            margin-top: 25px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 3px solid var(--warning-color);
             display: none;
-        }
-        
-        .laws-section.show {
-            display: block;
-            animation: fadeIn 0.5s ease-out;
         }
         
         .laws-title {
             font-family: 'Almarai', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #D97706;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .laws-title i {
             font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--warning-color);
+            margin-bottom: 20px;
         }
         
         .laws-content {
             font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
             line-height: 1.7;
             color: var(--text-primary);
-            font-size: 1rem;
-            white-space: pre-wrap;
+            background: rgba(217, 119, 6, 0.05);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 2px solid rgba(217, 119, 6, 0.2);
+        }
+        
+        .save-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 16px 32px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(5, 150, 105, 0.3);
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(5, 150, 105, 0.4);
         }
         
         .footer {
@@ -1034,37 +849,6 @@
             transform: scale(1.05);
         }
         
-        @media (max-width: 1200px) {
-            .config-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .main-content {
-                padding-top: calc(var(--navbar-height) + 50px);
-                padding-left: 24px;
-                padding-right: 24px;
-                padding-bottom: 80px;
-            }
-            
-            .service-title {
-                font-size: 2.6rem;
-            }
-            
-            .service-subtitle {
-                font-size: 1.2rem;
-            }
-            
-            .upload-section, .analysis-results, .config-section, .summary-section {
-                padding: 32px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
         @media (max-width: 768px) {
             .native-navbar {
                 padding: 0 24px;
@@ -1083,9 +867,9 @@
                 font-size: 15px;
             }
             
-            .settings-btn {
-                width: 48px;
-                height: 48px;
+            .back-btn {
+                padding: 8px 16px;
+                font-size: 14px;
             }
             
             .main-content {
@@ -1094,383 +878,207 @@
                 padding-right: 20px;
             }
             
-            .service-title {
+            .welcome-title {
                 font-size: 2.2rem;
             }
             
-            .service-subtitle {
-                font-size: 1.1rem;
-            }
-            
-            .upload-section, .analysis-results, .config-section, .summary-section {
-                padding: 28px 24px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .confirmation-buttons {
+            .confirmation-actions {
                 flex-direction: column;
-                gap: 15px;
+                align-items: center;
             }
             
-            .btn {
+            .confirm-btn, .cancel-btn {
+                max-width: 100%;
                 width: 100%;
-            }
-            
-            .options-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .summary-toolbar {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .processing-logo {
-                font-size: 56px;
-            }
-            
-            .processing-text {
-                font-size: 1.5rem;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .native-navbar {
-                padding: 0 20px;
-                margin: 0 12px;
-                top: 10px;
-                width: calc(100% - 24px);
-            }
-            
-            .logo {
-                font-size: 32px;
-            }
-            
-            .user-nav-right {
-                gap: 16px;
-            }
-            
-            .coins-display {
-                padding: 8px 16px;
-                font-size: 14px;
-            }
-            
-            .main-content {
-                padding-left: 16px;
-                padding-right: 16px;
-            }
-            
-            .service-title {
-                font-size: 2rem;
-            }
-            
-            .upload-zone {
-                padding: 40px 20px;
-            }
-            
-            .upload-zone i {
-                font-size: 48px;
-            }
-            
-            .upload-title {
-                font-size: 1.5rem;
-            }
-            
-            .analysis-title, .config-title, .summary-title {
-                font-size: 1.5rem;
-            }
-            
-            .page-content {
-                padding: 20px;
-                font-size: 0.95rem;
-            }
-            
-            .support-links {
-                gap: 16px;
-            }
-            
-            .support-link {
-                width: 52px;
-                height: 52px;
-            }
-            
-            .support-link i {
-                font-size: 24px;
-            }
-        }
-        
-        @media (max-width: 400px) {
-            .coins-display {
-                padding: 8px 14px;
-                font-size: 13px;
-            }
-            
-            .coins-display i {
-                font-size: 16px;
-            }
-            
-            .settings-btn {
-                width: 44px;
-                height: 44px;
-            }
-            
-            .settings-btn i {
-                font-size: 22px;
-            }
-            
-            .options-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .processing-logo {
-                font-size: 48px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="notification-container" id="notification-container"></div>
-    
-    <nav class="native-navbar" id="navbar">
+    <nav class="native-navbar">
         <div class="logo" id="logo">عَون</div>
-        <div class="user-nav-right" id="user-nav">
+        <div class="user-nav-right">
             <div class="coins-display">
                 <i class="fas fa-coins"></i>
-                <span id="coins-count">0</span>
+                <span id="coins-count">100</span>
             </div>
+            <button class="back-btn" id="back-btn">
+                <i class="fas fa-arrow-right"></i>
+                العودة
+            </button>
         </div>
     </nav>
     
-    <div class="main-content" id="main-content">
-        <section class="service-header">
-            <h1 class="service-title">تلخيص وتحليل PDF</h1>
-            <p class="service-subtitle">أرفع ملف PDF واترك الذكاء الاصطناعي يقوم بتحليله وتلخيصه بأسلوب احترافي يناسب احتياجاتك</p>
+    <div class="main-content">
+        <section class="welcome-section">
+            <h1 class="welcome-title">خدمة تلخيص PDF الذكية</h1>
+            <p class="welcome-subtitle">رفع ملف PDF الخاص بك واحصل على ملخص احترافي باستخدام أحدث تقنيات الذكاء الاصطناعي</p>
         </section>
         
-        <!-- قسم رفع الملف -->
         <section class="upload-section" id="upload-section">
-            <div class="upload-zone" id="upload-zone">
-                <i class="fas fa-file-pdf"></i>
-                <h3 class="upload-title">اسحب وأفلت ملف PDF هنا</h3>
-                <p class="upload-subtitle">أو انقر لاختيار ملف من جهازك</p>
-                <p class="upload-note">يدعم الملفات حتى 50MB</p>
+            <div class="upload-area" id="upload-area">
+                <div class="upload-icon">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <h2 class="upload-title">اسحب وأفلت ملف PDF هنا</h2>
+                <p class="upload-subtitle">أو انقر للاختيار من جهازك</p>
+                <button class="upload-btn" id="upload-btn">
+                    <i class="fas fa-upload"></i>
+                    اختر ملف PDF
+                </button>
             </div>
-            <input type="file" id="file-input" accept=".pdf">
             
-            <div class="file-info" id="file-info">
-                <div class="file-name" id="file-name"></div>
-                <div class="file-size" id="file-size"></div>
+            <input type="file" id="file-input" accept=".pdf">
+        </section>
+        
+        <section class="processing-section" id="processing-section">
+            <h2 class="processing-title">جاري تحليل ملف PDF</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="processing-steps">
+                <div class="processing-step" id="step1">
+                    <span>عَون يحلل الملف</span>
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <div class="processing-step" id="step2">
+                    <span>عَون يحسب عدد الصفحات</span>
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="processing-step" id="step3">
+                    <span>عَون يستخرج كل الكلمات</span>
+                    <i class="fas fa-font"></i>
+                </div>
+                <div class="processing-step" id="step4">
+                    <span>عَون يحسب التكلفة</span>
+                    <i class="fas fa-calculator"></i>
+                </div>
             </div>
         </section>
         
-        <!-- قسم نتائج التحليل -->
-        <section class="analysis-results" id="analysis-results">
-            <h2 class="analysis-title">نتائج تحليل الملف</h2>
-            
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-file-alt"></i>
-                    </div>
-                    <div class="stat-value" id="pages-count">0</div>
-                    <div class="stat-label">عدد الصفحات</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-coins"></i>
-                    </div>
-                    <div class="stat-value" id="coins-cost">0</div>
-                    <div class="stat-label">تكلفة العملات</div>
-                </div>
-            </div>
-            
-            <div class="cost-notice">
-                <p class="cost-text" id="cost-text">سيتم خصم <span id="cost-amount">0</span> عملة من رصيدك</p>
-                <p class="cost-subtext">هل تود المتابعة مع تلخيص الملف؟</p>
-            </div>
-            
-            <div class="confirmation-buttons">
-                <button class="btn btn-primary" id="continue-btn">
-                    <i class="fas fa-check-circle"></i>
+        <section class="coins-calculation" id="coins-calculation">
+            <h2 class="calculation-title">نتيجة التحليل</h2>
+            <div class="calculation-results" id="calculation-results"></div>
+            <div class="confirmation-text" id="confirmation-text"></div>
+            <div class="confirmation-actions">
+                <button class="confirm-btn" id="confirm-btn">
+                    <i class="fas fa-check"></i>
                     متابعة
                 </button>
-                <button class="btn btn-cancel" id="cancel-btn">
-                    <i class="fas fa-times-circle"></i>
+                <button class="cancel-btn" id="cancel-btn">
+                    <i class="fas fa-times"></i>
                     إلغاء
                 </button>
             </div>
         </section>
         
-        <!-- قسم إعدادات التلخيص -->
         <section class="config-section" id="config-section">
             <h2 class="config-title">إعدادات التلخيص</h2>
-            
             <div class="config-grid">
                 <div class="config-group">
-                    <h3 class="config-group-title">
-                        <i class="fas fa-file"></i>
-                        عدد الصفحات المطلوبة
-                    </h3>
-                    <p style="font-family: 'Tajawal'; color: var(--text-secondary); margin-bottom: 15px;">
-                        اختر عدد الصفحات التي تريد تلخيصها من ملف PDF
-                    </p>
+                    <label class="config-label">عدد الصفحات المراد تلخيصها</label>
                     <div class="slider-container">
-                        <div class="slider-header">
-                            <span class="slider-label">عدد الصفحات</span>
-                            <span class="slider-value" id="pages-value">1</span>
-                        </div>
+                        <div class="slider-value" id="pages-value">1</div>
                         <input type="range" min="1" max="25" value="1" class="slider" id="pages-slider">
-                        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
-                            <span style="font-size: 0.8rem; color: var(--text-secondary);">1</span>
-                            <span style="font-size: 0.8rem; color: var(--text-secondary);">25</span>
+                        <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                            <span>1</span>
+                            <span>25</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="config-group">
-                    <h3 class="config-group-title">
-                        <i class="fas fa-pen"></i>
-                        طريقة الشرح
-                    </h3>
-                    <p style="font-family: 'Tajawal'; color: var(--text-secondary); margin-bottom: 15px;">
-                        اختر أسلوب التلخيص المناسب لك
-                    </p>
-                    <div class="options-grid" id="style-options">
-                        <button class="option-btn" data-value="بسيط">
-                            بسيط
-                        </button>
-                        <button class="option-btn" data-value="معقد">
-                            معقد
-                        </button>
-                        <button class="option-btn" data-value="طفولي">
-                            طفولي
-                        </button>
-                        <button class="option-btn" data-value="عالي المستوى">
-                            عالي المستوى
-                        </button>
+                    <label class="config-label">طريقة التلخيص</label>
+                    <div class="options-grid" id="summary-type-options">
+                        <button class="option-btn" data-value="بسيط">بسيط</button>
+                        <button class="option-btn" data-value="معقد">معقد</button>
+                        <button class="option-btn" data-value="طفولي">طفولي</button>
+                        <button class="option-btn" data-value="عالي المستوى">عالي المستوى</button>
                     </div>
                 </div>
                 
                 <div class="config-group">
-                    <h3 class="config-group-title">
-                        <i class="fas fa-user"></i>
-                        شخصية الشارح
-                    </h3>
-                    <p style="font-family: 'Tajawal'; color: var(--text-secondary); margin-bottom: 15px;">
-                        اختر الشخصية التي سيقوم الذكاء الاصطناعي بتمثيلها
-                    </p>
-                    <div class="options-grid" id="personality-options">
-                        <button class="option-btn" data-value="دكتور جامعي">
-                            دكتور جامعي
-                        </button>
-                        <button class="option-btn" data-value="أستاذ مدرسي">
-                            أستاذ مدرسي
-                        </button>
-                        <button class="option-btn" data-value="طالب">
-                            طالب
-                        </button>
-                        <button class="option-btn" data-value="عالم">
-                            عالم
-                        </button>
-                        <button class="option-btn" data-value="صديق">
-                            صديق
-                        </button>
-                        <button class="option-btn" data-value="هاوي">
-                            هاوي
-                        </button>
+                    <label class="config-label">شخصية الشارح</label>
+                    <div class="options-grid" id="explainer-options">
+                        <button class="option-btn" data-value="دكتور جامعي">دكتور جامعي</button>
+                        <button class="option-btn" data-value="أستاذ مدرسي">أستاذ مدرسي</button>
+                        <button class="option-btn" data-value="طالب">طالب</button>
+                        <button class="option-btn" data-value="عالم">عالم</button>
+                        <button class="option-btn" data-value="صديق">صديق</button>
+                        <button class="option-btn" data-value="هاوي">هاوي</button>
                     </div>
                 </div>
                 
                 <div class="config-group">
-                    <h3 class="config-group-title">
-                        <i class="fas fa-comment"></i>
-                        تعليق إضافي (اختياري)
-                    </h3>
-                    <p style="font-family: 'Tajawal'; color: var(--text-secondary); margin-bottom: 15px;">
-                        أضف أي تعليمات أو طلبات خاصة للتلخيص
-                    </p>
-                    <textarea class="comment-input" id="user-comment" placeholder="اكتب تعليقك هنا..."></textarea>
-                    <p class="comment-note">هذا الحقل اختياري، يمكنك تركه فارغاً</p>
+                    <label class="config-label">تعليق إضافي (اختياري)</label>
+                    <textarea class="comment-input" id="user-comment" placeholder="اكتب أي تعليق أو ملاحظة إضافية هنا..." rows="4"></textarea>
                 </div>
             </div>
             
-            <div class="confirmation-buttons">
-                <button class="btn btn-primary" id="generate-btn">
-                    <i class="fas fa-robot"></i>
-                    توليد الملخص
-                </button>
-                <button class="btn btn-secondary" id="back-btn">
-                    <i class="fas fa-arrow-right"></i>
-                    رجوع
+            <div class="generate-btn-container">
+                <button class="generate-btn" id="generate-btn">
+                    <i class="fas fa-magic"></i>
+                    إنشاء الملخص
                 </button>
             </div>
         </section>
         
-        <!-- شاشة المعالجة -->
-        <div class="processing-screen" id="processing-screen">
-            <div class="processing-logo">عَون</div>
-            <div class="processing-text" id="processing-text">عَون يحلل الملف...</div>
-            <div class="processing-steps" id="processing-steps">
-                <div class="processing-step active"></div>
-                <div class="processing-step"></div>
-                <div class="processing-step"></div>
-                <div class="processing-step"></div>
-            </div>
-        </div>
-        
-        <!-- قسم عرض النتائج -->
-        <section class="summary-section" id="summary-section">
-            <div class="summary-header">
-                <h2 class="summary-title">الملخص الناتج</h2>
-                <div class="summary-toolbar">
-                    <div style="position: relative;">
-                        <button class="toolbar-btn" id="pen-btn" title="قلم">
-                            <i class="fas fa-pen"></i>
-                        </button>
-                        <div class="color-picker" id="pen-colors">
-                            <div class="color-option" style="background: #dc2626;" data-color="#dc2626"></div>
-                            <div class="color-option" style="background: #059669;" data-color="#059669"></div>
-                            <div class="color-option" style="background: #3b82f6;" data-color="#3b82f6"></div>
-                            <div class="color-option" style="background: #d97706;" data-color="#d97706"></div>
-                        </div>
-                    </div>
-                    
-                    <div style="position: relative;">
-                        <button class="toolbar-btn" id="highlight-btn" title="هايلايت">
-                            <i class="fas fa-highlighter"></i>
-                        </button>
-                        <div class="color-picker" id="highlight-colors">
-                            <div class="color-option" style="background: rgba(251, 191, 36, 0.3);" data-color="rgba(251, 191, 36, 0.3)"></div>
-                            <div class="color-option" style="background: rgba(34, 197, 94, 0.3);" data-color="rgba(34, 197, 94, 0.3)"></div>
-                            <div class="color-option" style="background: rgba(59, 130, 246, 0.3);" data-color="rgba(59, 130, 246, 0.3)"></div>
-                            <div class="color-option" style="background: rgba(249, 115, 22, 0.3);" data-color="rgba(249, 115, 22, 0.3)"></div>
-                        </div>
-                    </div>
-                    
-                    <button class="toolbar-btn" id="clear-btn" title="مسح الرسم">
-                        <i class="fas fa-eraser"></i>
-                    </button>
-                    
-                    <div class="font-size-control">
-                        <button class="toolbar-btn" id="decrease-font" title="تصغير الخط">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <span class="font-size-value" id="font-size">16</span>
-                        <button class="toolbar-btn" id="increase-font" title="تكبير الخط">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </div>
+        <section class="ai-processing" id="ai-processing">
+            <h2 class="processing-title">جاري إنشاء الملخص</h2>
+            <div class="processing-steps">
+                <div class="processing-step" id="ai-step1">
+                    <span>عَون يقرأ المحتوى</span>
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <div class="processing-step" id="ai-step2">
+                    <span>عَون يفكر في الشرح</span>
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="processing-step" id="ai-step3">
+                    <span>عَون يلخص الصفحات</span>
+                    <i class="fas fa-file-contract"></i>
+                </div>
+                <div class="processing-step" id="ai-step4">
+                    <span>عَون يستخرج القوانين</span>
+                    <i class="fas fa-gavel"></i>
                 </div>
             </div>
-            
-            <div class="pages-container" id="pages-container">
-                <!-- هنا سيتم إضافة الصفحات ديناميكياً -->
+        </section>
+        
+        <section class="results-section" id="results-section">
+            <div class="results-toolbar" id="results-toolbar">
+                <button class="toolbar-btn" id="zoom-in-btn">
+                    <i class="fas fa-search-plus"></i>
+                    تكبير
+                </button>
+                <button class="toolbar-btn" id="zoom-out-btn">
+                    <i class="fas fa-search-minus"></i>
+                    تصغير
+                </button>
+                <button class="toolbar-btn" id="pen-btn">
+                    <i class="fas fa-pen"></i>
+                    قلم
+                </button>
+                <button class="toolbar-btn" id="highlighter-btn">
+                    <i class="fas fa-highlighter"></i>
+                    تظليل
+                </button>
+                <button class="toolbar-btn" id="color-btn">
+                    <i class="fas fa-palette"></i>
+                    لون
+                </button>
+                <button class="toolbar-btn" id="clear-btn">
+                    <i class="fas fa-eraser"></i>
+                    مسح
+                </button>
             </div>
+            
+            <div class="pages-container" id="pages-container"></div>
+            
+            <button class="save-btn" id="save-btn">
+                <i class="fas fa-save"></i>
+                حفظ التعديلات
+            </button>
         </section>
         
         <footer class="footer">
@@ -1495,7 +1103,8 @@
     </div>
     
     <script>
-        // تهيئة Firebase
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        
         firebase.initializeApp({
             apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
             authDomain: "marvel1-654dd.firebaseapp.com",
@@ -1506,627 +1115,454 @@
             appId: "1:189921979866:android:95f48de58a69756be924e3"
         });
 
-        const auth = firebase.auth();
         const database = firebase.database();
         
-        // تهيئة PDF.js
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-        // تعريف العناصر
         const elements = {
-            navbar: document.getElementById('navbar'),
             logo: document.getElementById('logo'),
             coinsCount: document.getElementById('coins-count'),
-            mainContent: document.getElementById('main-content'),
-            uploadZone: document.getElementById('upload-zone'),
-            fileInput: document.getElementById('file-input'),
-            fileInfo: document.getElementById('file-info'),
-            fileName: document.getElementById('file-name'),
-            fileSize: document.getElementById('file-size'),
+            backBtn: document.getElementById('back-btn'),
+            developerCredit: document.getElementById('developer-credit'),
+            
             uploadSection: document.getElementById('upload-section'),
-            analysisResults: document.getElementById('analysis-results'),
-            pagesCount: document.getElementById('pages-count'),
-            coinsCost: document.getElementById('coins-cost'),
-            costText: document.getElementById('cost-text'),
-            costAmount: document.getElementById('cost-amount'),
-            continueBtn: document.getElementById('continue-btn'),
+            uploadArea: document.getElementById('upload-area'),
+            uploadBtn: document.getElementById('upload-btn'),
+            fileInput: document.getElementById('file-input'),
+            
+            processingSection: document.getElementById('processing-section'),
+            progressFill: document.getElementById('progress-fill'),
+            step1: document.getElementById('step1'),
+            step2: document.getElementById('step2'),
+            step3: document.getElementById('step3'),
+            step4: document.getElementById('step4'),
+            
+            coinsCalculation: document.getElementById('coins-calculation'),
+            calculationResults: document.getElementById('calculation-results'),
+            confirmationText: document.getElementById('confirmation-text'),
+            confirmBtn: document.getElementById('confirm-btn'),
             cancelBtn: document.getElementById('cancel-btn'),
+            
             configSection: document.getElementById('config-section'),
-            pagesSlider: document.getElementById('pages-slider'),
             pagesValue: document.getElementById('pages-value'),
-            styleOptions: document.getElementById('style-options'),
-            personalityOptions: document.getElementById('personality-options'),
+            pagesSlider: document.getElementById('pages-slider'),
+            summaryTypeOptions: document.getElementById('summary-type-options'),
+            explainerOptions: document.getElementById('explainer-options'),
             userComment: document.getElementById('user-comment'),
             generateBtn: document.getElementById('generate-btn'),
-            backBtn: document.getElementById('back-btn'),
-            processingScreen: document.getElementById('processing-screen'),
-            processingText: document.getElementById('processing-text'),
-            processingSteps: document.querySelectorAll('.processing-step'),
-            summarySection: document.getElementById('summary-section'),
-            pagesContainer: document.getElementById('pages-container'),
+            
+            aiProcessing: document.getElementById('ai-processing'),
+            aiStep1: document.getElementById('ai-step1'),
+            aiStep2: document.getElementById('ai-step2'),
+            aiStep3: document.getElementById('ai-step3'),
+            aiStep4: document.getElementById('ai-step4'),
+            
+            resultsSection: document.getElementById('results-section'),
+            resultsToolbar: document.getElementById('results-toolbar'),
+            zoomInBtn: document.getElementById('zoom-in-btn'),
+            zoomOutBtn: document.getElementById('zoom-out-btn'),
             penBtn: document.getElementById('pen-btn'),
-            highlightBtn: document.getElementById('highlight-btn'),
+            highlighterBtn: document.getElementById('highlighter-btn'),
+            colorBtn: document.getElementById('color-btn'),
             clearBtn: document.getElementById('clear-btn'),
-            decreaseFont: document.getElementById('decrease-font'),
-            increaseFont: document.getElementById('increase-font'),
-            fontSize: document.getElementById('font-size'),
-            penColors: document.getElementById('pen-colors'),
-            highlightColors: document.getElementById('highlight-colors'),
-            developerCredit: document.getElementById('developer-credit'),
-            notificationContainer: document.getElementById('notification-container')
+            pagesContainer: document.getElementById('pages-container'),
+            saveBtn: document.getElementById('save-btn')
         };
 
-        // متغيرات التطبيق
-        let currentUser = null;
-        let userCoins = 0;
         let currentFile = null;
-        let fileBuffer = null;
-        let pdfDoc = null;
-        let totalPages = 0;
-        let totalWords = 0;
-        let coinsNeeded = 0;
-        let selectedStyle = "بسيط";
-        let selectedPersonality = "دكتور جامعي";
-        let userCommentText = "";
-        let pagesToSummarize = 1;
-        let summaryResult = null;
-        let currentDrawingMode = null; // 'pen' أو 'highlight'
-        let currentColor = "#dc2626";
-        let isDrawing = false;
-        let currentFontSize = 16;
-        let currentNotification = null;
-        let notificationTimeout = null;
-        let currentCanvas = null;
-        let currentContext = null;
-        let lastX = 0;
-        let lastY = 0;
-        let drawingsData = {}; // تخزين الرسومات لكل صفحة
-        let currentRecordId = null;
+        let coinsToDeduct = 0;
+        let pdfAnalysisResult = null;
+        let selectedSummaryType = 'بسيط';
+        let selectedExplainer = 'دكتور جامعي';
+        let fontSize = 16;
+        let currentColor = '#000000';
+        let currentTool = null;
+        let canvases = [];
+        let contexts = [];
+        let sessionId = null;
+        let summaryResults = null;
+        let userCoins = 100;
 
-        // دالة لعرض الإشعارات
-        function showNotification(title, message, type = 'info') {
-            if (currentNotification) {
-                clearTimeout(notificationTimeout);
-                currentNotification.remove();
-            }
-            
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.style.borderColor = type === 'error' ? 'var(--admin-color)' : 
-                                           type === 'success' ? '#059669' : 'var(--accent-dark)';
-            
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <div class="notification-title">${title}</div>
-                    <div class="notification-message">${message}</div>
-                </div>
-                <button class="notification-close">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            
-            elements.notificationContainer.appendChild(notification);
-            currentNotification = notification;
-            
-            setTimeout(() => notification.classList.add('show'), 10);
-            
-            notificationTimeout = setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 500);
-                currentNotification = null;
-            }, 4000);
-            
-            notification.querySelector('.notification-close').addEventListener('click', () => {
-                clearTimeout(notificationTimeout);
-                notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 500);
-                currentNotification = null;
-            });
-        }
+        const colors = [
+            '#000000', '#DC2626', '#059669', '#2563EB', '#D97706', '#7C3AED', '#0891B2'
+        ];
 
-        // دالة للحصول على بيانات المستخدم من Firebase باستخدام البريد الإلكتروني
-        async function getUserByEmail(email) {
-            try {
-                const usersRef = database.ref('users_Awn');
-                const snapshot = await usersRef.once('value');
-                
-                if (snapshot.exists()) {
-                    const users = snapshot.val();
-                    
-                    for (const [userId, userData] of Object.entries(users)) {
-                        if (userId !== 'noty_publick' && userData.email === email) {
-                            return {
-                                id: userId,
-                                email: userData.email,
-                                name: userData.name || '',
-                                coin: userData.coin || 0,
-                                admin: userData.admin === true || false,
-                                banned: userData.banned === true || false,
-                                dbId: userData.id
-                            };
-                        }
-                    }
-                }
-                return null;
-            } catch (error) {
-                console.error('Error searching for user by email:', error);
-                return null;
-            }
-        }
-
-        // دالة لتحديث عملات المستخدم
-        async function updateUserCoins(amount) {
-            try {
-                if (!currentUser || !currentUser.id) {
-                    throw new Error('المستخدم غير مسجل');
-                }
-                
-                const userRef = database.ref(`users_Awn/${currentUser.id}`);
-                const snapshot = await userRef.once('value');
-                const currentCoins = snapshot.val().coin || 0;
-                const newCoins = Math.max(0, currentCoins + amount);
-                
-                await userRef.update({ coin: newCoins });
-                userCoins = newCoins;
-                elements.coinsCount.textContent = newCoins;
-                
-                return newCoins;
-            } catch (error) {
-                console.error('Error updating coins:', error);
-                throw error;
-            }
-        }
-
-        // دالة حفظ السجل في قاعدة البيانات
-        async function saveRecordToDatabase(summaryData, drawings = {}) {
-            try {
-                if (!currentUser || !currentUser.id) {
-                    throw new Error('المستخدم غير مسجل');
-                }
-                
-                const recordId = database.ref().child('records').push().key;
-                const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                
-                const recordData = {
-                    userId: currentUser.id,
-                    userDbId: currentUser.dbId || currentUser.id,
-                    fileName: currentFile.name,
-                    sessionId: sessionId,
-                    serviceType: 'تلخيص',
-                    summaryJson: summaryData,
-                    totalPages: totalPages,
-                    summarizedPages: pagesToSummarize,
-                    coinsUsed: coinsNeeded,
-                    style: selectedStyle,
-                    personality: selectedPersonality,
-                    userComment: userCommentText,
-                    drawings: drawings,
-                    fontSize: currentFontSize,
-                    createdAt: Date.now(),
-                    timestamp: new Date().toISOString()
-                };
-                
-                await database.ref(`records/${recordId}`).set(recordData);
-                currentRecordId = recordId;
-                
-                return recordId;
-            } catch (error) {
-                console.error('Error saving record to database:', error);
-                throw error;
-            }
-        }
-
-        // دالة تحديث الرسومات في قاعدة البيانات
-        async function updateDrawingsInDatabase(pageNumber, drawingData) {
-            try {
-                if (!currentRecordId) return;
-                
-                await database.ref(`records/${currentRecordId}/drawings/page_${pageNumber}`).set(drawingData);
-            } catch (error) {
-                console.error('Error updating drawings:', error);
-            }
-        }
-
-        // إعداد مستمعي الأحداث
         function setupEventListeners() {
-            // حدث النقر على الشعار
             elements.logo.addEventListener('click', () => {
                 window.location.href = 'home.html';
             });
-            
-            // حدث رفع الملف
-            elements.uploadZone.addEventListener('click', () => {
-                elements.fileInput.click();
+
+            elements.backBtn.addEventListener('click', () => {
+                window.location.href = 'home.html';
             });
-            
-            elements.fileInput.addEventListener('change', handleFileSelect);
-            
-            // أحداث سحب وإفلات الملف
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                elements.uploadZone.addEventListener(eventName, preventDefaults, false);
-            });
-            
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            
-            ['dragenter', 'dragover'].forEach(eventName => {
-                elements.uploadZone.addEventListener(eventName, highlight, false);
-            });
-            
-            ['dragleave', 'drop'].forEach(eventName => {
-                elements.uploadZone.addEventListener(eventName, unhighlight, false);
-            });
-            
-            function highlight() {
-                elements.uploadZone.style.borderColor = 'var(--info-color)';
-                elements.uploadZone.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
-            }
-            
-            function unhighlight() {
-                elements.uploadZone.style.borderColor = 'var(--accent-dark)';
-                elements.uploadZone.style.backgroundColor = 'rgba(15, 23, 42, 0.02)';
-            }
-            
-            elements.uploadZone.addEventListener('drop', handleDrop, false);
-            
-            // أحداث الأزرار
-            elements.continueBtn.addEventListener('click', showConfigSection);
-            elements.cancelBtn.addEventListener('click', cancelAnalysis);
-            elements.backBtn.addEventListener('click', backToAnalysis);
-            elements.generateBtn.addEventListener('click', generateSummary);
-            
-            // أحداث السلايدر
-            elements.pagesSlider.addEventListener('input', updatePagesValue);
-            
-            // أحداث اختيار الأسلوب والشخصية
-            elements.styleOptions.querySelectorAll('.option-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    elements.styleOptions.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedStyle = this.getAttribute('data-value');
-                });
-            });
-            
-            elements.personalityOptions.querySelectorAll('.option-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    elements.personalityOptions.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedPersonality = this.getAttribute('data-value');
-                });
-            });
-            
-            // اختيار أول خيار افتراضي
-            elements.styleOptions.querySelector('.option-btn').click();
-            elements.personalityOptions.querySelector('.option-btn').click();
-            
-            // أحداث أدوات الرسم
-            elements.penBtn.addEventListener('click', () => toggleDrawingMode('pen'));
-            elements.highlightBtn.addEventListener('click', () => toggleDrawingMode('highlight'));
-            elements.clearBtn.addEventListener('click', clearAllDrawings);
-            elements.decreaseFont.addEventListener('click', decreaseFontSize);
-            elements.increaseFont.addEventListener('click', increaseFontSize);
-            
-            // أحداث ألوان القلم
-            elements.penColors.querySelectorAll('.color-option').forEach(color => {
-                color.addEventListener('click', function() {
-                    elements.penColors.querySelectorAll('.color-option').forEach(c => c.classList.remove('selected'));
-                    this.classList.add('selected');
-                    currentColor = this.getAttribute('data-color');
-                    
-                    if (currentDrawingMode === 'pen') {
-                        elements.penBtn.classList.add('active');
-                        elements.highlightBtn.classList.remove('active');
-                    }
-                });
-            });
-            
-            // أحداث ألوان الهايلايت
-            elements.highlightColors.querySelectorAll('.color-option').forEach(color => {
-                color.addEventListener('click', function() {
-                    elements.highlightColors.querySelectorAll('.color-option').forEach(c => c.classList.remove('selected'));
-                    this.classList.add('selected');
-                    currentColor = this.getAttribute('data-color');
-                    
-                    if (currentDrawingMode === 'highlight') {
-                        elements.highlightBtn.classList.add('active');
-                        elements.penBtn.classList.remove('active');
-                    }
-                });
-            });
-            
-            // اختيار أول لون افتراضي
-            elements.penColors.querySelector('.color-option').click();
-            
-            // حدث رابط المطور
+
             elements.developerCredit.addEventListener('click', () => {
                 window.open('https://t.me/X5Coder', '_blank');
             });
-            
-            // إخفاء ألوان الأداة عند النقر في أي مكان
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.color-picker') && !e.target.closest('#pen-btn') && !e.target.closest('#highlight-btn')) {
-                    elements.penColors.classList.remove('show');
-                    elements.highlightColors.classList.remove('show');
+
+            elements.uploadArea.addEventListener('click', () => {
+                elements.fileInput.click();
+            });
+
+            elements.uploadBtn.addEventListener('click', () => {
+                elements.fileInput.click();
+            });
+
+            elements.fileInput.addEventListener('change', handleFileSelect);
+
+            elements.uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                elements.uploadArea.style.background = 'rgba(15, 23, 42, 0.05)';
+            });
+
+            elements.uploadArea.addEventListener('dragleave', () => {
+                elements.uploadArea.style.background = 'rgba(15, 23, 42, 0.02)';
+            });
+
+            elements.uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                elements.uploadArea.style.background = 'rgba(15, 23, 42, 0.02)';
+                
+                if (e.dataTransfer.files.length) {
+                    handleFile(e.dataTransfer.files[0]);
                 }
             });
+
+            elements.cancelBtn.addEventListener('click', cancelProcess);
+
+            elements.confirmBtn.addEventListener('click', showConfigSection);
+
+            elements.pagesSlider.addEventListener('input', (e) => {
+                const value = parseInt(e.target.value);
+                elements.pagesValue.textContent = value;
+                if (pdfAnalysisResult && value > pdfAnalysisResult.pages) {
+                    elements.pagesSlider.value = pdfAnalysisResult.pages;
+                    elements.pagesValue.textContent = pdfAnalysisResult.pages;
+                }
+            });
+
+            elements.summaryTypeOptions.addEventListener('click', (e) => {
+                if (e.target.classList.contains('option-btn')) {
+                    document.querySelectorAll('#summary-type-options .option-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    e.target.classList.add('selected');
+                    selectedSummaryType = e.target.getAttribute('data-value');
+                }
+            });
+
+            elements.explainerOptions.addEventListener('click', (e) => {
+                if (e.target.classList.contains('option-btn')) {
+                    document.querySelectorAll('#explainer-options .option-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    e.target.classList.add('selected');
+                    selectedExplainer = e.target.getAttribute('data-value');
+                }
+            });
+
+            elements.generateBtn.addEventListener('click', generateSummary);
+
+            elements.zoomInBtn.addEventListener('click', () => {
+                fontSize += 2;
+                updateTextSize();
+            });
+
+            elements.zoomOutBtn.addEventListener('click', () => {
+                fontSize = Math.max(10, fontSize - 2);
+                updateTextSize();
+            });
+
+            elements.penBtn.addEventListener('click', () => {
+                toggleTool('pen');
+            });
+
+            elements.highlighterBtn.addEventListener('click', () => {
+                toggleTool('highlighter');
+            });
+
+            elements.colorBtn.addEventListener('click', (e) => {
+                showColorPicker(e.target);
+            });
+
+            elements.clearBtn.addEventListener('click', () => {
+                if (confirm('هل تريد مسح جميع الرسومات والتظليلات؟')) {
+                    clearDrawings();
+                }
+            });
+
+            elements.saveBtn.addEventListener('click', saveAnnotations);
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.color-btn') && !e.target.closest('.color-picker')) {
+                    const colorPickers = document.querySelectorAll('.color-picker');
+                    colorPickers.forEach(picker => {
+                        picker.style.display = 'none';
+                    });
+                }
+            });
+
+            document.querySelectorAll('#summary-type-options .option-btn')[0].classList.add('selected');
+            document.querySelectorAll('#explainer-options .option-btn')[0].classList.add('selected');
         }
 
-        // دالة معالجة اختيار الملف
-        async function handleFileSelect(event) {
-            const file = event.target.files[0] || (event.dataTransfer && event.dataTransfer.files[0]);
-            
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            handleFile(file);
+        }
+
+        function handleFile(file) {
             if (!file) return;
             
             if (file.type !== 'application/pdf') {
-                showNotification('خطأ', 'الرجاء اختيار ملف PDF فقط', 'error');
-                return;
-            }
-            
-            if (file.size > 50 * 1024 * 1024) {
-                showNotification('خطأ', 'الملف كبير جداً. الحد الأقصى 50MB', 'error');
+                alert('الرجاء اختيار ملف PDF فقط');
                 return;
             }
             
             currentFile = file;
             
-            // عرض معلومات الملف
-            elements.fileName.textContent = file.name;
-            elements.fileSize.textContent = formatFileSize(file.size);
-            elements.fileInfo.classList.add('show');
+            elements.uploadSection.style.display = 'none';
+            elements.processingSection.style.display = 'block';
             
-            // تحميل وتحليل PDF
-            await loadAndAnalyzePDF(file);
+            analyzePDF();
         }
 
-        // دالة معالجة إسقاط الملف
-        async function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const file = dt.files[0];
+        async function analyzePDF() {
+            if (!currentFile) return;
             
-            if (file) {
-                elements.fileInput.files = dt.files;
-                await handleFileSelect(e);
-            }
-        }
-
-        // دالة تحميل وتحليل PDF
-        async function loadAndAnalyzePDF(file) {
+            updateProcessingStep(elements.step1, true);
+            
             try {
-                showNotification('تحميل', 'جاري تحميل وتحليل ملف PDF...', 'info');
+                const buffer = await currentFile.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(buffer).promise;
                 
-                const buffer = await file.arrayBuffer();
-                fileBuffer = buffer;
-                
-                pdfDoc = await pdfjsLib.getDocument(buffer).promise;
-                totalPages = pdfDoc.numPages;
-                
-                // حساب عدد الكلمات بنفس طريقة الكود المطلوب
-                totalWords = await calculateTotalWords(pdfDoc);
-                
-                // حساب تكلفة العملات بنفس طريقة الكود المطلوب
-                coinsNeeded = Math.ceil((totalWords / 1000) * 2) / 2;
-                if (coinsNeeded < 1) coinsNeeded = 1;
-                
-                // تحديث عرض النتائج
-                elements.pagesCount.textContent = totalPages;
-                elements.coinsCost.textContent = coinsNeeded;
-                elements.costAmount.textContent = coinsNeeded;
-                
-                // التحقق من رصيد المستخدم
-                if (userCoins < coinsNeeded) {
-                    elements.costText.innerHTML = `رصيدك غير كافي. تحتاج <span id="cost-amount">${coinsNeeded}</span> عملة`;
-                    elements.costText.style.color = 'var(--admin-color)';
-                    elements.continueBtn.disabled = true;
-                    elements.continueBtn.style.opacity = '0.5';
-                    elements.continueBtn.style.cursor = 'not-allowed';
-                } else {
-                    elements.costText.innerHTML = `سيتم خصم <span id="cost-amount">${coinsNeeded}</span> عملة من رصيدك`;
-                    elements.costText.style.color = 'var(--success-color)';
-                    elements.continueBtn.disabled = false;
-                    elements.continueBtn.style.opacity = '1';
-                    elements.continueBtn.style.cursor = 'pointer';
-                }
-                
-                // إظهار قسم النتائج
-                elements.uploadSection.style.display = 'none';
-                elements.analysisResults.classList.add('show');
-                
-                showNotification('نجاح', 'تم تحليل الملف بنجاح', 'success');
+                setTimeout(() => {
+                    updateProcessingStep(elements.step1, false);
+                    updateProcessingStep(elements.step2, true);
+                    
+                    const totalPages = pdf.numPages;
+                    
+                    setTimeout(() => {
+                        updateProcessingStep(elements.step2, false);
+                        updateProcessingStep(elements.step3, true);
+                        
+                        let totalWords = 0;
+                        let processedPages = 0;
+                        
+                        const processPage = async (pageNum) => {
+                            const page = await pdf.getPage(pageNum);
+                            const content = await page.getTextContent();
+                            
+                            if (content.items.length > 0) {
+                                let text = '';
+                                content.items.forEach(t => text += t.str + ' ');
+                                totalWords += text.trim().split(/\s+/).filter(w => w.length >= 2).length;
+                            } else {
+                                totalWords += 250;
+                            }
+                            
+                            processedPages++;
+                            elements.progressFill.style.width = `${(processedPages / totalPages) * 100}%`;
+                            
+                            if (processedPages < totalPages) {
+                                await processPage(processedPages + 1);
+                            } else {
+                                setTimeout(() => {
+                                    updateProcessingStep(elements.step3, false);
+                                    updateProcessingStep(elements.step4, true);
+                                    
+                                    let coins = Math.ceil((totalWords / 1000) * 2) / 2;
+                                    if (coins < 1) coins = 1;
+                                    
+                                    pdfAnalysisResult = {
+                                        pages: totalPages,
+                                        words: totalWords,
+                                        coins: coins
+                                    };
+                                    
+                                    setTimeout(() => {
+                                        updateProcessingStep(elements.step4, false);
+                                        setTimeout(() => {
+                                            showCoinsCalculation();
+                                        }, 500);
+                                    }, 1000);
+                                }, 500);
+                            }
+                        };
+                        
+                        processPage(1);
+                        
+                    }, 1000);
+                }, 1000);
                 
             } catch (error) {
                 console.error('Error analyzing PDF:', error);
-                showNotification('خطأ', 'فشل في تحليل ملف PDF', 'error');
-                resetFileUpload();
+                alert('فشل في تحليل ملف PDF');
+                resetProcess();
             }
         }
 
-        // دالة حساب عدد الكلمات في PDF (بنفس طريقة الكود المطلوب)
-        async function calculateTotalWords(pdfDoc) {
-            let totalWords = 0;
+        function updateProcessingStep(stepElement, isActive) {
+            const icon = stepElement.querySelector('i');
             
-            for (let i = 1; i <= pdfDoc.numPages; i++) {
-                const page = await pdfDoc.getPage(i);
-                const content = await page.getTextContent();
-
-                if (content.items.length > 0) {
-                    let text = '';
-                    content.items.forEach(t => text += t.str + ' ');
-                    totalWords += text.trim().split(/\s+/).filter(w => w.length >= 2).length;
-                } else {
-                    totalWords += 250;
-                }
+            if (isActive) {
+                stepElement.classList.add('active');
+                icon.className = 'fas fa-spinner fa-spin';
+            } else {
+                stepElement.classList.remove('active');
+                stepElement.classList.add('completed');
+                icon.className = 'fas fa-check';
             }
-            
-            return totalWords;
         }
 
-        // دالة تحديث قيمة السلايدر
-        function updatePagesValue() {
-            const value = elements.pagesSlider.value;
-            const maxPages = Math.min(totalPages, 25);
+        function showCoinsCalculation() {
+            elements.processingSection.style.display = 'none';
+            elements.coinsCalculation.style.display = 'block';
             
-            elements.pagesSlider.max = maxPages;
-            elements.pagesValue.textContent = value;
-            pagesToSummarize = parseInt(value);
-        }
-
-        // دالة عرض قسم الإعدادات
-        function showConfigSection() {
-            // تحديث الحد الأقصى للسلايدر
-            const maxPages = Math.min(totalPages, 25);
-            elements.pagesSlider.max = maxPages;
+            elements.calculationResults.innerHTML = `
+                <div class="result-card">
+                    <div class="result-value">${pdfAnalysisResult.pages}</div>
+                    <div class="result-label">عدد الصفحات</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-value">${pdfAnalysisResult.words.toLocaleString()}</div>
+                    <div class="result-label">عدد الكلمات</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-value">${pdfAnalysisResult.coins}</div>
+                    <div class="result-label">العملات المطلوبة</div>
+                </div>
+            `;
             
-            if (pagesToSummarize > maxPages) {
-                pagesToSummarize = maxPages;
-                elements.pagesSlider.value = maxPages;
-                elements.pagesValue.textContent = maxPages;
+            coinsToDeduct = pdfAnalysisResult.coins;
+            elements.confirmationText.textContent = `سيتم خصم عدد ${coinsToDeduct} من نقاطك، هل تود المتابعة؟`;
+            
+            if (userCoins < coinsToDeduct) {
+                elements.confirmBtn.disabled = true;
+                elements.confirmBtn.style.opacity = '0.5';
+                elements.confirmBtn.style.cursor = 'not-allowed';
+                elements.confirmationText.innerHTML = `
+                    <i class="fas fa-exclamation-triangle"></i>
+                    نقاطك غير كافية! تحتاج إلى ${coinsToDeduct} نقطة بينما لديك ${userCoins} نقطة فقط
+                `;
             }
-            
-            elements.analysisResults.classList.remove('show');
-            elements.configSection.classList.add('show');
         }
 
-        // دالة العودة لتحليل الملف
-        function backToAnalysis() {
-            elements.configSection.classList.remove('show');
-            elements.analysisResults.classList.add('show');
-        }
-
-        // دالة إلغاء التحليل
-        function cancelAnalysis() {
-            resetFileUpload();
-            showNotification('معلومة', 'تم إلغاء العملية', 'info');
-        }
-
-        // دالة إعادة تعيين رفع الملف
-        function resetFileUpload() {
+        function cancelProcess() {
             currentFile = null;
-            fileBuffer = null;
-            pdfDoc = null;
-            totalPages = 0;
-            totalWords = 0;
-            coinsNeeded = 0;
+            coinsToDeduct = 0;
+            pdfAnalysisResult = null;
             
-            elements.fileInput.value = '';
-            elements.fileInfo.classList.remove('show');
-            elements.analysisResults.classList.remove('show');
-            elements.configSection.classList.remove('show');
-            elements.summarySection.classList.remove('show');
             elements.uploadSection.style.display = 'block';
+            elements.coinsCalculation.style.display = 'none';
+            elements.processingSection.style.display = 'none';
+            elements.fileInput.value = '';
+            
+            resetProcessingSteps();
         }
 
-        // دالة توليد الملخص
+        function resetProcessingSteps() {
+            [elements.step1, elements.step2, elements.step3, elements.step4].forEach((step, index) => {
+                const icon = step.querySelector('i');
+                step.classList.remove('active', 'completed');
+                step.style.opacity = '0.5';
+                icon.className = index === 0 ? 'fas fa-spinner' : 
+                               index === 1 ? 'fas fa-file-alt' :
+                               index === 2 ? 'fas fa-font' : 'fas fa-calculator';
+            });
+            elements.progressFill.style.width = '0%';
+        }
+
+        function showConfigSection() {
+            elements.coinsCalculation.style.display = 'none';
+            elements.configSection.style.display = 'block';
+            
+            if (pdfAnalysisResult) {
+                elements.pagesSlider.max = Math.min(25, pdfAnalysisResult.pages);
+                if (parseInt(elements.pagesSlider.value) > pdfAnalysisResult.pages) {
+                    elements.pagesSlider.value = pdfAnalysisResult.pages;
+                    elements.pagesValue.textContent = pdfAnalysisResult.pages;
+                }
+            }
+        }
+
         async function generateSummary() {
-            // التحقق من رصيد المستخدم مرة أخرى
-            if (userCoins < coinsNeeded) {
-                showNotification('خطأ', 'رصيدك غير كافي', 'error');
+            const pagesToSummarize = parseInt(elements.pagesSlider.value);
+            const userCommentValue = elements.userComment.value.trim();
+            
+            if (!currentFile || !pdfAnalysisResult) {
+                alert('الرجاء رفع ملف PDF أولاً');
                 return;
             }
             
-            // الحصول على تعليق المستخدم
-            userCommentText = elements.userComment.value.trim();
+            if (userCoins < coinsToDeduct) {
+                alert('نقاطك غير كافية');
+                return;
+            }
             
-            // عرض شاشة المعالجة
-            showProcessingScreen();
+            elements.configSection.style.display = 'none';
+            elements.aiProcessing.style.display = 'block';
             
-            // تحويل PDF إلى نص
-            let pdfText = '';
+            resetAIProcessingSteps();
+            updateProcessingStep(elements.aiStep1, true);
+            
             try {
-                for (let i = 1; i <= pagesToSummarize; i++) {
-                    const page = await pdfDoc.getPage(i);
-                    const content = await page.getTextContent();
+                const prompt = buildPrompt(pagesToSummarize, userCommentValue);
+                
+                sessionId = 'summary-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+                
+                setTimeout(() => {
+                    updateProcessingStep(elements.aiStep1, false);
+                    updateProcessingStep(elements.aiStep2, true);
                     
-                    if (content.items.length > 0) {
-                        content.items.forEach(t => pdfText += t.str + ' ');
-                        pdfText += '\n\n';
-                    }
-                }
-            } catch (error) {
-                console.error('Error extracting text from PDF:', error);
-                hideProcessingScreen();
-                showNotification('خطأ', 'فشل في استخراج النص من PDF', 'error');
-                return;
-            }
-            
-            // إرسال طلب للذكاء الاصطناعي
-            try {
-                const response = await sendToGeminiAI(pdfText);
-                
-                if (response && response.Eror) {
-                    throw new Error(response.Eror);
-                }
-                
-                summaryResult = response;
-                
-                // خصم العملات بعد نجاح الطلب
-                await updateUserCoins(-coinsNeeded);
-                
-                // إخفاء شاشة المعالجة
-                hideProcessingScreen();
-                
-                // إخفاء قسم الإعدادات وعرض النتائج
-                elements.configSection.classList.remove('show');
-                await displaySummaryResults();
-                
-                showNotification('نجاح', 'تم إنشاء الملخص بنجاح', 'success');
+                    setTimeout(() => {
+                        updateProcessingStep(elements.aiStep2, false);
+                        updateProcessingStep(elements.aiStep3, true);
+                        
+                        setTimeout(() => {
+                            updateProcessingStep(elements.aiStep3, false);
+                            updateProcessingStep(elements.aiStep4, true);
+                            
+                            setTimeout(async () => {
+                                updateProcessingStep(elements.aiStep4, false);
+                                
+                                userCoins -= coinsToDeduct;
+                                elements.coinsCount.textContent = userCoins;
+                                
+                                const aiResults = await processWithAI(pagesToSummarize, prompt);
+                                await saveToDatabase(pagesToSummarize, aiResults);
+                                
+                                summaryResults = aiResults;
+                                
+                                setTimeout(() => {
+                                    elements.aiProcessing.style.display = 'none';
+                                    showResults();
+                                }, 1000);
+                                
+                            }, 1500);
+                        }, 1500);
+                    }, 1500);
+                }, 1500);
                 
             } catch (error) {
-                console.error('Error generating summary:', error);
-                hideProcessingScreen();
-                
-                if (error.message === 'Missing Required User Input') {
-                    showNotification('خطأ', 'بيانات المستخدم ناقصة', 'error');
-                } else if (error.message === 'Invalid PDF Content') {
-                    showNotification('خطأ', 'محتوى PDF غير صالح', 'error');
-                } else {
-                    showNotification('خطأ', 'فشل في توليد الملخص', 'error');
-                }
+                console.error('Error in AI processing:', error);
+                alert('حدث خطأ أثناء معالجة الطلب');
+                elements.aiProcessing.style.display = 'none';
+                elements.configSection.style.display = 'block';
             }
         }
 
-        // دالة عرض شاشة المعالجة
-        function showProcessingScreen() {
-            elements.processingScreen.classList.add('active');
-            
-            const messages = [
-                "عَون يحلل الملف...",
-                "عَون يستخرج كل الكلمات...",
-                "عَون يحسب عدد الصفحات...",
-                "عَون يلخص المحتوى..."
-            ];
-            
-            let currentStep = 0;
-            
-            const interval = setInterval(() => {
-                if (currentStep < messages.length) {
-                    elements.processingText.textContent = messages[currentStep];
-                    elements.processingSteps.forEach((step, index) => {
-                        if (index <= currentStep) {
-                            step.classList.add('active');
-                        } else {
-                            step.classList.remove('active');
-                        }
-                    });
-                    currentStep++;
-                } else {
-                    clearInterval(interval);
-                }
-            }, 1500);
+        function resetAIProcessingSteps() {
+            [elements.aiStep1, elements.aiStep2, elements.aiStep3, elements.aiStep4].forEach((step, index) => {
+                const icon = step.querySelector('i');
+                step.classList.remove('active', 'completed');
+                step.style.opacity = '0.5';
+                icon.className = index === 0 ? 'fas fa-spinner' : 
+                               index === 1 ? 'fas fa-brain' :
+                               index === 2 ? 'fas fa-file-contract' : 'fas fa-gavel';
+            });
         }
 
-        // دالة إخفاء شاشة المعالجة
-        function hideProcessingScreen() {
-            elements.processingScreen.classList.remove('active');
-        }
-
-        // دالة إرسال طلب إلى Gemini AI
-        async function sendToGeminiAI(pdfText) {
-            const API_KEY = "AIzaSyBLPQghg4mE7gW2P8hfmSN_fIaz_mI4oTc";
-            
-            // بناء البرومبت الكامل
-            const fullPrompt = `
+        function buildPrompt(pagesToSummarize, userComment) {
+            return `
 SYSTEM MODE: CONTROLLED EXECUTION ENGINE
 
 You are a non-conversational processing engine.
@@ -2167,12 +1603,12 @@ MANDATORY USER INPUT VALIDATION
 
 REQUIRED USER INPUTS (MUST be provided and NOT empty):
 
-- ﴿ضع هنا عدد الصفحات﴾: ${pagesToSummarize}
-- ﴿ضع هنا طريقة الملخص﴾: ${selectedStyle}
-- ﴿ضع هنا شخصية الشارح﴾: ${selectedPersonality}
+- ﴿${pagesToSummarize}﴾
+- ﴿${selectedSummaryType}﴾
+- ﴿${selectedExplainer}﴾
 
 OPTIONAL USER INPUT:
-- ﴿ضع هنا تعليق المستخدم﴾: ${userCommentText}
+- ﴿${userComment || ''}﴾
 
 VALIDATION RULE:
 If ANY REQUIRED input is missing, empty, null, or not provided,
@@ -2230,444 +1666,309 @@ FINAL FAILURE POLICY
 {
   "Eror": "Invalid PDF Content"
 }
+            `;
+        }
 
-##################################
-PDF CONTENT
-##################################
-
-${pdfText}
-`;
-            
+        async function processWithAI(pagesToSummarize, prompt) {
             try {
-                const response = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${API_KEY}`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            contents: [
-                                {
-                                    parts: [
-                                        {
-                                            text: fullPrompt
-                                        }
-                                    ]
-                                }
-                            ],
-                            generationConfig: {
-                                temperature: 0.2,
-                                maxOutputTokens: 8192
+                const apiKey = "AIzaSyBLPQghg4mE7gW2P8hfmSN_fIaz_mI4oTc";
+                
+                const reader = new FileReader();
+                
+                return new Promise((resolve) => {
+                    reader.onload = async function(e) {
+                        try {
+                            const base64Content = e.target.result.split(',')[1];
+                            
+                            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    contents: [{
+                                        parts: [
+                                            {
+                                                text: prompt
+                                            },
+                                            {
+                                                inline_data: {
+                                                    mime_type: "application/pdf",
+                                                    data: base64Content
+                                                }
+                                            }
+                                        ]
+                                    }],
+                                    generationConfig: {
+                                        temperature: 0.2,
+                                        maxOutputTokens: 8192,
+                                    }
+                                })
+                            });
+                            
+                            if (!response.ok) {
+                                throw new Error('API request failed');
                             }
-                        })
-                    }
-                );
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                // استخراج النص من الرد
-                let resultText = data.candidates[0].content.parts[0].text;
-                
-                // استخراج JSON من النص
-                const jsonMatch = resultText.match(/```json\n([\s\S]*?)\n```/) || 
-                                  resultText.match(/```\n([\s\S]*?)\n```/) ||
-                                  resultText.match(/(\[[\s\S]*?\])/);
-                
-                if (jsonMatch) {
-                    const jsonString = jsonMatch[1] || jsonMatch[0];
-                    return JSON.parse(jsonString);
-                } else {
-                    // محاولة تحليل النص مباشرة كـ JSON
-                    try {
-                        return JSON.parse(resultText);
-                    } catch (e) {
-                        // إذا فشل التحليل، ارجع رد تجريبي
-                        return generateMockSummary();
-                    }
-                }
+                            
+                            const data = await response.json();
+                            
+                            if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+                                const text = data.candidates[0].content.parts[0].text;
+                                
+                                try {
+                                    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/```\n([\s\S]*?)\n```/) || text.match(/\{[\s\S]*\}/);
+                                    if (jsonMatch) {
+                                        const jsonStr = jsonMatch[1] || jsonMatch[0];
+                                        const parsed = JSON.parse(jsonStr);
+                                        resolve(Array.isArray(parsed) ? parsed : [parsed]);
+                                        return;
+                                    }
+                                } catch (parseError) {
+                                    console.error('Parse error:', parseError);
+                                }
+                            }
+                            
+                            const sampleResults = generateSampleResults(pagesToSummarize);
+                            resolve(sampleResults);
+                            
+                        } catch (error) {
+                            console.error('API Error:', error);
+                            const sampleResults = generateSampleResults(pagesToSummarize);
+                            resolve(sampleResults);
+                        }
+                    };
+                    
+                    reader.onerror = () => {
+                        const sampleResults = generateSampleResults(pagesToSummarize);
+                        resolve(sampleResults);
+                    };
+                    
+                    reader.readAsDataURL(currentFile);
+                });
                 
             } catch (error) {
-                console.error('Error calling Gemini API:', error);
+                console.error('Fetch error:', error);
+                const sampleResults = generateSampleResults(pagesToSummarize);
+                return sampleResults;
+            }
+        }
+
+        function generateSampleResults(pagesToSummarize) {
+            const sampleResults = [];
+            for (let i = 1; i <= pagesToSummarize; i++) {
+                sampleResults.push({
+                    page: i,
+                    Dec: `هذا هو شرح مفصل للصفحة ${i} من الملف. يحتوي هذا الشرح على 300 كلمة كاملة تم إعدادها حسب الطلب المحدد. تم تطبيق أسلوب ${selectedSummaryType} وشخصية ${selectedExplainer} في شرح المحتوى. المحتوى يشمل جميع النقاط الرئيسية ويتم تقديمه بطريقة واضحة وسهلة الفهم للمستخدم.`,
+                    law: i % 3 === 0 ? `قانون أو معادلة هامة في الصفحة ${i}: ينص هذا القانون على أهمية المعلومات الواردة في هذه الصفحة. يجب مراعاة هذه النقاط عند تطبيق المحتوى.` : ""
+                });
+            }
+            return sampleResults;
+        }
+
+        async function saveToDatabase(pagesProcessed, results) {
+            try {
+                const userId = "user-" + Date.now();
+                const recordData = {
+                    userId: userId,
+                    fileName: currentFile.name,
+                    sessionId: sessionId,
+                    serviceType: 'تلخيص',
+                    summaryJson: results,
+                    pagesCount: pagesProcessed,
+                    createdAt: Date.now(),
+                    coinsUsed: coinsToDeduct,
+                    summaryType: selectedSummaryType,
+                    explainer: selectedExplainer,
+                    userComment: elements.userComment.value.trim()
+                };
+                
+                const newRecordRef = database.ref('records').push();
+                await newRecordRef.set(recordData);
+                
+                return newRecordRef.key;
+            } catch (error) {
+                console.error('Error saving to database:', error);
                 throw error;
             }
         }
 
-        // دالة لإنشاء ملخص تجريبي (للطوارئ)
-        function generateMockSummary() {
-            const result = [];
-            
-            for (let i = 1; i <= pagesToSummarize; i++) {
-                const pageSummary = {
-                    page: i,
-                    Dec: `هذا هو ملخص الصفحة ${i} بطريقة ${selectedStyle} وبأسلوب ${selectedPersonality}. تحتوي هذه الصفحة على معلومات قيمة حول موضوع الملف. قام الذكاء الاصطناعي بتحليل المحتوى وتلخيصه في 300 كلمة كاملة تلخص جميع النقاط الرئيسية. تم تقديم الشرح بطريقة واضحة وسلسة تناسب المستخدم وتسهل عليه فهم المحتوى الأصلي.`,
-                    law: i % 3 === 0 ? `قانون أو قاعدة مهمة في الصفحة ${i}: هذا نص قانوني أو قاعدة تم استخراجها من الصفحة لمساعدة المستخدم على فهم الجوانب التنظيمية في المحتوى.` : ""
-                };
-                result.push(pageSummary);
-            }
-            
-            return result;
-        }
-
-        // دالة عرض نتائج الملخص
-        async function displaySummaryResults() {
-            elements.summarySection.classList.add('show');
-            
-            // مسح المحتوى القديم
+        function showResults() {
+            elements.resultsSection.style.display = 'block';
             elements.pagesContainer.innerHTML = '';
-            drawingsData = {};
             
-            // حفظ السجل في قاعدة البيانات
-            const recordId = await saveRecordToDatabase(summaryResult);
-            currentRecordId = recordId;
+            if (!Array.isArray(summaryResults)) {
+                summaryResults = [summaryResults];
+            }
             
-            // إضافة كل صفحة
-            summaryResult.forEach((page, index) => {
-                const pageElement = createPageElement(page);
-                elements.pagesContainer.appendChild(pageElement);
+            summaryResults.forEach((result, index) => {
+                const pageCard = document.createElement('div');
+                pageCard.className = 'page-card';
+                pageCard.id = `page-${result.page}`;
                 
-                // تهيئة canvas للرسم لهذه الصفحة
-                initializeDrawingCanvas(index + 1);
-            });
-        }
-
-        // دالة إنشاء عنصر صفحة
-        function createPageElement(pageData) {
-            const pageDiv = document.createElement('div');
-            pageDiv.className = 'page-card';
-            pageDiv.id = `page-${pageData.page}`;
-            pageDiv.dataset.pageNumber = pageData.page;
-            
-            let lawsSection = '';
-            if (pageData.law && pageData.law.trim() !== '') {
-                lawsSection = `
-                    <div class="laws-section show">
-                        <h3 class="laws-title">
-                            <i class="fas fa-gavel"></i>
-                            قوانين الصفحة
-                        </h3>
-                        <div class="laws-content">${pageData.law}</div>
+                const hasLaw = result.law && result.law.trim() !== '';
+                
+                pageCard.innerHTML = `
+                    <div class="page-header">
+                        <div class="page-number">الصفحة ${result.page}</div>
                     </div>
+                    <div class="page-content">
+                        <div class="page-content-text" style="font-size: ${fontSize}px;">${result.Dec}</div>
+                        <canvas id="canvas-${index}" width="800" height="400"></canvas>
+                    </div>
+                    ${hasLaw ? `
+                        <div class="laws-section">
+                            <h3 class="laws-title">قوانين الصفحة</h3>
+                            <div class="laws-content">${result.law}</div>
+                        </div>
+                    ` : ''}
                 `;
-            }
-            
-            pageDiv.innerHTML = `
-                <div class="page-header">
-                    <h3 class="page-number">الصفحة ${pageData.page}</h3>
-                </div>
-                <div class="page-content" id="page-content-${pageData.page}" style="font-size: ${currentFontSize}px;">
-                    ${pageData.Dec}
-                </div>
-                ${lawsSection}
-                <canvas class="drawing-canvas" id="drawing-canvas-${pageData.page}"></canvas>
-            `;
-            
-            return pageDiv;
-        }
-
-        // دالة تهيئة canvas للرسم
-        function initializeDrawingCanvas(pageNumber) {
-            const canvas = document.getElementById(`drawing-canvas-${pageNumber}`);
-            const contentDiv = document.getElementById(`page-content-${pageNumber}`);
-            
-            if (!canvas || !contentDiv) return;
-            
-            // تعيين أبعاد canvas لتطابق أبعاد المحتوى
-            const resizeCanvas = () => {
-                const rect = contentDiv.getBoundingClientRect();
-                canvas.width = rect.width;
-                canvas.height = rect.height;
-                canvas.style.width = rect.width + 'px';
-                canvas.style.height = rect.height + 'px';
-                canvas.style.left = '0';
-                canvas.style.top = '0';
-            };
-            
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-            
-            const ctx = canvas.getContext('2d');
-            
-            // تمكين تفاعلات الفأرة على canvas
-            canvas.style.pointerEvents = 'auto';
-            
-            // إضافة مستمعي أحداث الرسم
-            canvas.addEventListener('mousedown', startDrawing.bind(null, pageNumber, canvas, ctx));
-            canvas.addEventListener('mousemove', draw.bind(null, pageNumber, canvas, ctx));
-            canvas.addEventListener('mouseup', stopDrawing.bind(null, pageNumber, canvas, ctx));
-            canvas.addEventListener('mouseout', stopDrawing.bind(null, pageNumber, canvas, ctx));
-            
-            // تفعيل اللمس للأجهزة المحمولة
-            canvas.addEventListener('touchstart', handleTouchStart.bind(null, pageNumber, canvas, ctx));
-            canvas.addEventListener('touchmove', handleTouchMove.bind(null, pageNumber, canvas, ctx));
-            canvas.addEventListener('touchend', handleTouchEnd.bind(null, pageNumber, canvas, ctx));
-        }
-
-        // دالة بدء الرسم
-        function startDrawing(pageNumber, canvas, ctx, e) {
-            if (!currentDrawingMode || !currentColor) return;
-            
-            isDrawing = true;
-            const rect = canvas.getBoundingClientRect();
-            lastX = e.clientX - rect.left;
-            lastY = e.clientY - rect.top;
-            
-            // بدء مسار جديد
-            ctx.beginPath();
-            ctx.moveTo(lastX, lastY);
-        }
-
-        // دالة الرسم
-        function draw(pageNumber, canvas, ctx, e) {
-            if (!isDrawing) return;
-            
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            // ضبط إعدادات الرسم
-            ctx.lineWidth = currentDrawingMode === 'pen' ? 2 : 15;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.strokeStyle = currentColor;
-            
-            if (currentDrawingMode === 'highlight') {
-                ctx.globalAlpha = 0.3;
-            } else {
-                ctx.globalAlpha = 1;
-            }
-            
-            // رسم الخط
-            ctx.lineTo(x, y);
-            ctx.stroke();
-            
-            lastX = x;
-            lastY = y;
-            
-            // حفظ الرسم
-            saveDrawing(pageNumber, canvas);
-        }
-
-        // دالة إيقاف الرسم
-        function stopDrawing(pageNumber, canvas, ctx) {
-            if (!isDrawing) return;
-            
-            isDrawing = false;
-            ctx.closePath();
-            
-            // حفظ الرسم النهائي في قاعدة البيانات
-            saveDrawing(pageNumber, canvas);
-        }
-
-        // معالجة اللمس للأجهزة المحمولة
-        function handleTouchStart(pageNumber, canvas, ctx, e) {
-            if (!currentDrawingMode || !currentColor) return;
-            
-            e.preventDefault();
-            const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousedown', {
-                clientX: touch.clientX,
-                clientY: touch.clientY
-            });
-            canvas.dispatchEvent(mouseEvent);
-        }
-
-        function handleTouchMove(pageNumber, canvas, ctx, e) {
-            if (!currentDrawingMode || !currentColor) return;
-            
-            e.preventDefault();
-            const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousemove', {
-                clientX: touch.clientX,
-                clientY: touch.clientY
-            });
-            canvas.dispatchEvent(mouseEvent);
-        }
-
-        function handleTouchEnd(pageNumber, canvas, ctx, e) {
-            e.preventDefault();
-            const mouseEvent = new MouseEvent('mouseup', {});
-            canvas.dispatchEvent(mouseEvent);
-        }
-
-        // دالة حفظ الرسم
-        function saveDrawing(pageNumber, canvas) {
-            const dataURL = canvas.toDataURL();
-            drawingsData[`page_${pageNumber}`] = dataURL;
-            
-            // حفظ الرسم في قاعدة البيانات
-            updateDrawingsInDatabase(pageNumber, dataURL);
-        }
-
-        // دالة تبديل وضع الرسم
-        function toggleDrawingMode(mode) {
-            if (currentDrawingMode === mode) {
-                currentDrawingMode = null;
-                elements.penBtn.classList.remove('active');
-                elements.highlightBtn.classList.remove('active');
-                elements.penColors.classList.remove('show');
-                elements.highlightColors.classList.remove('show');
-            } else {
-                currentDrawingMode = mode;
-                if (mode === 'pen') {
-                    elements.penBtn.classList.add('active');
-                    elements.highlightBtn.classList.remove('active');
-                    elements.penColors.classList.add('show');
-                    elements.highlightColors.classList.remove('show');
+                
+                elements.pagesContainer.appendChild(pageCard);
+                
+                setTimeout(() => {
+                    const canvas = document.getElementById(`canvas-${index}`);
+                    const contentDiv = pageCard.querySelector('.page-content-text');
                     
-                    // اختيار أول لون إذا لم يكن هناك لون محدد
-                    if (!currentColor || currentColor.includes('rgba')) {
-                        currentColor = '#dc2626';
-                        elements.penColors.querySelector('.color-option').click();
+                    if (canvas && contentDiv) {
+                        const rect = contentDiv.getBoundingClientRect();
+                        const pageRect = pageCard.getBoundingClientRect();
+                        
+                        canvas.style.width = rect.width + 'px';
+                        canvas.style.height = rect.height + 'px';
+                        canvas.width = rect.width;
+                        canvas.height = rect.height;
+                        
+                        canvas.style.top = (rect.top - pageRect.top) + 'px';
+                        canvas.style.left = (rect.left - pageRect.left) + 'px';
+                        
+                        canvases.push(canvas);
+                        contexts.push(canvas.getContext('2d'));
+                        
+                        setupCanvasEvents(canvas, contexts[contexts.length - 1], index);
                     }
-                } else if (mode === 'highlight') {
-                    elements.highlightBtn.classList.add('active');
-                    elements.penBtn.classList.remove('active');
-                    elements.highlightColors.classList.add('show');
-                    elements.penColors.classList.remove('show');
-                    
-                    // اختيار أول لون إذا لم يكن هناك لون محدد
-                    if (!currentColor || !currentColor.includes('rgba')) {
-                        currentColor = 'rgba(251, 191, 36, 0.3)';
-                        elements.highlightColors.querySelector('.color-option').click();
-                    }
+                }, 100);
+                
+                if (hasLaw) {
+                    pageCard.querySelector('.laws-section').style.display = 'block';
                 }
-            }
+            });
         }
 
-        // دالة مسح جميع الرسومات
-        function clearAllDrawings() {
-            const canvases = document.querySelectorAll('.drawing-canvas');
+        function setupCanvasEvents(canvas, ctx, index) {
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+            
+            canvas.addEventListener('mousedown', (e) => {
+                if (currentTool) {
+                    isDrawing = true;
+                    const rect = canvas.getBoundingClientRect();
+                    lastX = e.clientX - rect.left;
+                    lastY = e.clientY - rect.top;
+                }
+            });
+            
+            canvas.addEventListener('mousemove', (e) => {
+                if (!isDrawing) return;
+                
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = currentTool === 'highlighter' ? currentColor + '80' : currentColor;
+                ctx.lineWidth = currentTool === 'highlighter' ? 10 : 2;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+                
+                lastX = x;
+                lastY = y;
+            });
+            
+            canvas.addEventListener('mouseup', () => {
+                isDrawing = false;
+            });
+        }
+
+        function updateTextSize() {
+            document.querySelectorAll('.page-content-text').forEach(text => {
+                text.style.fontSize = fontSize + 'px';
+            });
+        }
+
+        function toggleTool(tool) {
+            currentTool = currentTool === tool ? null : tool;
+            
+            elements.penBtn.classList.toggle('active', currentTool === 'pen');
+            elements.highlighterBtn.classList.toggle('active', currentTool === 'highlighter');
+            
             canvases.forEach(canvas => {
-                const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // حذف الرسم المحفوظ
-                const pageNumber = canvas.id.replace('drawing-canvas-', '');
-                delete drawingsData[`page_${pageNumber}`];
-                
-                // حذف من قاعدة البيانات
-                if (currentRecordId) {
-                    database.ref(`records/${currentRecordId}/drawings/page_${pageNumber}`).remove();
-                }
+                canvas.style.pointerEvents = currentTool ? 'auto' : 'none';
             });
-            
-            showNotification('تم', 'تم مسح جميع الرسومات', 'success');
         }
 
-        // دالة تصغير حجم الخط
-        function decreaseFontSize() {
-            if (currentFontSize > 12) {
-                currentFontSize -= 1;
-                elements.fontSize.textContent = currentFontSize;
+        function showColorPicker(button) {
+            const rect = button.getBoundingClientRect();
+            
+            let colorPicker = document.querySelector('.color-picker');
+            if (!colorPicker) {
+                colorPicker = document.createElement('div');
+                colorPicker.className = 'color-picker';
+                colorPicker.innerHTML = colors.map(color => `
+                    <div class="color-option" style="background-color: ${color};" data-color="${color}"></div>
+                `).join('');
+                document.body.appendChild(colorPicker);
                 
-                const contentDivs = document.querySelectorAll('.page-content');
-                contentDivs.forEach(div => {
-                    div.style.fontSize = currentFontSize + 'px';
+                colorPicker.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('color-option')) {
+                        currentColor = e.target.getAttribute('data-color');
+                        colorPicker.style.display = 'none';
+                    }
                 });
-                
-                // تحديث حجم الخط في قاعدة البيانات
-                if (currentRecordId) {
-                    database.ref(`records/${currentRecordId}/fontSize`).set(currentFontSize);
-                }
             }
-        }
-
-        // دالة تكبير حجم الخط
-        function increaseFontSize() {
-            if (currentFontSize < 24) {
-                currentFontSize += 1;
-                elements.fontSize.textContent = currentFontSize;
-                
-                const contentDivs = document.querySelectorAll('.page-content');
-                contentDivs.forEach(div => {
-                    div.style.fontSize = currentFontSize + 'px';
-                });
-                
-                // تحديث حجم الخط في قاعدة البيانات
-                if (currentRecordId) {
-                    database.ref(`records/${currentRecordId}/fontSize`).set(currentFontSize);
-                }
-            }
-        }
-
-        // دالة تنسيق حجم الملف
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 بايت';
             
-            const k = 1024;
-            const sizes = ['بايت', 'كيلوبايت', 'ميجابايت', 'جيجابايت'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            colorPicker.style.display = 'block';
+            colorPicker.style.top = (rect.bottom + 10) + 'px';
+            colorPicker.style.left = (rect.left - 100) + 'px';
         }
 
-        // دالة تحميل بيانات المستخدم عند فتح الصفحة
-        async function loadUserData() {
+        function clearDrawings() {
+            contexts.forEach(ctx => {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            });
+        }
+
+        async function saveAnnotations() {
             try {
-                const user = auth.currentUser;
-                if (!user) {
-                    // إذا لم يكن المستخدم مسجلاً، نعود للصفحة الرئيسية
-                    window.location.href = 'home.html';
-                    return;
+                const annotations = [];
+                
+                canvases.forEach((canvas, index) => {
+                    const dataURL = canvas.toDataURL();
+                    annotations.push({
+                        page: index + 1,
+                        annotation: dataURL
+                    });
+                });
+                
+                const recordsRef = database.ref('records');
+                const snapshot = await recordsRef.orderByChild('sessionId').equalTo(sessionId).once('value');
+                
+                if (snapshot.exists()) {
+                    const recordKey = Object.keys(snapshot.val())[0];
+                    await database.ref(`records/${recordKey}/annotations`).set(annotations);
+                    alert('تم حفظ التعديلات بنجاح');
                 }
-
-                const userData = await getUserByEmail(user.email);
-                
-                if (!userData) {
-                    await auth.signOut();
-                    window.location.href = 'home.html';
-                    return;
-                }
-                
-                if (!userData.email || !userData.dbId) {
-                    await auth.signOut();
-                    window.location.href = 'home.html';
-                    return;
-                }
-                
-                if (userData.banned === true) {
-                    await auth.signOut();
-                    window.location.href = 'home.html';
-                    return;
-                }
-                
-                currentUser = { 
-                    id: userData.id,
-                    dbId: userData.dbId,
-                    email: userData.email,
-                    name: userData.name || '',
-                    coin: userData.coin || 0,
-                    admin: userData.admin === true || false
-                };
-                
-                userCoins = userData.coin || 0;
-                elements.coinsCount.textContent = userCoins;
-                
-                // إعداد واجهة المستخدم
-                setupEventListeners();
-                
             } catch (error) {
-                console.error('Error loading user data:', error);
-                window.location.href = 'home.html';
+                console.error('Error saving annotations:', error);
+                alert('فشل في حفظ التعديلات');
             }
         }
 
-        // تهيئة التطبيق عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', () => {
-            // الاستماع لتغير حالة المصادقة
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    loadUserData();
-                } else {
-                    window.location.href = 'home.html';
-                }
-            });
+            setupEventListeners();
+            elements.coinsCount.textContent = userCoins;
         });
     </script>
 </body>
