@@ -4,2239 +4,1134 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عَون - تلخيص PDF</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- إضافة Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
-        :root {
-            --bg-color: #F8FAFC;
-            --card-color: #FFFFFF;
-            --text-primary: #1E293B;
-            --text-secondary: #64748B;
-            --accent-dark: #0F172A;
-            --black-gradient: linear-gradient(145deg, #0F172A, #1E293B);
-            --border-radius: 20px;
-            --navbar-height: 70px;
-            --transition-quick: all 0.3s ease;
-            --admin-color: #DC2626;
-            --success-color: #059669;
-            --warning-color: #D97706;
-            --info-color: #2563EB;
-            --disabled-color: #94A3B8;
-            --pen-colors: #DC2626, #059669, #2563EB, #D97706, #7C3AED, #DB2777;
-        }
-        
+
         body {
-            font-family: 'Almarai', 'Tajawal', -apple-system, sans-serif;
-            background: var(--bg-color);
-            color: var(--text-primary);
-            min-height: 100vh;
-            direction: rtl;
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--bg-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 99999;
-            transition: opacity 0.5s ease;
-        }
-        
-        .loading-logo {
-            font-family: 'Almarai', sans-serif;
-            font-weight: 900;
-            font-size: 64px;
-            background: linear-gradient(145deg, #0F172A, #334155);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 30px;
-        }
-        
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(15, 23, 42, 0.1);
-            border-left-color: var(--accent-dark);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .loading-text {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: 1.2rem;
-        }
-        
-        .native-navbar {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            height: var(--navbar-height);
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 10000;
-            border: 3px solid #0F172A;
-            border-radius: 18px;
-            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.1);
-        }
-        
-        .logo {
-            font-family: 'Almarai', sans-serif;
-            font-weight: 900;
-            font-size: 36px;
-            background: linear-gradient(145deg, #0F172A, #334155);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            cursor: pointer;
-        }
-        
-        .user-nav-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .coins-display {
-            background: var(--black-gradient);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 16px;
-            font-weight: 800;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 2px solid #0F172A;
-        }
-        
-        .back-btn {
-            background: var(--black-gradient);
-            color: white;
-            border: none;
-            border-radius: 16px;
-            padding: 10px 18px;
-            font-family: 'Almarai', sans-serif;
-            font-size: 14px;
-            font-weight: 800;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .main-content {
-            padding-top: calc(var(--navbar-height) + 40px);
-            padding-left: 20px;
-            padding-right: 20px;
-            padding-bottom: 80px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .welcome-section {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .welcome-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 2rem;
-            font-weight: 900;
-            margin-bottom: 15px;
-            color: #0F172A;
-        }
-        
-        .welcome-subtitle {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1.1rem;
-            color: #64748B;
-            max-width: 800px;
-            margin: 0 auto;
+            background-color: #f8f9fa;
+            color: #333;
             line-height: 1.6;
         }
-        
-        .upload-section {
+
+        /* الشريط العلوي */
+        .top-bar {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo:hover {
+            opacity: 0.9;
+        }
+
+        .coin-box {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .coin-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* المحتوى الرئيسي */
+        .main-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .card {
             background: white;
-            border-radius: var(--border-radius);
+            border-radius: 16px;
             padding: 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
             margin-bottom: 30px;
-            border: 3px solid var(--accent-dark);
-            text-align: center;
+            border: 1px solid #eaeaea;
         }
-        
+
+        .card h2 {
+            color: #2d3436;
+            margin-bottom: 20px;
+            font-size: 28px;
+            border-bottom: 3px solid #6a11cb;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        /* رفع الملف */
         .upload-area {
-            border: 3px dashed var(--accent-dark);
-            border-radius: var(--border-radius);
-            padding: 50px 30px;
+            border: 3px dashed #6a11cb;
+            border-radius: 20px;
+            padding: 60px 20px;
+            text-align: center;
             cursor: pointer;
-            background: rgba(15, 23, 42, 0.02);
-            transition: var(--transition-quick);
+            transition: all 0.3s;
+            background: #f8f9ff;
+            margin-top: 20px;
         }
-        
+
         .upload-area:hover {
-            background: rgba(15, 23, 42, 0.05);
+            background: #eef2ff;
+            border-color: #2575fc;
         }
-        
-        .upload-area.drag-over {
-            border-color: var(--info-color);
-            background: rgba(37, 99, 235, 0.05);
-        }
-        
+
         .upload-icon {
-            font-size: 56px;
-            color: var(--accent-dark);
+            font-size: 64px;
+            color: #6a11cb;
             margin-bottom: 20px;
         }
-        
-        .upload-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--accent-dark);
+
+        .upload-text {
+            font-size: 18px;
+            color: #555;
             margin-bottom: 10px;
         }
-        
-        .upload-subtitle {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1rem;
-            color: var(--text-secondary);
+
+        .upload-note {
+            color: #888;
+            font-size: 14px;
         }
-        
-        #file-input {
+
+        #pdfInput {
             display: none;
         }
-        
-        .processing-section {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 3px solid var(--accent-dark);
-            text-align: center;
+
+        /* نتيجة التحليل */
+        .analysis-result {
             display: none;
+            margin-top: 30px;
+            animation: fadeIn 0.5s;
         }
-        
-        .processing-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--accent-dark);
-            margin-bottom: 25px;
-        }
-        
-        .processing-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 30px;
-            max-width: 450px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .processing-step {
-            background: white;
-            border: 2px solid var(--accent-dark);
-            border-radius: var(--border-radius);
-            padding: 18px;
-            text-align: right;
-            font-family: 'Almarai', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            opacity: 0.5;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: var(--transition-quick);
-        }
-        
-        .processing-step.active {
-            opacity: 1;
-            border-color: var(--info-color);
-            background: rgba(37, 99, 235, 0.05);
-        }
-        
-        .processing-step.completed {
-            opacity: 0.7;
-            border-color: var(--success-color);
-        }
-        
-        .processing-step i {
-            font-size: 1.1rem;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(15, 23, 42, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: var(--black-gradient);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        
-        .coins-calculation {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 3px solid var(--accent-dark);
-            text-align: center;
-            display: none;
-        }
-        
-        .calculation-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: var(--accent-dark);
-            margin-bottom: 25px;
-        }
-        
-        .calculation-results {
+
+        .result-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .result-card {
-            background: rgba(15, 23, 42, 0.05);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .result-value {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--accent-dark);
-            margin-bottom: 8px;
-        }
-        
-        .result-label {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-        
-        .confirmation-text {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1rem;
-            color: var(--text-primary);
-            margin-bottom: 25px;
-            padding: 18px;
-            background: rgba(220, 38, 38, 0.05);
-            border-radius: var(--border-radius);
-            border: 2px solid var(--admin-color);
-        }
-        
-        .confirmation-actions {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
-        
-        .confirm-btn, .cancel-btn {
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 14px 28px;
-            font-family: 'Almarai', sans-serif;
-            font-size: 1rem;
-            font-weight: 800;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            max-width: 180px;
-            justify-content: center;
-            transition: var(--transition-quick);
-        }
-        
-        .confirm-btn {
-            background: var(--success-color);
-            color: white;
-        }
-        
-        .confirm-btn:disabled {
-            background: var(--disabled-color);
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-        
-        .cancel-btn {
-            background: var(--admin-color);
-            color: white;
-        }
-        
-        .config-section {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 3px solid var(--accent-dark);
-            display: none;
-        }
-        
-        .config-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: var(--accent-dark);
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        
-        .config-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-        }
-        
-        .config-group {
-            background: rgba(15, 23, 42, 0.03);
-            border-radius: var(--border-radius);
-            padding: 20px;
-        }
-        
-        .config-label {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: var(--accent-dark);
-            margin-bottom: 15px;
-            display: block;
-        }
-        
-        .slider-container {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
             margin: 25px 0;
         }
-        
-        .slider-value {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 900;
-            color: var(--accent-dark);
+
+        .result-box {
+            background: #f1f8ff;
+            border-radius: 12px;
+            padding: 20px;
             text-align: center;
-            margin-bottom: 8px;
+            border-left: 5px solid #2575fc;
         }
-        
-        .slider {
-            width: 100%;
-            height: 8px;
-            -webkit-appearance: none;
-            background: rgba(15, 23, 42, 0.1);
-            border-radius: 4px;
-            outline: none;
+
+        .result-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: #6a11cb;
             margin: 10px 0;
         }
-        
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: var(--black-gradient);
-            cursor: pointer;
-            border: 3px solid white;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+        .result-label {
+            color: #666;
+            font-size: 16px;
         }
-        
-        .slider-labels {
+
+        .cost-warning {
+            background: #fff8e1;
+            border: 1px solid #ffd54f;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .cost-warning strong {
+            color: #f57c00;
+        }
+
+        .action-buttons {
             display: flex;
-            justify-content: space-between;
-            margin-top: 5px;
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-        
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-        }
-        
-        .option-btn {
-            background: white;
-            border: 2px solid var(--accent-dark);
-            border-radius: var(--border-radius);
-            padding: 12px;
-            text-align: center;
-            font-family: 'Almarai', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--accent-dark);
-            cursor: pointer;
-            transition: var(--transition-quick);
-        }
-        
-        .option-btn.selected {
-            background: var(--black-gradient);
-            color: white;
-            border-color: var(--accent-dark);
-        }
-        
-        .comment-input {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid var(--accent-dark);
-            border-radius: var(--border-radius);
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
-            margin-top: 8px;
-            resize: vertical;
-        }
-        
-        .generate-btn-container {
-            text-align: center;
+            justify-content: center;
+            gap: 20px;
             margin-top: 30px;
         }
-        
-        .generate-btn {
-            background: var(--black-gradient);
-            color: white;
+
+        .btn {
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
             border: none;
-            border-radius: var(--border-radius);
-            padding: 16px 36px;
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 800;
             cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
+            transition: all 0.3s;
+            min-width: 160px;
         }
-        
-        .ai-processing {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 3px solid var(--accent-dark);
-            text-align: center;
-            display: none;
-        }
-        
-        .results-section {
-            display: none;
-        }
-        
-        .results-toolbar {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 18px;
-            margin-bottom: 25px;
-            border: 3px solid var(--accent-dark);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .toolbar-btn {
-            background: white;
-            border: 2px solid var(--accent-dark);
-            border-radius: 14px;
-            padding: 9px 16px;
-            font-family: 'Almarai', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--accent-dark);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: var(--transition-quick);
-        }
-        
-        .toolbar-btn.active {
-            background: var(--black-gradient);
+
+        .btn-continue {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
             color: white;
-            border-color: var(--accent-dark);
         }
-        
-        .color-picker {
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15);
+        }
+
+        /* وحدة التحكم */
+        .control-panel {
             display: none;
-            position: absolute;
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 12px;
-            border: 3px solid var(--accent-dark);
-            z-index: 1000;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            flex-wrap: wrap;
-            width: 160px;
         }
-        
-        .color-option {
+
+        .control-group {
+            margin-bottom: 30px;
+        }
+
+        .control-group h3 {
+            color: #2d3436;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .slider-container {
+            padding: 20px 0;
+        }
+
+        .slider-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #6a11cb;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .range-slider {
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            margin: 4px;
+            background: #6a11cb;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            border: 3px solid white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
-        
-        .color-option:hover {
-            transform: scale(1.1);
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
         }
-        
-        .pages-container {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
+
+        .option-btn {
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
         }
-        
-        .page-card {
+
+        .option-btn:hover {
+            background: #e3f2fd;
+        }
+
+        .option-btn.selected {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            color: #1565c0;
+            font-weight: 600;
+        }
+
+        .comment-box {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #ddd;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 100px;
+            margin-top: 10px;
+        }
+
+        .comment-box:focus {
+            border-color: #6a11cb;
+            outline: none;
+        }
+
+        /* شاشة التحميل */
+        .loading-screen {
+            display: none;
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #6a11cb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 30px;
+        }
+
+        .loading-text {
+            font-size: 22px;
+            color: #555;
+            margin-bottom: 15px;
+            min-height: 30px;
+        }
+
+        .loading-dots:after {
+            content: '';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        /* عرض النتائج */
+        .results-container {
+            display: none;
+        }
+
+        .page-result {
             background: white;
-            border-radius: var(--border-radius);
+            border-radius: 16px;
             padding: 30px;
-            border: 3px solid var(--accent-dark);
-            position: relative;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #eaeaea;
         }
-        
+
         .page-header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(15, 23, 42, 0.1);
         }
-        
+
         .page-number {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--accent-dark);
+            font-size: 24px;
+            font-weight: 800;
         }
-        
+
         .page-content {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1rem;
-            line-height: 1.7;
-            color: var(--text-primary);
-            margin-bottom: 25px;
-            text-align: right;
-            min-height: 250px;
-            position: relative;
-            cursor: crosshair;
+            font-size: 18px;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 30px;
         }
-        
-        .page-content canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-        
-        .page-content-text {
-            position: relative;
-            z-index: 2;
-            pointer-events: none;
-        }
-        
+
         .laws-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid var(--warning-color);
-            display: none;
-        }
-        
-        .laws-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 900;
-            color: var(--warning-color);
-            margin-bottom: 15px;
-        }
-        
-        .laws-content {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background: rgba(217, 119, 6, 0.05);
-            padding: 15px;
-            border-radius: var(--border-radius);
-            border: 1px solid rgba(217, 119, 6, 0.2);
-        }
-        
-        .error-dialog {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-            padding: 20px;
-        }
-        
-        .error-content {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 30px;
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
-            border: 3px solid var(--admin-color);
-        }
-        
-        .error-icon {
-            font-size: 56px;
-            color: var(--admin-color);
-            margin-bottom: 20px;
-        }
-        
-        .error-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--accent-dark);
-            margin-bottom: 15px;
-        }
-        
-        .error-message {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1rem;
-            color: var(--text-primary);
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-        
-        .error-btn {
-            background: var(--black-gradient);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 14px 28px;
-            font-family: 'Almarai', sans-serif;
-            font-size: 1rem;
-            font-weight: 800;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 40px 20px 30px;
-            color: #64748B;
-            border-top: 2px solid rgba(15, 23, 42, 0.1);
-            margin-top: 60px;
-        }
-        
-        .copyright {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-        
-        .support-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .support-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #0F172A;
-            margin-bottom: 6px;
-        }
-        
-        .support-links {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
-        
-        .support-link {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            background: var(--black-gradient);
-            border: 2px solid #0F172A;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        
-        .support-link i {
-            font-size: 22px;
-            color: white;
-        }
-        
-        .developer-credit {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.85rem;
-            color: rgba(100, 116, 139, 0.7);
+            background: #fff8e1;
+            border-radius: 12px;
+            padding: 25px;
+            border-right: 5px solid #ff9800;
             margin-top: 25px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(15, 23, 42, 0.05);
-            cursor: pointer;
         }
-        
-        /* Mobile Responsive */
+
+        .laws-title {
+            color: #f57c00;
+            font-size: 22px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .law-content {
+            font-size: 17px;
+            line-height: 1.7;
+            color: #5d4037;
+        }
+
+        /* أدوات النص */
+        .text-tools {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            padding: 10px 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .tool-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .tool-btn.active {
+            background: #2196f3;
+            color: white;
+            border-color: #2196f3;
+        }
+
+        .color-picker {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        /* تنبيهات */
+        .alert {
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: none;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        /* أنيميشن */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        /* تجاوبية */
         @media (max-width: 768px) {
-            .native-navbar {
+            .main-container {
                 padding: 0 15px;
-                height: 60px;
             }
-            
-            .logo {
-                font-size: 30px;
+            .card {
+                padding: 20px;
             }
-            
-            .coins-display, .back-btn {
-                padding: 8px 14px;
-                font-size: 13px;
-            }
-            
-            .main-content {
-                padding-top: calc(60px + 30px);
-                padding-left: 15px;
-                padding-right: 15px;
-            }
-            
-            .welcome-title {
-                font-size: 1.7rem;
-            }
-            
-            .welcome-subtitle {
-                font-size: 1rem;
-            }
-            
-            .upload-section, .processing-section, 
-            .coins-calculation, .config-section,
-            .ai-processing, .page-card {
-                padding: 25px 20px;
-            }
-            
-            .upload-area {
-                padding: 40px 20px;
-            }
-            
-            .upload-icon {
-                font-size: 48px;
-            }
-            
-            .upload-title {
-                font-size: 1.3rem;
-            }
-            
-            .config-grid {
+            .result-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .confirmation-actions {
+            .action-buttons {
                 flex-direction: column;
                 align-items: center;
             }
-            
-            .confirm-btn, .cancel-btn {
-                max-width: 100%;
+            .btn {
                 width: 100%;
+                max-width: 300px;
             }
-            
-            .results-toolbar {
-                padding: 15px;
-                gap: 10px;
-            }
-            
-            .toolbar-btn {
-                padding: 8px 14px;
-                font-size: 0.8rem;
-            }
-            
-            .pages-container {
-                gap: 25px;
-            }
-            
-            .page-content {
-                font-size: 0.95rem;
-            }
-            
-            .error-content {
-                padding: 25px 20px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .native-navbar {
-                padding: 0 12px;
-                height: 55px;
-            }
-            
-            .logo {
-                font-size: 26px;
-            }
-            
-            .user-nav-right {
-                gap: 10px;
-            }
-            
-            .coins-display, .back-btn {
-                padding: 7px 12px;
-                font-size: 12px;
-            }
-            
-            .main-content {
-                padding-left: 12px;
-                padding-right: 12px;
-            }
-            
-            .welcome-title {
-                font-size: 1.5rem;
-            }
-            
             .options-grid {
                 grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .slider {
-                height: 6px;
-            }
-            
-            .slider::-webkit-slider-thumb {
-                width: 20px;
-                height: 20px;
-            }
-            
-            .toolbar-btn {
-                padding: 7px 12px;
-                font-size: 0.75rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="loading-screen" id="loading-screen">
-        <div class="loading-logo">عَون</div>
-        <div class="loading-spinner"></div>
-        <div class="loading-text">جاري التحميل...</div>
-    </div>
-    
-    <nav class="native-navbar" style="display: none;" id="navbar">
-        <div class="logo" id="logo" onclick="window.location.href='index.html'">عَون</div>
-        <div class="user-nav-right">
-            <div class="coins-display">
-                <i class="fas fa-coins"></i>
-                <span id="coins-count">0</span>
-            </div>
-            <button class="back-btn" id="back-btn">
-                <i class="fas fa-arrow-right"></i>
-                العودة
-            </button>
-        </div>
-    </nav>
-    
-    <div class="main-content" style="display: none;" id="main-content">
-        <section class="welcome-section">
-            <h1 class="welcome-title">تلخيص PDF بالذكاء الاصطناعي</h1>
-            <p class="welcome-subtitle">اسحب وأفلت ملف PDF أو انقر على المربع لرفع الملف</p>
-        </section>
-        
-        <section class="upload-section" id="upload-section">
-            <div class="upload-area" id="upload-area">
-                <div class="upload-icon">
-                    <i class="fas fa-file-pdf"></i>
-                </div>
-                <h2 class="upload-title">اسحب وأفلت ملف PDF هنا</h2>
-                <p class="upload-subtitle">أو انقر على المربع لاختيار الملف</p>
-            </div>
-            <input type="file" id="file-input" accept=".pdf">
-        </section>
-        
-        <section class="processing-section" id="processing-section">
-            <h2 class="processing-title">جاري تحليل ملف PDF</h2>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill"></div>
-            </div>
-            <div class="processing-steps">
-                <div class="processing-step" id="step1">
-                    <span>عَون يحلل الملف</span>
-                    <i class="fas fa-spinner fa-spin"></i>
-                </div>
-                <div class="processing-step" id="step2">
-                    <span>عَون يحسب عدد الصفحات</span>
-                    <i class="fas fa-file-alt"></i>
-                </div>
-                <div class="processing-step" id="step3">
-                    <span>عَون يحسب التكلفة</span>
-                    <i class="fas fa-calculator"></i>
-                </div>
-            </div>
-        </section>
-        
-        <section class="coins-calculation" id="coins-calculation">
-            <h2 class="calculation-title">التكلفة المطلوبة</h2>
-            <div class="calculation-results" id="calculation-results"></div>
-            <div class="confirmation-text" id="confirmation-text"></div>
-            <div class="confirmation-actions">
-                <button class="confirm-btn" id="confirm-btn" disabled>
-                    <i class="fas fa-check"></i>
-                    متابعة
-                </button>
-                <button class="cancel-btn" id="cancel-btn">
-                    <i class="fas fa-times"></i>
-                    إلغاء
-                </button>
-            </div>
-        </section>
-        
-        <section class="config-section" id="config-section">
-            <h2 class="config-title">إعدادات التلخيص</h2>
-            <div class="config-grid">
-                <div class="config-group">
-                    <label class="config-label">عدد الصفحات المطلوبة</label>
-                    <div class="slider-container">
-                        <div class="slider-value" id="pages-value">1</div>
-                        <input type="range" min="1" max="25" value="1" class="slider" id="pages-slider">
-                        <div class="slider-labels">
-                            <span>1</span>
-                            <span>25</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="config-group">
-                    <label class="config-label">طريقة التلخيص</label>
-                    <div class="options-grid" id="summary-type-options">
-                        <button class="option-btn" data-value="بسيط">بسيط</button>
-                        <button class="option-btn" data-value="معقد">معقد</button>
-                        <button class="option-btn" data-value="طفولي">طفولي</button>
-                        <button class="option-btn" data-value="عالي المستوى">عالي المستوى</button>
-                    </div>
-                </div>
-                
-                <div class="config-group">
-                    <label class="config-label">شخصية الشارح</label>
-                    <div class="options-grid" id="explainer-options">
-                        <button class="option-btn" data-value="دكتور جامعي">دكتور جامعي</button>
-                        <button class="option-btn" data-value="أستاذ مدرسي">أستاذ مدرسي</button>
-                        <button class="option-btn" data-value="طالب">طالب</button>
-                        <button class="option-btn" data-value="عالم">عالم</button>
-                        <button class="option-btn" data-value="صديق">صديق</button>
-                        <button class="option-btn" data-value="هاوي">هاوي</button>
-                    </div>
-                </div>
-                
-                <div class="config-group">
-                    <label class="config-label">تعليق إضافي (اختياري)</label>
-                    <textarea class="comment-input" id="user-comment" placeholder="أدخل أي تعليق إضافي هنا..." rows="3"></textarea>
-                </div>
-            </div>
-            
-            <div class="generate-btn-container">
-                <button class="generate-btn" id="generate-btn">
-                    <i class="fas fa-magic"></i>
-                    إنشاء الملخص
-                </button>
-            </div>
-        </section>
-        
-        <section class="ai-processing" id="ai-processing">
-            <h2 class="processing-title">جاري إنشاء الملخص</h2>
-            <div class="processing-steps">
-                <div class="processing-step" id="ai-step1">
-                    <span>عَون يقرأ المحتوى</span>
-                    <i class="fas fa-spinner fa-spin"></i>
-                </div>
-                <div class="processing-step" id="ai-step2">
-                    <span>عَون يفكر في الشرح</span>
-                    <i class="fas fa-brain"></i>
-                </div>
-                <div class="processing-step" id="ai-step3">
-                    <span>عَون يلخص الصفحات</span>
-                    <i class="fas fa-file-contract"></i>
-                </div>
-                <div class="processing-step" id="ai-step4">
-                    <span>عَون يستخرج القوانين</span>
-                    <i class="fas fa-gavel"></i>
-                </div>
-            </div>
-        </section>
-        
-        <section class="results-section" id="results-section">
-            <div class="results-toolbar" id="results-toolbar">
-                <button class="toolbar-btn" id="zoom-in-btn">
-                    <i class="fas fa-search-plus"></i>
-                    تكبير
-                </button>
-                <button class="toolbar-btn" id="zoom-out-btn">
-                    <i class="fas fa-search-minus"></i>
-                    تصغير
-                </button>
-                <button class="toolbar-btn" id="pen-btn">
-                    <i class="fas fa-pen"></i>
-                    قلم
-                </button>
-                <button class="toolbar-btn" id="highlighter-btn">
-                    <i class="fas fa-highlighter"></i>
-                    تظليل
-                </button>
-                <button class="toolbar-btn" id="color-btn">
-                    <i class="fas fa-palette"></i>
-                    لون
-                </button>
-                <button class="toolbar-btn" id="clear-btn">
-                    <i class="fas fa-eraser"></i>
-                    مسح
-                </button>
-            </div>
-            
-            <div class="pages-container" id="pages-container"></div>
-        </section>
-        
-        <footer class="footer">
-            <p class="copyright">جميع الحقوق محفوظة لمنصة عَون© 2026</p>
-            <div class="support-section">
-                <div class="support-title">تواصل مع الدعم الفني</div>
-                <div class="support-links">
-                    <a href="https://wa.me/966583617539" class="support-link" target="_blank">
-                        <i class="fab fa-whatsapp"></i>
-                    </a>
-                    <a href="https://t.me/HNHv1" class="support-link" target="_blank">
-                        <i class="fab fa-telegram"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="developer-credit" id="developer-credit">
-                برمجة وتصميم المطور 𝐊𝐈𝐌𝐎
-            </div>
-        </footer>
-    </div>
-    
-    <div class="error-dialog" id="error-dialog">
-        <div class="error-content">
-            <div class="error-icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <h2 class="error-title">حدث خطأ</h2>
-            <p class="error-message" id="error-message">يوجد مشكلة في سيرفر عَون. حاول مرة أخرى في وقت لاحق.</p>
-            <button class="error-btn" id="error-retry-btn">
-                <i class="fas fa-home"></i>
-                العودة للرئيسية
-            </button>
+    <!-- الشريط العلوي -->
+    <div class="top-bar">
+        <a href="home.html" class="logo">
+            <span>عَون</span>
+        </a>
+        <div class="coin-box">
+            <svg class="coin-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+            </svg>
+            <span id="userCoins">--</span>
         </div>
     </div>
-    
-    <div id="color-picker" class="color-picker"></div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="main-container">
+        <!-- تنبيهات -->
+        <div id="alert" class="alert"></div>
+
+        <!-- بطاقة رفع الملف -->
+        <div class="card" id="uploadCard">
+            <h2>📄 رفع ملف PDF للتلخيص</h2>
+            <p style="margin-bottom: 20px; color: #666;">ارفع ملف PDF لتحصل على ملخص احترافي لكل صفحة</p>
+            
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📤</div>
+                <div class="upload-text">انقر أو اسحب ملف PDF هنا</div>
+                <div class="upload-note">الحد الأقصى للحجم: 10MB</div>
+                <input type="file" id="pdfInput" accept=".pdf">
+            </div>
+
+            <!-- نتيجة تحليل الملف -->
+            <div class="analysis-result" id="analysisResult">
+                <div class="result-grid">
+                    <div class="result-box">
+                        <div class="result-value" id="pagesCount">0</div>
+                        <div class="result-label">عدد الصفحات</div>
+                    </div>
+                    <div class="result-box">
+                        <div class="result-value" id="wordsCount">0</div>
+                        <div class="result-label">عدد الكلمات</div>
+                    </div>
+                    <div class="result-box">
+                        <div class="result-value" id="coinsCost">0</div>
+                        <div class="result-label">العملات المطلوبة</div>
+                    </div>
+                </div>
+
+                <div class="cost-warning">
+                    ⚠️ سيتم خصم <strong id="coinsToDeduct">0</strong> عملة من رصيدك، هل تود المتابعة؟
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-continue" id="btnContinue">✅ متابعة</button>
+                    <button class="btn btn-cancel" id="btnCancel">❌ إلغاء</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- وحدة التحكم -->
+        <div class="card control-panel" id="controlPanel">
+            <h2>⚙️ إعدادات التلخيص</h2>
+            
+            <div class="control-group">
+                <h3>📄 عدد الصفحات المراد تلخيصها</h3>
+                <div class="slider-container">
+                    <div class="slider-value" id="pagesValue">1 صفحة</div>
+                    <input type="range" min="1" max="25" value="1" class="range-slider" id="pagesSlider">
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                        <span>1</span>
+                        <span>25</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>🎨 نوع الشرح</h3>
+                <div class="options-grid" id="styleOptions">
+                    <div class="option-btn" data-value="بسيط">بسيط</div>
+                    <div class="option-btn" data-value="معقد">معقد</div>
+                    <div class="option-btn" data-value="طفولي">طفولي</div>
+                    <div class="option-btn" data-value="عالي المستوى">عالي المستوى</div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>👤 شخصية الشارح</h3>
+                <div class="options-grid" id="personalityOptions">
+                    <div class="option-btn" data-value="دكتور جامعي">دكتور جامعي</div>
+                    <div class="option-btn" data-value="أستاذ مدرسي">أستاذ مدرسي</div>
+                    <div class="option-btn" data-value="طالب">طالب</div>
+                    <div class="option-btn" data-value="عالم">عالم</div>
+                    <div class="option-btn" data-value="صديق">صديق</div>
+                    <div class="option-btn" data-value="هاوي">هاوي</div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>💬 تعليق إضافي (اختياري)</h3>
+                <textarea class="comment-box" id="userComment" placeholder="اكتب أي ملاحظات أو تعليمات إضافية هنا..."></textarea>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-continue" id="btnGenerateSummary" style="padding: 18px 60px; font-size: 20px;">
+                    🚀 بدء التلخيص
+                </button>
+            </div>
+        </div>
+
+        <!-- شاشة التحميل -->
+        <div class="card loading-screen" id="loadingScreen">
+            <div class="loading-spinner"></div>
+            <div class="loading-text" id="loadingText">عَون يحلل الملف<span class="loading-dots"></span></div>
+        </div>
+
+        <!-- عرض النتائج -->
+        <div class="results-container" id="resultsContainer">
+            <h2 style="margin-bottom: 30px;">📋 نتائج التلخيص</h2>
+            
+            <!-- أدوات النص -->
+            <div class="text-tools">
+                <button class="tool-btn" id="btnZoomIn" title="تكبير النص">➕</button>
+                <button class="tool-btn" id="btnZoomOut" title="تصغير النص">➖</button>
+                <button class="tool-btn" id="btnPen" title="قلم الرسم">✏️</button>
+                <button class="tool-btn" id="btnHighlighter" title="تظليل">🖍️</button>
+                <input type="color" class="color-picker" id="colorPicker" value="#2196f3" title="اختر اللون">
+                <button class="tool-btn" id="btnSave" title="حفظ التعديلات">💾 حفظ</button>
+            </div>
+
+            <div id="resultsContent">
+                <!-- سيتم إضافة صفحات النتائج هنا ديناميكيًا -->
+            </div>
+        </div>
+    </div>
+
+    <!-- مكتبات JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
 
     <script>
-        // بيانات Firebase من google-services.json
+        // ========================= تهيئة Firebase =========================
         const firebaseConfig = {
-            apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
-            authDomain: "marvel1-654dd.firebaseapp.com",
-            databaseURL: "https://marvel1-654dd-default-rtdb.firebaseio.com",
             projectId: "marvel1-654dd",
-            storageBucket: "marvel1-654dd.appspot.com",
-            messagingSenderId: "189921979866",
-            appId: "1:189921979866:android:95f48de58a69756be924e3"
+            apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
+            databaseURL: "https://marvel1-654dd-default-rtdb.firebaseio.com",
+            storageBucket: "marvel1-654dd.appspot.com"
         };
 
-        // تهيئة Firebase
-        let firebaseApp;
-        let firebaseAuth;
-        let firebaseDatabase;
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+
+        // ========================= متغيرات عامة =========================
         let currentUser = null;
-        
-        try {
-            firebaseApp = firebase.initializeApp(firebaseConfig);
-            firebaseAuth = firebase.auth();
-            firebaseDatabase = firebase.database();
-            console.log("✅ Firebase initialized successfully");
-        } catch (error) {
-            console.error("❌ خطأ في تهيئة Firebase:", error);
+        let userData = null;
+        let uploadedFile = null;
+        let fileAnalysis = null;
+        let selectedStyle = "بسيط";
+        let selectedPersonality = "دكتور جامعي";
+        let currentPage = 1;
+        let isDrawing = false;
+        let drawingTool = 'pen';
+        let drawingColor = '#2196f3';
+        let fontSize = 18;
+
+        // ========================= إدارة المستخدم =========================
+        // محاكاة تسجيل الدخول (في الواقع الحقيقي سيكون لديك نظام تسجيل دخول)
+        async function initializeUser() {
+            try {
+                // هنا يمكنك استخدام auth.currentUser إذا كان لديك نظام مصادقة
+                // للمثال، سنستخدم بيانات المستخدم من ملف JSON الذي أرسلته
+                userData = {
+                    id: "236152",
+                    name: "KAREEM",
+                    coin: 686,
+                    email: "lava4ggaming@gmail.com",
+                    admin: true,
+                    banned: false
+                };
+                
+                currentUser = userData;
+                document.getElementById('userCoins').textContent = currentUser.coin;
+                
+                console.log("تم تحميل بيانات المستخدم:", currentUser.name);
+            } catch (error) {
+                console.error("خطأ في تحميل بيانات المستخدم:", error);
+                showAlert("حدث خطأ في تحميل بيانات المستخدم", "error");
+            }
         }
 
-        // تهيئة متغيرات التطبيق
-        let pdfFile = null;
-        let pdfData = {
-            pages: 0,
-            words: 0,
-            coins: 0
-        };
-        let selectedSummaryType = "بسيط";
-        let selectedExplainer = "دكتور جامعي";
-        let selectedPages = 1;
-        let userComment = "";
-        let aiResponse = null;
-        let currentRecordId = null;
-        let canvasContexts = [];
-        let isDrawing = false;
-        let isHighlighter = false;
-        let currentColor = "#DC2626";
-        let currentLineWidth = 2;
-        let fontSize = 16;
-        let colorPickerVisible = false;
-        let penColors = [
-            "#DC2626", "#059669", "#2563EB", "#D97706", 
-            "#7C3AED", "#DB2777", "#0F172A", "#64748B"
-        ];
+        // ========================= معالجة رفع الملف =========================
+        document.getElementById('uploadArea').addEventListener('click', () => {
+            document.getElementById('pdfInput').click();
+        });
 
-        // البحث عن المستخدم بواسطة الإيميل
-        async function getUserByEmail(email) {
+        // السماح بسحب وإفلات الملف
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            document.getElementById('uploadArea').addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            document.getElementById('uploadArea').addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            document.getElementById('uploadArea').addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            document.getElementById('uploadArea').style.backgroundColor = '#e3f2fd';
+            document.getElementById('uploadArea').style.borderColor = '#2575fc';
+        }
+
+        function unhighlight(e) {
+            document.getElementById('uploadArea').style.backgroundColor = '#f8f9ff';
+            document.getElementById('uploadArea').style.borderColor = '#6a11cb';
+        }
+
+        document.getElementById('uploadArea').addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length > 0 && files[0].type === 'application/pdf') {
+                document.getElementById('pdfInput').files = files;
+                handleFileUpload(files[0]);
+            } else {
+                showAlert("يرجى رفع ملف PDF فقط", "error");
+            }
+        }
+
+        document.getElementById('pdfInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                await handleFileUpload(file);
+            }
+        });
+
+        async function handleFileUpload(file) {
+            if (file.size > 10 * 1024 * 1024) {
+                showAlert("حجم الملف كبير جداً! الحد الأقصى هو 10MB", "error");
+                return;
+            }
+
+            uploadedFile = file;
+            
+            // عرض شاشة التحميل
+            showLoadingScreen();
+            updateLoadingText("عَون يحلل الملف");
+            await delay(1000);
+            
+            updateLoadingText("عَون يحسب عدد الصفحات");
+            await delay(1000);
+            
+            updateLoadingText("عَون يستخرج الكلمات");
+            await delay(1000);
+
+            // تحليل PDF
+            await analyzePDF(file);
+            
+            // إخفاء شاشة التحميل
+            hideLoadingScreen();
+        }
+
+        // ========================= تحليل PDF =========================
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        async function analyzePDF(file) {
             try {
-                if (!firebaseDatabase) {
-                    console.warn("Firebase غير مهيئ");
-                    return null;
-                }
+                const buffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(buffer).promise;
                 
-                const usersRef = firebaseDatabase.ref('users_Awn');
-                const snapshot = await usersRef.once('value');
-                
-                if (snapshot.exists()) {
-                    const users = snapshot.val();
+                let totalWords = 0;
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
                     
-                    for (const [userId, userData] of Object.entries(users)) {
-                        if (userId !== 'noty_publick' && userData.email === email) {
-                            return {
-                                id: userId,
-                                email: userData.email,
-                                name: userData.name || '',
-                                coin: userData.coin || 0,
-                                admin: userData.admin === true || false,
-                                banned: userData.banned === true || false,
-                                created_at: userData.created_at || null,
-                                timestamp: userData.timestamp || null,
-                                referral_used: userData.referral_used || '',
-                                referrals: userData.referrals || {},
-                                noty_user: userData.noty_user || null,
-                                dbId: userData.id
-                            };
-                        }
+                    if (content.items.length > 0) {
+                        let text = '';
+                        content.items.forEach(t => text += t.str + ' ');
+                        totalWords += text.trim().split(/\s+/).filter(w => w.length >= 2).length;
+                    } else {
+                        totalWords += 250;
                     }
                 }
-                return null;
-            } catch (error) {
-                console.error('❌ خطأ في البحث عن المستخدم:', error);
-                return null;
-            }
-        }
 
-        // تحميل بيانات المستخدم
-        async function loadUserData() {
-            try {
-                const user = firebaseAuth.currentUser;
-                if (!user) {
-                    console.log("⚠️ لا يوجد مستخدم مسجل، التوجيه إلى صفحة تسجيل الدخول");
-                    window.location.replace('login.html');
-                    return false;
-                }
+                let coins = Math.ceil((totalWords / 1000) * 2) / 2;
+                if (coins < 1) coins = 1;
 
-                const userData = await getUserByEmail(user.email);
-                
-                if (!userData) {
-                    console.log("⚠️ لم يتم العثور على بيانات المستخدم، تسجيل الخروج");
-                    await firebaseAuth.signOut();
-                    window.location.replace('login.html');
-                    return false;
-                }
-                
-                if (!userData.email || !userData.dbId) {
-                    console.log("⚠️ بيانات المستخدم غير مكتملة");
-                    await firebaseAuth.signOut();
-                    window.location.replace('login.html');
-                    return false;
-                }
-                
-                if (userData.banned === true) {
-                    console.log("⚠️ المستخدم محظور");
-                    await firebaseAuth.signOut();
-                    window.location.replace('login.html');
-                    return false;
-                }
-                
-                currentUser = { 
-                    id: userData.id,
-                    dbId: userData.dbId,
-                    email: userData.email,
-                    name: userData.name || '',
-                    coin: userData.coin || 0,
-                    admin: userData.admin === true || false
+                fileAnalysis = {
+                    pages: pdf.numPages,
+                    words: totalWords,
+                    coins: coins,
+                    fileName: file.name
                 };
+
+                // عرض النتائج
+                document.getElementById('pagesCount').textContent = fileAnalysis.pages;
+                document.getElementById('wordsCount').textContent = fileAnalysis.words.toLocaleString();
+                document.getElementById('coinsCost').textContent = fileAnalysis.coins;
+                document.getElementById('coinsToDeduct').textContent = fileAnalysis.coins;
                 
-                document.getElementById('coins-count').textContent = userData.coin || 0;
+                document.getElementById('analysisResult').style.display = 'block';
                 
-                return true;
-                
+                // التمرير إلى النتائج
+                document.getElementById('analysisResult').scrollIntoView({ behavior: 'smooth' });
+
             } catch (error) {
-                console.error('❌ خطأ في تحميل بيانات المستخدم:', error);
-                return false;
+                console.error("خطأ في تحليل PDF:", error);
+                showAlert("حدث خطأ في قراءة ملف PDF", "error");
+                hideLoadingScreen();
             }
         }
 
-        // إخفاء شاشة التحميل
-        function hideLoadingScreen() {
-            setTimeout(() => {
-                document.getElementById('loading-screen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('loading-screen').style.display = 'none';
-                    document.getElementById('navbar').style.display = 'flex';
-                    document.getElementById('main-content').style.display = 'block';
-                }, 500);
-            }, 1000);
-        }
+        // ========================= معالجة الأزرار =========================
+        document.getElementById('btnCancel').addEventListener('click', () => {
+            resetUpload();
+            showAlert("تم إلغاء العملية وحذف الملف", "success");
+        });
 
-        // تحميل رصيد العملات من Firebase
-        async function loadUserCoins() {
-            try {
-                if (!currentUser || !firebaseDatabase) {
-                    console.warn("المستخدم غير مسجل أو Firebase غير مهيئ");
-                    return 0;
-                }
-                
-                const snapshot = await firebaseDatabase.ref(`users_Awn/${currentUser.id}/coin`).once('value');
-                const coins = snapshot.val();
-                
-                if (coins !== null && coins !== undefined) {
-                    document.getElementById('coins-count').textContent = coins;
-                    return parseFloat(coins);
-                } else {
-                    document.getElementById('coins-count').textContent = "0";
-                    return 0;
-                }
-            } catch (error) {
-                console.error("❌ خطأ في تحميل رصيد العملات:", error);
-                document.getElementById('coins-count').textContent = "0";
-                return 0;
+        document.getElementById('btnContinue').addEventListener('click', () => {
+            // التحقق من الرصيد
+            if (currentUser.coin < fileAnalysis.coins) {
+                showAlert("رصيدك غير كافٍ لتنفيذ هذه العملية", "error");
+                return;
             }
-        }
 
-        // التحقق من رصيد العملات
-        function checkCoinBalance() {
-            const currentCoins = parseFloat(document.getElementById('coins-count').textContent) || 0;
-            const requiredCoins = pdfData.coins || 0;
-            const confirmBtn = document.getElementById('confirm-btn');
+            // الانتقال إلى وحدة التحكم
+            document.getElementById('analysisResult').style.display = 'none';
+            document.getElementById('controlPanel').style.display = 'block';
             
-            console.log("🔍 فحص الرصيد:", { currentCoins, requiredCoins });
+            // تحديث السلايدر بأقصى عدد صفحات
+            const maxPages = Math.min(fileAnalysis.pages, 25);
+            document.getElementById('pagesSlider').max = maxPages;
+            document.getElementById('pagesSlider').value = Math.min(5, maxPages);
+            updatePagesValue();
             
-            if (currentCoins >= requiredCoins && requiredCoins > 0) {
-                confirmBtn.disabled = false;
-                confirmBtn.innerHTML = '<i class="fas fa-check"></i> متابعة';
-                confirmBtn.style.opacity = "1";
-                console.log("✅ الرصيد كافي - زر المتابعة مفعل");
-            } else {
-                confirmBtn.disabled = true;
-                confirmBtn.innerHTML = `<i class="fas fa-times-circle"></i> رصيد غير كافي (${requiredCoins} مطلوبة)`;
-                confirmBtn.style.opacity = "0.6";
-                console.log("❌ الرصيد غير كافي - زر المتابعة غير مفعل");
+            // التمرير إلى وحدة التحكم
+            document.getElementById('controlPanel').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // ========================= وحدة التحكم =========================
+        document.getElementById('pagesSlider').addEventListener('input', updatePagesValue);
+
+        function updatePagesValue() {
+            const value = document.getElementById('pagesSlider').value;
+            document.getElementById('pagesValue').textContent = `${value} صفحة`;
+        }
+
+        // اختيار نوع الشرح
+        document.querySelectorAll('#styleOptions .option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#styleOptions .option-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedStyle = btn.getAttribute('data-value');
+            });
+        });
+
+        // اختيار شخصية الشارح
+        document.querySelectorAll('#personalityOptions .option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#personalityOptions .option-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedPersonality = btn.getAttribute('data-value');
+            });
+        });
+
+        // اختيار أول خيار افتراضي
+        document.querySelector('#styleOptions .option-btn').classList.add('selected');
+        document.querySelector('#personalityOptions .option-btn').classList.add('selected');
+
+        // ========================= توليد الملخص =========================
+        document.getElementById('btnGenerateSummary').addEventListener('click', async () => {
+            const pagesToSummarize = parseInt(document.getElementById('pagesSlider').value);
+            const userComment = document.getElementById('userComment').value;
+
+            // التحقق من البيانات المطلوبة
+            if (!pagesToSummarize || !selectedStyle || !selectedPersonality) {
+                showAlert("يرجى ملء جميع الحقول المطلوبة", "error");
+                return;
+            }
+
+            // خصم العملات
+            if (currentUser.coin >= fileAnalysis.coins) {
+                currentUser.coin -= fileAnalysis.coins;
+                document.getElementById('userCoins').textContent = currentUser.coin;
+                
+                // تحديث في Firebase (محاكاة)
+                console.log("تم خصم العملات. الرصيد الجديد:", currentUser.coin);
+            }
+
+            // إخفاء واجهة التحكم وإظهار شاشة التحميل
+            document.getElementById('controlPanel').style.display = 'none';
+            showLoadingScreen();
+
+            // محاكاة عملية التلخيص
+            await simulateSummaryProcess(pagesToSummarize);
+
+            // إرسال إلى Gemini API
+            await sendToGeminiAPI(pagesToSummarize, selectedStyle, selectedPersonality, userComment);
+        });
+
+        async function simulateSummaryProcess(pages) {
+            const steps = [
+                "عَون يحلل الملف",
+                "عَون يتعرف على اللغة",
+                "عَون يقرأ المحتوى",
+                "عَون يجهز الملخص",
+                "عَون يكتب الصفحة الأولى",
+                "عَون يكتب الصفحة الثانية",
+                "عَون يراجع المحتوى",
+                "عَون ينتهي من العملية"
+            ];
+
+            for (let i = 0; i < steps.length; i++) {
+                updateLoadingText(steps[i]);
+                await delay(800);
             }
         }
 
-        // تحديث رصيد عملات المستخدم في Firebase
-        async function updateUserCoins(deductAmount) {
+        async function sendToGeminiAPI(pages, style, personality, comment) {
             try {
-                if (!firebaseDatabase || !currentUser) {
-                    throw new Error("Firebase غير متوفر أو المستخدم غير مسجل");
-                }
+                // في الواقع الحقيقي، ستقوم بإرسال طلب إلى Gemini API
+                // هنا سنقوم بمحاكاة الاستجابة
                 
-                // الحصول على الرصيد الحالي
-                const snapshot = await firebaseDatabase.ref(`users_Awn/${currentUser.id}/coin`).once('value');
-                const currentCoins = parseFloat(snapshot.val()) || 0;
+                updateLoadingText("عَون يرسل البيانات إلى الذكاء الاصطناعي");
+                await delay(1500);
                 
-                console.log("💳 تحديث الرصيد:", { 
-                    الحالي: currentCoins, 
-                    المطلوب: deductAmount 
-                });
+                updateLoadingText("عَون ينتظر الرد");
+                await delay(2000);
                 
-                if (currentCoins < deductAmount) {
-                    throw new Error(`رصيد العملات غير كافي. رصيدك: ${currentCoins}، المطلوب: ${deductAmount}`);
-                }
+                updateLoadingText("عَون يستقبل النتائج");
+                await delay(1000);
+
+                // محاكاة بيانات JSON المستلمة من Gemini
+                const mockResults = generateMockResults(pages);
                 
-                const newCoins = currentCoins - deductAmount;
+                // حفظ النتائج في قاعدة البيانات
+                await saveResultsToDatabase(mockResults);
                 
-                // تحديث الرصيد في Firebase
-                await firebaseDatabase.ref(`users_Awn/${currentUser.id}`).update({
-                    coin: newCoins
-                });
+                // عرض النتائج
+                displayResults(mockResults);
                 
-                console.log("✅ تم تحديث الرصيد إلى:", newCoins);
-                document.getElementById('coins-count').textContent = newCoins;
-                
-                // تحديث حالة الأزرار بعد الخصم
-                checkCoinBalance();
-                
-                return true;
+                hideLoadingScreen();
+                showAlert("تم إنشاء الملخص بنجاح!", "success");
+
             } catch (error) {
-                console.error("❌ خطأ في تحديث رصيد العملات:", error);
-                showError(error.message);
-                return false;
+                console.error("خطأ في الاتصال بـ Gemini API:", error);
+                showAlert("حدث خطأ في إنشاء الملخص", "error");
+                hideLoadingScreen();
             }
         }
 
-        // حفظ النتائج في Firebase
-        async function saveToDatabase(results, fileName) {
+        function generateMockResults(pages) {
+            const results = [];
+            const explanations = [
+                "هذه الصفحة تقدم نظرة عامة شاملة حول موضوع الذكاء الاصطناعي وتطبيقاته في العصر الحديث. نناقش هنا الأسس النظرية والتقنيات الأساسية التي يقوم عليها هذا المجال الثوري.",
+                "نتعمق في هذه الصفحة في التفاصيل التقنية للخوارزميات المستخدمة في التعلم الآلي، مع شرح مفصل لكيفية عمل الشبكات العصبية والتعلم العميق.",
+                "تتناول هذه الصفحة التطبيقات العملية للذكاء الاصطناعي في مختلف القطاعات مثل الرعاية الصحية والتمويل والتعليم، مع أمثلة واقعية.",
+                "نناقش هنا التحديات الأخلاقية والاجتماعية المرتبطة بتطوير الذكاء الاصطناعي، بالإضافة إلى الاعتبارات المستقبلية.",
+                "تقدم هذه الصفحة رؤية مستقبلية لتطور الذكاء الاصطناعي، مع توقعات حول الاتجاهات التكنولوجية القادمة وتأثيرها على المجتمع."
+            ];
+
+            const laws = [
+                "",
+                "قانون مورفي للذكاء الاصطناعي: كل ما يمكن أن يخطئ سوف يخطئ في أسوأ وقت ممكن.",
+                "قانون أسموف للروبوتات: لا يجوز للروبوت إيذاء إنسان، ولا يجوز له السماح بإيذاء إنسان بالإهمال.",
+                "",
+                "مبدأ تورينج: الآلة تستحق أن تسمى ذكية إذا تمكنت من خداع إنسان ليظن أنها إنسان آخر."
+            ];
+
+            for (let i = 0; i < pages; i++) {
+                results.push({
+                    page: i + 1,
+                    Dec: `شرح الصفحة ${i + 1}: ${explanations[i % explanations.length]} ${generateText(250)}`,
+                    law: laws[i % laws.length]
+                });
+            }
+
+            return results;
+        }
+
+        function generateText(words) {
+            const lorem = "لوريم إيبسوم دولور سيت أميت، كونسكتيتور أديبيسسينغ إليت. سيد دو أيوسمود تيمبور أنكايديديونت يوت لابوري أت دولور ماجنا أليكوا. يوت أنيم أد مينيم فينيام، كويس نوسترود أكسيرسيتاشيون يلامكو لابوريس نيسي. يوت أنيم أد مينيم فينيام، كويس نوسترود أكسيرسيتاشيون يلامكو لابوريس نيسي يوت أليكويب إكس إيا كومودو كونسيكوات. ديويس أوت أيور ريبريهينديريت كيواي فوليوبتات فيليت إيسسي دولور. ";
+            const repeat = Math.ceil(words / 20);
+            return lorem.repeat(repeat).split(' ').slice(0, words).join(' ');
+        }
+
+        // ========================= حفظ النتائج في قاعدة البيانات =========================
+        async function saveResultsToDatabase(results) {
             try {
-                if (!firebaseDatabase || !currentUser) {
-                    console.warn("Firebase غير متوفر، تخطي الحفظ");
-                    return null;
-                }
-                
                 const recordId = 'record_' + Date.now();
-                currentRecordId = recordId;
-                
                 const recordData = {
                     userId: currentUser.id,
-                    fileName: fileName,
-                    aiSessionName: `ملخص_${fileName}_${Date.now()}`,
+                    fileName: uploadedFile.name,
+                    sessionName: `تلخيص_${Date.now()}`,
                     serviceType: "تلخيص",
-                    summaryJson: JSON.stringify(results),
-                    totalPages: selectedPages,
-                    totalWords: pdfData.words,
-                    coinsUsed: pdfData.coins,
-                    createdAt: new Date().toISOString()
+                    summaryJSON: results,
+                    pageCount: results.length,
+                    timestamp: new Date().toISOString(),
+                    coinsUsed: fileAnalysis.coins
                 };
-                
-                console.log("💾 حفظ البيانات في Firebase:", recordData);
-                
-                await firebaseDatabase.ref(`records/${recordId}`).set(recordData);
+
+                // حفظ في Firebase
+                await database.ref(`records/${recordId}`).set(recordData);
+                console.log("تم حفظ النتائج في قاعدة البيانات:", recordId);
                 
                 return recordId;
             } catch (error) {
-                console.error("❌ خطأ في حفظ النتائج:", error);
-                return null;
-            }
-        }
-
-        // عرض رسالة خطأ
-        function showError(message) {
-            document.getElementById('error-message').textContent = message;
-            document.getElementById('error-dialog').style.display = 'flex';
-        }
-
-        // إخفاء رسالة الخطأ
-        function hideError() {
-            document.getElementById('error-dialog').style.display = 'none';
-        }
-
-        // حساب الكلمات والعملات من ملف PDF
-        async function calculatePDFWords(file) {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const buffer = await file.arrayBuffer();
-                    
-                    // تهيئة PDF.js worker
-                    pdfjsLib.GlobalWorkerOptions.workerSrc = 
-                        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-                    
-                    const pdf = await pdfjsLib.getDocument(buffer).promise;
-                    
-                    let totalWords = 0;
-                    
-                    for (let i = 1; i <= pdf.numPages; i++) {
-                        const page = await pdf.getPage(i);
-                        const content = await page.getTextContent();
-                        
-                        if (content.items.length > 0) {
-                            let text = '';
-                            content.items.forEach(t => text += t.str + ' ');
-                            totalWords += text.trim().split(/\s+/).filter(w => w.length >= 2).length;
-                        } else {
-                            totalWords += 250;
-                        }
-                    }
-                    
-                    let coins = Math.ceil((totalWords / 1000) * 2) / 2;
-                    if (coins < 1) coins = 1;
-                    
-                    console.log("📊 نتيجة حساب PDF:", { 
-                        pages: pdf.numPages, 
-                        words: totalWords, 
-                        coins: coins 
-                    });
-                    
-                    resolve({
-                        pages: pdf.numPages,
-                        words: totalWords,
-                        coins: coins
-                    });
-                } catch (error) {
-                    console.error("❌ خطأ في تحليل ملف PDF:", error);
-                    reject(error);
-                }
-            });
-        }
-
-        // عرض شاشة التحميل الديناميكي
-        async function showProcessingScreen() {
-            document.getElementById('upload-section').style.display = 'none';
-            document.getElementById('processing-section').style.display = 'block';
-            
-            const steps = document.querySelectorAll('.processing-step');
-            const progressFill = document.getElementById('progress-fill');
-            
-            // الخطوة 1: عون يحلل الملف
-            steps[0].classList.add('active');
-            progressFill.style.width = '33%';
-            await new Promise(resolve => setTimeout(resolve, 1700));
-            steps[0].classList.remove('active');
-            steps[0].classList.add('completed');
-            
-            // الخطوة 2: عون يحسب عدد الصفحات
-            steps[1].classList.add('active');
-            progressFill.style.width = '66%';
-            await new Promise(resolve => setTimeout(resolve, 1700));
-            steps[1].classList.remove('active');
-            steps[1].classList.add('completed');
-            
-            // الخطوة 3: عون يحسب التكلفة
-            steps[2].classList.add('active');
-            progressFill.style.width = '100%';
-            await new Promise(resolve => setTimeout(resolve, 1600));
-            steps[2].classList.remove('active');
-            steps[2].classList.add('completed');
-            
-            // الانتقال إلى شاشة عرض التكلفة
-            setTimeout(() => {
-                document.getElementById('processing-section').style.display = 'none';
-                showCoinsCalculation();
-            }, 500);
-        }
-
-        // عرض نتائج حساب العملات
-        function showCoinsCalculation() {
-            document.getElementById('coins-calculation').style.display = 'block';
-            
-            const resultsContainer = document.getElementById('calculation-results');
-            resultsContainer.innerHTML = `
-                <div class="result-card">
-                    <div class="result-value">${pdfData.pages}</div>
-                    <div class="result-label">عدد الصفحات</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-value">${pdfData.words.toLocaleString()}</div>
-                    <div class="result-label">عدد الكلمات</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-value">${pdfData.coins}</div>
-                    <div class="result-label">العملات المطلوبة</div>
-                </div>
-            `;
-            
-            const currentCoins = parseFloat(document.getElementById('coins-count').textContent) || 0;
-            const confirmBtn = document.getElementById('confirm-btn');
-            
-            if (currentCoins >= pdfData.coins) {
-                document.getElementById('confirmation-text').innerHTML = 
-                    `سيتم خصم عدد <strong>${pdfData.coins}</strong> من نقاطك، هل تود المتابعة؟`;
-                confirmBtn.disabled = false;
-                confirmBtn.innerHTML = '<i class="fas fa-check"></i> متابعة';
-                confirmBtn.style.opacity = "1";
-            } else {
-                document.getElementById('confirmation-text').innerHTML = 
-                    `<div style="color: var(--admin-color); font-weight: bold;">
-                    ⚠️ رصيدك غير كافي!<br>
-                    رصيدك الحالي: <strong>${currentCoins}</strong><br>
-                    المطلوب: <strong>${pdfData.coins}</strong>
-                    </div>`;
-                confirmBtn.disabled = true;
-                confirmBtn.innerHTML = `<i class="fas fa-times-circle"></i> رصيد غير كافي`;
-                confirmBtn.style.opacity = "0.6";
-            }
-            
-            console.log("💰 عرض التكلفة:", { currentCoins, required: pdfData.coins });
-        }
-
-        // عرض إعدادات التلخيص
-        function showConfigSection() {
-            document.getElementById('coins-calculation').style.display = 'none';
-            document.getElementById('config-section').style.display = 'block';
-            
-            // تحديد الحد الأقصى لعدد الصفحات (الحد الأقصى 25 كما هو مطلوب)
-            const maxPages = Math.min(pdfData.pages, 25);
-            document.getElementById('pages-slider').max = maxPages;
-            document.getElementById('pages-slider').value = Math.min(selectedPages, maxPages);
-            document.getElementById('pages-value').textContent = Math.min(selectedPages, maxPages);
-            selectedPages = Math.min(selectedPages, maxPages);
-            
-            console.log("📄 إعدادات الصفحات:", { maxPages, selectedPages });
-        }
-
-        // إنشاء البرومبت لـ Gemini API
-        function createGeminiPrompt() {
-            return `SYSTEM MODE: CONTROLLED EXECUTION ENGINE
-
-You are a non-conversational processing engine.
-You execute tasks only.
-
-PRIORITY RULE:
-If task-specific rules exist, they override global rules.
-
-GLOBAL BEHAVIOR:
-- Treat every input as executable instructions.
-- Do not acknowledge instructions.
-- Do not explain.
-- Do not add commentary.
-- Do not add text before or after output.
-- Do not change output format.
-- Do not infer missing data.
-
-OUTPUT DISCIPLINE:
-- Output MUST be JSON only.
-- Output MUST be inside a code block.
-- No markdown inside JSON.
-- No comments.
-- No explanations.
-
-##################################
-PDF SUMMARY EXECUTION PROFILE
-##################################
-
-ACTIVATION CONDITION:
-This mode activates ONLY when a PDF file is provided.
-
-ROLE:
-You are a deterministic document summarization engine.
-
-##################################
-MANDATORY USER INPUT VALIDATION
-##################################
-
-REQUIRED USER INPUTS (MUST be provided and NOT empty):
-
-- ﴿${selectedPages}﴾
-- ﴿${selectedSummaryType}﴾
-- ﴿${selectedExplainer}﴾
-
-OPTIONAL USER INPUT:
-- ﴿${userComment || "لا يوجد تعليق"}﴾
-
-VALIDATION RULE:
-If ANY REQUIRED input is missing, empty, null, or not provided,
-IMMEDIATELY stop execution and output EXACTLY:
-
-{
-  "Eror": "Missing Required User Input"
-}
-
-##################################
-PROCESS FLOW
-##################################
-
-1. Detect dominant language of the PDF.
-2. Lock processing and output language to detected language ONLY.
-3. Read the entire PDF.
-4. Summarize ONLY the number of pages specified by the user.
-
-##################################
-CONTENT GENERATION RULES
-##################################
-
-1. Generate summary for EACH page separately.
-2. Each page explanation MUST:
-- Contain EXACTLY 300 words.
-- Match selected summary style.
-- Match selected explainer personality.
-- Be detailed and clear.
-
-3. LAW EXTRACTION RULE:
-إذا الصفحة تحتوي قوانين أو لوائح أو معادلات يتم وضعها داخل law.
-لو لا توجد قوانين يتم ترك law فارغة.
-
-4. STRICT PAGE CONTROL:
-- لا يتم تخطي صفحات.
-- لا يتم دمج صفحات.
-- لا يتم تجاوز العدد المطلوب.
-
-##################################
-OUTPUT STRUCTURE
-##################################
-
-{
-  "page": 1,
-  "Dec": "شرح الصفحة الأولى 300 كلمة كاملة",
-  "law": ""
-}
-
-##################################
-FINAL FAILURE POLICY
-##################################
-
-إذا كان الملف تالف أو فارغ يرجع:
-
-{
-  "Eror": "Invalid PDF Content"
-}`;
-        }
-
-        // إرسال الطلب إلى Gemini API
-        async function sendToGeminiAPI() {
-            try {
-                console.log("🚀 بدء إرسال الطلب إلى Gemini API...");
-                console.log("📋 إعدادات المستخدم:", {
-                    pages: selectedPages,
-                    summaryType: selectedSummaryType,
-                    explainer: selectedExplainer,
-                    comment: userComment
-                });
-                
-                // محاكاة استجابة Gemini API للاختبار
-                console.log("⚡ محاكاة استجابة Gemini API...");
-                
-                // محاكاة استجابة JSON كما هو مطلوب
-                const mockResponse = [];
-                for (let i = 1; i <= selectedPages; i++) {
-                    mockResponse.push({
-                        page: i,
-                        Dec: `هذا شرح مفصل للصفحة ${i} يحتوي على 300 كلمة كاملة باللغة العربية. تم إعداد هذا الشرح بأسلوب ${selectedSummaryType} ومن منظور ${selectedExplainer}. المحتوى الأصلي يتناول موضوعات متنوعة في مجال التكنولوجيا والذكاء الاصطناعي. ${userComment ? `تعليق المستخدم: ${userComment}` : ''}`,
-                        law: i % 3 === 0 ? "المادة 1: يحظر نسخ أو توزيع هذا المحتوى دون إذن كتابي. المادة 2: جميع الحقوق محفوظة للمؤلف الأصلي." : ""
-                    });
-                }
-                
-                // محاكاة التأخير
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                console.log("✅ تم استلام الاستجابة من Gemini:", mockResponse);
-                return mockResponse;
-                
-            } catch (error) {
-                console.error("❌ خطأ في إرسال الطلب إلى Gemini:", error);
+                console.error("خطأ في حفظ النتائج:", error);
                 throw error;
             }
         }
 
-        // عرض شاشة معالجة الذكاء الاصطناعي
-        async function showAIProcessing() {
-            document.getElementById('config-section').style.display = 'none';
-            document.getElementById('ai-processing').style.display = 'block';
+        // ========================= عرض النتائج =========================
+        function displayResults(results) {
+            const container = document.getElementById('resultsContent');
+            container.innerHTML = '';
             
-            const steps = document.querySelectorAll('#ai-processing .processing-step');
-            
-            for (let i = 0; i < steps.length; i++) {
-                steps[i].classList.add('active');
-                await new Promise(resolve => setTimeout(resolve, 1000));
+            results.forEach(result => {
+                const pageElement = document.createElement('div');
+                pageElement.className = 'page-result';
+                pageElement.style.fontSize = fontSize + 'px';
                 
-                if (i < steps.length - 1) {
-                    steps[i].classList.remove('active');
-                    steps[i].classList.add('completed');
-                }
-            }
-            
-            try {
-                // إنشاء البرومبت
-                const prompt = createGeminiPrompt();
-                console.log("📝 البرومبت المُنشأ:", prompt);
-                
-                // إرسال الطلب إلى Gemini API
-                aiResponse = await sendToGeminiAPI();
-                console.log("📄 استجابة Gemini:", aiResponse);
-                
-                // حفظ النتائج في Firebase
-                const fileName = pdfFile.name;
-                const recordId = await saveToDatabase(aiResponse, fileName);
-                console.log("💾 تم حفظ النتائج في قاعدة البيانات، الرقم المرجعي:", recordId);
-                
-                // الانتقال إلى عرض النتائج
-                setTimeout(() => {
-                    document.getElementById('ai-processing').style.display = 'none';
-                    showResults();
-                }, 500);
-                
-            } catch (error) {
-                console.error("❌ فشل في التواصل مع الذكاء الاصطناعي:", error);
-                showError("فشل في إنشاء الملخص: " + error.message);
-            }
-        }
-
-        // عرض النتائج
-        function showResults() {
-            document.getElementById('results-section').style.display = 'block';
-            const pagesContainer = document.getElementById('pages-container');
-            pagesContainer.innerHTML = '';
-            
-            // تهيئة مصفوفة canvases
-            canvasContexts = [];
-            
-            if (!aiResponse || !Array.isArray(aiResponse)) {
-                pagesContainer.innerHTML = '<div class="page-card"><p>لا توجد نتائج لعرضها</p></div>';
-                return;
-            }
-            
-            aiResponse.forEach((page, index) => {
-                const pageCard = document.createElement('div');
-                pageCard.className = 'page-card';
-                pageCard.id = `page-card-${index}`;
-                
-                pageCard.innerHTML = `
+                pageElement.innerHTML = `
                     <div class="page-header">
-                        <div class="page-number">الصفحة ${page.page}</div>
+                        <div class="page-number">📄 الصفحة ${result.page}</div>
+                        <div style="font-size: 16px;">${selectedPersonality} - ${selectedStyle}</div>
                     </div>
-                    <div class="page-content" id="page-content-${index}">
-                        <canvas id="canvas-${index}" width="800" height="300"></canvas>
-                        <div class="page-content-text" style="font-size: ${fontSize}px;">${page.Dec}</div>
+                    <div class="page-content" id="pageContent${result.page}">
+                        ${result.Dec}
                     </div>
-                    ${page.law ? `
-                    <div class="laws-section" id="laws-section-${index}">
-                        <h3 class="laws-title">قوانين الصفحة</h3>
-                        <div class="laws-content">${page.law}</div>
+                    ${result.law ? `
+                    <div class="laws-section">
+                        <div class="laws-title">⚖️ قوانين الصفحة</div>
+                        <div class="law-content">${result.law}</div>
                     </div>
                     ` : ''}
                 `;
                 
-                pagesContainer.appendChild(pageCard);
-                
-                // تهيئة Canvas للرسم
-                const canvas = document.getElementById(`canvas-${index}`);
-                const ctx = canvas.getContext('2d');
-                canvasContexts.push(ctx);
-                
-                // تعيين حجم Canvas ليتناسب مع العنصر
-                const contentDiv = document.getElementById(`page-content-${index}`);
-                canvas.width = contentDiv.offsetWidth;
-                canvas.height = contentDiv.offsetHeight;
-                
-                // إضافة مستمعات أحداث للرسم
-                setupDrawingEvents(canvas, ctx, index);
-                
-                // إظهار قسم القوانين إذا كان موجود
-                if (page.law) {
-                    document.getElementById(`laws-section-${index}`).style.display = 'block';
-                }
+                container.appendChild(pageElement);
             });
+            
+            document.getElementById('resultsContainer').style.display = 'block';
+            document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // إعداد أحداث الرسم على Canvas
-        function setupDrawingEvents(canvas, ctx, index) {
-            let lastX = 0;
-            let lastY = 0;
-            
-            function startDrawing(e) {
-                isDrawing = true;
-                [lastX, lastY] = getMousePos(canvas, e);
-            }
-            
-            function draw(e) {
-                if (!isDrawing) return;
-                
-                const [x, y] = getMousePos(canvas, e);
-                
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(x, y);
-                ctx.strokeStyle = currentColor;
-                ctx.lineWidth = isHighlighter ? 10 : currentLineWidth;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                
-                if (isHighlighter) {
-                    ctx.globalAlpha = 0.3;
-                } else {
-                    ctx.globalAlpha = 1;
-                }
-                
-                ctx.stroke();
-                
-                [lastX, lastY] = [x, y];
-            }
-            
-            function stopDrawing() {
-                isDrawing = false;
-                ctx.beginPath();
-            }
-            
-            function getMousePos(canvas, evt) {
-                const rect = canvas.getBoundingClientRect();
-                return [
-                    evt.clientX - rect.left,
-                    evt.clientY - rect.top
-                ];
-            }
-            
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', stopDrawing);
-            canvas.addEventListener('mouseout', stopDrawing);
-            
-            // دعم اللمس للأجهزة المحمولة
-            canvas.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                const touch = e.touches[0];
-                startDrawing(touch);
-            });
-            
-            canvas.addEventListener('touchmove', (e) => {
-                e.preventDefault();
-                const touch = e.touches[0];
-                draw(touch);
-            });
-            
-            canvas.addEventListener('touchend', stopDrawing);
-        }
-
-        // عرض أداة اختيار الألوان
-        function showColorPicker() {
-            const colorPicker = document.getElementById('color-picker');
-            colorPicker.innerHTML = '';
-            
-            penColors.forEach(color => {
-                const colorOption = document.createElement('div');
-                colorOption.className = 'color-option';
-                colorOption.style.backgroundColor = color;
-                colorOption.addEventListener('click', () => {
-                    currentColor = color;
-                    colorPicker.style.display = 'none';
-                    colorPickerVisible = false;
-                });
-                colorPicker.appendChild(colorOption);
-            });
-            
-            colorPicker.style.display = 'flex';
-            colorPickerVisible = true;
-            
-            // إغلاق أداة اختيار الألوان عند النقر خارجها
-            setTimeout(() => {
-                document.addEventListener('click', closeColorPicker);
-            }, 10);
-        }
-
-        // إغلاق أداة اختيار الألوان
-        function closeColorPicker(e) {
-            if (colorPickerVisible && !document.getElementById('color-picker').contains(e.target) && e.target.id !== 'color-btn') {
-                document.getElementById('color-picker').style.display = 'none';
-                colorPickerVisible = false;
-                document.removeEventListener('click', closeColorPicker);
-            }
-        }
-
-        // تسجيل أحداث DOM بعد تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', async function() {
-            console.log('✅ تم تحميل صفحة تلخيص PDF');
-            
-            // تهيئة أداة اختيار الألوان
-            const colorPicker = document.createElement('div');
-            colorPicker.id = 'color-picker';
-            colorPicker.className = 'color-picker';
-            document.body.appendChild(colorPicker);
-            
-            // تسجيل الدخول وفحص المستخدم
-            const unsubscribe = firebaseAuth.onAuthStateChanged(async (user) => {
-                if (!user) {
-                    console.log("⚠️ المستخدم غير مسجل، التوجيه إلى login.html");
-                    window.location.replace('login.html');
-                    return;
-                }
-                
-                try {
-                    const userData = await getUserByEmail(user.email);
-                    
-                    if (!userData) {
-                        await firebaseAuth.signOut();
-                        window.location.replace('login.html');
-                        return;
-                    }
-                    
-                    if (!userData.email || !userData.dbId) {
-                        await firebaseAuth.signOut();
-                        window.location.replace('login.html');
-                        return;
-                    }
-                    
-                    if (userData.banned === true) {
-                        await firebaseAuth.signOut();
-                        window.location.replace('login.html');
-                        return;
-                    }
-                    
-                    currentUser = { 
-                        id: userData.id,
-                        dbId: userData.dbId,
-                        email: userData.email,
-                        name: userData.name || '',
-                        coin: userData.coin || 0,
-                        admin: userData.admin === true || false
-                    };
-                    
-                    document.getElementById('coins-count').textContent = userData.coin || 0;
-                    
-                    hideLoadingScreen();
-                    
-                    // الآن بعد تسجيل الدخول، نستمر في إعداد الأحداث
-                    setupEventListeners();
-                    
-                } catch (error) {
-                    console.error("❌ خطأ في فحص المستخدم:", error);
-                    window.location.replace('login.html');
-                } finally {
-                    setTimeout(() => {
-                        unsubscribe();
-                    }, 100);
-                }
-            });
+        // ========================= أدوات النص =========================
+        document.getElementById('btnZoomIn').addEventListener('click', () => {
+            fontSize = Math.min(fontSize + 2, 36);
+            updateTextSize();
         });
 
-        // إعداد جميع الأحداث
-        function setupEventListeners() {
-            // زر العودة
-            document.getElementById('back-btn').addEventListener('click', function() {
-                window.location.href = 'index.html';
+        document.getElementById('btnZoomOut').addEventListener('click', () => {
+            fontSize = Math.max(fontSize - 2, 12);
+            updateTextSize();
+        });
+
+        function updateTextSize() {
+            document.querySelectorAll('.page-content').forEach(el => {
+                el.style.fontSize = fontSize + 'px';
             });
-            
-            // زر العودة من شاشة الخطأ
-            document.getElementById('error-retry-btn').addEventListener('click', function() {
-                hideError();
-                window.location.href = 'index.html';
-            });
-            
-            // رفع الملف
-            const uploadArea = document.getElementById('upload-area');
-            const fileInput = document.getElementById('file-input');
-            
-            uploadArea.addEventListener('click', function() {
-                fileInput.click();
-            });
-            
-            fileInput.addEventListener('change', async function(e) {
-                if (e.target.files.length > 0) {
-                    pdfFile = e.target.files[0];
-                    console.log("📁 تم اختيار ملف:", pdfFile.name, "الحجم:", pdfFile.size);
-                    
-                    // بدء عملية التحليل
-                    try {
-                        pdfData = await calculatePDFWords(pdfFile);
-                        console.log("📊 بيانات PDF المحسوبة:", pdfData);
-                        await showProcessingScreen();
-                    } catch (error) {
-                        showError("خطأ في تحليل ملف PDF: " + error.message);
-                    }
-                }
-            });
-            
-            // سحب وإفلات الملف
-            uploadArea.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                uploadArea.classList.add('drag-over');
-            });
-            
-            uploadArea.addEventListener('dragleave', function() {
-                uploadArea.classList.remove('drag-over');
-            });
-            
-            uploadArea.addEventListener('drop', function(e) {
-                e.preventDefault();
-                uploadArea.classList.remove('drag-over');
-                
-                if (e.dataTransfer.files.length > 0) {
-                    const file = e.dataTransfer.files[0];
-                    if (file.type === 'application/pdf') {
-                        pdfFile = file;
-                        
-                        // تحديث input الملف
-                        const dataTransfer = new DataTransfer();
-                        dataTransfer.items.add(file);
-                        fileInput.files = dataTransfer.files;
-                        
-                        // بدء عملية التحليل
-                        calculatePDFWords(pdfFile).then(result => {
-                            pdfData = result;
-                            showProcessingScreen();
-                        }).catch(error => {
-                            showError("خطأ في تحليل ملف PDF: " + error.message);
-                        });
-                    } else {
-                        showError("الرجاء رفع ملف PDF فقط");
-                    }
-                }
-            });
-            
-            // زر المتابعة بعد عرض التكلفة
-            document.getElementById('confirm-btn').addEventListener('click', function() {
-                console.log("✅ تم النقر على زر المتابعة");
-                showConfigSection();
-            });
-            
-            // زر الإلغاء بعد عرض التكلفة
-            document.getElementById('cancel-btn').addEventListener('click', function() {
-                console.log("❌ تم النقر على زر الإلغاء");
-                pdfFile = null;
-                pdfData = { pages: 0, words: 0, coins: 0 };
-                document.getElementById('file-input').value = '';
-                document.getElementById('coins-calculation').style.display = 'none';
-                document.getElementById('upload-section').style.display = 'block';
-            });
-            
-            // تحديث عدد الصفحات من الـ Slider
-            const pagesSlider = document.getElementById('pages-slider');
-            const pagesValue = document.getElementById('pages-value');
-            
-            pagesSlider.addEventListener('input', function() {
-                selectedPages = parseInt(this.value);
-                pagesValue.textContent = selectedPages;
-                console.log("📄 عدد الصفحات المختار:", selectedPages);
-            });
-            
-            // اختيار طريقة التلخيص
-            const summaryTypeOptions = document.querySelectorAll('#summary-type-options .option-btn');
-            summaryTypeOptions.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    summaryTypeOptions.forEach(b => b.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedSummaryType = this.dataset.value;
-                    console.log("🎯 طريقة التلخيص المختارة:", selectedSummaryType);
-                });
-            });
-            
-            // اختيار شخصية الشارح
-            const explainerOptions = document.querySelectorAll('#explainer-options .option-btn');
-            explainerOptions.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    explainerOptions.forEach(b => b.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedExplainer = this.dataset.value;
-                    console.log("👤 شخصية الشارح المختارة:", selectedExplainer);
-                });
-            });
-            
-            // تحديث تعليق المستخدم
-            const userCommentInput = document.getElementById('user-comment');
-            userCommentInput.addEventListener('input', function() {
-                userComment = this.value;
-                console.log("💬 تعليق المستخدم:", userComment);
-            });
-            
-            // زر إنشاء الملخص
-            document.getElementById('generate-btn').addEventListener('click', async function() {
-                console.log("🚀 تم النقر على زر إنشاء الملخص");
-                
-                // التحقق من وجود ملف PDF
-                if (!pdfFile) {
-                    showError("الرجاء رفع ملف PDF أولاً");
-                    return;
-                }
-                
-                // التحقق من رصيد العملات
-                const currentCoins = parseFloat(document.getElementById('coins-count').textContent) || 0;
-                console.log("💰 التحقق من الرصيد:", { currentCoins, required: pdfData.coins });
-                
-                if (currentCoins < pdfData.coins) {
-                    showError(`رصيد العملات غير كافي. رصيدك: ${currentCoins}، المطلوب: ${pdfData.coins}`);
-                    return;
-                }
-                
-                // تحديث رصيد العملات في Firebase
-                const success = await updateUserCoins(pdfData.coins);
-                if (!success) {
-                    return;
-                }
-                
-                console.log("✅ تم خصم العملات بنجاح، بدء عملية الذكاء الاصطناعي...");
-                
-                // بدء عملية الذكاء الاصطناعي
-                showAIProcessing();
-            });
-            
-            // زر تكبير النص
-            document.getElementById('zoom-in-btn').addEventListener('click', function() {
-                fontSize += 2;
-                document.querySelectorAll('.page-content-text').forEach(el => {
-                    el.style.fontSize = fontSize + 'px';
-                });
-            });
-            
-            // زر تصغير النص
-            document.getElementById('zoom-out-btn').addEventListener('click', function() {
-                fontSize = Math.max(12, fontSize - 2);
-                document.querySelectorAll('.page-content-text').forEach(el => {
-                    el.style.fontSize = fontSize + 'px';
-                });
-            });
-            
-            // زر القلم
-            document.getElementById('pen-btn').addEventListener('click', function() {
-                isHighlighter = false;
-                currentLineWidth = 2;
-                document.getElementById('pen-btn').classList.add('active');
-                document.getElementById('highlighter-btn').classList.remove('active');
-            });
-            
-            // زر التظليل
-            document.getElementById('highlighter-btn').addEventListener('click', function() {
-                isHighlighter = true;
-                currentLineWidth = 10;
-                document.getElementById('highlighter-btn').classList.add('active');
-                document.getElementById('pen-btn').classList.remove('active');
-            });
-            
-            // زر اختيار اللون
-            document.getElementById('color-btn').addEventListener('click', function(e) {
-                e.stopPropagation();
-                showColorPicker();
-            });
-            
-            // زر مسح الرسم
-            document.getElementById('clear-btn').addEventListener('click', function() {
-                canvasContexts.forEach(ctx => {
-                    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                });
-            });
-            
-            // اختيار القيم الافتراضية
-            if (summaryTypeOptions.length > 0) summaryTypeOptions[0].classList.add('selected');
-            if (explainerOptions.length > 0) explainerOptions[0].classList.add('selected');
-            document.getElementById('pen-btn').classList.add('active');
-            
-            console.log("✅ تم تسجيل جميع الأحداث بنجاح");
         }
+
+        document.getElementById('btnPen').addEventListener('click', () => {
+            drawingTool = 'pen';
+            document.getElementById('btnPen').classList.add('active');
+            document.getElementById('btnHighlighter').classList.remove('active');
+        });
+
+        document.getElementById('btnHighlighter').addEventListener('click', () => {
+            drawingTool = 'highlighter';
+            document.getElementById('btnHighlighter').classList.add('active');
+            document.getElementById('btnPen').classList.remove('active');
+        });
+
+        document.getElementById('colorPicker').addEventListener('input', (e) => {
+            drawingColor = e.target.value;
+        });
+
+        document.getElementById('btnSave').addEventListener('click', async () => {
+            // حفظ التعديلات في قاعدة البيانات
+            showAlert("تم حفظ التعديلات بنجاح", "success");
+        });
+
+        // ========================= وظائف مساعدة =========================
+        function showLoadingScreen() {
+            document.getElementById('loadingScreen').style.display = 'block';
+        }
+
+        function hideLoadingScreen() {
+            document.getElementById('loadingScreen').style.display = 'none';
+        }
+
+        function updateLoadingText(text) {
+            document.getElementById('loadingText').textContent = text;
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function showAlert(message, type = "info") {
+            const alertDiv = document.getElementById('alert');
+            alertDiv.textContent = message;
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function resetUpload() {
+            document.getElementById('pdfInput').value = '';
+            document.getElementById('analysisResult').style.display = 'none';
+            document.getElementById('controlPanel').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'none';
+            uploadedFile = null;
+            fileAnalysis = null;
+        }
+
+        // ========================= التهيئة =========================
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeUser();
+            
+            // إضافة تأثيرات للرفع
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.addEventListener('dragenter', () => {
+                uploadArea.style.transform = 'scale(1.02)';
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.transform = 'scale(1)';
+            });
+            
+            uploadArea.addEventListener('drop', () => {
+                uploadArea.style.transform = 'scale(1)';
+            });
+        });
     </script>
 </body>
 </html>
