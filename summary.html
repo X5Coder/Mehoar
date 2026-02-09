@@ -1,251 +1,815 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-<meta charset="UTF-8">
-<title>عون | تلخيص PDF</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
-<style>
-body{margin:0;font-family:Arial;background:#f5f5f5}
-.header{background:#1a73e8;color:#fff;padding:15px 20px;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:22px;font-weight:bold}
-.coins{background:rgba(255,255,255,.2);padding:6px 14px;border-radius:20px}
-.section{display:none;max-width:1100px;margin:25px auto;background:#fff;padding:25px;border-radius:8px}
-.section.active{display:block}
-h2{color:#1a73e8;margin-top:0}
-button{padding:10px 20px;border:0;border-radius:6px;font-weight:bold;cursor:pointer}
-.primary{background:#1a73e8;color:#fff}
-.danger{background:#dc3545;color:#fff}
-.upload{border:3px dashed #1a73e8;padding:50px;text-align:center;cursor:pointer}
-.loading{text-align:center;font-size:18px}
-.result-box{background:#e8f0fe;padding:15px;border-radius:6px;text-align:center;margin:10px 0}
-.toolbar{display:flex;gap:10px;margin-bottom:15px}
-.page{background:#fff;border:1px solid #ccc;padding:20px;margin:20px 0}
-.law{background:#fff3cd;padding:12px;border-radius:6px;margin-top:15px}
-input[type=range]{width:100%}
-select,textarea{width:100%;padding:8px;margin-top:6px}
-canvas{border:1px solid #1a73e8;border-radius:6px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تلخيص PDF - عون</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <style>
+        body { font-family: Arial; margin: 0; padding: 0; background: #f5f5f5; }
+        .header { background: #1a73e8; color: white; padding: 15px 20px; display: flex; justify-content: space-between; }
+        .logo { font-size: 24px; font-weight: bold; }
+        .coins { background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
+        .section { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; display: none; }
+        .section.active { display: block; }
+        h2 { color: #1a73e8; margin-bottom: 20px; }
+        #uploadArea { border: 3px dashed #1a73e8; border-radius: 8px; padding: 50px 20px; text-align: center; cursor: pointer; background: #f8f9fa; }
+        input[type="file"] { display: none; }
+        .analysis-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .result-box { background: #e8f0fe; padding: 15px; border-radius: 6px; text-align: center; border: 1px solid #1a73e8; }
+        .result-value { font-size: 24px; font-weight: bold; color: #1a73e8; margin: 5px 0; }
+        .buttons { display: flex; gap: 10px; margin-top: 20px; justify-content: center; }
+        button { padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: #1a73e8; color: white; }
+        .btn-secondary { background: #dc3545; color: white; }
+        .control-group { margin: 15px 0; }
+        .options { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+        .option-btn { padding: 8px 15px; border: 2px solid #ddd; border-radius: 4px; cursor: pointer; }
+        .option-btn.selected { background: #1a73e8; color: white; border-color: #1a73e8; }
+        textarea { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px; margin: 10px 0; min-height: 80px; }
+        .loading { text-align: center; padding: 30px; }
+        .page-result { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 20px; margin: 15px 0; }
+        .page-header { background: #1a73e8; color: white; padding: 12px; border-radius: 4px; margin-bottom: 15px; }
+        .law-section { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 12px; margin: 10px 0; }
+        .tools { display: flex; gap: 8px; margin: 15px 0; padding: 12px; background: #f8f9fa; border-radius: 4px; }
+        canvas { border: 2px solid #1a73e8; border-radius: 6px; background: white; cursor: crosshair; display: block; margin: 0 auto; }
+        .alert { padding: 12px; border-radius: 4px; margin: 10px 0; display: none; }
+        .alert-success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .alert-error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+    </style>
 </head>
-
 <body>
+    <div class="header">
+        <div class="logo">عون</div>
+        <div class="coins">النقاط: <span id="coinsCount">0</span></div>
+    </div>
+    
+    <div class="container">
+        <div id="alert" class="alert"></div>
+        
+        <div id="uploadSection" class="section active">
+            <h2>رفع ملف PDF للتلخيص</h2>
+            <div id="uploadArea">
+                <div style="font-size: 40px; margin-bottom: 10px;">📁</div>
+                <div style="font-size: 18px; margin-bottom: 5px; color: #1a73e8;">انقر لرفع ملف PDF</div>
+                <div style="color: #666;">الحد الأقصى: 10MB</div>
+                <input type="file" id="pdfInput" accept=".pdf">
+            </div>
+        </div>
+        
+        <div id="analysisSection" class="section">
+            <h2>نتيجة التحليل</h2>
+            <div class="analysis-grid">
+                <div class="result-box">
+                    <div>الصفحات</div>
+                    <div class="result-value" id="pagesCount">0</div>
+                </div>
+                <div class="result-box">
+                    <div>الكلمات</div>
+                    <div class="result-value" id="wordsCount">0</div>
+                </div>
+                <div class="result-box">
+                    <div>التكلفة</div>
+                    <div class="result-value" id="coinsCost">0</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin: 15px 0; padding: 12px; background: #fff3cd; border-radius: 6px;">
+                سيتم خصم <span id="coinsToDeduct" style="font-weight: bold; color: #1a73e8;">0</span> نقطة
+            </div>
+            <div class="buttons">
+                <button id="btnConfirm" class="btn-primary">متابعة</button>
+                <button id="btnCancel" class="btn-secondary">إلغاء</button>
+            </div>
+        </div>
+        
+        <div id="controlSection" class="section">
+            <h2>إعدادات التلخيص</h2>
+            
+            <div class="control-group">
+                <label>عدد الصفحات: <span id="pagesValue">1</span></label>
+                <input type="range" id="pagesSlider" min="1" max="25" value="1" style="width:100%; margin:10px 0;">
+            </div>
+            
+            <div class="control-group">
+                <label>نوع الشرح:</label>
+                <div class="options" id="styleOptions">
+                    <div class="option-btn" data-value="بسيط">بسيط</div>
+                    <div class="option-btn" data-value="معقد">معقد</div>
+                    <div class="option-btn" data-value="طفولي">طفولي</div>
+                    <div class="option-btn" data-value="عالي المستوى">عالي المستوى</div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>شخصية الشارح:</label>
+                <div class="options" id="personalityOptions">
+                    <div class="option-btn" data-value="دكتور جامعي">دكتور جامعي</div>
+                    <div class="option-btn" data-value="أستاذ مدرسي">أستاذ مدرسي</div>
+                    <div class="option-btn" data-value="طالب">طالب</div>
+                    <div class="option-btn" data-value="عالم">عالم</div>
+                    <div class="option-btn" data-value="صديق">صديق</div>
+                    <div class="option-btn" data-value="هاوي">هاوي</div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>تعليق إضافي:</label>
+                <textarea id="userComment" placeholder="ملاحظات إضافية..."></textarea>
+            </div>
+            
+            <div class="buttons">
+                <button id="btnGenerate" class="btn-primary">بدء التلخيص</button>
+            </div>
+        </div>
+        
+        <div id="loadingSection" class="section">
+            <div class="loading">
+                <div style="font-size: 40px; margin-bottom: 15px;">⏳</div>
+                <div id="loadingText">جارٍ المعالجة...</div>
+            </div>
+        </div>
+        
+        <div id="resultsSection" class="section">
+            <h2>نتائج التلخيص</h2>
+            
+            <div class="tools">
+                <button class="option-btn active" id="btnPen">✏️ قلم</button>
+                <button class="option-btn" id="btnHighlighter">🖍️ تظليل</button>
+                <input type="color" id="colorPicker" value="#000000" style="height:40px;">
+                <button class="option-btn" id="btnClear">🗑️ مسح</button>
+                <button class="option-btn" id="btnSaveDraw">💾 حفظ</button>
+            </div>
+            
+            <div style="text-align:center; margin:15px 0;">
+                <canvas id="drawingCanvas" width="700" height="350"></canvas>
+            </div>
+            
+            <div id="resultsContent"></div>
+        </div>
+    </div>
 
-<div class="header">
-<div class="logo">عَون</div>
-<div class="coins">النقاط: <span id="coins">120</span></div>
-</div>
+    <script>
+        // ==================== Firebase ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
+            authDomain: "marvel1-654dd.firebaseapp.com",
+            databaseURL: "https://marvel1-654dd-default-rtdb.firebaseio.com",
+            projectId: "marvel1-654dd",
+            storageBucket: "marvel1-654dd.appspot.com"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
 
-<!-- رفع الملف -->
-<div id="uploadSection" class="section active">
-<h2>رفع ملف PDF</h2>
-<div class="upload" onclick="pdfInput.click()">اضغط لرفع الملف</div>
-<input type="file" id="pdfInput" accept=".pdf" hidden>
-</div>
+        // ==================== Global Variables ====================
+        let currentUser = null;
+        let uploadedFile = null;
+        let fileAnalysis = null;
+        let selectedStyle = "بسيط";
+        let selectedPersonality = "دكتور جامعي";
+        let canvas, ctx;
+        let drawing = false;
+        let currentTool = 'pen';
+        let currentColor = '#000000';
+        let pdfBuffer = null;
+        let pdfDocument = null;
 
-<!-- تحميل -->
-<div id="loadingSection" class="section">
-<div class="loading" id="loadingText">عون يحلل الملف...</div>
-</div>
+        // ==================== Authentication ====================
+        async function checkAuth() {
+            return new Promise((resolve) => {
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        currentUser = user;
+                        await loadUserData();
+                        resolve(true);
+                    } else {
+                        showAlert("يجب تسجيل الدخول", "error");
+                        setTimeout(() => window.location.href = 'login.html', 2000);
+                        resolve(false);
+                    }
+                });
+            });
+        }
 
-<!-- تحليل -->
-<div id="analysisSection" class="section">
-<h2>تحليل الملف</h2>
-<div class="result-box">عدد الصفحات: <b id="pagesCount"></b></div>
-<div class="result-box">عدد الكلمات: <b id="wordsCount"></b></div>
-<div class="result-box">سيتم خصم: <b id="coinsCost"></b> نقطة</div>
-<p>سيتم خصم عدد (<span id="coinsCost2"></span>) من نقاطك، هل تود المتابعة؟</p>
-<button class="primary" onclick="goControls()">متابعة</button>
-<button class="danger" onclick="resetAll()">إلغاء</button>
-</div>
+        async function loadUserData() {
+            try {
+                const snapshot = await database.ref('users_Awn').once('value');
+                const users = snapshot.val();
+                
+                for (const [userId, userData] of Object.entries(users)) {
+                    if (userId !== 'noty_publick' && userData.email === currentUser.email) {
+                        currentUser.uid = userId;
+                        currentUser.dbId = userData.id;
+                        currentUser.name = userData.name || '';
+                        currentUser.coin = userData.coin || 0;
+                        currentUser.admin = userData.admin === true;
+                        currentUser.banned = userData.banned === true;
+                        
+                        document.getElementById('coinsCount').textContent = currentUser.coin;
+                        
+                        if (currentUser.banned) {
+                            await auth.signOut();
+                            showAlert("حسابك محظور", "error");
+                            setTimeout(() => window.location.href = 'login.html', 2000);
+                            return false;
+                        }
+                        
+                        return true;
+                    }
+                }
+                
+                await auth.signOut();
+                showAlert("حساب غير موجود", "error");
+                setTimeout(() => window.location.href = 'login.html', 2000);
+                return false;
+                
+            } catch (error) {
+                console.error("Error loading user:", error);
+                return false;
+            }
+        }
 
-<!-- الإعدادات -->
-<div id="controlSection" class="section">
-<h2>إعدادات التلخيص</h2>
+        // ==================== File Upload ====================
+        document.getElementById('uploadArea').addEventListener('click', () => {
+            document.getElementById('pdfInput').click();
+        });
 
-<label>عدد الصفحات</label>
-<input type="range" id="pagesSlider" min="1" max="25" value="1">
-<div id="pagesVal">1</div>
+        document.getElementById('pdfInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (!await checkAuth()) return;
+                await handleFileUpload(file);
+            }
+        });
 
-<label>نوع الشرح</label>
-<select id="style">
-<option>بسيط</option>
-<option>معقد</option>
-<option>طفولي</option>
-<option>عالي المستوى</option>
-</select>
+        async function handleFileUpload(file) {
+            if (file.size > 10 * 1024 * 1024) {
+                showAlert("الحد الأقصى 10MB", "error");
+                return;
+            }
 
-<label>شخصية الشرح</label>
-<select id="persona">
-<option>دكتور جامعي</option>
-<option>أستاذ مدرسي</option>
-<option>طالب</option>
-<option>عالم</option>
-<option>صديق</option>
-<option>هاوي</option>
-</select>
+            uploadedFile = file;
+            showSection('loadingSection');
+            updateLoadingText("جاري تحليل الملف...");
+            
+            try {
+                await analyzePDF(file);
+                showSection('analysisSection');
+            } catch (error) {
+                console.error("Error in file upload:", error);
+                showAlert("خطأ في تحليل الملف", "error");
+                showSection('uploadSection');
+            }
+        }
 
-<label>تعليق المستخدم (اختياري)</label>
-<textarea id="comment"></textarea>
+        // ==================== PDF Analysis ====================
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-<button class="primary" onclick="startSummary()">بدء التلخيص</button>
-</div>
+        async function analyzePDF(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                pdfBuffer = arrayBuffer;
+                
+                pdfDocument = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+                
+                let totalWords = 0;
+                const samplePages = Math.min(pdfDocument.numPages, 5);
+                
+                for (let i = 1; i <= samplePages; i++) {
+                    const page = await pdfDocument.getPage(i);
+                    const content = await page.getTextContent();
+                    
+                    if (content.items.length > 0) {
+                        let text = '';
+                        content.items.forEach(t => text += t.str + ' ');
+                        totalWords += text.trim().split(/\s+/).filter(w => w.length >= 2).length;
+                    } else {
+                        totalWords += 250;
+                    }
+                }
+                
+                const avgWordsPerPage = Math.floor(totalWords / samplePages);
+                const estimatedTotalWords = avgWordsPerPage * pdfDocument.numPages;
 
-<!-- النتائج -->
-<div id="resultSection" class="section">
-<h2>نتائج التلخيص</h2>
-<div class="toolbar">
-<button onclick="zoom(1)">تكبير</button>
-<button onclick="zoom(-1)">تصغير</button>
-</div>
-<div id="results"></div>
-</div>
+                let coins = Math.ceil((estimatedTotalWords / 1000) * 2) / 2;
+                if (coins < 1) coins = 1;
+                if (coins > 100) coins = 100;
 
-<script>
-// ================= Firebase =================
-firebase.initializeApp({
-databaseURL:"https://marvel1-654dd-default-rtdb.firebaseio.com"
-});
-const db=firebase.database();
+                fileAnalysis = {
+                    pages: pdfDocument.numPages,
+                    words: estimatedTotalWords,
+                    coins: coins,
+                    fileName: file.name
+                };
 
-// ================= Globals =================
-let pdfBuffer,analysis,fontSize=16;
-const GEMINI_KEY="AIzaSyBLPQghg4mE7gW2P8hfmSN_fIaz_mI4oTc";
+                document.getElementById('pagesCount').textContent = fileAnalysis.pages;
+                document.getElementById('wordsCount').textContent = fileAnalysis.words.toLocaleString();
+                document.getElementById('coinsCost').textContent = fileAnalysis.coins;
+                document.getElementById('coinsToDeduct').textContent = fileAnalysis.coins;
 
-// ================= PDF Analyzer (كما هو) =================
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            } catch (error) {
+                console.error("PDF error:", error);
+                throw new Error("خطأ في قراءة الملف PDF");
+            }
+        }
 
-pdfInput.onchange=async e=>{
-const file=e.target.files[0];
-if(!file)return;
+        // ==================== Buttons ====================
+        document.getElementById('btnCancel').addEventListener('click', () => {
+            resetUpload();
+            showAlert("تم الإلغاء", "error");
+        });
 
-pdfBuffer=new Uint8Array(await file.arrayBuffer());
+        document.getElementById('btnConfirm').addEventListener('click', async () => {
+            if (!currentUser) return;
+            
+            if (currentUser.coin < fileAnalysis.coins) {
+                showAlert("رصيد غير كافي", "error");
+                return;
+            }
 
-show("loadingSection");
-const msgs=[
-"عون يحلل الملف...",
-"عون يحسب عدد الصفحات...",
-"عون يستخرج كل الكلمات...",
-"عون يجهز البيانات..."
-];
-let i=0;
-const interval=setInterval(()=>{
-loadingText.textContent=msgs[i++%msgs.length];
-},1200);
+            const originalCoins = currentUser.coin;
+            
+            try {
+                const userRef = database.ref(`users_Awn/${currentUser.uid}`);
+                const newCoins = currentUser.coin - fileAnalysis.coins;
+                
+                await userRef.update({ coin: newCoins });
+                
+                currentUser.coin = newCoins;
+                document.getElementById('coinsCount').textContent = newCoins;
+                
+                const transactionId = `trans_${Date.now()}_${currentUser.uid}`;
+                await database.ref(`transactions/${transactionId}`).set({
+                    userId: currentUser.uid,
+                    type: "summary_deduction",
+                    amount: fileAnalysis.coins,
+                    originalAmount: originalCoins,
+                    fileName: uploadedFile.name,
+                    timestamp: Date.now(),
+                    status: "processing"
+                });
+                
+                currentUser.transactionId = transactionId;
+                currentUser.originalCoins = originalCoins;
+                
+                showSection('controlSection');
+                
+            } catch (error) {
+                console.error("Deduct error:", error);
+                showAlert("خطأ في الخصم", "error");
+                currentUser.coin = originalCoins;
+                document.getElementById('coinsCount').textContent = originalCoins;
+            }
+        });
 
-const pdf=await pdfjsLib.getDocument(pdfBuffer).promise;
-let totalWords=0;
+        // ==================== Controls ====================
+        document.querySelectorAll('#styleOptions .option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#styleOptions .option-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedStyle = this.dataset.value;
+            });
+        });
 
-for(let p=1;p<=pdf.numPages;p++){
-const page=await pdf.getPage(p);
-const content=await page.getTextContent();
-if(content.items.length>0){
-let text='';
-content.items.forEach(t=>text+=t.str+' ');
-totalWords+=text.trim().split(/\s+/).filter(w=>w.length>=2).length;
-}else{
-totalWords+=250;
-}
-}
+        document.querySelectorAll('#personalityOptions .option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#personalityOptions .option-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedPersonality = this.dataset.value;
+            });
+        });
 
-let coins=Math.ceil((totalWords/1000)*2)/2;
-if(coins<1)coins=1;
+        document.querySelector('#styleOptions .option-btn').classList.add('selected');
+        document.querySelector('#personalityOptions .option-btn').classList.add('selected');
 
-analysis={pages:pdf.numPages,words:totalWords,coins};
+        document.getElementById('pagesSlider').addEventListener('input', function() {
+            const maxPages = fileAnalysis ? fileAnalysis.pages : 25;
+            if (this.value > maxPages) {
+                this.value = maxPages;
+            }
+            document.getElementById('pagesValue').textContent = this.value;
+        });
 
-setTimeout(()=>{
-clearInterval(interval);
-pagesCount.textContent=analysis.pages;
-wordsCount.textContent=analysis.words;
-coinsCost.textContent=analysis.coins;
-coinsCost2.textContent=analysis.coins;
-show("analysisSection");
-},5000);
-};
+        // ==================== Send to Gemini API ====================
+        document.getElementById('btnGenerate').addEventListener('click', async () => {
+            const pagesToSummarize = parseInt(document.getElementById('pagesSlider').value);
+            const userComment = document.getElementById('userComment').value;
 
-// ================= Controls =================
-pagesSlider.oninput=()=>pagesVal.textContent=pagesSlider.value;
+            if (pagesToSummarize > fileAnalysis.pages) {
+                showAlert("الصفحات المطلوبة أكبر من الملف", "error");
+                return;
+            }
 
-// ================= Gemini =================
-async function startSummary(){
-show("loadingSection");
-loadingText.textContent="عون يلخص...";
+            showSection('loadingSection');
+            updateLoadingText("جارٍ إرسال إلى Gemini...");
 
-const prompt=`SYSTEM MODE: CONTROLLED EXECUTION ENGINE
+            try {
+                const result = await sendToGemini(pagesToSummarize, selectedStyle, selectedPersonality, userComment);
+                
+                if (currentUser.transactionId) {
+                    await database.ref(`transactions/${currentUser.transactionId}`).update({
+                        status: "completed",
+                        summaryResult: "success",
+                        completedAt: Date.now()
+                    });
+                }
+                
+                await saveResults(result);
+                displayResults(result);
+                initDrawingCanvas();
+                showSection('resultsSection');
+                showAlert("تم التلخيص بنجاح!", "success");
+                
+            } catch (error) {
+                console.error("Gemini error:", error);
+                await refundCoins();
+                showAlert(`خطأ في التلخيص: ${error.message}`, "error");
+                showSection('uploadSection');
+            }
+        });
 
-You are a non-conversational processing engine.
-You execute tasks only.
+        async function sendToGemini(pages, style, personality, comment) {
+            // تحضير الـ prompt
+            const prompt = `
+SYSTEM MODE: PDF SUMMARIZATION ENGINE
+You are a specialized PDF summarization engine that ONLY processes PDF files.
 
-REQUIRED USER INPUTS:
-- ﴿${pagesSlider.value}﴾
-- ﴿${style.value}﴾
-- ﴿${persona.value}﴾
+REQUIRED INPUTS:
+- Number of pages to summarize: ${pages}
+- Summary style: ${style}
+- Explainer personality: ${personality}
+- Additional notes: ${comment || 'لا يوجد'}
 
-OPTIONAL USER INPUT:
-- ﴿${comment.value||"لا يوجد"}﴾
+INSTRUCTIONS:
+1. Analyze ONLY the first ${pages} pages of the PDF
+2. Summarize each page separately
+3. Each page summary must be approximately 300 words in Arabic
+4. If a page contains laws, regulations, or formulas, extract them in a separate 'law' field
+5. Follow the style: ${style}
+6. Use the personality: ${personality}
+
+OUTPUT FORMAT (JSON ONLY):
+[
+  {
+    "page": 1,
+    "Dec": "شرح مفصل للصفحة الأولى بـ 300 كلمة تقريباً",
+    "law": "إذا كانت الصفحة تحتوي قوانين أو معادلات"
+  },
+  {
+    "page": 2,
+    "Dec": "شرح مفصل للصفحة الثانية",
+    "law": ""
+  }
+]
+
+If PDF is empty or corrupted, return:
+{"error": "Invalid PDF Content"}
 `;
 
-let binary='';
-pdfBuffer.forEach(b=>binary+=String.fromCharCode(b));
-const base64=btoa(binary);
+            try {
+                // تحويل PDF إلى base64
+                let base64Data;
+                const bytes = new Uint8Array(pdfBuffer);
+                let binary = '';
+                for (let i = 0; i < bytes.byteLength; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                base64Data = btoa(binary);
 
-const res=await fetch(
-`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${GEMINI_KEY}`,
-{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-contents:[{parts:[
-{text:prompt},
-{inline_data:{mime_type:"application/pdf",data:base64}}
-]}],
-generationConfig:{temperature:.2,maxOutputTokens:4096}
-})
-});
+                // استخدام Gemini 2.5 Flash Lite
+                const apiKey = "AIzaSyBLPQghg4mE7gW2P8hfmSN_fIaz_mI4oTc";
+                const model = "gemini-2.5-flash-lite";
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                
+                const requestBody = {
+                    contents: [{
+                        parts: [
+                            { text: prompt },
+                            {
+                                inline_data: {
+                                    mime_type: "application/pdf",
+                                    data: base64Data
+                                }
+                            }
+                        ]
+                    }],
+                    generationConfig: {
+                        temperature: 0.3,
+                        maxOutputTokens: 8192,
+                        topP: 0.9,
+                        topK: 40
+                    },
+                    safetySettings: [
+                        {
+                            category: "HARM_CATEGORY_HARASSMENT",
+                            threshold: "BLOCK_NONE"
+                        },
+                        {
+                            category: "HARM_CATEGORY_HATE_SPEECH",
+                            threshold: "BLOCK_NONE"
+                        },
+                        {
+                            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                            threshold: "BLOCK_NONE"
+                        },
+                        {
+                            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+                            threshold: "BLOCK_NONE"
+                        }
+                    ]
+                };
 
-const data=await res.json();
-const text=data.candidates[0].content.parts[0].text;
-const json=JSON.parse(text);
+                console.log("Sending request to Gemini 2.5 Flash Lite...");
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
 
-// حفظ
-await db.ref("records").push({
-user:"demo",
-file:"pdf",
-type:"summary",
-pages:analysis.pages,
-result:json
-});
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error("API Error Response:", errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
+                }
 
-render(json);
-show("resultSection");
-}
+                const data = await response.json();
+                console.log("Gemini Response:", data);
 
-// ================= Render =================
-function render(arr){
-results.innerHTML="";
-arr.forEach(p=>{
-results.innerHTML+=`
-<div class="page" style="font-size:${fontSize}px">
-<h3>الصفحة ${p.page}</h3>
-<p>${p.Dec}</p>
-${p.law?`<div class="law"><b>قوانين الصفحة</b><br>${p.law}</div>`:""}
-</div>`;
-});
-}
+                if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts[0]) {
+                    throw new Error("Invalid response structure from Gemini");
+                }
 
-function zoom(v){fontSize+=v*2;render([...document.querySelectorAll('.page')].map((_,i)=>analysis));}
+                const responseText = data.candidates[0].content.parts[0].text;
+                console.log("Response Text:", responseText.substring(0, 500));
 
-// ================= Helpers =================
-function show(id){
-document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-document.getElementById(id).classList.add('active');
-}
-function resetAll(){location.reload();}
-</script>
+                // استخراج JSON من الاستجابة
+                let jsonResult;
+                try {
+                    // حاول تحليل كامل النص كـ JSON أولاً
+                    jsonResult = JSON.parse(responseText.trim());
+                } catch (e) {
+                    // إذا فشل، ابحث عن JSON داخل النص
+                    const jsonMatch = responseText.match(/\[\s*\{[\s\S]*\}\s*\]/);
+                    if (!jsonMatch) {
+                        throw new Error("No valid JSON found in response");
+                    }
+                    jsonResult = JSON.parse(jsonMatch[0]);
+                }
 
+                // التحقق من صحة الهيكل
+                if (Array.isArray(jsonResult) && jsonResult.length > 0) {
+                    // التأكد من وجود الحقول المطلوبة
+                    const validatedResult = jsonResult.map(item => ({
+                        page: item.page || 0,
+                        Dec: item.Dec || item.dec || item.summary || "لا يوجد شرح",
+                        law: item.law || ""
+                    }));
+                    return validatedResult;
+                } else if (jsonResult.error) {
+                    throw new Error(jsonResult.error);
+                } else {
+                    throw new Error("Invalid response format");
+                }
+
+            } catch (error) {
+                console.error("Gemini API error:", error);
+                throw error;
+            }
+        }
+
+        async function refundCoins() {
+            try {
+                if (!currentUser || !currentUser.transactionId) return;
+                
+                const userRef = database.ref(`users_Awn/${currentUser.uid}`);
+                await userRef.update({ coin: currentUser.originalCoins });
+                
+                currentUser.coin = currentUser.originalCoins;
+                document.getElementById('coinsCount').textContent = currentUser.originalCoins;
+                
+                await database.ref(`transactions/${currentUser.transactionId}`).update({
+                    status: "refunded",
+                    refundedAt: Date.now(),
+                    error: "Gemini API failed"
+                });
+                
+            } catch (refundError) {
+                console.error("Refund error:", refundError);
+            }
+        }
+
+        // ==================== Save Results ====================
+        async function saveResults(results) {
+            try {
+                const recordId = `record_${Date.now()}_${currentUser.uid}`;
+                const recordData = {
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    userName: currentUser.name || currentUser.email,
+                    fileName: uploadedFile.name,
+                    fileSize: uploadedFile.size,
+                    pages: fileAnalysis.pages,
+                    summarizedPages: results.length,
+                    summaryStyle: selectedStyle,
+                    explainerPersonality: selectedPersonality,
+                    coinsUsed: fileAnalysis.coins,
+                    summaryResults: results,
+                    timestamp: Date.now(),
+                    status: "completed",
+                    type: "summary",
+                    transactionId: currentUser.transactionId || null
+                };
+
+                await database.ref(`records/${recordId}`).set(recordData);
+                await database.ref(`users_Awn/${currentUser.uid}/records/${recordId}`).set({
+                    type: "summary",
+                    fileName: uploadedFile.name,
+                    timestamp: Date.now(),
+                    coinsUsed: fileAnalysis.coins,
+                    status: "completed"
+                });
+                
+            } catch (error) {
+                console.error("Save results error:", error);
+                throw error;
+            }
+        }
+
+        // ==================== Display Results ====================
+        function displayResults(results) {
+            const container = document.getElementById('resultsContent');
+            container.innerHTML = '';
+            
+            results.forEach(result => {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'page-result';
+                pageDiv.innerHTML = `
+                    <div class="page-header">
+                        <strong>الصفحة ${result.page}</strong>
+                        <small>${selectedPersonality} - ${selectedStyle}</small>
+                    </div>
+                    <div style="line-height:1.7; margin:15px 0; text-align: right; direction: rtl;">
+                        ${result.Dec}
+                    </div>
+                    ${result.law ? `
+                    <div class="law-section">
+                        <strong>القوانين/المعادلات:</strong>
+                        <div style="margin-top:8px; text-align: right; direction: rtl;">${result.law}</div>
+                    </div>
+                    ` : ''}
+                `;
+                container.appendChild(pageDiv);
+            });
+        }
+
+        // ==================== Drawing ====================
+        function initDrawingCanvas() {
+            canvas = document.getElementById('drawingCanvas');
+            ctx = canvas.getContext('2d');
+            
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            loadDrawings();
+        }
+
+        function startDrawing(e) {
+            drawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        }
+
+        function draw(e) {
+            if (!drawing) return;
+            
+            ctx.lineWidth = currentTool === 'highlighter' ? 10 : 2;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = currentTool === 'highlighter' ? currentColor + '80' : currentColor;
+            
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        }
+
+        function stopDrawing() {
+            drawing = false;
+        }
+
+        document.getElementById('btnPen').addEventListener('click', function() {
+            currentTool = 'pen';
+            this.classList.add('selected');
+            document.getElementById('btnHighlighter').classList.remove('selected');
+        });
+
+        document.getElementById('btnHighlighter').addEventListener('click', function() {
+            currentTool = 'highlighter';
+            this.classList.add('selected');
+            document.getElementById('btnPen').classList.remove('selected');
+        });
+
+        document.getElementById('colorPicker').addEventListener('change', (e) => {
+            currentColor = e.target.value;
+        });
+
+        document.getElementById('btnClear').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        document.getElementById('btnSaveDraw').addEventListener('click', async () => {
+            try {
+                const drawingId = `draw_${Date.now()}_${currentUser.uid}`;
+                const imageData = canvas.toDataURL();
+                
+                await database.ref(`drawings/${drawingId}`).set({
+                    userId: currentUser.uid,
+                    image: imageData,
+                    timestamp: Date.now(),
+                    relatedFile: uploadedFile.name,
+                    relatedRecord: currentUser.transactionId
+                });
+                
+                showAlert("تم حفظ الرسم", "success");
+            } catch (error) {
+                console.error("Save drawing error:", error);
+                showAlert("خطأ في حفظ الرسم", "error");
+            }
+        });
+
+        async function loadDrawings() {
+            try {
+                const snapshot = await database.ref('drawings')
+                    .orderByChild('userId')
+                    .equalTo(currentUser.uid)
+                    .limitToLast(1)
+                    .once('value');
+                
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const lastDrawing = Object.values(data)[0];
+                    
+                    if (lastDrawing.image) {
+                        const img = new Image();
+                        img.onload = () => {
+                            ctx.drawImage(img, 0, 0);
+                        };
+                        img.src = lastDrawing.image;
+                    }
+                }
+            } catch (error) {
+                console.error("Load drawings error:", error);
+            }
+        }
+
+        // ==================== Helper Functions ====================
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function updateLoadingText(text) {
+            document.getElementById('loadingText').textContent = text;
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alert');
+            alertDiv.textContent = message;
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 4000);
+        }
+
+        function resetUpload() {
+            document.getElementById('pdfInput').value = '';
+            uploadedFile = null;
+            fileAnalysis = null;
+            pdfBuffer = null;
+            pdfDocument = null;
+            showSection('uploadSection');
+        }
+
+        // ==================== Initialize ====================
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            
+            document.querySelector('#styleOptions .option-btn').classList.add('selected');
+            document.querySelector('#personalityOptions .option-btn').classList.add('selected');
+        });
+    </script>
 </body>
 </html>
