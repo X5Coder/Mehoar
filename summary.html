@@ -1,206 +1,410 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تلخيص PDF</title>
+    <title>تلخيص PDF - عَون</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
     <style>
-        body {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: Arial, sans-serif;
-            margin: 20px;
-            background: #f5f5f5;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        
+        body {
+            background: #f0f2f5;
+            color: #333;
+            min-height: 100vh;
         }
+        
         .top-bar {
+            background: #1a73e8;
+            color: white;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .coin-display {
-            background: #ffd700;
-            padding: 5px 15px;
-            border-radius: 20px;
+        
+        .logo {
+            font-size: 24px;
             font-weight: bold;
         }
-        #uploadArea {
-            border: 2px dashed #4CAF50;
-            padding: 40px;
-            text-align: center;
-            margin: 20px 0;
-            cursor: pointer;
+        
+        .coins-display {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+        
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        
         .section {
-            display: none;
-            margin: 20px 0;
-            padding: 20px;
-            border: 1px solid #ddd;
+            background: white;
             border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
         }
+        
+        .section.active {
+            display: block;
+        }
+        
+        h2 {
+            color: #1a73e8;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #1a73e8;
+            padding-bottom: 10px;
+        }
+        
+        #uploadArea {
+            border: 3px dashed #1a73e8;
+            border-radius: 8px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: #f8f9fa;
+        }
+        
+        #uploadArea:hover {
+            background: #e8f0fe;
+        }
+        
+        #pdfInput {
+            display: none;
+        }
+        
+        .analysis-result {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .result-box {
+            background: #e8f0fe;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #1a73e8;
+        }
+        
+        .result-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1a73e8;
+            margin: 10px 0;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-primary {
+            background: #1a73e8;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0d62d9;
+        }
+        
+        .btn-secondary {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #c82333;
+        }
+        
         .control-group {
+            margin: 20px 0;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .option-btn {
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .option-btn.selected {
+            background: #1a73e8;
+            color: white;
+            border-color: #1a73e8;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin: 10px 0;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
             margin: 15px 0;
         }
-        .option-btn {
-            padding: 8px 15px;
-            margin: 5px;
-            border: 1px solid #ddd;
-            background: #f9f9f9;
-            cursor: pointer;
-            border-radius: 4px;
+        
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
         }
-        .option-btn.selected {
-            background: #4CAF50;
-            color: white;
-            border-color: #4CAF50;
+        
+        .loading-text {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
         }
-        #canvasContainer {
-            position: relative;
-            margin: 20px 0;
-        }
-        canvas {
-            border: 1px solid #000;
-            background: white;
-            cursor: crosshair;
-        }
-        .tools {
-            margin: 10px 0;
-        }
-        .tool-btn {
-            padding: 8px 12px;
-            margin: 5px;
-            background: #2196F3;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+        
         .result-page {
             background: white;
-            padding: 20px;
-            margin: 10px 0;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
             border: 1px solid #ddd;
             position: relative;
-            min-height: 300px;
         }
+        
+        .page-header {
+            background: #1a73e8;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
         .law-section {
             background: #fff3cd;
-            padding: 15px;
-            margin: 10px 0;
             border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .tools {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        
+        .tool-btn {
+            padding: 10px 15px;
+            background: white;
+            border: 1px solid #ddd;
             border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .tool-btn.active {
+            background: #1a73e8;
+            color: white;
+            border-color: #1a73e8;
+        }
+        
+        canvas {
+            border: 2px solid #1a73e8;
+            border-radius: 8px;
+            background: white;
+            cursor: crosshair;
+            display: block;
+            margin: 20px auto;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            display: none;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="top-bar">
-            <h2>عَون</h2>
-            <div class="coin-display">النقاط: <span id="userCoins">0</span></div>
+    <div class="top-bar">
+        <div class="logo">عَون</div>
+        <div class="coins-display">
+            <span id="coinsCount">0</span> نقطة
         </div>
-
-        <!-- تنبيهات -->
-        <div id="alert" style="display:none; padding:10px; margin:10px 0; border-radius:4px;"></div>
-
+    </div>
+    
+    <div class="container">
+        <div id="alert" class="alert"></div>
+        
         <!-- قسم رفع الملف -->
-        <div id="uploadSection">
-            <h3>رفع ملف PDF</h3>
+        <div id="uploadSection" class="section active">
+            <h2>رفع ملف PDF</h2>
             <div id="uploadArea">
-                انقر لرفع ملف PDF
-                <input type="file" id="pdfInput" accept=".pdf" style="display:none;">
+                <div style="font-size: 48px; margin-bottom: 15px;">📁</div>
+                <div style="font-size: 20px; margin-bottom: 10px; color: #1a73e8;">انقر أو اسحب ملف PDF هنا</div>
+                <div style="color: #666;">الحد الأقصى: 10MB</div>
+                <input type="file" id="pdfInput" accept=".pdf">
             </div>
         </div>
-
+        
         <!-- نتائج التحليل -->
         <div id="analysisSection" class="section">
-            <h3>نتيجة التحليل</h3>
-            <div>
-                <p>عدد الصفحات: <span id="pagesCount">0</span></p>
-                <p>عدد الكلمات: <span id="wordsCount">0</span></p>
-                <p>التكلفة: <span id="coinsCost">0</span> نقطة</p>
+            <h2>نتيجة التحليل</h2>
+            <div class="analysis-result">
+                <div class="result-box">
+                    <div>عدد الصفحات</div>
+                    <div class="result-value" id="pagesCount">0</div>
+                </div>
+                <div class="result-box">
+                    <div>عدد الكلمات</div>
+                    <div class="result-value" id="wordsCount">0</div>
+                </div>
+                <div class="result-box">
+                    <div>التكلفة</div>
+                    <div class="result-value" id="coinsCost">0</div>
+                </div>
             </div>
-            <div id="confirmation" style="margin:20px 0;">
-                <p>سيتم خصم <span id="coinsToDeduct">0</span> نقطة من رصيدك</p>
-                <button id="btnConfirm">متابعة</button>
-                <button id="btnCancel">إلغاء</button>
+            <div style="text-align: center; margin: 20px 0; padding: 15px; background: #fff3cd; border-radius: 6px;">
+                سيتم خصم <span id="coinsToDeduct" style="font-weight: bold; color: #1a73e8;">0</span> نقطة من رصيدك
+            </div>
+            <div class="buttons">
+                <button id="btnConfirm" class="btn-primary">متابعة</button>
+                <button id="btnCancel" class="btn-secondary">إلغاء</button>
             </div>
         </div>
-
+        
         <!-- إعدادات التلخيص -->
         <div id="controlSection" class="section">
-            <h3>إعدادات التلخيص</h3>
+            <h2>إعدادات التلخيص</h2>
             
             <div class="control-group">
-                <label>عدد الصفحات: <span id="pagesValue">1</span></label>
-                <input type="range" id="pagesSlider" min="1" max="25" value="1" style="width:100%">
+                <label>عدد الصفحات المراد تلخيصها: <span id="pagesValue">1</span></label>
+                <input type="range" id="pagesSlider" min="1" max="25" value="1">
             </div>
-
+            
             <div class="control-group">
                 <label>نوع الشرح:</label>
-                <div>
-                    <button class="option-btn" data-value="بسيط">بسيط</button>
-                    <button class="option-btn" data-value="معقد">معقد</button>
-                    <button class="option-btn" data-value="طفولي">طفولي</button>
-                    <button class="option-btn" data-value="عالي المستوى">عالي المستوى</button>
+                <div class="options" id="styleOptions">
+                    <div class="option-btn" data-value="بسيط">بسيط</div>
+                    <div class="option-btn" data-value="معقد">معقد</div>
+                    <div class="option-btn" data-value="طفولي">طفولي</div>
+                    <div class="option-btn" data-value="عالي المستوى">عالي المستوى</div>
                 </div>
             </div>
-
+            
             <div class="control-group">
                 <label>شخصية الشارح:</label>
-                <div>
-                    <button class="option-btn" data-value="دكتور جامعي">دكتور جامعي</button>
-                    <button class="option-btn" data-value="أستاذ مدرسي">أستاذ مدرسي</button>
-                    <button class="option-btn" data-value="طالب">طالب</button>
-                    <button class="option-btn" data-value="عالم">عالم</button>
-                    <button class="option-btn" data-value="صديق">صديق</button>
-                    <button class="option-btn" data-value="هاوي">هاوي</button>
+                <div class="options" id="personalityOptions">
+                    <div class="option-btn" data-value="دكتور جامعي">دكتور جامعي</div>
+                    <div class="option-btn" data-value="أستاذ مدرسي">أستاذ مدرسي</div>
+                    <div class="option-btn" data-value="طالب">طالب</div>
+                    <div class="option-btn" data-value="عالم">عالم</div>
+                    <div class="option-btn" data-value="صديق">صديق</div>
+                    <div class="option-btn" data-value="هاوي">هاوي</div>
                 </div>
             </div>
-
+            
             <div class="control-group">
                 <label>تعليق إضافي (اختياري):</label>
-                <textarea id="userComment" style="width:100%; height:80px;"></textarea>
+                <textarea id="userComment" placeholder="اكتب أي ملاحظات أو تعليمات إضافية هنا..."></textarea>
             </div>
-
-            <button id="btnGenerate">بدء التلخيص</button>
+            
+            <div class="buttons">
+                <button id="btnGenerate" class="btn-primary">بدء التلخيص</button>
+            </div>
         </div>
-
+        
         <!-- شاشة التحميل -->
-        <div id="loadingSection" class="section" style="text-align:center;">
-            <div id="loadingSpinner" style="width:50px;height:50px;border:5px solid #f3f3f3;border-top:5px solid #3498db;border-radius:50%;margin:20px auto;animation:spin 1s linear infinite;"></div>
-            <p id="loadingText">عَون يحلل الملف...</p>
+        <div id="loadingSection" class="section">
+            <div class="loading">
+                <div style="font-size: 48px; margin-bottom: 20px;">⏳</div>
+                <div class="loading-text" id="loadingText">عَون يحلل الملف...</div>
+            </div>
         </div>
-
+        
         <!-- النتائج -->
         <div id="resultsSection" class="section">
-            <h3>النتائج</h3>
+            <h2>نتائج التلخيص</h2>
+            
             <div class="tools">
-                <button class="tool-btn" id="btnPen">قلم</button>
-                <button class="tool-btn" id="btnHighlighter">تظليل</button>
+                <button class="tool-btn active" id="btnPen">✏️ قلم</button>
+                <button class="tool-btn" id="btnHighlighter">🖍️ تظليل</button>
                 <input type="color" id="colorPicker" value="#000000">
-                <button class="tool-btn" id="btnClear">مسح</button>
-                <button class="tool-btn" id="btnSaveDraw">حفظ الرسم</button>
+                <button class="tool-btn" id="btnClear">🗑️ مسح</button>
+                <button class="tool-btn" id="btnSaveDraw">💾 حفظ الرسم</button>
             </div>
-            <div id="canvasContainer">
+            
+            <div style="text-align: center; margin: 20px 0;">
                 <canvas id="drawingCanvas" width="750" height="400"></canvas>
             </div>
+            
             <div id="resultsContent"></div>
         </div>
     </div>
-
-    <!-- مكتبات -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
 
     <script>
         // ==================== تهيئة Firebase ====================
@@ -218,6 +422,7 @@
 
         // ==================== متغيرات عامة ====================
         let currentUser = null;
+        let userData = null;
         let uploadedFile = null;
         let fileAnalysis = null;
         let selectedStyle = "بسيط";
@@ -241,6 +446,9 @@
                         resolve(true);
                     } else {
                         showAlert("يجب تسجيل الدخول أولاً", "error");
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 2000);
                         resolve(false);
                     }
                 });
@@ -249,13 +457,52 @@
 
         async function loadUserData() {
             try {
-                const snapshot = await database.ref(`users/${currentUser.uid}`).once('value');
-                const userData = snapshot.val();
-                if (userData) {
-                    document.getElementById('userCoins').textContent = userData.coin || 0;
+                // البحث عن المستخدم في قاعدة البيانات باستخدام الإيميل
+                const usersRef = database.ref('users_Awn');
+                const snapshot = await usersRef.once('value');
+                
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    
+                    for (const [userId, userData] of Object.entries(users)) {
+                        if (userId !== 'noty_publick' && userData.email === currentUser.email) {
+                            // تحديث المستخدم الحالي
+                            currentUser.uid = userId;
+                            currentUser.dbId = userData.id;
+                            currentUser.name = userData.name || '';
+                            currentUser.coin = userData.coin || 0;
+                            currentUser.admin = userData.admin === true;
+                            currentUser.banned = userData.banned === true;
+                            
+                            // عرض النقاط
+                            document.getElementById('coinsCount').textContent = currentUser.coin;
+                            
+                            // التحقق إذا كان محظور
+                            if (currentUser.banned) {
+                                await auth.signOut();
+                                showAlert("حسابك محظور", "error");
+                                setTimeout(() => {
+                                    window.location.href = 'login.html';
+                                }, 2000);
+                                return false;
+                            }
+                            
+                            return true;
+                        }
+                    }
                 }
+                
+                // إذا لم يتم العثور على المستخدم
+                await auth.signOut();
+                showAlert("لم يتم العثور على حسابك", "error");
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return false;
+                
             } catch (error) {
                 console.error("Error loading user data:", error);
+                return false;
             }
         }
 
@@ -264,20 +511,71 @@
             document.getElementById('pdfInput').click();
         });
 
+        // السماح بسحب وإفلات الملف
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            document.getElementById('uploadArea').addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            document.getElementById('uploadArea').addEventListener(eventName, () => {
+                document.getElementById('uploadArea').style.backgroundColor = '#e8f0fe';
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            document.getElementById('uploadArea').addEventListener(eventName, () => {
+                document.getElementById('uploadArea').style.backgroundColor = '#f8f9fa';
+            }, false);
+        });
+
+        document.getElementById('uploadArea').addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length > 0 && files[0].type === 'application/pdf') {
+                document.getElementById('pdfInput').files = files;
+                handleFileUpload(files[0]);
+            } else {
+                showAlert("يرجى رفع ملف PDF فقط", "error");
+            }
+        }
+
         document.getElementById('pdfInput').addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (file) {
                 if (!await checkAuth()) return;
-                
-                uploadedFile = file;
-                showLoading("جاري تحليل الملف...");
-                await analyzePDF(file);
-                hideLoading();
-                showSection('analysisSection');
+                await handleFileUpload(file);
             }
         });
 
+        async function handleFileUpload(file) {
+            if (file.size > 10 * 1024 * 1024) {
+                showAlert("حجم الملف كبير جداً! الحد الأقصى هو 10MB", "error");
+                return;
+            }
+
+            uploadedFile = file;
+            
+            // عرض شاشة التحميل
+            showSection('loadingSection');
+            updateLoadingText("جاري تحليل الملف...");
+            
+            // تحليل PDF
+            await analyzePDF(file);
+            
+            // إخفاء شاشة التحميل
+            showSection('analysisSection');
+        }
+
         // ==================== تحليل PDF ====================
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
         async function analyzePDF(file) {
             try {
                 const buffer = await file.arrayBuffer();
@@ -309,20 +607,21 @@
                 };
 
                 document.getElementById('pagesCount').textContent = fileAnalysis.pages;
-                document.getElementById('wordsCount').textContent = fileAnalysis.words;
+                document.getElementById('wordsCount').textContent = fileAnalysis.words.toLocaleString();
                 document.getElementById('coinsCost').textContent = fileAnalysis.coins;
                 document.getElementById('coinsToDeduct').textContent = fileAnalysis.coins;
 
             } catch (error) {
                 console.error("Error analyzing PDF:", error);
                 showAlert("خطأ في قراءة ملف PDF", "error");
+                showSection('uploadSection');
             }
         }
 
         // ==================== معالجة الأزرار ====================
         document.getElementById('btnCancel').addEventListener('click', () => {
             resetUpload();
-            showAlert("تم الإلغاء", "info");
+            showAlert("تم الإلغاء", "error");
         });
 
         document.getElementById('btnConfirm').addEventListener('click', async () => {
@@ -332,35 +631,50 @@
             }
 
             // التحقق من الرصيد
-            const snapshot = await database.ref(`users/${currentUser.uid}/coin`).once('value');
-            const userCoins = snapshot.val() || 0;
-            
-            if (userCoins < fileAnalysis.coins) {
+            if (currentUser.coin < fileAnalysis.coins) {
                 showAlert("رصيدك غير كافي", "error");
                 return;
             }
 
-            // خصم النقاط
-            await database.ref(`users/${currentUser.uid}/coin`).set(userCoins - fileAnalysis.coins);
-            document.getElementById('userCoins').textContent = userCoins - fileAnalysis.coins;
-            
-            showSection('controlSection');
+            // خصم النقاط من قاعدة البيانات
+            try {
+                const userRef = database.ref(`users_Awn/${currentUser.uid}`);
+                await userRef.update({
+                    coin: currentUser.coin - fileAnalysis.coins
+                });
+                
+                // تحديث العرض المحلي
+                currentUser.coin -= fileAnalysis.coins;
+                document.getElementById('coinsCount').textContent = currentUser.coin;
+                
+                showSection('controlSection');
+                
+            } catch (error) {
+                console.error("Error deducting coins:", error);
+                showAlert("خطأ في خصم النقاط", "error");
+            }
         });
 
         // ==================== إعدادات التلخيص ====================
-        document.querySelectorAll('.option-btn').forEach(btn => {
+        document.querySelectorAll('#styleOptions .option-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                const group = this.parentElement;
-                group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                document.querySelectorAll('#styleOptions .option-btn').forEach(b => b.classList.remove('selected'));
                 this.classList.add('selected');
-                
-                if (this.closest('.control-group').querySelector('label').textContent.includes('نوع الشرح')) {
-                    selectedStyle = this.getAttribute('data-value');
-                } else {
-                    selectedPersonality = this.getAttribute('data-value');
-                }
+                selectedStyle = this.getAttribute('data-value');
             });
         });
+
+        document.querySelectorAll('#personalityOptions .option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#personalityOptions .option-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedPersonality = this.getAttribute('data-value');
+            });
+        });
+
+        // اختيار أول خيار افتراضي
+        document.querySelector('#styleOptions .option-btn').classList.add('selected');
+        document.querySelector('#personalityOptions .option-btn').classList.add('selected');
 
         document.getElementById('pagesSlider').addEventListener('input', function() {
             document.getElementById('pagesValue').textContent = this.value;
@@ -383,8 +697,8 @@
                 const result = await sendToGemini(pagesToSummarize, selectedStyle, selectedPersonality, userComment);
                 await saveResults(result);
                 displayResults(result);
-                showSection('resultsSection');
                 initDrawingCanvas();
+                showSection('resultsSection');
             } catch (error) {
                 console.error("Error:", error);
                 showAlert("حدث خطأ في التلخيص", "error");
@@ -539,7 +853,8 @@ FINAL FAILURE POLICY
             const recordId = `record_${Date.now()}_${currentUser.uid}`;
             const recordData = {
                 userId: currentUser.uid,
-                userName: currentUser.displayName || currentUser.email,
+                userName: currentUser.name || currentUser.email,
+                userEmail: currentUser.email,
                 fileName: uploadedFile.name,
                 fileSize: uploadedFile.size,
                 pages: fileAnalysis.pages,
@@ -549,11 +864,20 @@ FINAL FAILURE POLICY
                 coinsUsed: fileAnalysis.coins,
                 summaryResults: results,
                 timestamp: Date.now(),
-                status: "completed"
+                status: "completed",
+                type: "summary"
             };
 
             await database.ref(`records/${recordId}`).set(recordData);
             console.log("Results saved to database");
+            
+            // حفظ أيضًا في مسار المستخدم
+            await database.ref(`users_Awn/${currentUser.uid}/records/${recordId}`).set({
+                type: "summary",
+                fileName: uploadedFile.name,
+                timestamp: Date.now(),
+                coinsUsed: fileAnalysis.coins
+            });
         }
 
         // ==================== عرض النتائج ====================
@@ -565,12 +889,17 @@ FINAL FAILURE POLICY
                 const pageDiv = document.createElement('div');
                 pageDiv.className = 'result-page';
                 pageDiv.innerHTML = `
-                    <h4>الصفحة ${result.page}</h4>
-                    <p>${result.Dec}</p>
+                    <div class="page-header">
+                        <div>الصفحة ${result.page}</div>
+                        <div>${selectedPersonality} - ${selectedStyle}</div>
+                    </div>
+                    <div style="line-height: 1.8; margin: 20px 0;">
+                        ${result.Dec}
+                    </div>
                     ${result.law ? `
                     <div class="law-section">
                         <strong>القوانين:</strong>
-                        <p>${result.law}</p>
+                        <div style="margin-top: 10px;">${result.law}</div>
                     </div>
                     ` : ''}
                 `;
@@ -633,14 +962,18 @@ FINAL FAILURE POLICY
         }
 
         // أدوات الرسم
-        document.getElementById('btnPen').addEventListener('click', () => {
+        document.getElementById('btnPen').addEventListener('click', function() {
             currentTool = 'pen';
             lineWidth = 2;
+            document.getElementById('btnPen').classList.add('active');
+            document.getElementById('btnHighlighter').classList.remove('active');
         });
 
-        document.getElementById('btnHighlighter').addEventListener('click', () => {
+        document.getElementById('btnHighlighter').addEventListener('click', function() {
             currentTool = 'highlighter';
             lineWidth = 10;
+            document.getElementById('btnHighlighter').classList.add('active');
+            document.getElementById('btnPen').classList.remove('active');
         });
 
         document.getElementById('colorPicker').addEventListener('change', (e) => {
@@ -653,13 +986,24 @@ FINAL FAILURE POLICY
         });
 
         document.getElementById('btnSaveDraw').addEventListener('click', async () => {
-            const recordId = `drawing_${Date.now()}_${currentUser.uid}`;
-            await database.ref(`drawings/${recordId}`).set({
-                userId: currentUser.uid,
-                timestamp: Date.now(),
-                drawings: drawings
-            });
-            showAlert("تم حفظ الرسم", "success");
+            if (!drawings.length) {
+                showAlert("لا يوجد رسم لحفظه", "error");
+                return;
+            }
+            
+            try {
+                const drawingId = `drawing_${Date.now()}_${currentUser.uid}`;
+                await database.ref(`drawings/${drawingId}`).set({
+                    userId: currentUser.uid,
+                    timestamp: Date.now(),
+                    drawings: drawings,
+                    relatedTo: uploadedFile.name
+                });
+                showAlert("تم حفظ الرسم", "success");
+            } catch (error) {
+                console.error("Error saving drawing:", error);
+                showAlert("خطأ في حفظ الرسم", "error");
+            }
         });
 
         async function loadDrawings() {
@@ -699,33 +1043,19 @@ FINAL FAILURE POLICY
         // ==================== وظائف مساعدة ====================
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(section => {
-                section.style.display = 'none';
+                section.classList.remove('active');
             });
-            document.getElementById(sectionId).style.display = 'block';
-        }
-
-        function showLoading(text = "جاري المعالجة...") {
-            document.getElementById('loadingText').textContent = text;
-            document.getElementById('loadingSection').style.display = 'block';
-        }
-
-        function hideLoading() {
-            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById(sectionId).classList.add('active');
         }
 
         function updateLoadingText(text) {
             document.getElementById('loadingText').textContent = text;
         }
 
-        function showAlert(message, type = "info") {
+        function showAlert(message, type = "success") {
             const alertDiv = document.getElementById('alert');
             alertDiv.textContent = message;
-            alertDiv.style.backgroundColor = type === 'error' ? '#f8d7da' : 
-                                           type === 'success' ? '#d4edda' : '#d1ecf1';
-            alertDiv.style.color = type === 'error' ? '#721c24' : 
-                                 type === 'success' ? '#155724' : '#0c5460';
-            alertDiv.style.borderColor = type === 'error' ? '#f5c6cb' : 
-                                       type === 'success' ? '#c3e6cb' : '#bee5eb';
+            alertDiv.className = `alert alert-${type}`;
             alertDiv.style.display = 'block';
             
             setTimeout(() => {
@@ -743,22 +1073,37 @@ FINAL FAILURE POLICY
         // ==================== التهيئة ====================
         document.addEventListener('DOMContentLoaded', async () => {
             // التحقق من تسجيل الدخول
-            await checkAuth();
+            const isAuthenticated = await checkAuth();
+            if (!isAuthenticated) return;
             
             // تعيين الخيارات الافتراضية
-            document.querySelectorAll('.option-btn')[0].classList.add('selected');
-            document.querySelectorAll('.option-btn')[6].classList.add('selected');
+            document.querySelector('#styleOptions .option-btn').classList.add('selected');
+            document.querySelector('#personalityOptions .option-btn').classList.add('selected');
+            
+            // إعداد دراغ أند دروب للرفع
+            setupDragAndDrop();
         });
 
-        // أنيميشن للتحميل
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        `;
-        document.head.appendChild(style);
+        function setupDragAndDrop() {
+            const uploadArea = document.getElementById('uploadArea');
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#0d62d9';
+                uploadArea.style.backgroundColor = '#e8f0fe';
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.borderColor = '#1a73e8';
+                uploadArea.style.backgroundColor = '#f8f9fa';
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#1a73e8';
+                uploadArea.style.backgroundColor = '#f8f9fa';
+            });
+        }
     </script>
 </body>
 </html>
