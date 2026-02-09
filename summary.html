@@ -1,1 +1,2310 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>عَون - خدمة تلخيص PDF</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --bg-color: #F8FAFC;
+            --card-color: #FFFFFF;
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --accent-dark: #0F172A;
+            --black-gradient: linear-gradient(145deg, #0F172A, #1E293B);
+            --border-radius: 24px;
+            --border-radius-large: 32px;
+            --navbar-height: 80px;
+            --transition-quick: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --admin-color: #DC2626;
+            --success-color: #059669;
+            --warning-color: #D97706;
+            --info-color: #2563EB;
+        }
+        
+        body {
+            font-family: 'Almarai', 'Tajawal', -apple-system, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            direction: rtl;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-logo {
+            font-family: 'Almarai', sans-serif;
+            font-weight: 900;
+            font-size: 64px;
+            background: linear-gradient(145deg, #0F172A, #334155);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(15, 23, 42, 0.1);
+            border-left-color: var(--accent-dark);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+        
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 99998;
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .notification {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            border: 3px solid var(--accent-dark);
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: grab;
+            font-size: 0.85rem;
+            opacity: 0;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .notification.hide {
+            transform: translateX(120%);
+            opacity: 0;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--accent-dark);
+            margin-bottom: 6px;
+        }
+        
+        .notification-message {
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            padding: 4px;
+        }
+        
+        .notification-close:hover {
+            color: var(--admin-color);
+            transform: rotate(90deg);
+        }
+        
+        .native-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--navbar-height);
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: saturate(200%) blur(30px);
+            -webkit-backdrop-filter: saturate(200%) blur(30px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            z-index: 10000;
+            border-bottom: 2px solid rgba(15, 23, 42, 0.1);
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+            margin: 0 20px;
+            top: 15px;
+            width: calc(100% - 40px);
+            border: 3px solid #0F172A;
+            border-radius: 28px;
+        }
+        
+        .logo {
+            font-family: 'Almarai', sans-serif;
+            font-weight: 900;
+            font-size: 42px;
+            background: linear-gradient(145deg, #0F172A, #334155);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1.5px;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .user-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .coins-display {
+            background: var(--black-gradient);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
+            border: 3px solid #0F172A;
+            transition: var(--transition-quick);
+        }
+        
+        .coins-display:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.3);
+        }
+        
+        .coins-display i {
+            font-size: 18px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+        
+        .back-btn {
+            background: var(--black-gradient);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            padding: 10px 20px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.3);
+        }
+        
+        .main-content {
+            padding-top: calc(var(--navbar-height) + 60px);
+            padding-left: 28px;
+            padding-right: 28px;
+            padding-bottom: 100px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .welcome-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: #0F172A;
+            letter-spacing: -1.5px;
+            line-height: 1.2;
+        }
+        
+        .welcome-subtitle {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.2rem;
+            color: #64748B;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.7;
+            font-weight: 500;
+        }
+        
+        .upload-section {
+            background: white;
+            border-radius: var(--border-radius-large);
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 4px solid var(--accent-dark);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+        
+        .upload-area {
+            border: 4px dashed var(--accent-dark);
+            border-radius: var(--border-radius-large);
+            padding: 60px 40px;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            background: rgba(15, 23, 42, 0.02);
+        }
+        
+        .upload-area:hover {
+            background: rgba(15, 23, 42, 0.05);
+            transform: translateY(-5px);
+        }
+        
+        .upload-area.drag-over {
+            border-color: var(--info-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+        
+        .upload-icon {
+            font-size: 64px;
+            color: var(--accent-dark);
+            margin-bottom: 20px;
+        }
+        
+        .upload-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--accent-dark);
+            margin-bottom: 15px;
+        }
+        
+        .upload-subtitle {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        
+        .upload-btn {
+            background: var(--black-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 16px 32px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.25);
+        }
+        
+        .upload-btn i {
+            font-size: 1.2rem;
+        }
+        
+        #file-input {
+            display: none;
+        }
+        
+        .file-info {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.05);
+            border-radius: var(--border-radius);
+            text-align: right;
+            display: none;
+        }
+        
+        .file-name {
+            font-family: 'Almarai', sans-serif;
+            font-weight: 800;
+            color: var(--accent-dark);
+            margin-bottom: 10px;
+        }
+        
+        .file-size {
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .processing-section {
+            display: none;
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .processing-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--accent-dark);
+            margin-bottom: 30px;
+        }
+        
+        .processing-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 40px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .processing-step {
+            background: white;
+            border: 3px solid var(--accent-dark);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: right;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            opacity: 0.5;
+            transition: var(--transition-quick);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .processing-step.active {
+            opacity: 1;
+            border-color: var(--info-color);
+            background: rgba(37, 99, 235, 0.05);
+            transform: translateX(-10px);
+        }
+        
+        .processing-step.completed {
+            opacity: 0.7;
+            border-color: var(--success-color);
+        }
+        
+        .processing-step i {
+            font-size: 1.2rem;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(15, 23, 42, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--black-gradient);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .coins-calculation {
+            background: white;
+            border-radius: var(--border-radius-large);
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 4px solid var(--accent-dark);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            display: none;
+        }
+        
+        .calculation-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--accent-dark);
+            margin-bottom: 30px;
+        }
+        
+        .calculation-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .result-card {
+            background: rgba(15, 23, 42, 0.05);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .result-value {
+            font-family: 'Almarai', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--accent-dark);
+            margin-bottom: 10px;
+        }
+        
+        .result-label {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+        
+        .confirmation-text {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(220, 38, 38, 0.05);
+            border-radius: var(--border-radius);
+            border: 2px solid var(--admin-color);
+        }
+        
+        .confirmation-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        .confirm-btn {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 16px 32px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            max-width: 200px;
+            justify-content: center;
+        }
+        
+        .confirm-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(5, 150, 105, 0.25);
+        }
+        
+        .cancel-btn {
+            background: var(--admin-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 16px 32px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            max-width: 200px;
+            justify-content: center;
+        }
+        
+        .cancel-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(220, 38, 38, 0.25);
+        }
+        
+        .config-section {
+            background: white;
+            border-radius: var(--border-radius-large);
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 4px solid var(--accent-dark);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+            display: none;
+        }
+        
+        .config-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--accent-dark);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .config-group {
+            background: rgba(15, 23, 42, 0.03);
+            border-radius: var(--border-radius);
+            padding: 25px;
+        }
+        
+        .config-label {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--accent-dark);
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .slider-container {
+            margin: 30px 0;
+        }
+        
+        .slider-value {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--accent-dark);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 10px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(15, 23, 42, 0.1);
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: var(--black-gradient);
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+        }
+        
+        .option-btn {
+            background: white;
+            border: 3px solid var(--accent-dark);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            text-align: center;
+            font-family: 'Almarai', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-dark);
+            cursor: pointer;
+            transition: var(--transition-quick);
+        }
+        
+        .option-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option-btn.selected {
+            background: var(--black-gradient);
+            color: white;
+            border-color: var(--accent-dark);
+        }
+        
+        .comment-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 3px solid var(--accent-dark);
+            border-radius: var(--border-radius);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition-quick);
+            margin-top: 10px;
+        }
+        
+        .comment-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+        }
+        
+        .generate-btn-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .generate-btn {
+            background: var(--black-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 18px 40px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.3);
+        }
+        
+        .results-section {
+            display: none;
+        }
+        
+        .results-toolbar {
+            background: white;
+            border-radius: var(--border-radius-large);
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 4px solid var(--accent-dark);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .toolbar-btn {
+            background: white;
+            border: 3px solid var(--accent-dark);
+            border-radius: 16px;
+            padding: 10px 20px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-dark);
+            cursor: pointer;
+            transition: var(--transition-quick);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .toolbar-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .toolbar-btn.active {
+            background: var(--black-gradient);
+            color: white;
+        }
+        
+        .color-picker {
+            display: none;
+            position: absolute;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            border: 3px solid var(--accent-dark);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 5px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: var(--transition-quick);
+        }
+        
+        .color-option:hover {
+            transform: scale(1.2);
+        }
+        
+        .pages-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        
+        .page-card {
+            background: white;
+            border-radius: var(--border-radius-large);
+            padding: 40px;
+            border: 4px solid var(--accent-dark);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid rgba(15, 23, 42, 0.1);
+        }
+        
+        .page-number {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--accent-dark);
+        }
+        
+        .page-content {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+            text-align: right;
+            min-height: 300px;
+            position: relative;
+        }
+        
+        .page-content canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .page-content-text {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .laws-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 3px solid var(--warning-color);
+            display: none;
+        }
+        
+        .laws-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--warning-color);
+            margin-bottom: 20px;
+        }
+        
+        .laws-content {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            background: rgba(217, 119, 6, 0.05);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 2px solid rgba(217, 119, 6, 0.2);
+        }
+        
+        .save-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 16px 32px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(5, 150, 105, 0.3);
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(5, 150, 105, 0.4);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 60px 28px 40px;
+            color: #64748B;
+            border-top: 3px solid rgba(15, 23, 42, 0.1);
+            margin-top: 100px;
+        }
+        
+        .copyright {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+        
+        .support-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .support-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #0F172A;
+            margin-bottom: 8px;
+        }
+        
+        .support-links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        .support-link {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: var(--black-gradient);
+            border: 3px solid #0F172A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
+        }
+        
+        .support-link:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.25);
+        }
+        
+        .support-link i {
+            font-size: 26px;
+            color: white;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        
+        .developer-credit {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.95rem;
+            color: rgba(100, 116, 139, 0.7);
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(15, 23, 42, 0.05);
+            cursor: pointer;
+            transition: var(--transition-quick);
+        }
+        
+        .developer-credit:hover {
+            color: #0F172A;
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 992px) {
+            .main-content {
+                padding-top: calc(var(--navbar-height) + 50px);
+                padding-left: 24px;
+                padding-right: 24px;
+                padding-bottom: 80px;
+            }
+            
+            .welcome-title {
+                font-size: 2.2rem;
+            }
+            
+            .upload-section, .coins-calculation, .config-section, .page-card {
+                padding: 32px 28px;
+            }
+            
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .native-navbar {
+                padding: 0 24px;
+                margin: 0 16px;
+                top: 12px;
+                width: calc(100% - 32px);
+                height: 70px;
+            }
+            
+            .logo {
+                font-size: 36px;
+            }
+            
+            .coins-display {
+                padding: 10px 20px;
+                font-size: 15px;
+            }
+            
+            .back-btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            .main-content {
+                padding-top: calc(70px + 40px);
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+            
+            .confirmation-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .confirm-btn, .cancel-btn {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .options-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            
+            .page-card {
+                padding: 30px 24px;
+            }
+            
+            .page-content {
+                font-size: 1rem;
+            }
+            
+            .save-btn {
+                left: 20px;
+                bottom: 20px;
+                padding: 14px 28px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .native-navbar {
+                padding: 0 20px;
+                margin: 0 12px;
+                top: 10px;
+                width: calc(100% - 24px);
+            }
+            
+            .logo {
+                font-size: 32px;
+            }
+            
+            .user-nav-right {
+                gap: 16px;
+            }
+            
+            .coins-display {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            .main-content {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+            
+            .welcome-title {
+                font-size: 1.8rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 1rem;
+            }
+            
+            .upload-section, .coins-calculation, .config-section, .page-card {
+                padding: 28px 24px;
+            }
+            
+            .upload-area {
+                padding: 40px 24px;
+            }
+            
+            .upload-title {
+                font-size: 1.5rem;
+            }
+            
+            .result-value {
+                font-size: 1.8rem;
+            }
+            
+            .options-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .toolbar-btn {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+            
+            .page-card {
+                padding: 24px 20px;
+            }
+            
+            .page-content {
+                font-size: 0.95rem;
+            }
+            
+            .save-btn {
+                left: 10px;
+                bottom: 10px;
+                right: 10px;
+                width: calc(100% - 20px);
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-logo">عَون</div>
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري التحضير لخدمة التلخيص...</div>
+    </div>
+    
+    <div class="notification-container" id="notification-container"></div>
+    
+    <nav class="native-navbar" style="display: none;" id="navbar">
+        <div class="logo" id="logo">عَون</div>
+        <div class="user-nav-right" id="user-nav">
+            <div class="coins-display">
+                <i class="fas fa-coins"></i>
+                <span id="coins-count">0</span>
+            </div>
+            <button class="back-btn" id="back-btn">
+                <i class="fas fa-arrow-right"></i>
+                العودة
+            </button>
+        </div>
+    </nav>
+    
+    <div class="main-content" style="display: none;" id="main-content">
+        <section class="welcome-section">
+            <h1 class="welcome-title">خدمة تلخيص PDF الذكية</h1>
+            <p class="welcome-subtitle">رفع ملف PDF الخاص بك واحصل على ملخص احترافي باستخدام أحدث تقنيات الذكاء الاصطناعي</p>
+        </section>
+        
+        <section class="upload-section" id="upload-section">
+            <div class="upload-area" id="upload-area">
+                <div class="upload-icon">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <h2 class="upload-title">اسحب وأفلت ملف PDF هنا</h2>
+                <p class="upload-subtitle">أو انقر للاختيار من جهازك</p>
+                <button class="upload-btn" id="upload-btn">
+                    <i class="fas fa-upload"></i>
+                    اختر ملف PDF
+                </button>
+            </div>
+            
+            <div class="file-info" id="file-info">
+                <div class="file-name" id="file-name"></div>
+                <div class="file-size" id="file-size"></div>
+            </div>
+            
+            <input type="file" id="file-input" accept=".pdf">
+        </section>
+        
+        <section class="processing-section" id="processing-section">
+            <h2 class="processing-title">جاري تحليل ملف PDF</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="processing-steps" id="processing-steps">
+                <div class="processing-step" id="step1">
+                    <span>عَون يحلل الملف</span>
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <div class="processing-step" id="step2">
+                    <span>عَون يحسب عدد الصفحات</span>
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="processing-step" id="step3">
+                    <span>عَون يستخرج كل الكلمات</span>
+                    <i class="fas fa-font"></i>
+                </div>
+                <div class="processing-step" id="step4">
+                    <span>عَون يحسب التكلفة</span>
+                    <i class="fas fa-calculator"></i>
+                </div>
+            </div>
+        </section>
+        
+        <section class="coins-calculation" id="coins-calculation">
+            <h2 class="calculation-title">نتيجة التحليل</h2>
+            <div class="calculation-results" id="calculation-results"></div>
+            <div class="confirmation-text" id="confirmation-text"></div>
+            <div class="confirmation-actions">
+                <button class="confirm-btn" id="confirm-btn">
+                    <i class="fas fa-check"></i>
+                    متابعة
+                </button>
+                <button class="cancel-btn" id="cancel-btn">
+                    <i class="fas fa-times"></i>
+                    إلغاء
+                </button>
+            </div>
+        </section>
+        
+        <section class="config-section" id="config-section">
+            <h2 class="config-title">إعدادات التلخيص</h2>
+            <div class="config-grid">
+                <div class="config-group">
+                    <label class="config-label">عدد الصفحات المراد تلخيصها</label>
+                    <div class="slider-container">
+                        <div class="slider-value" id="pages-value">1</div>
+                        <input type="range" min="1" max="25" value="1" class="slider" id="pages-slider">
+                        <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                            <span>1</span>
+                            <span>25</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-group">
+                    <label class="config-label">طريقة التلخيص</label>
+                    <div class="options-grid" id="summary-type-options">
+                        <button class="option-btn" data-value="بسيط">بسيط</button>
+                        <button class="option-btn" data-value="معقد">معقد</button>
+                        <button class="option-btn" data-value="طفولي">طفولي</button>
+                        <button class="option-btn" data-value="عالي المستوى">عالي المستوى</button>
+                    </div>
+                </div>
+                
+                <div class="config-group">
+                    <label class="config-label">شخصية الشارح</label>
+                    <div class="options-grid" id="explainer-options">
+                        <button class="option-btn" data-value="دكتور جامعي">دكتور جامعي</button>
+                        <button class="option-btn" data-value="أستاذ مدرسي">أستاذ مدرسي</button>
+                        <button class="option-btn" data-value="طالب">طالب</button>
+                        <button class="option-btn" data-value="عالم">عالم</button>
+                        <button class="option-btn" data-value="صديق">صديق</button>
+                        <button class="option-btn" data-value="هاوي">هاوي</button>
+                    </div>
+                </div>
+                
+                <div class="config-group">
+                    <label class="config-label">تعليق إضافي (اختياري)</label>
+                    <textarea class="comment-input" id="user-comment" placeholder="اكتب أي تعليق أو ملاحظة إضافية هنا..." rows="4"></textarea>
+                </div>
+            </div>
+            
+            <div class="generate-btn-container">
+                <button class="generate-btn" id="generate-btn">
+                    <i class="fas fa-magic"></i>
+                    إنشاء الملخص
+                </button>
+            </div>
+        </section>
+        
+        <section class="results-section" id="results-section">
+            <div class="results-toolbar" id="results-toolbar">
+                <button class="toolbar-btn" id="zoom-in-btn">
+                    <i class="fas fa-search-plus"></i>
+                    تكبير
+                </button>
+                <button class="toolbar-btn" id="zoom-out-btn">
+                    <i class="fas fa-search-minus"></i>
+                    تصغير
+                </button>
+                <button class="toolbar-btn" id="pen-btn">
+                    <i class="fas fa-pen"></i>
+                    قلم
+                </button>
+                <button class="toolbar-btn" id="highlighter-btn">
+                    <i class="fas fa-highlighter"></i>
+                    تظليل
+                </button>
+                <button class="toolbar-btn" id="color-btn">
+                    <i class="fas fa-palette"></i>
+                    لون
+                </button>
+                <button class="toolbar-btn" id="clear-btn">
+                    <i class="fas fa-eraser"></i>
+                    مسح
+                </button>
+            </div>
+            
+            <div class="pages-container" id="pages-container"></div>
+            
+            <button class="save-btn" id="save-btn">
+                <i class="fas fa-save"></i>
+                حفظ التعديلات
+            </button>
+        </section>
+        
+        <footer class="footer">
+            <p class="copyright">جميع الحقوق محفوظة لمنصة عَون© 2026</p>
+            
+            <div class="support-section">
+                <div class="support-title">تواصل مع الدعم الفني</div>
+                <div class="support-links">
+                    <a href="https://wa.me/966583617539" target="_blank" class="support-link">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="https://t.me/HNHv1" target="_blank" class="support-link">
+                        <i class="fab fa-telegram"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="developer-credit" id="developer-credit">
+                برمجة وتصميم المطور 𝐊𝐈𝐌𝐎
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        
+        firebase.initializeApp({
+            apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
+            authDomain: "marvel1-654dd.firebaseapp.com",
+            databaseURL: "https://marvel1-654dd-default-rtdb.firebaseio.com",
+            projectId: "marvel1-654dd",
+            storageBucket: "marvel1-654dd.appspot.com",
+            messagingSenderId: "189921979866",
+            appId: "1:189921979866:android:95f48de58a69756be924e3"
+        });
 
+        const auth = firebase.auth();
+        const database = firebase.database();
+        
+        const elements = {
+            loadingScreen: document.getElementById('loading-screen'),
+            navbar: document.getElementById('navbar'),
+            logo: document.getElementById('logo'),
+            userNav: document.getElementById('user-nav'),
+            coinsCount: document.getElementById('coins-count'),
+            backBtn: document.getElementById('back-btn'),
+            mainContent: document.getElementById('main-content'),
+            developerCredit: document.getElementById('developer-credit'),
+            notificationContainer: document.getElementById('notification-container'),
+            
+            uploadSection: document.getElementById('upload-section'),
+            uploadArea: document.getElementById('upload-area'),
+            uploadBtn: document.getElementById('upload-btn'),
+            fileInput: document.getElementById('file-input'),
+            fileInfo: document.getElementById('file-info'),
+            fileName: document.getElementById('file-name'),
+            fileSize: document.getElementById('file-size'),
+            
+            processingSection: document.getElementById('processing-section'),
+            progressFill: document.getElementById('progress-fill'),
+            processingSteps: document.getElementById('processing-steps'),
+            step1: document.getElementById('step1'),
+            step2: document.getElementById('step2'),
+            step3: document.getElementById('step3'),
+            step4: document.getElementById('step4'),
+            
+            coinsCalculation: document.getElementById('coins-calculation'),
+            calculationResults: document.getElementById('calculation-results'),
+            confirmationText: document.getElementById('confirmation-text'),
+            confirmBtn: document.getElementById('confirm-btn'),
+            cancelBtn: document.getElementById('cancel-btn'),
+            
+            configSection: document.getElementById('config-section'),
+            pagesValue: document.getElementById('pages-value'),
+            pagesSlider: document.getElementById('pages-slider'),
+            summaryTypeOptions: document.getElementById('summary-type-options'),
+            explainerOptions: document.getElementById('explainer-options'),
+            userComment: document.getElementById('user-comment'),
+            generateBtn: document.getElementById('generate-btn'),
+            
+            resultsSection: document.getElementById('results-section'),
+            resultsToolbar: document.getElementById('results-toolbar'),
+            zoomInBtn: document.getElementById('zoom-in-btn'),
+            zoomOutBtn: document.getElementById('zoom-out-btn'),
+            penBtn: document.getElementById('pen-btn'),
+            highlighterBtn: document.getElementById('highlighter-btn'),
+            colorBtn: document.getElementById('color-btn'),
+            clearBtn: document.getElementById('clear-btn'),
+            pagesContainer: document.getElementById('pages-container'),
+            saveBtn: document.getElementById('save-btn')
+        };
+
+        let currentUser = null;
+        let currentFile = null;
+        let fileInfo = null;
+        let coinsToDeduct = 0;
+        let pdfAnalysisResult = null;
+        let selectedSummaryType = 'بسيط';
+        let selectedExplainer = 'دكتور جامعي';
+        let fontSize = 16;
+        let isDrawing = false;
+        let isHighlighting = false;
+        let currentColor = '#000000';
+        let currentTool = null;
+        let canvases = [];
+        let contexts = [];
+        let sessionId = null;
+        let summaryResults = null;
+
+        const colors = [
+            '#000000', '#DC2626', '#059669', '#2563EB', '#D97706', '#7C3AED', '#0891B2'
+        ];
+
+        function hideLoadingScreen() {
+            setTimeout(() => {
+                elements.loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    elements.loadingScreen.style.display = 'none';
+                    elements.navbar.style.display = 'flex';
+                    elements.mainContent.style.display = 'block';
+                }, 500);
+            }, 1000);
+        }
+
+        async function getUserByEmail(email) {
+            try {
+                const usersRef = database.ref('users_Awn');
+                const snapshot = await usersRef.once('value');
+                
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    
+                    for (const [userId, userData] of Object.entries(users)) {
+                        if (userId !== 'noty_publick' && userData.email === email) {
+                            return {
+                                id: userId,
+                                email: userData.email,
+                                name: userData.name || '',
+                                coin: userData.coin || 0,
+                                admin: userData.admin === true || false,
+                                banned: userData.banned === true || false
+                            };
+                        }
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('Error getting user by email:', error);
+                return null;
+            }
+        }
+
+        async function loadUserData() {
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    window.location.replace('login.html');
+                    return false;
+                }
+
+                const userData = await getUserByEmail(user.email);
+                
+                if (!userData) {
+                    await auth.signOut();
+                    window.location.replace('login.html');
+                    return false;
+                }
+                
+                if (!userData.email) {
+                    await auth.signOut();
+                    window.location.replace('login.html');
+                    return false;
+                }
+                
+                if (userData.banned === true) {
+                    await auth.signOut();
+                    window.location.replace('login.html');
+                    return false;
+                }
+                
+                currentUser = { 
+                    id: userData.id,
+                    email: userData.email,
+                    name: userData.name || '',
+                    coin: userData.coin || 0,
+                    admin: userData.admin === true || false
+                };
+                
+                elements.coinsCount.textContent = userData.coin || 0;
+                
+                return true;
+                
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                return false;
+            }
+        }
+
+        function setupEventListeners() {
+            elements.logo.addEventListener('click', () => {
+                window.location.href = 'home.html';
+            });
+
+            elements.backBtn.addEventListener('click', () => {
+                window.location.href = 'home.html';
+            });
+
+            elements.developerCredit.addEventListener('click', () => {
+                window.open('https://t.me/X5Coder', '_blank');
+            });
+
+            elements.uploadArea.addEventListener('click', () => {
+                elements.fileInput.click();
+            });
+
+            elements.uploadBtn.addEventListener('click', () => {
+                elements.fileInput.click();
+            });
+
+            elements.fileInput.addEventListener('change', handleFileSelect);
+
+            elements.uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                elements.uploadArea.classList.add('drag-over');
+            });
+
+            elements.uploadArea.addEventListener('dragleave', () => {
+                elements.uploadArea.classList.remove('drag-over');
+            });
+
+            elements.uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                elements.uploadArea.classList.remove('drag-over');
+                
+                if (e.dataTransfer.files.length) {
+                    handleFile(e.dataTransfer.files[0]);
+                }
+            });
+
+            elements.cancelBtn.addEventListener('click', cancelProcess);
+
+            elements.confirmBtn.addEventListener('click', showConfigSection);
+
+            elements.pagesSlider.addEventListener('input', (e) => {
+                const value = parseInt(e.target.value);
+                elements.pagesValue.textContent = value;
+                if (pdfAnalysisResult && value > pdfAnalysisResult.pages) {
+                    elements.pagesSlider.value = pdfAnalysisResult.pages;
+                    elements.pagesValue.textContent = pdfAnalysisResult.pages;
+                }
+            });
+
+            elements.summaryTypeOptions.addEventListener('click', (e) => {
+                if (e.target.classList.contains('option-btn')) {
+                    document.querySelectorAll('#summary-type-options .option-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    e.target.classList.add('selected');
+                    selectedSummaryType = e.target.getAttribute('data-value');
+                }
+            });
+
+            elements.explainerOptions.addEventListener('click', (e) => {
+                if (e.target.classList.contains('option-btn')) {
+                    document.querySelectorAll('#explainer-options .option-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    e.target.classList.add('selected');
+                    selectedExplainer = e.target.getAttribute('data-value');
+                }
+            });
+
+            elements.generateBtn.addEventListener('click', generateSummary);
+
+            elements.zoomInBtn.addEventListener('click', () => {
+                fontSize += 2;
+                updateTextSize();
+            });
+
+            elements.zoomOutBtn.addEventListener('click', () => {
+                fontSize = Math.max(10, fontSize - 2);
+                updateTextSize();
+            });
+
+            elements.penBtn.addEventListener('click', () => {
+                toggleTool('pen');
+            });
+
+            elements.highlighterBtn.addEventListener('click', () => {
+                toggleTool('highlighter');
+            });
+
+            elements.colorBtn.addEventListener('click', (e) => {
+                showColorPicker(e.target);
+            });
+
+            elements.clearBtn.addEventListener('click', () => {
+                if (confirm('هل تريد مسح جميع الرسومات والتظليلات؟')) {
+                    clearDrawings();
+                }
+            });
+
+            elements.saveBtn.addEventListener('click', saveAnnotations);
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.color-btn') && !e.target.closest('.color-picker')) {
+                    const colorPickers = document.querySelectorAll('.color-picker');
+                    colorPickers.forEach(picker => {
+                        picker.style.display = 'none';
+                    });
+                }
+            });
+
+            document.querySelectorAll('#summary-type-options .option-btn')[0].classList.add('selected');
+            document.querySelectorAll('#explainer-options .option-btn')[0].classList.add('selected');
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            handleFile(file);
+        }
+
+        function handleFile(file) {
+            if (!file) return;
+            
+            if (file.type !== 'application/pdf') {
+                showNotification('خطأ', 'الرجاء اختيار ملف PDF فقط', 'error');
+                return;
+            }
+            
+            currentFile = file;
+            fileInfo = {
+                name: file.name,
+                size: formatFileSize(file.size)
+            };
+            
+            elements.fileName.textContent = fileInfo.name;
+            elements.fileSize.textContent = fileInfo.size;
+            elements.fileInfo.style.display = 'block';
+            
+            analyzePDF();
+        }
+
+        async function analyzePDF() {
+            if (!currentFile) return;
+            
+            elements.uploadSection.style.display = 'none';
+            elements.processingSection.style.display = 'block';
+            
+            updateProcessingStep(1, true);
+            
+            try {
+                const buffer = await currentFile.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(buffer).promise;
+                
+                updateProcessingStep(1, false);
+                updateProcessingStep(2, true);
+                
+                const totalPages = pdf.numPages;
+                
+                updateProcessingStep(2, false);
+                updateProcessingStep(3, true);
+                
+                let totalWords = 0;
+                
+                for (let i = 1; i <= totalPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    
+                    if (content.items.length > 0) {
+                        let text = '';
+                        content.items.forEach(t => text += t.str + ' ');
+                        totalWords += text.trim().split(/\s+/).filter(w => w.length >= 2).length;
+                    } else {
+                        totalWords += 250;
+                    }
+                    
+                    elements.progressFill.style.width = `${(i / totalPages) * 100}%`;
+                }
+                
+                updateProcessingStep(3, false);
+                updateProcessingStep(4, true);
+                
+                let coins = Math.ceil((totalWords / 1000) * 2) / 2;
+                if (coins < 1) coins = 1;
+                
+                pdfAnalysisResult = {
+                    pages: totalPages,
+                    words: totalWords,
+                    coins: coins
+                };
+                
+                setTimeout(() => {
+                    updateProcessingStep(4, false);
+                    showCoinsCalculation();
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error analyzing PDF:', error);
+                showNotification('خطأ', 'فشل في تحليل ملف PDF', 'error');
+                resetProcess();
+            }
+        }
+
+        function updateProcessingStep(stepNumber, isActive) {
+            const step = document.getElementById(`step${stepNumber}`);
+            const icon = step.querySelector('i');
+            
+            if (isActive) {
+                step.classList.add('active');
+                icon.className = 'fas fa-spinner fa-spin';
+            } else {
+                step.classList.remove('active');
+                step.classList.add('completed');
+                icon.className = 'fas fa-check';
+            }
+        }
+
+        function showCoinsCalculation() {
+            elements.processingSection.style.display = 'none';
+            elements.coinsCalculation.style.display = 'block';
+            
+            elements.calculationResults.innerHTML = `
+                <div class="result-card">
+                    <div class="result-value">${pdfAnalysisResult.pages}</div>
+                    <div class="result-label">عدد الصفحات</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-value">${pdfAnalysisResult.words.toLocaleString()}</div>
+                    <div class="result-label">عدد الكلمات</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-value">${pdfAnalysisResult.coins}</div>
+                    <div class="result-label">العملات المطلوبة</div>
+                </div>
+            `;
+            
+            coinsToDeduct = pdfAnalysisResult.coins;
+            elements.confirmationText.textContent = `سيتم خصم عدد ${coinsToDeduct} من نقاطك، هل تود المتابعة؟`;
+            
+            if (currentUser.coin < coinsToDeduct) {
+                elements.confirmBtn.disabled = true;
+                elements.confirmBtn.style.opacity = '0.5';
+                elements.confirmBtn.style.cursor = 'not-allowed';
+                elements.confirmationText.innerHTML = `
+                    <i class="fas fa-exclamation-triangle"></i>
+                    نقاطك غير كافية! تحتاج إلى ${coinsToDeduct} نقطة بينما لديك ${currentUser.coin} نقطة فقط
+                `;
+            }
+        }
+
+        function cancelProcess() {
+            currentFile = null;
+            fileInfo = null;
+            coinsToDeduct = 0;
+            pdfAnalysisResult = null;
+            
+            elements.uploadSection.style.display = 'block';
+            elements.coinsCalculation.style.display = 'none';
+            elements.fileInfo.style.display = 'none';
+            elements.fileInput.value = '';
+            
+            resetProcessingSteps();
+        }
+
+        function resetProcessingSteps() {
+            for (let i = 1; i <= 4; i++) {
+                const step = document.getElementById(`step${i}`);
+                const icon = step.querySelector('i');
+                step.classList.remove('active', 'completed');
+                step.style.opacity = '0.5';
+                icon.className = i === 1 ? 'fas fa-spinner' : 
+                               i === 2 ? 'fas fa-file-alt' :
+                               i === 3 ? 'fas fa-font' : 'fas fa-calculator';
+            }
+            elements.progressFill.style.width = '0%';
+        }
+
+        function showConfigSection() {
+            elements.coinsCalculation.style.display = 'none';
+            elements.configSection.style.display = 'block';
+            
+            if (pdfAnalysisResult) {
+                elements.pagesSlider.max = pdfAnalysisResult.pages;
+                if (parseInt(elements.pagesSlider.value) > pdfAnalysisResult.pages) {
+                    elements.pagesSlider.value = pdfAnalysisResult.pages;
+                    elements.pagesValue.textContent = pdfAnalysisResult.pages;
+                }
+            }
+        }
+
+        async function generateSummary() {
+            const pagesToSummarize = parseInt(elements.pagesSlider.value);
+            const userCommentValue = elements.userComment.value.trim();
+            
+            if (!currentFile || !pdfAnalysisResult) {
+                showNotification('خطأ', 'الرجاء رفع ملف PDF أولاً', 'error');
+                return;
+            }
+            
+            if (currentUser.coin < coinsToDeduct) {
+                showNotification('خطأ', 'نقاطك غير كافية', 'error');
+                return;
+            }
+            
+            elements.configSection.style.display = 'none';
+            elements.processingSection.style.display = 'block';
+            resetProcessingSteps();
+            
+            updateProcessingStep(1, true);
+            setTimeout(() => {
+                updateProcessingStep(1, false);
+                updateProcessingStep(2, true);
+                setTimeout(() => {
+                    updateProcessingStep(2, false);
+                    updateProcessingStep(3, true);
+                    setTimeout(() => {
+                        updateProcessingStep(3, false);
+                        updateProcessingStep(4, true);
+                        setTimeout(() => {
+                            updateProcessingStep(4, false);
+                            simulateAIProcessing(pagesToSummarize, userCommentValue);
+                        }, 1000);
+                    }, 1000);
+                }, 1000);
+            }, 1000);
+        }
+
+        async function simulateAIProcessing(pagesToSummarize, userComment) {
+            try {
+                const prompt = buildPrompt(pagesToSummarize, userComment);
+                
+                sessionId = 'summary-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+                
+                const userCoinsRef = database.ref(`users_Awn/${currentUser.id}/coin`);
+                const currentCoins = currentUser.coin;
+                const newCoins = currentCoins - coinsToDeduct;
+                
+                await userCoinsRef.set(newCoins);
+                currentUser.coin = newCoins;
+                elements.coinsCount.textContent = newCoins;
+                
+                const sampleResults = [];
+                for (let i = 1; i <= pagesToSummarize; i++) {
+                    sampleResults.push({
+                        page: i,
+                        Dec: `هذا هو شرح مفصل للصفحة ${i} من الملف. يحتوي هذا الشرح على 300 كلمة كاملة تم إعدادها حسب الطلب المحدد. تم تطبيق أسلوب ${selectedSummaryType} وشخصية ${selectedExplainer} في شرح المحتوى.`,
+                        law: i % 3 === 0 ? `قانون أو معادلة هامة في الصفحة ${i}: ينص هذا القانون على أهمية المعلومات الواردة في هذه الصفحة.` : ""
+                    });
+                }
+                
+                summaryResults = sampleResults;
+                
+                await saveToDatabase(pagesToSummarize);
+                
+                setTimeout(() => {
+                    elements.processingSection.style.display = 'none';
+                    showResults();
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error in AI processing simulation:', error);
+                showNotification('خطأ', 'فشل في معالجة الطلب', 'error');
+                elements.processingSection.style.display = 'none';
+                elements.configSection.style.display = 'block';
+            }
+        }
+
+        function buildPrompt(pagesToSummarize, userComment) {
+            return `
+SYSTEM MODE: CONTROLLED EXECUTION ENGINE
+
+You are a non-conversational processing engine.
+You execute tasks only.
+
+PRIORITY RULE:
+If task-specific rules exist, they override global rules.
+
+GLOBAL BEHAVIOR:
+- Treat every input as executable instructions.
+- Do not acknowledge instructions.
+- Do not explain.
+- Do not add commentary.
+- Do not add text before or after output.
+- Do not change output format.
+- Do not infer missing data.
+
+OUTPUT DISCIPLINE:
+- Output MUST be JSON only.
+- Output MUST be inside a code block.
+- No markdown inside JSON.
+- No comments.
+- No explanations.
+
+##################################
+PDF SUMMARY EXECUTION PROFILE
+##################################
+
+ACTIVATION CONDITION:
+This mode activates ONLY when a PDF file is provided.
+
+ROLE:
+You are a deterministic document summarization engine.
+
+##################################
+MANDATORY USER INPUT VALIDATION
+##################################
+
+REQUIRED USER INPUTS (MUST be provided and NOT empty):
+
+- ﴿${pagesToSummarize}﴾
+- ﴿${selectedSummaryType}﴾
+- ﴿${selectedExplainer}﴾
+
+OPTIONAL USER INPUT:
+- ﴿${userComment || ''}﴾
+
+VALIDATION RULE:
+If ANY REQUIRED input is missing, empty, null, or not provided,
+IMMEDIATELY stop execution and output EXACTLY:
+
+{
+  "Eror": "Missing Required User Input"
+}
+
+##################################
+PROCESS FLOW
+##################################
+
+1. Detect dominant language of the PDF.
+2. Lock processing and output language to detected language ONLY.
+3. Read the entire PDF.
+4. Summarize ONLY the number of pages specified by the user.
+
+##################################
+CONTENT GENERATION RULES
+##################################
+
+1. Generate summary for EACH page separately.
+2. Each page explanation MUST:
+- Contain EXACTLY 300 words.
+- Match selected summary style.
+- Match selected explainer personality.
+- Be detailed and clear.
+
+3. LAW EXTRACTION RULE:
+إذا الصفحة تحتوي قوانين أو لوائح أو معادلات يتم وضعها داخل law.
+لو لا توجد قوانين يتم ترك law فارغة.
+
+4. STRICT PAGE CONTROL:
+- لا يتم تخطي صفحات.
+- لا يتم دمج صفحات.
+- لا يتم تجاوز العدد المطلوب.
+
+##################################
+OUTPUT STRUCTURE
+##################################
+
+{
+  "page": 1,
+  "Dec": "شرح الصفحة الأولى 300 كلمة كاملة",
+  "law": ""
+}
+
+##################################
+FINAL FAILURE POLICY
+##################################
+
+إذا كان الملف تالف أو فارغ يرجع:
+
+{
+  "Eror": "Invalid PDF Content"
+}
+            `;
+        }
+
+        async function saveToDatabase(pagesProcessed) {
+            try {
+                const recordData = {
+                    userId: currentUser.id,
+                    fileName: currentFile.name,
+                    sessionId: sessionId,
+                    serviceType: 'تلخيص',
+                    summaryJson: summaryResults,
+                    pagesCount: pagesProcessed,
+                    createdAt: Date.now(),
+                    coinsUsed: coinsToDeduct,
+                    summaryType: selectedSummaryType,
+                    explainer: selectedExplainer
+                };
+                
+                const newRecordRef = database.ref('records').push();
+                await newRecordRef.set(recordData);
+                
+                return newRecordRef.key;
+            } catch (error) {
+                console.error('Error saving to database:', error);
+                throw error;
+            }
+        }
+
+        function showResults() {
+            elements.resultsSection.style.display = 'block';
+            elements.pagesContainer.innerHTML = '';
+            
+            summaryResults.forEach((result, index) => {
+                const pageCard = document.createElement('div');
+                pageCard.className = 'page-card';
+                pageCard.id = `page-${result.page}`;
+                
+                const hasLaw = result.law && result.law.trim() !== '';
+                
+                pageCard.innerHTML = `
+                    <div class="page-header">
+                        <div class="page-number">الصفحة ${result.page}</div>
+                    </div>
+                    <div class="page-content">
+                        <div class="page-content-text" style="font-size: ${fontSize}px;">${result.Dec}</div>
+                        <canvas id="canvas-${index}" width="800" height="400"></canvas>
+                    </div>
+                    ${hasLaw ? `
+                        <div class="laws-section">
+                            <h3 class="laws-title">قوانين الصفحة</h3>
+                            <div class="laws-content">${result.law}</div>
+                        </div>
+                    ` : ''}
+                `;
+                
+                elements.pagesContainer.appendChild(pageCard);
+                
+                setTimeout(() => {
+                    const canvas = document.getElementById(`canvas-${index}`);
+                    const contentDiv = pageCard.querySelector('.page-content-text');
+                    
+                    if (canvas && contentDiv) {
+                        const rect = contentDiv.getBoundingClientRect();
+                        const pageRect = pageCard.getBoundingClientRect();
+                        
+                        canvas.style.width = rect.width + 'px';
+                        canvas.style.height = rect.height + 'px';
+                        canvas.width = rect.width;
+                        canvas.height = rect.height;
+                        
+                        canvas.style.top = (rect.top - pageRect.top) + 'px';
+                        canvas.style.left = (rect.left - pageRect.left) + 'px';
+                        
+                        canvases.push(canvas);
+                        contexts.push(canvas.getContext('2d'));
+                        
+                        setupCanvasEvents(canvas, contexts[contexts.length - 1], index);
+                    }
+                }, 100);
+            });
+            
+            if (summaryResults.some(result => result.law && result.law.trim() !== '')) {
+                document.querySelectorAll('.laws-section').forEach(section => {
+                    section.style.display = 'block';
+                });
+            }
+        }
+
+        function setupCanvasEvents(canvas, ctx, index) {
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+            
+            canvas.addEventListener('mousedown', (e) => {
+                if (currentTool) {
+                    isDrawing = true;
+                    const rect = canvas.getBoundingClientRect();
+                    lastX = e.clientX - rect.left;
+                    lastY = e.clientY - rect.top;
+                }
+            });
+            
+            canvas.addEventListener('mousemove', (e) => {
+                if (!isDrawing) return;
+                
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = currentTool === 'highlighter' ? currentColor + '80' : currentColor;
+                ctx.lineWidth = currentTool === 'highlighter' ? 10 : 2;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+                
+                lastX = x;
+                lastY = y;
+            });
+            
+            canvas.addEventListener('mouseup', () => {
+                isDrawing = false;
+            });
+            
+            canvas.addEventListener('mouseleave', () => {
+                isDrawing = false;
+            });
+        }
+
+        function updateTextSize() {
+            document.querySelectorAll('.page-content-text').forEach(text => {
+                text.style.fontSize = fontSize + 'px';
+            });
+        }
+
+        function toggleTool(tool) {
+            currentTool = currentTool === tool ? null : tool;
+            
+            elements.penBtn.classList.toggle('active', currentTool === 'pen');
+            elements.highlighterBtn.classList.toggle('active', currentTool === 'highlighter');
+            
+            canvases.forEach(canvas => {
+                canvas.style.pointerEvents = currentTool ? 'auto' : 'none';
+            });
+        }
+
+        function showColorPicker(button) {
+            const rect = button.getBoundingClientRect();
+            
+            let colorPicker = document.querySelector('.color-picker');
+            if (!colorPicker) {
+                colorPicker = document.createElement('div');
+                colorPicker.className = 'color-picker';
+                colorPicker.innerHTML = colors.map(color => `
+                    <div class="color-option" style="background-color: ${color};" data-color="${color}"></div>
+                `).join('');
+                document.body.appendChild(colorPicker);
+                
+                colorPicker.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('color-option')) {
+                        currentColor = e.target.getAttribute('data-color');
+                        colorPicker.style.display = 'none';
+                    }
+                });
+            }
+            
+            colorPicker.style.display = 'block';
+            colorPicker.style.top = (rect.bottom + 10) + 'px';
+            colorPicker.style.left = (rect.left - 100) + 'px';
+        }
+
+        function clearDrawings() {
+            contexts.forEach(ctx => {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            });
+        }
+
+        async function saveAnnotations() {
+            try {
+                const annotations = [];
+                
+                canvases.forEach((canvas, index) => {
+                    const dataURL = canvas.toDataURL();
+                    annotations.push({
+                        page: index + 1,
+                        annotation: dataURL
+                    });
+                });
+                
+                const recordsRef = database.ref('records');
+                const snapshot = await recordsRef.orderByChild('sessionId').equalTo(sessionId).once('value');
+                
+                if (snapshot.exists()) {
+                    const recordKey = Object.keys(snapshot.val())[0];
+                    await database.ref(`records/${recordKey}/annotations`).set(annotations);
+                    showNotification('تم', 'تم حفظ التعديلات بنجاح', 'success');
+                }
+            } catch (error) {
+                console.error('Error saving annotations:', error);
+                showNotification('خطأ', 'فشل في حفظ التعديلات', 'error');
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function showNotification(title, message, type = 'info') {
+            const notificationId = 'notification-' + Date.now() + '-' + Math.random();
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.setAttribute('data-notification-id', notificationId);
+            notification.style.borderColor = type === 'error' ? 'var(--admin-color)' : 
+                                           type === 'success' ? '#059669' : 'var(--accent-dark)';
+            
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-message">${message}</div>
+                </div>
+                <button class="notification-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            elements.notificationContainer.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 10);
+            
+            const timeoutId = setTimeout(() => {
+                notification.classList.remove('show');
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 500);
+            }, 5000);
+            
+            notification.querySelector('.notification-close').addEventListener('click', () => {
+                clearTimeout(timeoutId);
+                notification.classList.remove('show');
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 500);
+            });
+        }
+
+        function resetProcess() {
+            currentFile = null;
+            fileInfo = null;
+            coinsToDeduct = 0;
+            pdfAnalysisResult = null;
+            summaryResults = null;
+            sessionId = null;
+            
+            elements.uploadSection.style.display = 'block';
+            elements.coinsCalculation.style.display = 'none';
+            elements.configSection.style.display = 'none';
+            elements.resultsSection.style.display = 'none';
+            elements.fileInfo.style.display = 'none';
+            elements.fileInput.value = '';
+            
+            resetProcessingSteps();
+            clearDrawings();
+        }
+
+        async function initApp() {
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.replace('login.html');
+                return;
+            }
+            
+            try {
+                const userData = await getUserByEmail(user.email);
+                
+                if (!userData) {
+                    await auth.signOut();
+                    window.location.replace('login.html');
+                    return;
+                }
+                
+                if (userData.banned === true) {
+                    await auth.signOut();
+                    window.location.replace('login.html');
+                    return;
+                }
+                
+                currentUser = { 
+                    id: userData.id,
+                    email: userData.email,
+                    name: userData.name || '',
+                    coin: userData.coin || 0,
+                    admin: userData.admin === true || false
+                };
+                
+                elements.coinsCount.textContent = userData.coin || 0;
+                
+                setupEventListeners();
+                hideLoadingScreen();
+                
+            } catch (error) {
+                console.error('Error during init:', error);
+                window.location.replace('login.html');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
