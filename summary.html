@@ -2,18 +2,19 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>عَون - خدمة التلخيص</title>
     
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     
     <style>
         * {
@@ -24,20 +25,17 @@
         }
         
         :root {
-            --bg-color: #F8FAFC;
+            --bg-color: #F5F1E8; /* لون بيج بدلاً من الأبيض */
             --card-color: #FFFFFF;
             --text-primary: #1E293B;
             --text-secondary: #64748B;
-            --accent-dark: #0F172A;
-            --black-gradient: linear-gradient(145deg, #0F172A, #1E293B);
-            --border-radius: 16px;
-            --border-radius-large: 20px;
-            --navbar-height: 70px;
+            --accent-dark: #8B7355; /* لون بني فاتح يناسب البيج */
+            --accent-light: #D4B996;
+            --beige-gradient: linear-gradient(145deg, #F5F1E8, #E8E1D1);
+            --border-radius: 24px;
+            --border-radius-large: 32px;
+            --navbar-height: 80px;
             --transition-quick: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --admin-color: #DC2626;
-            --success-color: #059669;
-            --warning-color: #D97706;
-            --info-color: #2563EB;
         }
         
         body {
@@ -47,212 +45,320 @@
             min-height: 100vh;
             direction: rtl;
             -webkit-font-smoothing: antialiased;
-            padding-bottom: 20px;
         }
         
-        /* شريط التنقل */
+        /* Loading Screens */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-logo {
+            font-family: 'Almarai', sans-serif;
+            font-weight: 900;
+            font-size: 64px;
+            background: linear-gradient(145deg, var(--accent-dark), #A68B6A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(139, 115, 85, 0.1);
+            border-left-color: var(--accent-dark);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+        
+        /* Navbar */
         .native-navbar {
             position: fixed;
-            top: 10px;
-            left: 10px;
-            right: 10px;
+            top: 15px;
+            left: 0;
+            right: 0;
             height: var(--navbar-height);
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(245, 241, 232, 0.96);
             backdrop-filter: saturate(200%) blur(30px);
             -webkit-backdrop-filter: saturate(200%) blur(30px);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 28px;
             z-index: 10000;
-            border: 3px solid #0F172A;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(15, 23, 42, 0.1);
+            border-bottom: 2px solid rgba(139, 115, 85, 0.1);
+            box-shadow: 0 10px 40px rgba(139, 115, 85, 0.08);
+            margin: 0 20px;
+            width: calc(100% - 40px);
+            border: 3px solid var(--accent-dark);
+            border-radius: 28px;
         }
         
         .logo {
             font-family: 'Almarai', sans-serif;
             font-weight: 900;
-            font-size: 32px;
-            background: linear-gradient(145deg, #0F172A, #334155);
+            font-size: 42px;
+            background: linear-gradient(145deg, var(--accent-dark), #A68B6A);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: -1.5px;
             cursor: pointer;
             transition: var(--transition-quick);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
-        .nav-right {
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .nav-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 20px;
         }
         
         .coins-display {
-            background: var(--black-gradient);
+            background: linear-gradient(145deg, var(--accent-dark), #A68B6A);
             color: white;
-            padding: 10px 16px;
-            border-radius: 16px;
+            padding: 12px 24px;
+            border-radius: 20px;
             font-weight: 800;
             font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            border: 2px solid #0F172A;
+            gap: 10px;
+            box-shadow: 0 8px 24px rgba(139, 115, 85, 0.2);
+            border: 3px solid var(--accent-dark);
+            transition: var(--transition-quick);
         }
         
-        .font-size-controls {
+        .coins-display:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(139, 115, 85, 0.3);
+        }
+        
+        .coins-display i {
+            font-size: 18px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+        
+        .font-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 3px solid var(--accent-dark);
         }
         
         .font-btn {
             width: 40px;
             height: 40px;
-            border-radius: 10px;
-            background: white;
-            border: 2px solid #0F172A;
+            border-radius: 12px;
+            background: var(--beige-gradient);
+            border: 2px solid var(--accent-dark);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: var(--transition-quick);
-            color: #0F172A;
             font-weight: 800;
-            font-size: 1.1rem;
+            font-size: 18px;
+            color: var(--accent-dark);
         }
         
-        /* المحتوى الرئيسي */
+        .font-btn:hover {
+            transform: translateY(-2px);
+            background: var(--accent-dark);
+            color: white;
+        }
+        
+        /* Main Content */
         .main-content {
-            padding-top: calc(var(--navbar-height) + 30px);
-            padding-left: 20px;
-            padding-right: 20px;
-            max-width: 100%;
+            padding-top: calc(var(--navbar-height) + 60px);
+            padding-left: 28px;
+            padding-right: 28px;
+            padding-bottom: 100px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         
-        /* قسم رفع الملف */
+        /* Upload Section */
         .upload-section {
             background: white;
             border-radius: var(--border-radius-large);
-            padding: 24px;
-            margin-bottom: 20px;
-            border: 3px solid var(--accent-dark);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 4px solid var(--accent-dark);
+            box-shadow: 0 16px 48px rgba(139, 115, 85, 0.08);
             text-align: center;
-            width: 100%;
         }
         
         .section-title {
             font-family: 'Almarai', sans-serif;
-            font-size: 1.5rem;
+            font-size: 2.2rem;
             font-weight: 900;
             color: var(--accent-dark);
-            margin-bottom: 20px;
-            text-align: center;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+        
+        .section-subtitle {
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            font-weight: 500;
         }
         
         .upload-area {
-            border: 3px dashed var(--accent-dark);
-            border-radius: var(--border-radius-large);
-            padding: 30px 20px;
-            background: rgba(15, 23, 42, 0.02);
+            border: 3px dashed var(--accent-light);
+            border-radius: var(--border-radius);
+            padding: 50px 30px;
+            margin-bottom: 30px;
             cursor: pointer;
             transition: var(--transition-quick);
-            margin-bottom: 20px;
+            background: rgba(212, 185, 150, 0.05);
+        }
+        
+        .upload-area:hover {
+            border-color: var(--accent-dark);
+            background: rgba(212, 185, 150, 0.1);
         }
         
         .upload-icon {
-            font-size: 48px;
-            color: var(--accent-dark);
-            margin-bottom: 15px;
+            font-size: 60px;
+            color: var(--accent-light);
+            margin-bottom: 20px;
         }
         
         .upload-text {
             font-family: 'Tajawal', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: var(--text-secondary);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         
         .upload-hint {
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            opacity: 0.8;
+            font-size: 0.9rem;
+            color: var(--accent-light);
+            font-style: italic;
         }
         
-        .file-input {
-            display: none;
-        }
-        
-        /* معلومات الملف */
-        .file-info {
-            background: rgba(15, 23, 42, 0.05);
+        .upload-btn {
+            background: linear-gradient(145deg, var(--accent-dark), #A68B6A);
+            color: white;
+            border: none;
             border-radius: var(--border-radius);
-            padding: 20px;
-            margin-top: 20px;
-            border: 2px solid rgba(15, 23, 42, 0.1);
-            text-align: right;
+            padding: 15px 40px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(139, 115, 85, 0.25);
+        }
+        
+        .upload-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* Cost Preview */
+        .cost-preview {
+            background: rgba(212, 185, 150, 0.1);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-top: 30px;
+            border: 3px solid var(--accent-light);
             display: none;
         }
         
-        .file-info.show {
+        .cost-preview.show {
             display: block;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-        
-        .info-item {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            border: 2px solid rgba(15, 23, 42, 0.1);
-        }
-        
-        .info-label {
+        .cost-title {
             font-family: 'Almarai', sans-serif;
+            font-size: 1.3rem;
             font-weight: 800;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            margin-bottom: 6px;
-        }
-        
-        .info-value {
-            font-family: 'Tajawal', sans-serif;
-            font-weight: 700;
             color: var(--accent-dark);
-            font-size: 1rem;
+            margin-bottom: 15px;
+            text-align: center;
         }
         
-        .coins-cost {
-            color: var(--admin-color);
-            font-weight: 900;
-        }
-        
-        /* أزرار التحكم */
-        .action-buttons {
+        .cost-details {
             display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-top: 20px;
+            justify-content: space-around;
             flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .cost-item {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .cost-label {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+        
+        .cost-value {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--accent-dark);
+        }
+        
+        .cost-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
         }
         
         .action-btn {
-            padding: 14px 24px;
+            padding: 12px 30px;
             border: none;
             border-radius: var(--border-radius);
             font-family: 'Almarai', sans-serif;
@@ -260,1287 +366,1343 @@
             font-weight: 800;
             cursor: pointer;
             transition: var(--transition-quick);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            min-width: 140px;
+            min-width: 150px;
         }
         
-        .continue-btn {
-            background: var(--black-gradient);
+        .confirm-btn {
+            background: linear-gradient(145deg, #059669, #047857);
             color: white;
-            border: 2px solid var(--accent-dark);
-        }
-        
-        .continue-btn:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2);
+            border: 3px solid #059669;
         }
         
         .cancel-btn {
-            background: white;
-            color: var(--accent-dark);
-            border: 2px solid var(--accent-dark);
+            background: linear-gradient(145deg, #DC2626, #B91C1C);
+            color: white;
+            border: 3px solid #DC2626;
         }
         
-        .cancel-btn:hover {
+        .action-btn:hover {
             transform: translateY(-3px);
-            background: rgba(15, 23, 42, 0.05);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
         
-        .action-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        
-        /* قسم الإعدادات */
+        /* Settings Section */
         .settings-section {
             background: white;
             border-radius: var(--border-radius-large);
-            padding: 24px;
-            margin-bottom: 20px;
-            border: 3px solid var(--accent-dark);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 4px solid var(--accent-dark);
+            box-shadow: 0 16px 48px rgba(139, 115, 85, 0.08);
             display: none;
-            width: 100%;
         }
         
         .settings-section.show {
             display: block;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
         }
         
-        /* شريط عدد الصفحات */
-        .pages-slider {
-            margin-bottom: 25px;
-        }
-        
-        .slider-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .slider-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: var(--accent-dark);
-        }
-        
-        .page-count {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--info-color);
-            background: rgba(37, 99, 235, 0.1);
-            padding: 6px 12px;
-            border-radius: 10px;
-        }
-        
-        .slider-container {
-            position: relative;
-            height: 40px;
-            background: rgba(15, 23, 42, 0.05);
-            border-radius: 20px;
-            overflow: hidden;
-        }
-        
-        .slider-track {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-        }
-        
-        .slider-segment {
-            flex: 1;
-            border-right: 1px solid white;
-            position: relative;
-        }
-        
-        .slider-segment:last-child {
-            border-right: none;
-        }
-        
-        .slider-segment.active {
-            background: var(--info-color);
-        }
-        
-        .slider-segment-number {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-weight: 700;
-            font-size: 0.75rem;
-            opacity: 0.8;
-        }
-        
-        .slider-input {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-        
-        /* اختيارات الإعدادات */
-        .options-grid {
+        .settings-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-bottom: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
         }
         
-        .option-group {
-            background: rgba(15, 23, 42, 0.02);
+        .setting-group {
+            background: rgba(212, 185, 150, 0.05);
             border-radius: var(--border-radius);
-            padding: 20px;
-            border: 2px solid rgba(15, 23, 42, 0.1);
+            padding: 25px;
+            border: 3px solid var(--accent-light);
         }
         
-        .option-title {
+        .setting-title {
             font-family: 'Almarai', sans-serif;
-            font-size: 1rem;
+            font-size: 1.3rem;
             font-weight: 800;
             color: var(--accent-dark);
             margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 8px;
-        }
-        
-        .option-title i {
-            color: var(--info-color);
-        }
-        
-        .option-choices {
-            display: flex;
-            flex-direction: column;
             gap: 10px;
         }
         
-        .option-choice {
-            padding: 14px;
+        .setting-title i {
+            color: var(--accent-light);
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+        
+        .option-btn {
+            padding: 12px;
+            border: 3px solid var(--accent-light);
+            border-radius: var(--border-radius);
             background: white;
-            border-radius: 12px;
-            border: 2px solid rgba(15, 23, 42, 0.1);
-            cursor: pointer;
-            transition: var(--transition-quick);
             font-family: 'Tajawal', sans-serif;
             font-size: 0.95rem;
             font-weight: 500;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            text-align: center;
         }
         
-        .option-choice:hover {
-            transform: translateX(-8px);
-            border-color: var(--info-color);
+        .option-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-dark);
         }
         
-        .option-choice.selected {
-            background: var(--info-color);
+        .option-btn.selected {
+            background: var(--accent-dark);
             color: white;
-            border-color: var(--info-color);
+            border-color: var(--accent-dark);
         }
         
-        .option-choice.selected .check-icon {
+        .text-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 3px solid var(--accent-light);
+            border-radius: var(--border-radius);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition-quick);
+            background: white;
+        }
+        
+        .text-input:focus {
+            outline: none;
+            border-color: var(--accent-dark);
+            box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
+        }
+        
+        .generate-btn {
+            background: linear-gradient(145deg, var(--accent-dark), #A68B6A);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 18px 50px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition-quick);
             display: block;
+            margin: 0 auto;
+            min-width: 250px;
         }
         
-        .check-icon {
-            display: none;
-            color: white;
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(139, 115, 85, 0.25);
         }
         
-        .custom-language {
-            margin-top: 12px;
-            display: none;
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
         }
         
-        .custom-input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid var(--accent-dark);
-            border-radius: 12px;
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
-            transition: var(--transition-quick);
-        }
-        
-        .comment-section {
-            margin-top: 20px;
-        }
-        
-        .comment-input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid rgba(15, 23, 42, 0.2);
-            border-radius: 12px;
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
-            min-height: 100px;
-            resize: vertical;
-            transition: var(--transition-quick);
-        }
-        
-        /* شاشة النتائج */
+        /* Result Section */
         .result-section {
+            background: white;
+            border-radius: var(--border-radius-large);
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 4px solid var(--accent-dark);
+            box-shadow: 0 16px 48px rgba(139, 115, 85, 0.08);
             display: none;
-            width: 100%;
         }
         
         .result-section.show {
             display: block;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
         }
         
-        .pages-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .result-page {
-            background: white;
-            border-radius: var(--border-radius-large);
-            padding: 24px;
-            border: 3px solid var(--accent-dark);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-        }
-        
-        .page-header {
+        .result-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(15, 23, 42, 0.1);
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid rgba(139, 115, 85, 0.1);
         }
         
-        .page-number {
+        .result-title {
             font-family: 'Almarai', sans-serif;
-            font-size: 1.3rem;
+            font-size: 2rem;
             font-weight: 900;
             color: var(--accent-dark);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            letter-spacing: -1px;
         }
         
-        .page-badge {
-            background: var(--info-color);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
-        
-        .page-content {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1rem;
-            line-height: 1.7;
-            color: var(--text-primary);
-            margin-bottom: 20px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        
-        .laws-section {
-            background: rgba(15, 23, 42, 0.05);
+        .result-content {
+            background: #f9f9f9;
             border-radius: var(--border-radius);
-            padding: 20px;
-            border: 2px solid rgba(15, 23, 42, 0.1);
-            display: none;
-        }
-        
-        .laws-section.show {
-            display: block;
-        }
-        
-        .laws-title {
-            font-family: 'Almarai', sans-serif;
+            padding: 30px;
+            min-height: 500px;
+            border: 3px solid rgba(139, 115, 85, 0.1);
+            font-family: 'Tajawal', sans-serif;
             font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        
+        .raw-summary {
+            background: rgba(212, 185, 150, 0.1);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-top: 30px;
+            border: 3px solid var(--accent-light);
+        }
+        
+        .raw-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.3rem;
             font-weight: 800;
             color: var(--accent-dark);
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         
-        .laws-content {
+        .raw-title i {
+            color: var(--accent-light);
+        }
+        
+        .raw-points {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .raw-points li {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 12px;
+            border-right: 4px solid var(--accent-dark);
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
-            line-height: 1.6;
+            font-size: 1rem;
             color: var(--text-primary);
-            white-space: pre-wrap;
-            word-wrap: break-word;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
         }
         
-        /* شاشة التحميل المؤقتة */
-        .processing-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(248, 250, 252, 0.95);
-            display: none;
+        .raw-points li i {
+            color: var(--accent-dark);
+            margin-top: 3px;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 60px 28px 40px;
+            color: var(--text-secondary);
+            border-top: 3px solid rgba(139, 115, 85, 0.1);
+            margin-top: 100px;
+        }
+        
+        .copyright {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+        
+        .support-section {
+            display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            z-index: 99999;
-            transition: opacity 0.3s ease;
+            gap: 24px;
+            margin-bottom: 40px;
         }
         
-        .processing-overlay.show {
+        .support-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--accent-dark);
+            margin-bottom: 8px;
+        }
+        
+        .support-links {
             display: flex;
+            gap: 20px;
+            justify-content: center;
         }
         
-        .processing-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(15, 23, 42, 0.1);
-            border-left-color: var(--accent-dark);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+        .support-link {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(145deg, var(--accent-dark), #A68B6A);
+            border: 3px solid var(--accent-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            box-shadow: 0 8px 24px rgba(139, 115, 85, 0.15);
         }
         
-        .processing-text {
+        .support-link:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 16px 40px rgba(139, 115, 85, 0.25);
+        }
+        
+        .support-link i {
+            font-size: 26px;
+            color: white;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        
+        .developer-credit {
             font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: 1.1rem;
+            font-size: 0.95rem;
+            color: rgba(100, 116, 139, 0.7);
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(139, 115, 85, 0.05);
+            cursor: pointer;
+            transition: var(--transition-quick);
         }
         
-        /* حجم الخطوط الديناميكي */
-        body.font-small .page-content,
-        body.font-small .laws-content {
-            font-size: 0.9rem;
+        .developer-credit:hover {
+            color: var(--accent-dark);
+            transform: scale(1.05);
         }
         
-        body.font-large .page-content,
-        body.font-large .laws-content {
-            font-size: 1.1rem;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        body.font-xlarge .page-content,
-        body.font-xlarge .laws-content {
-            font-size: 1.2rem;
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-content {
+                max-width: 100%;
+            }
+            
+            .settings-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
         }
         
-        /* تحسينات للشاشات الصغيرة */
-        @media (max-width: 480px) {
+        @media (max-width: 992px) {
+            .main-content {
+                padding-top: calc(var(--navbar-height) + 50px);
+                padding-left: 24px;
+                padding-right: 24px;
+                padding-bottom: 80px;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .upload-section, .settings-section, .result-section {
+                padding: 32px 28px;
+            }
+        }
+        
+        @media (max-width: 768px) {
             .native-navbar {
-                top: 8px;
-                left: 8px;
-                right: 8px;
-                padding: 0 16px;
-                height: 60px;
+                padding: 0 24px;
+                margin: 0 16px;
+                top: 12px;
+                width: calc(100% - 32px);
+                height: 70px;
             }
             
             .logo {
-                font-size: 28px;
+                font-size: 36px;
             }
             
             .coins-display {
-                padding: 8px 12px;
-                font-size: 13px;
+                padding: 10px 20px;
+                font-size: 15px;
+            }
+            
+            .font-controls {
+                padding: 6px 12px;
             }
             
             .font-btn {
                 width: 36px;
                 height: 36px;
-                font-size: 1rem;
+                font-size: 16px;
             }
             
             .main-content {
-                padding-top: calc(60px + 20px);
-                padding-left: 16px;
-                padding-right: 16px;
+                padding-top: calc(70px + 40px);
+                padding-left: 20px;
+                padding-right: 20px;
             }
             
-            .upload-section,
-            .settings-section,
-            .result-page {
-                padding: 20px 16px;
+            .cost-details {
+                flex-direction: column;
+                align-items: center;
             }
             
-            .section-title {
-                font-size: 1.3rem;
+            .cost-item {
+                min-width: 100%;
             }
             
-            .upload-area {
-                padding: 24px 16px;
-            }
-            
-            .upload-icon {
-                font-size: 40px;
-            }
-            
-            .info-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
+            .cost-actions {
+                flex-direction: column;
             }
             
             .action-btn {
-                padding: 12px 20px;
-                min-width: 120px;
-                font-size: 0.95rem;
+                min-width: 100%;
             }
             
-            .option-group {
-                padding: 16px;
-            }
-            
-            .option-choice {
-                padding: 12px;
-                font-size: 0.9rem;
-            }
-        }
-        
-        @media (min-width: 768px) {
             .options-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
             
-            .info-grid {
-                grid-template-columns: repeat(3, 1fr);
+            .result-header {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
             }
         }
         
-        @media (min-width: 1024px) {
+        @media (max-width: 576px) {
+            .native-navbar {
+                padding: 0 20px;
+                margin: 0 12px;
+                top: 10px;
+                width: calc(100% - 24px);
+            }
+            
+            .logo {
+                font-size: 32px;
+            }
+            
+            .nav-left {
+                gap: 16px;
+            }
+            
+            .coins-display {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
             .main-content {
-                max-width: 1200px;
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .upload-section, .settings-section, .result-section {
+                padding: 28px 24px;
+            }
+            
+            .upload-area {
+                padding: 40px 20px;
+            }
+            
+            .upload-icon {
+                font-size: 50px;
+            }
+            
+            .generate-btn {
+                min-width: 100%;
+            }
+            
+            .support-links {
+                gap: 16px;
+            }
+            
+            .support-link {
+                width: 52px;
+                height: 52px;
+            }
+            
+            .support-link i {
+                font-size: 24px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .coins-display {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+            
+            .coins-display i {
+                font-size: 16px;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .font-controls {
+                flex-direction: column;
+                gap: 8px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- شريط التنقل -->
+    <!-- Loading Screen (للتحميل فقط) -->
+    <div class="loading-screen" id="loading-screen" style="display: none;">
+        <div class="loading-logo">عَون</div>
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loading-text">جاري التحميل...</div>
+    </div>
+    
+    <!-- Navbar -->
     <nav class="native-navbar" id="navbar">
-        <div class="logo" id="logo">عَون</div>
-        <div class="nav-right">
+        <div class="logo" onclick="window.location.href='home.html'">عَون</div>
+        <div class="nav-left">
+            <div class="font-controls" id="font-controls">
+                <button class="font-btn" onclick="changeFontSize('increase')">+</button>
+                <span style="font-weight: 700; color: var(--accent-dark);">الخط</span>
+                <button class="font-btn" onclick="changeFontSize('decrease')">-</button>
+            </div>
             <div class="coins-display">
                 <i class="fas fa-coins"></i>
                 <span id="coins-count">0</span>
             </div>
-            <div class="font-size-controls" id="font-controls" style="display: none;">
-                <button class="font-btn" id="font-decrease">A-</button>
-                <button class="font-btn" id="font-increase">A+</button>
-            </div>
         </div>
     </nav>
     
-    <!-- شاشة المعالجة المؤقتة -->
-    <div class="processing-overlay" id="processing-overlay">
-        <div class="processing-spinner"></div>
-        <div class="processing-text" id="processing-text">جاري المعالجة...</div>
-    </div>
-    
-    <!-- المحتوى الرئيسي -->
+    <!-- Main Content -->
     <div class="main-content" id="main-content">
-        <!-- قسم رفع الملف -->
+        <!-- Upload Section -->
         <section class="upload-section" id="upload-section">
-            <h2 class="section-title">تلخيص PDF</h2>
+            <h1 class="section-title">خدمة تلخيص PDF</h1>
+            <p class="section-subtitle">ارفع ملف PDF الخاص بك واحصل على ملخص شامل باستخدام الذكاء الاصطناعي المتقدم</p>
             
-            <div class="upload-area" id="upload-area">
+            <div class="upload-area" id="upload-area" onclick="document.getElementById('pdfFile').click()">
                 <div class="upload-icon">
-                    <i class="fas fa-cloud-upload-alt"></i>
+                    <i class="fas fa-file-pdf"></i>
                 </div>
-                <div class="upload-text">انقر لرفع ملف PDF</div>
-                <div class="upload-hint">المقاس الأقصى: 20MB | الملفات المدعومة: PDF فقط</div>
-                <input type="file" class="file-input" id="pdf-file" accept=".pdf">
+                <div class="upload-text" id="upload-text">انقر لرفع ملف PDF</div>
+                <div class="upload-hint">الحد الأقصى لحجم الملف: 10MB</div>
             </div>
             
-            <div class="file-info" id="file-info">
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-label">اسم الملف</div>
-                        <div class="info-value" id="file-name">-</div>
+            <input type="file" id="pdfFile" accept=".pdf" style="display: none;">
+            
+            <button class="upload-btn" id="upload-btn" onclick="processPDF()" disabled>
+                <i class="fas fa-upload"></i>
+                تحليل الملف
+            </button>
+            
+            <div class="cost-preview" id="cost-preview">
+                <h3 class="cost-title">تفاصيل التكلفة</h3>
+                <div class="cost-details">
+                    <div class="cost-item">
+                        <div class="cost-label">عدد الصفحات</div>
+                        <div class="cost-value" id="page-count">0</div>
                     </div>
-                    <div class="info-item">
-                        <div class="info-label">حجم الملف</div>
-                        <div class="info-value" id="file-size">-</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">عدد الصفحات</div>
-                        <div class="info-value" id="page-count">-</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">التكلفة (عملات)</div>
-                        <div class="info-value coins-cost" id="coins-cost">-</div>
+                    <div class="cost-item">
+                        <div class="cost-label">التكلفة</div>
+                        <div class="cost-value" id="cost-amount">0 عملة</div>
                     </div>
                 </div>
-                
-                <div class="action-buttons">
-                    <button class="action-btn cancel-btn" id="cancel-upload">
+                <div class="cost-actions">
+                    <button class="action-btn cancel-btn" onclick="cancelProcess()">
                         <i class="fas fa-times"></i>
                         إلغاء
                     </button>
-                    <button class="action-btn continue-btn" id="continue-btn" disabled>
-                        <i class="fas fa-arrow-right"></i>
-                        المتابعة
+                    <button class="action-btn confirm-btn" onclick="confirmProcess()">
+                        <i class="fas fa-check"></i>
+                        متابعة
                     </button>
                 </div>
             </div>
         </section>
         
-        <!-- قسم إعدادات التلخيص -->
+        <!-- Settings Section -->
         <section class="settings-section" id="settings-section">
             <h2 class="section-title">إعدادات التلخيص</h2>
+            <p class="section-subtitle">اختر الطريقة المناسبة لك للحصول على أفضل تجربة تلخيص</p>
             
-            <!-- شريط عدد الصفحات -->
-            <div class="pages-slider">
-                <div class="slider-header">
-                    <div class="slider-title">عدد الصفحات الملخصة</div>
-                    <div class="page-count" id="selected-pages">1 صفحة</div>
-                </div>
-                <div class="slider-container">
-                    <div class="slider-track" id="slider-track"></div>
-                    <input type="range" class="slider-input" id="pages-slider" min="1" max="25" value="1">
-                </div>
-            </div>
-            
-            <!-- اختيارات الإعدادات -->
-            <div class="options-grid">
-                <div class="option-group">
-                    <div class="option-title">
-                        <i class="fas fa-comment-dots"></i>
-                        طريقة الشرح
-                    </div>
-                    <div class="option-choices" id="explanation-style">
-                        <div class="option-choice" data-value="طفولي">
-                            <span>طفولي</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
-                        <div class="option-choice" data-value="معقد">
-                            <span>معقد</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
-                        <div class="option-choice" data-value="بسيط">
-                            <span>بسيط</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
+            <div class="settings-grid">
+                <!-- طريقة الشرح -->
+                <div class="setting-group">
+                    <h3 class="setting-title">
+                        <i class="fas fa-comment-alt"></i>
+                        طريقة الشرح التي تفضل؟
+                    </h3>
+                    <div class="options-grid" id="explanation-level">
+                        <button class="option-btn" data-value="طفولي">طفولي</button>
+                        <button class="option-btn" data-value="معقد">معقد</button>
+                        <button class="option-btn selected" data-value="بسيط">بسيط</button>
                     </div>
                 </div>
                 
-                <div class="option-group">
-                    <div class="option-title">
-                        <i class="fas fa-globe"></i>
-                        اللهجة المفضلة
-                    </div>
-                    <div class="option-choices" id="dialect">
-                        <div class="option-choice" data-value="مصري">
-                            <span>مصري</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
-                        <div class="option-choice" data-value="سعودي">
-                            <span>سعودي</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
-                        <div class="option-choice" data-value="جزائري">
-                            <span>جزائري</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
-                        <div class="option-choice" data-value="عربيه فصحى">
-                            <span>عربيه فصحى</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="option-group">
-                    <div class="option-title">
-                        <i class="fas fa-user-tie"></i>
-                        الشخص الشارح
-                    </div>
-                    <div class="option-choices" id="explainer">
-                        <div class="option-choice" data-value="طالب">
-                            <span>طالب</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
-                        <div class="option-choice" data-value="عالم">
-                            <span>عالم</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
-                        <div class="option-choice" data-value="دكتور جامعة">
-                            <span>دكتور جامعة</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
-                        <div class="option-choice" data-value="مدرس">
-                            <span>مدرس</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="option-group">
-                    <div class="option-title">
+                <!-- اللهجة -->
+                <div class="setting-group">
+                    <h3 class="setting-title">
                         <i class="fas fa-language"></i>
-                        لغة الإخراج
+                        اللهجة التي تفضل؟
+                    </h3>
+                    <div class="options-grid" id="dialect">
+                        <button class="option-btn selected" data-value="مصري">مصري</button>
+                        <button class="option-btn" data-value="سعودي">سعودي</button>
+                        <button class="option-btn" data-value="جزائري">جزائري</button>
+                        <button class="option-btn" data-value="عربيه فصحى">عربيه فصحى</button>
                     </div>
-                    <div class="option-choices" id="output-language">
-                        <div class="option-choice" data-value="عربي">
-                            <span>عربي</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
-                        <div class="option-choice" data-value="انجليزي">
-                            <span>انجليزي</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
-                        <div class="option-choice" data-value="same">
-                            <span>نفس لغة الملف</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
-                        <div class="option-choice" data-value="custom">
-                            <span>لغة مخصصة</span>
-                            <i class="fas fa-check check-icon"></i>
-                        </div>
+                </div>
+                
+                <!-- شخصية الشارح -->
+                <div class="setting-group">
+                    <h3 class="setting-title">
+                        <i class="fas fa-user-tie"></i>
+                        من هو الشخص الذي تفضل ان يشرح لك؟
+                    </h3>
+                    <div class="options-grid" id="explainer-persona">
+                        <button class="option-btn" data-value="طالب">طالب</button>
+                        <button class="option-btn selected" data-value="مدرس">مدرس</button>
+                        <button class="option-btn" data-value="دكتور جامعة">دكتور جامعة</button>
+                        <button class="option-btn" data-value="عالم">عالم</button>
                     </div>
-                    <div class="custom-language" id="custom-language-input">
-                        <input type="text" class="custom-input" id="custom-language" placeholder="اكتب اسم اللغة (مثل: فرنسي، ألماني، إسباني)">
+                </div>
+                
+                <!-- لغة الإخراج -->
+                <div class="setting-group">
+                    <h3 class="setting-title">
+                        <i class="fas fa-globe"></i>
+                        ما هي لغة الإخراج التي تفضل؟
+                    </h3>
+                    <div class="options-grid" id="output-language">
+                        <button class="option-btn selected" data-value="عربي">عربي</button>
+                        <button class="option-btn" data-value="انجليزي">انجليزي</button>
                     </div>
+                    <input type="text" class="text-input" id="custom-language" placeholder="أو اكتب اسم لغة أخرى" style="margin-top: 15px;">
+                </div>
+                
+                <!-- تعليق اختياري -->
+                <div class="setting-group">
+                    <h3 class="setting-title">
+                        <i class="fas fa-edit"></i>
+                        تعليق اختياري (تركيز خاص)
+                    </h3>
+                    <textarea class="text-input" id="optional-comment" rows="4" placeholder="اكتب تعليقاً لتوجيه عَون للتركيز على شيء معين في المحتوى (اختياري)"></textarea>
                 </div>
             </div>
             
-            <!-- التعليق الاختياري -->
-            <div class="comment-section">
-                <div class="option-title">
-                    <i class="fas fa-edit"></i>
-                    تعليق إضافي (اختياري)
+            <button class="generate-btn" id="generate-btn" onclick="generateSummary()">
+                <i class="fas fa-robot"></i>
+                إنشاء التلخيص التلقائي
+            </button>
+        </section>
+        
+        <!-- Result Section -->
+        <section class="result-section" id="result-section">
+            <div class="result-header">
+                <h2 class="result-title" id="result-title">ملخص الملف</h2>
+                <div class="font-controls">
+                    <button class="font-btn" onclick="changeResultFontSize('increase')">+</button>
+                    <span style="font-weight: 700; color: var(--accent-dark);">الخط</span>
+                    <button class="font-btn" onclick="changeResultFontSize('decrease')">-</button>
                 </div>
-                <textarea class="comment-input" id="comment" placeholder="اكتب أي تعليق أو ملاحظة إضافية تريد أن يراعيها التلخيص..."></textarea>
             </div>
             
-            <!-- أزرار التحكم -->
-            <div class="action-buttons">
-                <button class="action-btn cancel-btn" id="cancel-settings">
-                    <i class="fas fa-arrow-right fa-rotate-180"></i>
-                    رجوع
-                </button>
-                <button class="action-btn continue-btn" id="generate-btn">
-                    <i class="fas fa-robot"></i>
-                    إنشاء التلخيص
-                </button>
+            <div class="result-content" id="result-content">
+                <!-- سيتم ملء المحتوى هنا -->
+            </div>
+            
+            <div class="raw-summary" id="raw-summary">
+                <h3 class="raw-title">
+                    <i class="fas fa-bullseye"></i>
+                    النقاط الرئيسية
+                </h3>
+                <ul class="raw-points" id="raw-points">
+                    <!-- سيتم ملء النقاط هنا -->
+                </ul>
             </div>
         </section>
         
-        <!-- قسم نتائج التلخيص -->
-        <section class="result-section" id="result-section">
-            <h2 class="section-title">التلخيص الناتج</h2>
-            <div class="pages-container" id="pages-container"></div>
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="copyright">جميع الحقوق محفوظة لمنصة عَون© 2026</p>
             
-            <div class="action-buttons">
-                <button class="action-btn continue-btn" id="new-summary">
-                    <i class="fas fa-plus"></i>
-                    تلخيص جديد
-                </button>
+            <div class="support-section">
+                <div class="support-title">تواصل مع الدعم الفني</div>
+                <div class="support-links">
+                    <a href="https://wa.me/966583617539" target="_blank" class="support-link">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="https://t.me/HNHv1" target="_blank" class="support-link">
+                        <i class="fab fa-telegram"></i>
+                    </a>
+                </div>
             </div>
-        </section>
+            
+            <div class="developer-credit" onclick="window.open('https://t.me/X5Coder', '_blank')">
+                برمجة وتصميم المطور 𝐊𝐈𝐌𝐎
+            </div>
+        </footer>
     </div>
-
+    
     <script>
-        // متغيرات التطبيق
-        let currentFile = null;
+        // تهيئة Firebase
+        firebase.initializeApp({
+            apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
+            authDomain: "marvel1-654dd.firebaseapp.com",
+            databaseURL: "https://marvel1-654dd-default-rtdb.firebaseio.com",
+            projectId: "marvel1-654dd",
+            storageBucket: "marvel1-654dd.appspot.com",
+            messagingSenderId: "189921979866",
+            appId: "1:189921979866:android:95f48de58a69756be924e3"
+        });
+
+        const auth = firebase.auth();
+        const database = firebase.database();
+        
+        // العناصر الرئيسية
+        const elements = {
+            loadingScreen: document.getElementById('loading-screen'),
+            loadingText: document.getElementById('loading-text'),
+            navbar: document.getElementById('navbar'),
+            coinsCount: document.getElementById('coins-count'),
+            mainContent: document.getElementById('main-content'),
+            
+            // قسم الرفع
+            uploadArea: document.getElementById('upload-area'),
+            uploadText: document.getElementById('upload-text'),
+            uploadBtn: document.getElementById('upload-btn'),
+            pdfFile: document.getElementById('pdfFile'),
+            costPreview: document.getElementById('cost-preview'),
+            pageCount: document.getElementById('page-count'),
+            costAmount: document.getElementById('cost-amount'),
+            
+            // قسم الإعدادات
+            settingsSection: document.getElementById('settings-section'),
+            generateBtn: document.getElementById('generate-btn'),
+            
+            // قسم النتيجة
+            resultSection: document.getElementById('result-section'),
+            resultTitle: document.getElementById('result-title'),
+            resultContent: document.getElementById('result-content'),
+            rawSummary: document.getElementById('raw-summary'),
+            rawPoints: document.getElementById('raw-points')
+        };
+        
+        // المتغيرات العامة
+        let currentUser = null;
+        let userCoins = 0;
+        let selectedFile = null;
         let fileInfo = {
             name: '',
             size: 0,
             pages: 0,
             words: 0,
-            coins: 0
+            cost: 0
         };
-        let summarySettings = {
-            pages: 1,
-            explanationStyle: 'طفولي',
+        
+        let selectedSettings = {
+            explanationLevel: 'بسيط',
             dialect: 'مصري',
-            explainer: 'طالب',
+            explainerPersona: 'مدرس',
             outputLanguage: 'عربي',
             customLanguage: '',
-            comment: ''
+            optionalComment: ''
         };
-        let summaryResult = null;
         
-        // العناصر الرئيسية
-        const elements = {
-            navbar: document.getElementById('navbar'),
-            logo: document.getElementById('logo'),
-            coinsCount: document.getElementById('coins-count'),
-            fontControls: document.getElementById('font-controls'),
-            fontDecrease: document.getElementById('font-decrease'),
-            fontIncrease: document.getElementById('font-increase'),
-            mainContent: document.getElementById('main-content'),
-            processingOverlay: document.getElementById('processing-overlay'),
-            processingText: document.getElementById('processing-text'),
-            
-            // قسم رفع الملف
-            uploadArea: document.getElementById('upload-area'),
-            pdfFile: document.getElementById('pdf-file'),
-            fileInfo: document.getElementById('file-info'),
-            fileName: document.getElementById('file-name'),
-            fileSize: document.getElementById('file-size'),
-            pageCount: document.getElementById('page-count'),
-            coinsCost: document.getElementById('coins-cost'),
-            cancelUpload: document.getElementById('cancel-upload'),
-            continueBtn: document.getElementById('continue-btn'),
-            
-            // قسم الإعدادات
-            settingsSection: document.getElementById('settings-section'),
-            selectedPages: document.getElementById('selected-pages'),
-            sliderTrack: document.getElementById('slider-track'),
-            pagesSlider: document.getElementById('pages-slider'),
-            explanationStyle: document.getElementById('explanation-style'),
-            dialect: document.getElementById('dialect'),
-            explainer: document.getElementById('explainer'),
-            outputLanguage: document.getElementById('output-language'),
-            customLanguageInput: document.getElementById('custom-language-input'),
-            customLanguage: document.getElementById('custom-language'),
-            comment: document.getElementById('comment'),
-            cancelSettings: document.getElementById('cancel-settings'),
-            generateBtn: document.getElementById('generate-btn'),
-            
-            // قسم النتائج
-            resultSection: document.getElementById('result-section'),
-            pagesContainer: document.getElementById('pages-container'),
-            newSummary: document.getElementById('new-summary')
-        };
-
-        // تهيئة التطبيق عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', () => {
-            setupUI();
-        });
+        // إعدادات السيرفر (مأخوذة من تجربه.html)
+        const SERVER = "https://wet-aidan-kimon-66eadaf6.koyeb.app";
+        const ID = "12345";
+        const PASS = "12345abcde57";
         
-        // إعداد واجهة المستخدم
-        function setupUI() {
-            // شعار المنصة
-            elements.logo.addEventListener('click', () => {
-                // يمكن إضافة أي وظيفة هنا
-                console.log('شعار المنصة');
-            });
-            
-            // رفع الملف
-            elements.uploadArea.addEventListener('click', () => {
-                elements.pdfFile.click();
-            });
-            
-            elements.pdfFile.addEventListener('change', handleFileUpload);
-            elements.cancelUpload.addEventListener('click', resetUpload);
-            elements.continueBtn.addEventListener('click', showSettingsSection);
-            
-            // شريط الصفحات
-            setupPagesSlider();
-            
-            // اختيارات الإعدادات
-            setupOptionChoices(elements.explanationStyle, 'explanationStyle');
-            setupOptionChoices(elements.dialect, 'dialect');
-            setupOptionChoices(elements.explainer, 'explainer');
-            setupOptionChoices(elements.outputLanguage, 'outputLanguage');
-            
-            // أزرار التحكم
-            elements.generateBtn.addEventListener('click', generateSummary);
-            elements.cancelSettings.addEventListener('click', cancelSettings);
-            elements.newSummary.addEventListener('click', resetToUpload);
-            
-            // التحكم بحجم الخط
-            elements.fontDecrease.addEventListener('click', decreaseFontSize);
-            elements.fontIncrease.addEventListener('click', increaseFontSize);
-            
-            // اختيار القيم الافتراضية
-            selectDefaultOptions();
-            
-            // تعيين رصيد افتراضي لعرضه فقط (ليس مرتبطاً بأي حساب)
-            elements.coinsCount.textContent = "100";
-        }
+        // تحجيم الخط
+        let currentFontSize = 16;
+        let resultFontSize = 16;
         
-        // إعداد شريط عدد الصفحات
-        function setupPagesSlider() {
-            // إنشاء 25 قطعة
-            for (let i = 1; i <= 25; i++) {
-                const segment = document.createElement('div');
-                segment.className = 'slider-segment';
-                segment.innerHTML = `<div class="slider-segment-number">${i}</div>`;
-                elements.sliderTrack.appendChild(segment);
+        function changeFontSize(action) {
+            if (action === 'increase' && currentFontSize < 24) {
+                currentFontSize += 1;
+            } else if (action === 'decrease' && currentFontSize > 12) {
+                currentFontSize -= 1;
             }
             
-            elements.pagesSlider.addEventListener('input', updatePagesSlider);
-            updatePagesSlider();
+            document.body.style.fontSize = currentFontSize + 'px';
         }
         
-        // تحديث شريط الصفحات
-        function updatePagesSlider() {
-            const value = parseInt(elements.pagesSlider.value);
-            summarySettings.pages = value;
-            elements.selectedPages.textContent = `${value} صفحة`;
+        function changeResultFontSize(action) {
+            if (action === 'increase' && resultFontSize < 24) {
+                resultFontSize += 1;
+            } else if (action === 'decrease' && resultFontSize > 12) {
+                resultFontSize -= 1;
+            }
             
-            const segments = elements.sliderTrack.querySelectorAll('.slider-segment');
-            segments.forEach((segment, index) => {
-                if (index < value) {
-                    segment.classList.add('active');
-                } else {
-                    segment.classList.remove('active');
+            elements.resultContent.style.fontSize = resultFontSize + 'px';
+        }
+        
+        // تحميل بيانات المستخدم
+        async function loadUserData() {
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    window.location.replace('login.html');
+                    return;
                 }
-            });
-        }
-        
-        // إعداد اختيارات الإعدادات
-        function setupOptionChoices(container, settingKey) {
-            const choices = container.querySelectorAll('.option-choice');
-            choices.forEach(choice => {
-                choice.addEventListener('click', () => {
-                    choices.forEach(c => c.classList.remove('selected'));
-                    choice.classList.add('selected');
+                
+                // البحث عن المستخدم بالبريد الإلكتروني
+                const usersRef = database.ref('users_Awn');
+                const snapshot = await usersRef.once('value');
+                
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    let userFound = false;
                     
-                    const value = choice.getAttribute('data-value');
-                    summarySettings[settingKey] = value;
-                    
-                    if (settingKey === 'outputLanguage' && value === 'custom') {
-                        elements.customLanguageInput.style.display = 'block';
-                    } else if (settingKey === 'outputLanguage') {
-                        elements.customLanguageInput.style.display = 'none';
+                    for (const [userId, userData] of Object.entries(users)) {
+                        if (userId !== 'noty_publick' && userData.email === user.email) {
+                            currentUser = {
+                                id: userId,
+                                email: userData.email,
+                                name: userData.name || '',
+                                coin: userData.coin || 0,
+                                admin: userData.admin === true || false,
+                                banned: userData.banned === true || false
+                            };
+                            
+                            userCoins = userData.coin || 0;
+                            elements.coinsCount.textContent = userCoins;
+                            userFound = true;
+                            break;
+                        }
                     }
-                });
-            });
+                    
+                    if (!userFound) {
+                        await auth.signOut();
+                        window.location.replace('login.html');
+                    }
+                } else {
+                    await auth.signOut();
+                    window.location.replace('login.html');
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                window.location.replace('login.html');
+            }
         }
         
-        // اختيار القيم الافتراضية
-        function selectDefaultOptions() {
-            elements.explanationStyle.querySelector(`[data-value="طفولي"]`).click();
-            elements.dialect.querySelector(`[data-value="مصري"]`).click();
-            elements.explainer.querySelector(`[data-value="طالب"]`).click();
-            elements.outputLanguage.querySelector(`[data-value="عربي"]`).click();
+        // إعداد المستخدم
+        async function setupUser() {
+            try {
+                await loadUserData();
+                
+                if (currentUser && currentUser.banned !== true) {
+                    elements.navbar.style.display = 'flex';
+                    elements.mainContent.style.display = 'block';
+                } else {
+                    window.location.replace('login.html');
+                }
+            } catch (error) {
+                console.error('Error setting up user:', error);
+                window.location.replace('login.html');
+            }
         }
         
-        // التعامل مع رفع الملف
-        async function handleFileUpload(event) {
+        // إعداد حدث اختيار الملف
+        function setupFileUpload() {
+            elements.pdfFile.addEventListener('change', handleFileSelect);
+        }
+        
+        // معالجة اختيار الملف
+        async function handleFileSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
             
-            // التحقق من نوع الملف
-            if (!file.type.includes('pdf')) {
-                alert('⚠️ يرجى رفع ملف PDF فقط');
+            // التحقق من امتداد الملف
+            if (!file.name.toLowerCase().endsWith('.pdf')) {
+                alert('الرجاء رفع ملف PDF فقط');
+                resetFileInput();
                 return;
             }
             
-            // التحقق من حجم الملف
-            if (file.size > 20 * 1024 * 1024) {
-                alert('⚠️ حجم الملف كبير جداً. الحد الأقصى 20MB');
+            // التحقق من حجم الملف (10MB كحد أقصى)
+            if (file.size > 10 * 1024 * 1024) {
+                alert('حجم الملف كبير جداً. الحد الأقصى هو 10MB');
+                resetFileInput();
                 return;
             }
             
-            currentFile = file;
+            selectedFile = file;
+            elements.uploadText.textContent = file.name;
+            elements.uploadArea.style.borderColor = 'var(--accent-dark)';
+            elements.uploadArea.style.backgroundColor = 'rgba(139, 115, 85, 0.1)';
+            elements.uploadBtn.disabled = false;
             
-            // إظهار شاشة المعالجة
-            showProcessing('جاري تحليل الملف...');
-            
+            // تحليل الملف لحساب الكلمات والصفحات
+            await analyzePDF(file);
+        }
+        
+        // تحليل ملف PDF
+        async function analyzePDF(file) {
             try {
-                // تحليل PDF
-                await analyzePDF(file);
+                showLoading('جاري تحليل الملف...');
                 
-                // حساب التكلفة
-                calculateCost();
+                // قراءة ملف PDF وتحليل محتواه
+                const arrayBuffer = await file.arrayBuffer();
+                const pdfData = new Uint8Array(arrayBuffer);
                 
-                // عرض معلومات الملف
-                displayFileInfo();
+                // استخدام مكتبة PDF.js (إذا كانت متاحة) أو حساب تقديري
+                // في هذا المثال، سنستخدم تقديرات بسيطة
+                // ملاحظة: في التطبيق الفعلي، يجب استخدام مكتبة PDF.js لتحليل PDF
                 
-                // تمكين زر المتابعة
-                elements.continueBtn.disabled = false;
+                // تقدير عدد الصفحات (افتراض: كل 5000 بايت = صفحة واحدة، بحد أدنى 1)
+                const estimatedPages = Math.max(1, Math.round(file.size / 5000));
+                
+                // تقدير عدد الكلمات (افتراض: كل 5 كيلوبايت = 1000 كلمة)
+                const estimatedWords = Math.round(file.size / 5);
+                
+                fileInfo = {
+                    name: file.name,
+                    size: file.size,
+                    pages: estimatedPages,
+                    words: estimatedWords,
+                    cost: calculateCost(estimatedWords)
+                };
+                
+                hideLoading();
+                
+                // عرض معلومات التكلفة
+                elements.pageCount.textContent = fileInfo.pages;
+                elements.costAmount.textContent = fileInfo.cost + ' عملة';
+                elements.costPreview.classList.add('show');
                 
             } catch (error) {
-                console.error('خطأ في تحليل الملف:', error);
-                alert('❌ حدث خطأ في تحليل الملف. يرجى التأكد من صحة الملف وإعادة المحاولة.');
-            } finally {
-                hideProcessing();
+                console.error('Error analyzing PDF:', error);
+                hideLoading();
+                alert('حدث خطأ أثناء تحليل الملف. الرجاء المحاولة مرة أخرى.');
+                resetFileInput();
             }
         }
         
-        // تحليل PDF
-        async function analyzePDF(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                
-                reader.onload = async function(e) {
-                    try {
-                        const buffer = e.target.result;
-                        const typedarray = new Uint8Array(buffer);
-                        
-                        // استخدام pdf.js
-                        pdfjsLib.GlobalWorkerOptions.workerSrc = 
-                            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-                        
-                        const pdf = await pdfjsLib.getDocument(typedarray).promise;
-                        
-                        // حساب عدد الكلمات
-                        let totalWords = 0;
-                        for (let i = 1; i <= pdf.numPages; i++) {
-                            const page = await pdf.getPage(i);
-                            const content = await page.getTextContent();
-                            
-                            if (content.items.length > 0) {
-                                let text = '';
-                                content.items.forEach(t => text += t.str + ' ');
-                                const words = text.trim().split(/\s+/).filter(w => w.length >= 2);
-                                totalWords += words.length;
-                            } else {
-                                totalWords += 250;
-                            }
-                        }
-                        
-                        // حفظ المعلومات
-                        fileInfo = {
-                            name: file.name,
-                            size: file.size,
-                            pages: pdf.numPages,
-                            words: totalWords,
-                            coins: 0
-                        };
-                        
-                        // تحديد عدد الصفحات الأقصى
-                        const maxPages = Math.min(pdf.numPages, 25);
-                        elements.pagesSlider.max = maxPages;
-                        summarySettings.pages = Math.min(summarySettings.pages, maxPages);
-                        elements.pagesSlider.value = summarySettings.pages;
-                        updatePagesSlider();
-                        
-                        resolve();
-                    } catch (error) {
-                        reject(error);
-                    }
-                };
-                
-                reader.onerror = reject;
-                reader.readAsArrayBuffer(file);
+        // حساب التكلفة (مستوحى من ملف محلل.html)
+        function calculateCost(wordCount) {
+            // قاعدة حساب التكلفة: كل 1000 كلمة = 1 عملة، بحد أدنى 1 عملة
+            const cost = Math.max(1, Math.round(wordCount / 1000));
+            return cost;
+        }
+        
+        // إعادة تعيين إدخال الملف
+        function resetFileInput() {
+            elements.pdfFile.value = '';
+            selectedFile = null;
+            elements.uploadText.textContent = 'انقر لرفع ملف PDF';
+            elements.uploadArea.style.borderColor = '';
+            elements.uploadArea.style.backgroundColor = '';
+            elements.uploadBtn.disabled = true;
+            elements.costPreview.classList.remove('show');
+        }
+        
+        // معالجة PDF
+        function processPDF() {
+            if (!selectedFile) {
+                alert('الرجاء اختيار ملف PDF أولاً');
+                return;
+            }
+            
+            // التحقق من رصيد المستخدم
+            if (userCoins < fileInfo.cost) {
+                alert('رصيدك غير كافي لهذه العملية. الرجاء شحن رصيدك.');
+                return;
+            }
+            
+            // الانتقال إلى قسم الإعدادات
+            elements.uploadSection.style.display = 'none';
+            elements.settingsSection.classList.add('show');
+        }
+        
+        // إلغاء العملية
+        function cancelProcess() {
+            resetFileInput();
+            elements.costPreview.classList.remove('show');
+        }
+        
+        // تأكيد المتابعة
+        function confirmProcess() {
+            processPDF();
+        }
+        
+        // إعداد أحداث الإعدادات
+        function setupSettingsEvents() {
+            // طريقة الشرح
+            document.querySelectorAll('#explanation-level .option-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('#explanation-level .option-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedSettings.explanationLevel = this.getAttribute('data-value');
+                });
+            });
+            
+            // اللهجة
+            document.querySelectorAll('#dialect .option-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('#dialect .option-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedSettings.dialect = this.getAttribute('data-value');
+                });
+            });
+            
+            // شخصية الشارح
+            document.querySelectorAll('#explainer-persona .option-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('#explainer-persona .option-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedSettings.explainerPersona = this.getAttribute('data-value');
+                });
+            });
+            
+            // لغة الإخراج
+            document.querySelectorAll('#output-language .option-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('#output-language .option-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedSettings.outputLanguage = this.getAttribute('data-value');
+                });
+            });
+            
+            // اللغة المخصصة
+            document.getElementById('custom-language').addEventListener('input', function() {
+                if (this.value.trim()) {
+                    selectedSettings.customLanguage = this.value.trim();
+                    // إذا كتب لغة مخصصة، نختارها بدلاً من الخيارات المحددة
+                    selectedSettings.outputLanguage = this.value.trim();
+                }
+            });
+            
+            // التعليق الاختياري
+            document.getElementById('optional-comment').addEventListener('input', function() {
+                selectedSettings.optionalComment = this.value.trim();
             });
         }
         
-        // حساب التكلفة
-        function calculateCost() {
-            let coins = Math.ceil((fileInfo.words / 1000) * 2) / 2;
-            if (coins < 1) coins = 1;
-            fileInfo.coins = coins;
-        }
-        
-        // عرض معلومات الملف
-        function displayFileInfo() {
-            elements.fileName.textContent = fileInfo.name;
-            elements.fileSize.textContent = formatFileSize(fileInfo.size);
-            elements.pageCount.textContent = fileInfo.pages;
-            elements.coinsCost.textContent = fileInfo.coins;
+        // إنشاء البرومبت (مستوحى من تجربه.html)
+        function createPrompt() {
+            // استخدام اللغة المخصصة إذا تم إدخالها
+            const outputLanguage = selectedSettings.customLanguage || selectedSettings.outputLanguage;
             
-            elements.fileInfo.classList.add('show');
+            return `
+ROLE:
+You are an AI specialized in **strict PDF analysis and summarization** following Google Gemini Flash 2.5 Lite standards.
+You must strictly follow the instructions below with ZERO deviation.
+
+========================
+INPUT VARIABLES (IN ARABIC):
+========================
+لغة_الإخراج        = ${outputLanguage}
+اللهجة             = ${selectedSettings.dialect}
+مستوى_الشرح        = ${selectedSettings.explanationLevel}
+شخصية_الشارح       = ${selectedSettings.explainerPersona}
+تعليق_اختياري      = ${selectedSettings.optionalComment || '(فارغ → ignore completely)'}
+
+========================
+TASK:
+========================
+1. Analyze the provided PDF **from the first word to the last word only**.
+2. Do NOT use any external knowledge.
+3. Do NOT infer, guess, or add explanations not present in the PDF.
+4. If the PDF is empty, corrupted, unreadable, or has no meaningful content → return the fallback JSON exactly as defined below.
+5. Generate a **full summary** in a **single page**, strictly following:
+   - Explanation level: مستوى_الشرح
+   - Explainer persona: شخصية_الشارح
+   - Output language: لغة_الإخراج
+   - Dialect: اللهجة
+   - Optional comment: تعليق_اختياري (ignore if empty)
+   - The summary must cover **100% of the PDF content**. No important information inside the PDF should be omitted.
+   - The style must fully match the user-selected level and persona.
+
+6. **RAW field rules**:
+   - Extract **3–5 sentences**, not questions, but **direct statements summarizing the key content or useful insights**.
+   - **Priority:** Any explicit rules, laws, or constraints in the PDF come first. Then include other important points.
+   - All sentences must be understandable **alone** to capture the gist of the PDF content.
+
+========================
+OUTPUT FORMAT (STRICT):
+========================
+- Output MUST be **VALID JSON ONLY**
+- No Markdown
+- No extra text
+- No comments
+- Keys must appear **exactly in this order**
+
+========================
+JSON SCHEMA:
+========================
+{
+  "head": "",
+  "raw": [],
+  "page": ""
+}
+
+========================
+FIELD RULES:
+========================
+1. head:
+   - Exactly 5 words
+   - Represents the PDF content accurately
+   - Written in لغة_الإخراج
+
+2. raw:
+   - Array of **direct statements**, not questions
+   - Minimum 3 items, maximum 5 items
+   - Priority:
+     a) Explicit rules, laws, or constraints in the PDF
+     b) If none exist, summarize the most useful points clearly
+   - Must be understandable **alone** without reading the full summary
+   - Written in the specified language, dialect, and style
+
+3. page:
+   - Full detailed explanation of the summary
+   - Must follow **شخصية_الشارح** explaining in **مستوى_الشرح**
+   - Strictly based on PDF content only
+   - Must cover **everything in the PDF**; nothing should be skipped
+   - No added knowledge or interpretation
+
+========================
+FAILURE / EMPTY PDF RESPONSE (MANDATORY):
+========================
+If the PDF is empty, unreadable, or invalid, RETURN EXACTLY:
+
+{
+  "head": "Not Output",
+  "raw": "Not Output",
+  "page": "Not Output"
+}
+
+========================
+ABSOLUTE CONSTRAINTS:
+========================
+- Do NOT output anything except the final JSON
+- Do NOT mention instructions or analysis steps
+- Do NOT hallucinate or guess
+- Be strict, literal, and deterministic
+`;
         }
         
-        // تنسيق حجم الملف
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-        
-        // إعادة تعيين رفع الملف
-        function resetUpload() {
-            currentFile = null;
-            fileInfo = { name: '', size: 0, pages: 0, words: 0, coins: 0 };
-            elements.pdfFile.value = '';
-            elements.fileInfo.classList.remove('show');
-            elements.continueBtn.disabled = true;
-        }
-        
-        // عرض قسم الإعدادات
-        function showSettingsSection() {
-            if (!currentFile) {
-                alert('⚠️ يرجى رفع ملف أولاً');
+        // إنشاء التلخيص
+        async function generateSummary() {
+            if (!selectedFile) {
+                alert('الرجاء اختيار ملف PDF أولاً');
                 return;
             }
             
-            elements.uploadSection.style.display = 'none';
-            elements.settingsSection.classList.add('show');
-            elements.resultSection.classList.remove('show');
-        }
-        
-        // العودة من قسم الإعدادات
-        function cancelSettings() {
-            elements.settingsSection.classList.remove('show');
-            elements.uploadSection.style.display = 'block';
-        }
-        
-        // توليد التلخيص
-        async function generateSummary() {
+            // التحقق من رصيد المستخدم مرة أخرى
+            if (userCoins < fileInfo.cost) {
+                alert('رصيدك غير كافي لهذه العملية. الرجاء شحن رصيدك.');
+                return;
+            }
+            
+            // تعطيل زر الإنشاء أثناء المعالجة
+            elements.generateBtn.disabled = true;
+            elements.generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإنشاء...';
+            
             try {
-                // جمع الإعدادات
-                summarySettings.comment = elements.comment.value;
-                if (summarySettings.outputLanguage === 'custom') {
-                    summarySettings.customLanguage = elements.customLanguage.value.trim();
-                    if (!summarySettings.customLanguage) {
-                        alert('⚠️ يرجى إدخال اللغة المخصصة');
-                        return;
-                    }
-                }
+                showLoading('جاري إنشاء التلخيص...');
                 
-                // إظهار شاشة المعالجة
-                showProcessing('جاري إنشاء التلخيص...');
-                
-                // تحويل PDF إلى Base64
+                // تحويل الملف إلى base64 (مستوحى من تجربه.html)
                 const base64 = await new Promise((resolve, reject) => {
                     const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.onload = () => resolve(reader.result.split(",")[1]);
                     reader.onerror = reject;
-                    reader.readAsDataURL(currentFile);
+                    reader.readAsDataURL(selectedFile);
                 });
                 
-                // إنشاء البرومت
+                // إنشاء البرومبت
                 const prompt = createPrompt();
                 
-                // إعداد بيانات الإرسال
-                const requestData = {
-                    id: "12345",
-                    pass: "12345abcde57",
-                    data: prompt,
-                    PDF_BASE64: base64
-                };
-                
-                // إرسال الطلب للسيرفر
-                const SERVER = 'https://wet-aidan-kimon-66eadaf6.koyeb.app';
-                const response = await fetch(SERVER + '/api/KIMO_DEV', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestData)
+                // إرسال الطلب إلى السيرفر (مستوحى من تجربه.html)
+                const response = await fetch(SERVER + "/api/KIMO_DEV", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        id: ID,
+                        pass: PASS,
+                        data: prompt,
+                        PDF_BASE64: base64
+                    })
                 });
                 
                 if (!response.ok) {
                     throw new Error(`خطأ في السيرفر: ${response.status}`);
                 }
                 
-                const resultText = await response.text();
-                console.log('النتيجة:', resultText);
+                const text = await response.text();
                 
+                // محاولة تحليل JSON
                 let result;
                 try {
-                    result = JSON.parse(resultText);
+                    result = JSON.parse(text);
                 } catch (e) {
-                    throw new Error('❌ النتيجة ليست بصيغة JSON صحيحة');
+                    console.error('Error parsing JSON:', e, 'Response:', text);
+                    throw new Error('رد غير صالح من السيرفر');
                 }
                 
-                if (result.Eror) {
-                    throw new Error(result.Eror);
+                // التحقق من وجود أخطاء
+                if (result.head === "Not Output" && result.raw === "Not Output" && result.page === "Not Output") {
+                    throw new Error('الملف فارغ أو غير قابل للقراءة');
                 }
+                
+                // خصم العملات بعد نجاح العملية
+                await deductCoins(fileInfo.cost);
+                
+                // حفظ النتيجة في قاعدة البيانات
+                await saveResultToDatabase(result);
                 
                 // عرض النتيجة
-                summaryResult = result;
-                displaySummaryResult();
+                displayResult(result);
+                
+                // إخفاء قسم الإعدادات وإظهار قسم النتيجة
+                elements.settingsSection.classList.remove('show');
+                elements.resultSection.classList.add('show');
                 
             } catch (error) {
-                console.error('خطأ:', error);
-                alert(`❌ حدث خطأ: ${error.message}`);
+                console.error('Error generating summary:', error);
+                alert('حدث خطأ أثناء إنشاء التلخيص: ' + error.message);
             } finally {
-                hideProcessing();
+                hideLoading();
+                elements.generateBtn.disabled = false;
+                elements.generateBtn.innerHTML = '<i class="fas fa-robot"></i> إنشاء التلخيص التلقائي';
             }
         }
         
-        // إنشاء البرومت
-        function createPrompt() {
-            const { pages, explanationStyle, dialect, explainer, outputLanguage, customLanguage, comment } = summarySettings;
-            
-            let languageOutput = outputLanguage;
-            if (outputLanguage === 'custom' && customLanguage) {
-                languageOutput = customLanguage;
+        // خصم العملات
+        async function deductCoins(amount) {
+            try {
+                const newCoins = userCoins - amount;
+                userCoins = newCoins;
+                
+                // تحديث في Firebase
+                await database.ref(`users_Awn/${currentUser.id}/coin`).set(newCoins);
+                
+                // تحديث العرض
+                elements.coinsCount.textContent = newCoins;
+                
+            } catch (error) {
+                console.error('Error deducting coins:', error);
+                throw error;
             }
-            
-            return `SYSTEM MODE: STRICT CONTROLLED EXECUTION ENGINE
-
-أنت محرك تنفيذ مهام وتحليل مستندات فقط وليس مساعد محادثة. تقوم بتنفيذ الطلب مباشرة بدون أي مقدمات أو تعليقات أو شرح خارج المطلوب.
-
-عند استلام ملف PDF يجب تنفيذ المراحل التالية بالترتيب الإجباري:
-
-أولاً: تحليل الملف بالكامل من البداية للنهاية لفهم المحتوى العام والأفكار الرئيسية والتفاصيل المهمة بدون تخطي أي جزء.
-
-ثانياً: تحديد اللغة الأساسية المستخدمة داخل الملف.
-
-ثالثاً: تنفيذ عملية التلخيص الاحترافي بناءً على المدخلات التالية مع الالتزام الكامل بها.
-
-يجب عليك إنشاء تلخيص احترافي عالي الجودة يلتزم التزامًا صارمًا بكل المدخلات التي سيضعها المستخدم. يجب أن يكون عدد الصفحات الناتج مساويًا تمامًا للقيمة المحددة هنا {{عدد_الصفحات=${pages}}} ويمنع منعًا باتًا زيادة أو تقليل عدد الصفحات عن هذا الرقم.
-
-يجب أن تكون لغة التلخيص والتحويل النهائي للناتج مطابقة تمامًا للغة التالية {{لغة_الإخراج=${languageOutput}}}.  
-
-إذا كانت القيمة تشير إلى استخدام نفس لغة الملف فيجب الالتزام باللغة التي تم اكتشافها داخل الملف.
-
-يجب أن يكون أسلوب الشرح والتلخيص مطابقًا تمامًا للطريقة التالية {{طريقة_الشرح=${explanationStyle}}} ويجب أن ينعكس هذا الأسلوب بوضوح داخل طريقة عرض المعلومات.
-
-يجب أن يتم تقديم التلخيص باستخدام اللهجة التالية {{اللهجة_المفضلة=${dialect}}} ويجب الالتزام بهذه اللهجة طوال التلخيص بالكامل دون تغيير.
-
-يجب أن يتم تقديم التلخيص وكأنه صادر من شخصية {{الشخص_الشارح=${explainer}}} ويجب أن يظهر أسلوب التفكير وطريقة عرض المعلومات بما يتناسب مع هذه الشخصية.
-
-يجب مراعاة التعليق التالي إن وُجد ودمجه داخل أسلوب التلخيص بدون الإشارة إليه بشكل مباشر {{تعليق_اختياري=${comment || "لا يوجد تعليق"}}}
-
---------------------------------------------
-
-قواعد التنفيذ الصارمة:
-
-- تحليل الملف كاملًا قبل بدء التلخيص
-- الالتزام الكامل بجميع المدخلات بدون أي تعديل أو تفسير إضافي
-- استخراج أهم الأفكار والمعلومات الجوهرية فقط
-- يمنع إضافة أي معلومات غير موجودة داخل الملف
-- يمنع الافتراض أو التخمين
-- يمنع تجاوز عدد الصفحات المحدد
-- يجب تقسيم التلخيص إلى صفحات مساوية تمامًا لعدد الصفحات المحدد
-- كل صفحة يجب أن تحتوي فقط على محتوى خاص بها
-- يجب أن يكون النص النهائي بالكامل مكتوب بلغة {{لغة_الإخراج}}
-
---------------------------------------------
-
-OUTPUT FORMAT (HARD LOCK JSON STRUCTURE):
-
-يجب أن يكون الإخراج بصيغة JSON فقط وبدون أي نص خارج الجيسون.
-
-يجب إنشاء عنصر لكل صفحة باستخدام نفس عدد الصفحات المدخل من المستخدم.
-
-هيكل كل صفحة يجب أن يكون كالتالي:
-
-pageX:
-dec : النص الملخص الخاص بالصفحة
-rew : القوانين أو القواعد المذكورة داخل نفس محتوى الصفحة إذا كانت موجودة، وإذا لم تكن موجودة تترك فارغة ""
-
-حيث X يمثل رقم الصفحة ويجب أن يبدأ من 1 وحتى {{عدد_الصفحات}} بدون نقصان أو زيادة.
-
---------------------------------------------
-
-قواعد الجيسون:
-
-- يمنع إضافة أي مفاتيح إضافية
-- يمنع تغيير أسماء الحقول
-- يمنع تغيير ترتيب الصفحات
-- يجب أن يكون عدد الصفحات داخل الجيسون مطابق تمامًا لعدد الصفحات المدخل
-- يمنع إضافة شروحات أو تعليقات خارج الجيسون
-
---------------------------------------------
-
-سياسة الخطأ:
-
-إذا كان الملف فارغ أو تالف أو غير قابل للقراءة أو حدث فشل في استخراج المحتوى يجب أن يكون الإخراج فقط بالشكل التالي:
-
-{
-"page": 1,
-"dec": "No Output",
-"raw": ""
-}`;
         }
         
-        // عرض النتائج
-        function displaySummaryResult() {
-            elements.settingsSection.classList.remove('show');
-            elements.resultSection.classList.add('show');
-            elements.fontControls.style.display = 'flex';
+        // حفظ النتيجة في قاعدة البيانات
+        async function saveResultToDatabase(result) {
+            try {
+                const recordId = 'record_' + Date.now();
+                const recordData = {
+                    id: currentUser.id,
+                    process: 'ملخص',
+                    data: result,
+                    timestamp: Date.now(),
+                    fileName: fileInfo.name,
+                    cost: fileInfo.cost
+                };
+                
+                await database.ref(`records/${recordId}`).set(recordData);
+                
+            } catch (error) {
+                console.error('Error saving result to database:', error);
+                // لا نرمي الخطأ هنا لأن العملية الأساسية تمت بنجاح
+            }
+        }
+        
+        // عرض النتيجة
+        function displayResult(result) {
+            // عرض العنوان
+            elements.resultTitle.textContent = result.head || 'ملخص الملف';
             
-            elements.pagesContainer.innerHTML = '';
+            // عرض المحتوى الرئيسي
+            elements.resultContent.innerHTML = '';
             
-            if (Array.isArray(summaryResult)) {
-                summaryResult.forEach((page, index) => {
-                    createResultPage(index + 1, page.dec || '', page.rew || '');
+            if (result.page) {
+                // تحويل النص إلى فقرات
+                const paragraphs = result.page.split('\n').filter(p => p.trim());
+                paragraphs.forEach(paragraph => {
+                    const p = document.createElement('p');
+                    p.textContent = paragraph;
+                    p.style.marginBottom = '20px';
+                    elements.resultContent.appendChild(p);
                 });
-            } else if (typeof summaryResult === 'object') {
-                Object.keys(summaryResult).forEach(key => {
-                    const page = summaryResult[key];
-                    const pageNumber = parseInt(key.replace('page', ''));
-                    createResultPage(pageNumber, page.dec || '', page.rew || '');
+            } else {
+                elements.resultContent.textContent = 'لا يوجد محتوى للعرض';
+            }
+            
+            // عرض النقاط الرئيسية
+            elements.rawPoints.innerHTML = '';
+            
+            if (result.raw && Array.isArray(result.raw) && result.raw.length > 0) {
+                result.raw.forEach(point => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
+                    elements.rawPoints.appendChild(li);
                 });
-            }
-        }
-        
-        // إنشاء صفحة نتيجة
-        function createResultPage(pageNumber, content, laws) {
-            const pageElement = document.createElement('div');
-            pageElement.className = 'result-page';
-            
-            const lawsSection = laws && laws.trim() !== '' ? 
-                `<div class="laws-section show">
-                    <div class="laws-title">
-                        <i class="fas fa-gavel"></i>
-                        القوانين والقواعد
-                    </div>
-                    <div class="laws-content">${laws}</div>
-                </div>` : '';
-            
-            pageElement.innerHTML = `
-                <div class="page-header">
-                    <div class="page-number">
-                        <i class="fas fa-file-alt"></i>
-                        الصفحة ${pageNumber}
-                        <span class="page-badge">ملخص</span>
-                    </div>
-                </div>
-                <div class="page-content">${content}</div>
-                ${lawsSection}
-            `;
-            
-            elements.pagesContainer.appendChild(pageElement);
-        }
-        
-        // إعادة التعيين
-        function resetToUpload() {
-            resetUpload();
-            elements.settingsSection.classList.remove('show');
-            elements.resultSection.classList.remove('show');
-            elements.uploadSection.style.display = 'block';
-            elements.fontControls.style.display = 'none';
-            
-            selectDefaultOptions();
-            elements.comment.value = '';
-            elements.customLanguage.value = '';
-            elements.pagesSlider.value = 1;
-            updatePagesSlider();
-        }
-        
-        // التحكم بحجم الخط
-        function decreaseFontSize() {
-            if (document.body.classList.contains('font-large')) {
-                document.body.classList.remove('font-large');
-                document.body.classList.add('font-small');
-            } else if (document.body.classList.contains('font-xlarge')) {
-                document.body.classList.remove('font-xlarge');
-                document.body.classList.add('font-large');
             } else {
-                document.body.classList.add('font-small');
+                const li = document.createElement('li');
+                li.innerHTML = '<i class="fas fa-info-circle"></i> لا توجد نقاط رئيسية';
+                elements.rawPoints.appendChild(li);
             }
+            
+            // إعادة تعيين حجم خط النتيجة
+            resultFontSize = 16;
+            elements.resultContent.style.fontSize = resultFontSize + 'px';
         }
         
-        function increaseFontSize() {
-            if (document.body.classList.contains('font-small')) {
-                document.body.classList.remove('font-small');
-            } else if (document.body.classList.contains('font-large')) {
-                document.body.classList.remove('font-large');
-                document.body.classList.add('font-xlarge');
-            } else {
-                document.body.classList.add('font-large');
-            }
+        // عرض شاشة التحميل
+        function showLoading(text = 'جاري التحميل...') {
+            elements.loadingText.textContent = text;
+            elements.loadingScreen.style.display = 'flex';
+            setTimeout(() => {
+                elements.loadingScreen.style.opacity = '1';
+            }, 10);
         }
         
-        // إظهار شاشة المعالجة
-        function showProcessing(text) {
-            elements.processingText.textContent = text;
-            elements.processingOverlay.classList.add('show');
+        // إخفاء شاشة التحميل
+        function hideLoading() {
+            elements.loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                elements.loadingScreen.style.display = 'none';
+            }, 500);
         }
         
-        // إخفاء شاشة المعالجة
-        function hideProcessing() {
-            elements.processingOverlay.classList.remove('show');
+        // تهيئة التطبيق
+        async function initApp() {
+            // مراقبة حالة المصادقة
+            const unsubscribe = auth.onAuthStateChanged(async (user) => {
+                if (!user) {
+                    window.location.replace('login.html');
+                    return;
+                }
+                
+                try {
+                    await setupUser();
+                    setupFileUpload();
+                    setupSettingsEvents();
+                } catch (error) {
+                    console.error('Error initializing app:', error);
+                    window.location.replace('login.html');
+                } finally {
+                    setTimeout(() => {
+                        unsubscribe();
+                    }, 100);
+                }
+            });
         }
+        
+        // منع الرجوع في المتصفح
+        history.pushState(null, null, window.location.href);
+        window.addEventListener('popstate', function(event) {
+            history.pushState(null, null, window.location.href);
+        });
+        
+        // تهيئة التطبيق عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
