@@ -1,135 +1,250 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>تلخيص PDF - عون</title>
+<title>عون | تلخيص PDF</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
 <style>
-body{font-family:Arial;background:#f5f5f5;margin:0}
-.header{background:#1a73e8;color:#fff;padding:15px;display:flex;justify-content:space-between}
-.section{display:none;background:#fff;margin:20px;padding:20px;border-radius:8px}
+body{margin:0;font-family:Arial;background:#f5f5f5}
+.header{background:#1a73e8;color:#fff;padding:15px 20px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:22px;font-weight:bold}
+.coins{background:rgba(255,255,255,.2);padding:6px 14px;border-radius:20px}
+.section{display:none;max-width:1100px;margin:25px auto;background:#fff;padding:25px;border-radius:8px}
 .section.active{display:block}
-button{padding:10px 20px;background:#1a73e8;color:#fff;border:0;border-radius:5px;cursor:pointer}
+h2{color:#1a73e8;margin-top:0}
+button{padding:10px 20px;border:0;border-radius:6px;font-weight:bold;cursor:pointer}
+.primary{background:#1a73e8;color:#fff}
+.danger{background:#dc3545;color:#fff}
+.upload{border:3px dashed #1a73e8;padding:50px;text-align:center;cursor:pointer}
+.loading{text-align:center;font-size:18px}
+.result-box{background:#e8f0fe;padding:15px;border-radius:6px;text-align:center;margin:10px 0}
+.toolbar{display:flex;gap:10px;margin-bottom:15px}
+.page{background:#fff;border:1px solid #ccc;padding:20px;margin:20px 0}
+.law{background:#fff3cd;padding:12px;border-radius:6px;margin-top:15px}
+input[type=range]{width:100%}
+select,textarea{width:100%;padding:8px;margin-top:6px}
+canvas{border:1px solid #1a73e8;border-radius:6px}
 </style>
 </head>
 
 <body>
 
 <div class="header">
-<div>عون</div>
-<div>النقاط: <span id="coinsCount">0</span></div>
+<div class="logo">عَون</div>
+<div class="coins">النقاط: <span id="coins">120</span></div>
 </div>
 
+<!-- رفع الملف -->
 <div id="uploadSection" class="section active">
 <h2>رفع ملف PDF</h2>
-<input type="file" id="pdfInput" accept=".pdf">
+<div class="upload" onclick="pdfInput.click()">اضغط لرفع الملف</div>
+<input type="file" id="pdfInput" accept=".pdf" hidden>
 </div>
 
+<!-- تحميل -->
 <div id="loadingSection" class="section">
-<h2 id="loadingText">جارٍ المعالجة...</h2>
+<div class="loading" id="loadingText">عون يحلل الملف...</div>
 </div>
 
-<div id="resultsSection" class="section">
-<h2>النتيجة</h2>
-<div id="resultsContent"></div>
+<!-- تحليل -->
+<div id="analysisSection" class="section">
+<h2>تحليل الملف</h2>
+<div class="result-box">عدد الصفحات: <b id="pagesCount"></b></div>
+<div class="result-box">عدد الكلمات: <b id="wordsCount"></b></div>
+<div class="result-box">سيتم خصم: <b id="coinsCost"></b> نقطة</div>
+<p>سيتم خصم عدد (<span id="coinsCost2"></span>) من نقاطك، هل تود المتابعة؟</p>
+<button class="primary" onclick="goControls()">متابعة</button>
+<button class="danger" onclick="resetAll()">إلغاء</button>
+</div>
+
+<!-- الإعدادات -->
+<div id="controlSection" class="section">
+<h2>إعدادات التلخيص</h2>
+
+<label>عدد الصفحات</label>
+<input type="range" id="pagesSlider" min="1" max="25" value="1">
+<div id="pagesVal">1</div>
+
+<label>نوع الشرح</label>
+<select id="style">
+<option>بسيط</option>
+<option>معقد</option>
+<option>طفولي</option>
+<option>عالي المستوى</option>
+</select>
+
+<label>شخصية الشرح</label>
+<select id="persona">
+<option>دكتور جامعي</option>
+<option>أستاذ مدرسي</option>
+<option>طالب</option>
+<option>عالم</option>
+<option>صديق</option>
+<option>هاوي</option>
+</select>
+
+<label>تعليق المستخدم (اختياري)</label>
+<textarea id="comment"></textarea>
+
+<button class="primary" onclick="startSummary()">بدء التلخيص</button>
+</div>
+
+<!-- النتائج -->
+<div id="resultSection" class="section">
+<h2>نتائج التلخيص</h2>
+<div class="toolbar">
+<button onclick="zoom(1)">تكبير</button>
+<button onclick="zoom(-1)">تصغير</button>
+</div>
+<div id="results"></div>
 </div>
 
 <script>
 // ================= Firebase =================
 firebase.initializeApp({
-apiKey:"AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
 databaseURL:"https://marvel1-654dd-default-rtdb.firebaseio.com"
 });
-const database=firebase.database();
+const db=firebase.database();
 
 // ================= Globals =================
-let pdfBuffer=null;
+let pdfBuffer,analysis,fontSize=16;
 const GEMINI_KEY="AIzaSyBLPQghg4mE7gW2P8hfmSN_fIaz_mI4oTc";
-const GEMINI_MODEL="gemini-2.5-flash-lite";
 
-// ================= PDF Upload =================
-document.getElementById("pdfInput").addEventListener("change",async e=>{
+// ================= PDF Analyzer (كما هو) =================
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+pdfInput.onchange=async e=>{
 const file=e.target.files[0];
 if(!file)return;
-show("loadingSection","تحليل الملف...");
+
 pdfBuffer=new Uint8Array(await file.arrayBuffer());
-const result=await sendToGemini(1,"بسيط","دكتور جامعي","");
-show("resultsSection");
-display(result);
-});
+
+show("loadingSection");
+const msgs=[
+"عون يحلل الملف...",
+"عون يحسب عدد الصفحات...",
+"عون يستخرج كل الكلمات...",
+"عون يجهز البيانات..."
+];
+let i=0;
+const interval=setInterval(()=>{
+loadingText.textContent=msgs[i++%msgs.length];
+},1200);
+
+const pdf=await pdfjsLib.getDocument(pdfBuffer).promise;
+let totalWords=0;
+
+for(let p=1;p<=pdf.numPages;p++){
+const page=await pdf.getPage(p);
+const content=await page.getTextContent();
+if(content.items.length>0){
+let text='';
+content.items.forEach(t=>text+=t.str+' ');
+totalWords+=text.trim().split(/\s+/).filter(w=>w.length>=2).length;
+}else{
+totalWords+=250;
+}
+}
+
+let coins=Math.ceil((totalWords/1000)*2)/2;
+if(coins<1)coins=1;
+
+analysis={pages:pdf.numPages,words:totalWords,coins};
+
+setTimeout(()=>{
+clearInterval(interval);
+pagesCount.textContent=analysis.pages;
+wordsCount.textContent=analysis.words;
+coinsCost.textContent=analysis.coins;
+coinsCost2.textContent=analysis.coins;
+show("analysisSection");
+},5000);
+};
+
+// ================= Controls =================
+pagesSlider.oninput=()=>pagesVal.textContent=pagesSlider.value;
 
 // ================= Gemini =================
-async function sendToGemini(pages,style,personality,comment){
+async function startSummary(){
+show("loadingSection");
+loadingText.textContent="عون يلخص...";
 
-const prompt=`
-OUTPUT JSON ONLY
-[
- {
-  "page":1,
-  "Dec":"شرح 300 كلمة",
-  "law":""
- }
-]
+const prompt=`SYSTEM MODE: CONTROLLED EXECUTION ENGINE
+
+You are a non-conversational processing engine.
+You execute tasks only.
+
+REQUIRED USER INPUTS:
+- ﴿${pagesSlider.value}﴾
+- ﴿${style.value}﴾
+- ﴿${persona.value}﴾
+
+OPTIONAL USER INPUT:
+- ﴿${comment.value||"لا يوجد"}﴾
 `;
 
-let binary="";
-for(let i=0;i<pdfBuffer.length;i++){
-binary+=String.fromCharCode(pdfBuffer[i]);
-}
+let binary='';
+pdfBuffer.forEach(b=>binary+=String.fromCharCode(b));
 const base64=btoa(binary);
 
-const response=await fetch(
-`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_KEY}`,
+const res=await fetch(
+`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${GEMINI_KEY}`,
 {
 method:"POST",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify({
-contents:[{
-parts:[
+contents:[{parts:[
 {text:prompt},
 {inline_data:{mime_type:"application/pdf",data:base64}}
-]
-}],
-generationConfig:{
-temperature:0.2,
-maxOutputTokens:4096,
-topP:0.8,
-topK:40
-}
+]}],
+generationConfig:{temperature:.2,maxOutputTokens:4096}
 })
 });
 
-if(!response.ok) throw new Error("Gemini error");
-
-const data=await response.json();
+const data=await res.json();
 const text=data.candidates[0].content.parts[0].text;
-return JSON.parse(text);
+const json=JSON.parse(text);
+
+// حفظ
+await db.ref("records").push({
+user:"demo",
+file:"pdf",
+type:"summary",
+pages:analysis.pages,
+result:json
+});
+
+render(json);
+show("resultSection");
 }
 
-// ================= UI =================
-function show(id,text){
-document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-if(text)document.getElementById("loadingText").textContent=text;
-}
-
-function display(results){
-const c=document.getElementById("resultsContent");
-c.innerHTML="";
-results.forEach(r=>{
-c.innerHTML+=`
-<div style="margin:10px;padding:10px;border:1px solid #ccc">
-<h3>الصفحة ${r.page}</h3>
-<p>${r.Dec}</p>
-${r.law?`<div><b>قوانين:</b>${r.law}</div>`:""}
+// ================= Render =================
+function render(arr){
+results.innerHTML="";
+arr.forEach(p=>{
+results.innerHTML+=`
+<div class="page" style="font-size:${fontSize}px">
+<h3>الصفحة ${p.page}</h3>
+<p>${p.Dec}</p>
+${p.law?`<div class="law"><b>قوانين الصفحة</b><br>${p.law}</div>`:""}
 </div>`;
 });
 }
+
+function zoom(v){fontSize+=v*2;render([...document.querySelectorAll('.page')].map((_,i)=>analysis));}
+
+// ================= Helpers =================
+function show(id){
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+function resetAll(){location.reload();}
 </script>
 
 </body>
