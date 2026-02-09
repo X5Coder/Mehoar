@@ -752,7 +752,7 @@
             border-radius: 12px;
             padding: 8px 12px;
             margin-bottom: 8px;
-            border: 2px solid rgba(15, 23,42, 0.1);
+            border: 2px solid rgba(15, 23, 42, 0.1);
             font-size: 0.85rem;
         }
         
@@ -1524,10 +1524,10 @@
         let currentUser = null;
         let isAdmin = false;
         let allUsers = [];
-        let currentNotifications = []; // مصفوفة لتخزين جميع الإشعارات النشطة
-        let notificationTimeouts = {}; // كائن لتخزين المؤقتات لكل إشعار
-        let publicNotificationsListener = null;
-        let userNotificationsListener = null;
+        let shownNotifications = new Set(); // لتتبع الإشعارات التي تم عرضها بالفعل
+        let activeNotifications = new Map(); // لتتبع الإشعارات النشطة حالياً
+        let notificationTimeouts = new Map(); // لتتبع المؤقتات
+        let hasShownInitialNotifications = false; // للتحقق إذا تم عرض الإشعارات الأولية
         
         function hideLoadingScreen() {
             setTimeout(() => {
@@ -1539,7 +1539,8 @@
                     
                     // بعد إخفاء شاشة التحميل بـ 1 ثانية، نعرض الإشعارات
                     setTimeout(() => {
-                        if (!isAdmin) {
+                        if (!isAdmin && !hasShownInitialNotifications) {
+                            hasShownInitialNotifications = true;
                             checkExistingNotifications();
                         }
                     }, 1000);
@@ -1555,7 +1556,6 @@
                 if (snapshot.exists()) {
                     const users = snapshot.val();
                     
-                    // البحث عن المستخدم بالبريد الإلكتروني
                     for (const [userId, userData] of Object.entries(users)) {
                         if (userId !== 'noty_publick' && userData.email === email) {
                             return {
@@ -1644,7 +1644,8 @@
                 elements.userContent.style.display = 'block';
                 setupUserEventListeners();
                 
-                startMonitoringNotifications();
+                // إعداد مراقبة الإشعارات الجديدة فقط
+                setupNotificationsMonitoring();
             }
         }
 
@@ -1720,45 +1721,50 @@
             });
         }
 
-        function startMonitoringNotifications() {
+        // إعداد مراقبة الإشعارات الجديدة فقط (وليس القديمة)
+        function setupNotificationsMonitoring() {
             if (!currentUser || !currentUser.id) return;
             
-            publicNotificationsListener = database.ref('users_Awn/noty_publick')
-                .on('value', (snapshot) => {
-                    if (snapshot.exists()) {
-                        const notifications = snapshot.val();
-                        Object.entries(notifications).forEach(([key, notification]) => {
-                            if (notification && typeof notification === 'string') {
-                                // تأخير ظهور الإشعار بـ 1 ثانية بعد ظهور الصفحة
-                                setTimeout(() => {
-                                    showNotification('إشعار عام', notification, 'info', key);
-                                }, 1000);
-                            }
-                        });
+            // مراقبة الإشعارات العامة الجديدة فقط
+            database.ref('users_Awn/noty_publick').limitToLast(1).on('child_added', (snapshot) => {
+                const notification = snapshot.val();
+                const notificationId = snapshot.key;
+                
+                if (notification && typeof notification === 'string') {
+                    // التحقق إذا تم عرض هذا الإشعار من قبل
+                    if (!shownNotifications.has(`public-${notificationId}`)) {
+                        shownNotifications.add(`public-${notificationId}`);
+                        
+                        // تأخير ظهور الإشعار بـ 1 ثانية
+                        setTimeout(() => {
+                            showNotification('إشعار عام', notification, 'info', `public-${notificationId}`);
+                        }, 1000);
                     }
-                });
+                }
+            });
             
-            userNotificationsListener = database.ref(`users_Awn/${currentUser.id}/noty_user`)
-                .on('value', (snapshot) => {
-                    if (snapshot.exists()) {
-                        const notification = snapshot.val();
-                        if (notification && typeof notification === 'string') {
-                            setTimeout(() => {
-                                showNotification('إشعار شخصي', notification, 'info', 'personal');
-                            }, 1000);
-                        }
+            // مراقبة الإشعارات الشخصية الجديدة فقط
+            database.ref(`users_Awn/${currentUser.id}/noty_user`).on('value', (snapshot) => {
+                const notification = snapshot.val();
+                
+                if (notification && typeof notification === 'string') {
+                    // التحقق إذا تم عرض هذا الإشعار من قبل
+                    if (!shownNotifications.has('personal')) {
+                        shownNotifications.add('personal');
+                        
+                        // تأخير ظهور الإشعار بـ 1 ثانية
+                        setTimeout(() => {
+                            showNotification('إشعار شخصي', notification, 'info', 'personal');
+                        }, 1000);
                     }
-                });
+                }
+            });
         }
 
         function stopMonitoringNotifications() {
-            if (publicNotificationsListener) {
-                database.ref('users_Awn/noty_publick').off('value', publicNotificationsListener);
-            }
-            if (userNotificationsListener) {
-                if (currentUser && currentUser.id) {
-                    database.ref(`users_Awn/${currentUser.id}/noty_user`).off('value', userNotificationsListener);
-                }
+            if (currentUser && currentUser.id) {
+                database.ref('users_Awn/noty_publick').off('child_added');
+                database.ref(`users_Awn/${currentUser.id}/noty_user`).off('value');
             }
         }
 
@@ -2120,29 +2126,28 @@
             }
         }
 
-        function showNotification(title, message, type = 'info', id = null) {
+        function showNotification(title, message, type = 'info', notificationId = null) {
             // إنشاء معرف فريد للإشعار إذا لم يتم تزويده
-            const notificationId = id || 'notification-' + Date.now() + '-' + Math.random();
+            const uniqueId = notificationId || 'notification-' + Date.now() + '-' + Math.random();
             
             // إذا كان هناك مؤقت لهذا الإشعار بالفعل، نلغيه
-            if (notificationTimeouts[notificationId]) {
-                clearTimeout(notificationTimeouts[notificationId]);
-                delete notificationTimeouts[notificationId];
+            if (notificationTimeouts.has(uniqueId)) {
+                clearTimeout(notificationTimeouts.get(uniqueId));
+                notificationTimeouts.delete(uniqueId);
             }
             
-            // إزالة أي إشعار موجود بنفس المعرف
-            const existingNotification = document.querySelector(`[data-notification-id="${notificationId}"]`);
-            if (existingNotification) {
-                existingNotification.remove();
-                const index = currentNotifications.indexOf(existingNotification);
-                if (index > -1) {
-                    currentNotifications.splice(index, 1);
+            // إذا كان هناك إشعار نشط بنفس المعرف، نزيله
+            if (activeNotifications.has(uniqueId)) {
+                const existingNotification = activeNotifications.get(uniqueId);
+                if (existingNotification && existingNotification.parentNode) {
+                    existingNotification.remove();
                 }
+                activeNotifications.delete(uniqueId);
             }
             
             const notification = document.createElement('div');
             notification.className = 'notification';
-            notification.setAttribute('data-notification-id', notificationId);
+            notification.setAttribute('data-notification-id', uniqueId);
             notification.style.borderColor = type === 'error' ? 'var(--admin-color)' : 
                                            type === 'success' ? '#059669' : 'var(--accent-dark)';
             
@@ -2156,40 +2161,65 @@
                 </button>
             `;
             
-            // إضافة الإشعار إلى البداية ليظهر في الأعلى
-            if (elements.notificationContainer.firstChild) {
-                elements.notificationContainer.insertBefore(notification, elements.notificationContainer.firstChild);
-            } else {
-                elements.notificationContainer.appendChild(notification);
-            }
+            // حساب الموضع للإشعار الجديد (تحت الإشعارات الأخرى)
+            let topPosition = 20;
+            activeNotifications.forEach((existingNotif, id) => {
+                if (existingNotif && existingNotif.parentNode) {
+                    const existingHeight = existingNotif.offsetHeight + 12; // 12 هو الـ margin-bottom
+                    topPosition += existingHeight;
+                }
+            });
             
-            currentNotifications.push(notification);
+            notification.style.position = 'fixed';
+            notification.style.right = '20px';
+            notification.style.top = `${topPosition}px`;
+            notification.style.maxWidth = '400px';
+            notification.style.width = '100%';
+            
+            elements.notificationContainer.appendChild(notification);
+            activeNotifications.set(uniqueId, notification);
+            
+            // تحديث مواضع جميع الإشعارات
+            updateNotificationPositions();
             
             if (window.innerWidth <= 768) {
                 notification.style.maxWidth = '300px';
                 notification.style.fontSize = '0.75rem';
                 notification.style.padding = '12px';
                 notification.style.right = '10px';
-                notification.style.top = '10px';
             }
             
-            // ظهور الإشعار مع أنيميشن بطيء
+            // ظهور الإشعار مع أنيميشن
             setTimeout(() => notification.classList.add('show'), 10);
             
-            // إخفاء الإشعار بعد 6 ثواني مع أنيميشن خروج بطيء
-            notificationTimeouts[notificationId] = setTimeout(() => {
-                hideNotificationWithAnimation(notification, notificationId, 'right');
-            }, 6000); // 6 ثواني
+            // إخفاء الإشعار بعد 5 ثواني مع أنيميشن خروج نحو اليمين
+            const timeoutId = setTimeout(() => {
+                hideNotificationWithAnimation(notification, uniqueId, 'right');
+            }, 5000); // 5 ثواني
+            
+            notificationTimeouts.set(uniqueId, timeoutId);
             
             notification.querySelector('.notification-close').addEventListener('click', () => {
-                if (notificationTimeouts[notificationId]) {
-                    clearTimeout(notificationTimeouts[notificationId]);
-                    delete notificationTimeouts[notificationId];
+                if (notificationTimeouts.has(uniqueId)) {
+                    clearTimeout(notificationTimeouts.get(uniqueId));
+                    notificationTimeouts.delete(uniqueId);
                 }
-                hideNotificationWithAnimation(notification, notificationId, 'right');
+                hideNotificationWithAnimation(notification, uniqueId, 'right');
             });
             
-            setupNotificationDrag(notification, notificationId);
+            setupNotificationDrag(notification, uniqueId);
+        }
+
+        function updateNotificationPositions() {
+            let topPosition = 20;
+            
+            activeNotifications.forEach((notification, id) => {
+                if (notification && notification.parentNode) {
+                    notification.style.top = `${topPosition}px`;
+                    const notificationHeight = notification.offsetHeight + 12; // 12 هو الـ margin-bottom
+                    topPosition += notificationHeight;
+                }
+            });
         }
 
         function hideNotificationWithAnimation(notification, notificationId, direction = 'right') {
@@ -2209,30 +2239,24 @@
                     notification.remove();
                 }
                 
-                // إزالة الإشعار من المصفوفة
-                const index = currentNotifications.indexOf(notification);
-                if (index > -1) {
-                    currentNotifications.splice(index, 1);
+                // إزالة الإشعار من الخريطة النشطة
+                activeNotifications.delete(notificationId);
+                
+                // إزالة المؤقت
+                if (notificationTimeouts.has(notificationId)) {
+                    notificationTimeouts.delete(notificationId);
                 }
                 
-                // إزالة المؤقت من الكائن
-                if (notificationTimeouts[notificationId]) {
-                    delete notificationTimeouts[notificationId];
-                }
+                // تحديث مواضع الإشعارات المتبقية
+                updateNotificationPositions();
             }, 500);
         }
 
         function setupNotificationDrag(notification, notificationId) {
             let isDragging = false;
             let startX = 0;
-            let startY = 0;
-            let initialX = 0;
-            let initialY = 0;
+            let initialRight = 20;
             let hasDraggedEnough = false;
-            
-            notification.style.position = 'fixed';
-            notification.style.right = '20px';
-            notification.style.top = `${20 + (currentNotifications.indexOf(notification) * 100)}px`;
             
             notification.addEventListener('mousedown', startDrag);
             notification.addEventListener('touchstart', startDragTouch);
@@ -2241,9 +2265,7 @@
                 isDragging = true;
                 hasDraggedEnough = false;
                 startX = e.clientX;
-                startY = e.clientY;
-                initialX = parseInt(notification.style.right) || 20;
-                initialY = parseInt(notification.style.top) || 20;
+                initialRight = parseInt(notification.style.right) || 20;
                 
                 document.addEventListener('mousemove', drag);
                 document.addEventListener('mouseup', stopDrag);
@@ -2257,9 +2279,7 @@
                     isDragging = true;
                     hasDraggedEnough = false;
                     startX = e.touches[0].clientX;
-                    startY = e.touches[0].clientY;
-                    initialX = parseInt(notification.style.right) || 20;
-                    initialY = parseInt(notification.style.top) || 20;
+                    initialRight = parseInt(notification.style.right) || 20;
                     
                     document.addEventListener('touchmove', dragTouch);
                     document.addEventListener('touchend', stopDrag);
@@ -2272,17 +2292,14 @@
                 e.preventDefault();
                 
                 const deltaX = startX - e.clientX;
-                const deltaY = e.clientY - startY;
+                notification.style.right = `${initialRight + deltaX}px`;
                 
-                // التحريك أفقيًا فقط (يمين/شمال)
-                notification.style.right = `${initialX + deltaX}px`;
-                
-                // تتبع إذا تم السحب بما يكفي (أكثر من 50px)
-                if (Math.abs(deltaX) > 50) {
+                // تتبع إذا تم السحب بما يكفي (أكثر من 100px)
+                if (Math.abs(deltaX) > 100) {
                     hasDraggedEnough = true;
                     
                     // إضافة تأثير التلاشي كلما ابتعد الإشعار
-                    const opacity = 1 - (Math.abs(deltaX) / 200);
+                    const opacity = 1 - (Math.abs(deltaX) / 250);
                     notification.style.opacity = Math.max(opacity, 0.3);
                 }
             }
@@ -2292,17 +2309,14 @@
                 e.preventDefault();
                 
                 const deltaX = startX - e.touches[0].clientX;
-                const deltaY = e.touches[0].clientY - startY;
+                notification.style.right = `${initialRight + deltaX}px`;
                 
-                // التحريك أفقيًا فقط (يمين/شمال)
-                notification.style.right = `${initialX + deltaX}px`;
-                
-                // تتبع إذا تم السحب بما يكفي (أكثر من 50px)
-                if (Math.abs(deltaX) > 50) {
+                // تتبع إذا تم السحب بما يكفي (أكثر من 100px)
+                if (Math.abs(deltaX) > 100) {
                     hasDraggedEnough = true;
                     
                     // إضافة تأثير التلاشي كلما ابتعد الإشعار
-                    const opacity = 1 - (Math.abs(deltaX) / 200);
+                    const opacity = 1 - (Math.abs(deltaX) / 250);
                     notification.style.opacity = Math.max(opacity, 0.3);
                 }
             }
@@ -2319,9 +2333,9 @@
                 
                 if (hasDraggedEnough) {
                     // إذا تم السحب بما يكفي، نخرج الإشعار مع أنيميشن
-                    if (notificationTimeouts[notificationId]) {
-                        clearTimeout(notificationTimeouts[notificationId]);
-                        delete notificationTimeouts[notificationId];
+                    if (notificationTimeouts.has(notificationId)) {
+                        clearTimeout(notificationTimeouts.get(notificationId));
+                        notificationTimeouts.delete(notificationId);
                     }
                     hideNotificationWithAnimation(notification, notificationId, 'right');
                 } else {
@@ -2340,30 +2354,37 @@
             if (!currentUser || !currentUser.id || isAdmin) return;
             
             try {
-                // التحقق من الإشعارات العامة
+                // التحقق من الإشعارات العامة الموجودة
                 const publicSnap = await database.ref('users_Awn/noty_publick').once('value');
                 if (publicSnap.exists()) {
                     const publicNotifications = publicSnap.val();
-                    let delay = 0;
+                    let hasPublicNotification = false;
                     
-                    Object.entries(publicNotifications).forEach(([key, notification]) => {
-                        if (notification && typeof notification === 'string') {
+                    // نأخذ آخر إشعار عام فقط
+                    const lastPublicKey = Object.keys(publicNotifications).pop();
+                    if (lastPublicKey) {
+                        const lastPublicNotification = publicNotifications[lastPublicKey];
+                        if (lastPublicNotification && typeof lastPublicNotification === 'string') {
+                            hasPublicNotification = true;
+                            shownNotifications.add(`public-${lastPublicKey}`);
+                            
                             setTimeout(() => {
-                                showNotification('إشعار عام', notification, 'info', 'public-' + key);
-                            }, delay);
-                            delay += 300; // تأخير 300ms بين كل إشعار
+                                showNotification('إشعار عام', lastPublicNotification, 'info', `public-${lastPublicKey}`);
+                            }, 1000);
                         }
-                    });
+                    }
                 }
                 
-                // التحقق من الإشعارات الشخصية
+                // التحقق من الإشعار الشخصي
                 const userSnap = await database.ref(`users_Awn/${currentUser.id}/noty_user`).once('value');
                 if (userSnap.exists()) {
                     const userNotification = userSnap.val();
                     if (userNotification && typeof userNotification === 'string') {
+                        shownNotifications.add('personal');
+                        
                         setTimeout(() => {
                             showNotification('إشعار شخصي', userNotification, 'info', 'personal');
-                        }, Object.keys(publicSnap.val() || {}).length * 300);
+                        }, hasPublicNotification ? 2000 : 1000);
                     }
                 }
             } catch (error) {
@@ -2426,8 +2447,6 @@
                     
                     if (isAdmin) {
                         await loadAllUsers();
-                    } else {
-                        setupUserEventListeners();
                     }
                     
                     hideLoadingScreen();
