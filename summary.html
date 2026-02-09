@@ -178,6 +178,7 @@
         let drawing = false;
         let currentTool = 'pen';
         let currentColor = '#000000';
+        let pdfBuffer = null; // لتخزين الـ buffer
 
         // ==================== Authentication ====================
         async function checkAuth() {
@@ -266,8 +267,11 @@
 
         async function analyzePDF(file) {
             try {
-                const buffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument(buffer).promise;
+                // حفظ الـ buffer بشكل منفصل لتجنب مشكلة Detached ArrayBuffer
+                const arrayBuffer = await file.arrayBuffer();
+                pdfBuffer = new Uint8Array(arrayBuffer); // حفظ نسخة من البيانات
+                
+                const pdf = await pdfjsLib.getDocument({data: pdfBuffer}).promise;
                 
                 let totalWords = 0;
                 for (let i = 1; i <= pdf.numPages; i++) {
@@ -290,8 +294,7 @@
                     pages: pdf.numPages,
                     words: totalWords,
                     coins: coins,
-                    fileName: file.name,
-                    fileBuffer: buffer
+                    fileName: file.name
                 };
 
                 document.getElementById('pagesCount').textContent = fileAnalysis.pages;
@@ -320,18 +323,42 @@
                 return;
             }
 
+            // تخزين رصيد المستخدم قبل الخصم لاسترجاعه في حال فشل العملية
+            const originalCoins = currentUser.coin;
+            
             try {
                 const userRef = database.ref(`users_Awn/${currentUser.uid}`);
-                await userRef.update({ coin: currentUser.coin - fileAnalysis.coins });
+                const newCoins = currentUser.coin - fileAnalysis.coins;
                 
-                currentUser.coin -= fileAnalysis.coins;
-                document.getElementById('coinsCount').textContent = currentUser.coin;
+                await userRef.update({ coin: newCoins });
+                
+                // تحديث محلي فوري
+                currentUser.coin = newCoins;
+                document.getElementById('coinsCount').textContent = newCoins;
+                
+                // إضافة ترانزاكشن لمتابعة حالة العملية
+                const transactionId = `trans_${Date.now()}_${currentUser.uid}`;
+                await database.ref(`transactions/${transactionId}`).set({
+                    userId: currentUser.uid,
+                    type: "summary_deduction",
+                    amount: fileAnalysis.coins,
+                    originalAmount: originalCoins,
+                    fileName: uploadedFile.name,
+                    timestamp: Date.now(),
+                    status: "processing"
+                });
+                
+                currentUser.transactionId = transactionId;
+                currentUser.originalCoins = originalCoins;
                 
                 showSection('controlSection');
                 
             } catch (error) {
                 console.error("Deduct error:", error);
                 showAlert("خطأ في الخصم", "error");
+                // استرجاع الرصيد المحلي
+                currentUser.coin = originalCoins;
+                document.getElementById('coinsCount').textContent = originalCoins;
             }
         });
 
@@ -374,16 +401,58 @@
 
             try {
                 const result = await sendToGemini(pagesToSummarize, selectedStyle, selectedPersonality, userComment);
+                
+                // تحديث حالة الترانزاكشن إلى نجاح
+                if (currentUser.transactionId) {
+                    await database.ref(`transactions/${currentUser.transactionId}`).update({
+                        status: "completed",
+                        summaryResult: "success",
+                        completedAt: Date.now()
+                    });
+                }
+                
                 await saveResults(result);
                 displayResults(result);
                 initDrawingCanvas();
                 showSection('resultsSection');
+                showAlert("تم التلخيص بنجاح!", "success");
+                
             } catch (error) {
                 console.error("Gemini error:", error);
+                
+                // استرجاع النقاط في حالة الفشل
+                await refundCoins();
+                
                 showAlert("خطأ في التلخيص: " + error.message, "error");
                 showSection('uploadSection');
             }
         });
+
+        async function refundCoins() {
+            try {
+                if (!currentUser || !currentUser.transactionId) return;
+                
+                // استرجاع النقاط للمستخدم
+                const userRef = database.ref(`users_Awn/${currentUser.uid}`);
+                await userRef.update({ coin: currentUser.originalCoins });
+                
+                // تحديث العرض المحلي
+                currentUser.coin = currentUser.originalCoins;
+                document.getElementById('coinsCount').textContent = currentUser.originalCoins;
+                
+                // تحديث حالة الترانزاكشن
+                await database.ref(`transactions/${currentUser.transactionId}`).update({
+                    status: "refunded",
+                    refundedAt: Date.now(),
+                    error: "Gemini API failed"
+                });
+                
+                console.log("Coins refunded successfully");
+                
+            } catch (refundError) {
+                console.error("Refund error:", refundError);
+            }
+        }
 
         async function sendToGemini(pages, style, personality, comment) {
             // إنشاء البرومبت
@@ -467,116 +536,172 @@ FINAL FAILURE POLICY
 الملف المرفق هو PDF يحتوي على ${fileAnalysis.pages} صفحة. يرجى تلخيص أول ${pages} صفحات.
             `;
 
-            // تحويل الملف إلى base64
-            const base64Data = arrayBufferToBase64(fileAnalysis.fileBuffer);
+            // تحويل الـ buffer المخزن إلى base64
+            let base64Data;
+            try {
+                // طريقة أكثر أمانًا لتحويل ArrayBuffer إلى base64
+                let binary = '';
+                const bytes = pdfBuffer;
+                for (let i = 0; i < bytes.byteLength; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                base64Data = btoa(binary);
+            } catch (convertError) {
+                console.error("Base64 conversion error:", convertError);
+                throw new Error("Failed to convert PDF to base64");
+            }
 
-            // إرسال الطلب إلى Gemini API - الطريقة الصحيحة
+            // إرسال الطلب إلى Gemini API
             const apiKey = "AIzaSyBLPQghg4mE7gW2P8hfmSN_fIaz_mI4oTc";
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
             
-            const requestBody = {
-                contents: [{
-                    parts: [
-                        { text: prompt },
-                        {
-                            inline_data: {
-                                mime_type: "application/pdf",
-                                data: base64Data
+            // جرب عدة نماذج مختلفة
+            const models = [
+                "gemini-1.5-flash",
+                "gemini-1.5-pro",
+                "gemini-1.0-pro"
+            ];
+            
+            let lastError = null;
+            
+            for (const model of models) {
+                try {
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                    
+                    const requestBody = {
+                        contents: [{
+                            parts: [
+                                { text: prompt },
+                                {
+                                    inline_data: {
+                                        mime_type: "application/pdf",
+                                        data: base64Data
+                                    }
+                                }
+                            ]
+                        }],
+                        generationConfig: {
+                            temperature: 0.2,
+                            maxOutputTokens: 8192,
+                            topP: 0.8,
+                            topK: 40
+                        }
+                    };
+
+                    console.log(`Trying model: ${model}`);
+                    
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        lastError = new Error(`${model}: HTTP ${response.status}: ${errorText}`);
+                        continue; // جرب النموذج التالي
+                    }
+
+                    const data = await response.json();
+                    console.log(`Response from ${model}:`, data);
+                    
+                    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
+                        const text = data.candidates[0].content.parts[0].text;
+                        
+                        // استخراج JSON من النص
+                        const jsonMatch = text.match(/\[\s*\{[\s\S]*\}\s*\]/);
+                        if (jsonMatch) {
+                            try {
+                                const result = JSON.parse(jsonMatch[0]);
+                                if (Array.isArray(result) && result.length > 0) {
+                                    console.log(`Success with model: ${model}`);
+                                    return result;
+                                }
+                            } catch (e) {
+                                console.error(`JSON parse error with ${model}:`, e);
                             }
                         }
-                    ]
-                }],
-                generationConfig: {
-                    temperature: 0.2,
-                    maxOutputTokens: 8192
-                }
-            };
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestBody)
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`HTTP ${response.status}: ${errorText}`);
-            }
-
-            const data = await response.json();
-            
-            console.log("Gemini response:", data);
-            
-            if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
-                const text = data.candidates[0].content.parts[0].text;
-                
-                // استخراج JSON من النص
-                const jsonMatch = text.match(/\[\s*\{[\s\S]*\}\s*\]/);
-                if (jsonMatch) {
-                    try {
-                        return JSON.parse(jsonMatch[0]);
-                    } catch (e) {
-                        throw new Error("Invalid JSON format in response");
-                    }
-                } else {
-                    // إذا لم يتم العثور على JSON، حاول تحليل النص كاملاً
-                    try {
-                        const parsed = JSON.parse(text);
-                        if (Array.isArray(parsed)) {
-                            return parsed;
+                        
+                        // محاولة أخرى: تحليل النص كاملاً كـ JSON
+                        try {
+                            const parsed = JSON.parse(text);
+                            if (Array.isArray(parsed)) {
+                                console.log(`Success with model: ${model} (direct parse)`);
+                                return parsed;
+                            }
+                        } catch (e) {
+                            // إذا فشل، حاول العثور على JSON في أي مكان في النص
+                            const jsonRegex = /(\{[\s\S]*\})|(\[[\s\S]*\])/g;
+                            const matches = text.match(jsonRegex);
+                            if (matches) {
+                                for (const match of matches) {
+                                    try {
+                                        const parsed = JSON.parse(match);
+                                        if (Array.isArray(parsed)) {
+                                            console.log(`Success with model: ${model} (regex match)`);
+                                            return parsed;
+                                        }
+                                    } catch (e2) {
+                                        continue;
+                                    }
+                                }
+                            }
                         }
-                    } catch (e) {
-                        throw new Error("No valid JSON found in response");
                     }
+                    
+                    lastError = new Error(`${model}: Invalid response format`);
+                    
+                } catch (modelError) {
+                    lastError = modelError;
+                    console.error(`Error with model ${model}:`, modelError);
+                    continue;
                 }
-            } else if (data.error) {
-                throw new Error(`Gemini API Error: ${data.error.message}`);
             }
             
-            throw new Error("Invalid response format from Gemini");
-        }
-
-        function arrayBufferToBase64(buffer) {
-            let binary = '';
-            const bytes = new Uint8Array(buffer);
-            for (let i = 0; i < bytes.byteLength; i++) {
-                binary += String.fromCharCode(bytes[i]);
-            }
-            return btoa(binary);
+            // إذا وصلنا هنا، فشلت جميع المحاولات
+            throw lastError || new Error("All Gemini models failed");
         }
 
         // ==================== Save Results ====================
         async function saveResults(results) {
-            const recordId = `record_${Date.now()}_${currentUser.uid}`;
-            const recordData = {
-                userId: currentUser.uid,
-                userEmail: currentUser.email,
-                fileName: uploadedFile.name,
-                fileSize: uploadedFile.size,
-                pages: fileAnalysis.pages,
-                summarizedPages: results.length,
-                summaryStyle: selectedStyle,
-                explainerPersonality: selectedPersonality,
-                coinsUsed: fileAnalysis.coins,
-                summaryResults: results,
-                timestamp: Date.now(),
-                status: "completed",
-                type: "summary"
-            };
+            try {
+                const recordId = `record_${Date.now()}_${currentUser.uid}`;
+                const recordData = {
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    userName: currentUser.name || currentUser.email,
+                    fileName: uploadedFile.name,
+                    fileSize: uploadedFile.size,
+                    pages: fileAnalysis.pages,
+                    summarizedPages: results.length,
+                    summaryStyle: selectedStyle,
+                    explainerPersonality: selectedPersonality,
+                    coinsUsed: fileAnalysis.coins,
+                    summaryResults: results,
+                    timestamp: Date.now(),
+                    status: "completed",
+                    type: "summary",
+                    transactionId: currentUser.transactionId || null
+                };
 
-            await database.ref(`records/${recordId}`).set(recordData);
-            
-            // حفظ في مسار المستخدم
-            await database.ref(`users_Awn/${currentUser.uid}/records/${recordId}`).set({
-                type: "summary",
-                fileName: uploadedFile.name,
-                timestamp: Date.now(),
-                coinsUsed: fileAnalysis.coins
-            });
-            
-            showAlert("تم حفظ النتائج", "success");
+                await database.ref(`records/${recordId}`).set(recordData);
+                
+                // حفظ في مسار المستخدم
+                await database.ref(`users_Awn/${currentUser.uid}/records/${recordId}`).set({
+                    type: "summary",
+                    fileName: uploadedFile.name,
+                    timestamp: Date.now(),
+                    coinsUsed: fileAnalysis.coins,
+                    status: "completed"
+                });
+                
+                console.log("Results saved successfully");
+                
+            } catch (error) {
+                console.error("Save results error:", error);
+                throw error;
+            }
         }
 
         // ==================== Display Results ====================
@@ -592,13 +717,13 @@ FINAL FAILURE POLICY
                         <strong>الصفحة ${result.page}</strong>
                         <small>${selectedPersonality} - ${selectedStyle}</small>
                     </div>
-                    <div style="line-height:1.7; margin:15px 0;">
+                    <div style="line-height:1.7; margin:15px 0; text-align: right; direction: rtl;">
                         ${result.Dec}
                     </div>
                     ${result.law ? `
                     <div class="law-section">
                         <strong>القوانين:</strong>
-                        <div style="margin-top:8px;">${result.law}</div>
+                        <div style="margin-top:8px; text-align: right; direction: rtl;">${result.law}</div>
                     </div>
                     ` : ''}
                 `;
@@ -671,7 +796,8 @@ FINAL FAILURE POLICY
                     userId: currentUser.uid,
                     image: imageData,
                     timestamp: Date.now(),
-                    relatedFile: uploadedFile.name
+                    relatedFile: uploadedFile.name,
+                    relatedRecord: currentUser.transactionId
                 });
                 
                 showAlert("تم حفظ الرسم", "success");
@@ -731,6 +857,7 @@ FINAL FAILURE POLICY
             document.getElementById('pdfInput').value = '';
             uploadedFile = null;
             fileAnalysis = null;
+            pdfBuffer = null;
             showSection('uploadSection');
         }
 
