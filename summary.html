@@ -9,9 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     
     <!-- إضافة Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     
     <style>
@@ -47,6 +47,52 @@
             min-height: 100vh;
             direction: rtl;
             -webkit-font-smoothing: antialiased;
+        }
+        
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-logo {
+            font-family: 'Almarai', sans-serif;
+            font-weight: 900;
+            font-size: 64px;
+            background: linear-gradient(145deg, #0F172A, #334155);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(15, 23, 42, 0.1);
+            border-left-color: var(--accent-dark);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
         }
         
         .native-navbar {
@@ -505,12 +551,6 @@
             gap: 12px;
         }
         
-        .generate-btn:disabled {
-            background: var(--disabled-color);
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-        
         .ai-processing {
             background: white;
             border-radius: var(--border-radius);
@@ -929,7 +969,13 @@
     </style>
 </head>
 <body>
-    <nav class="native-navbar">
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-logo">عَون</div>
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري التحميل...</div>
+    </div>
+    
+    <nav class="native-navbar" style="display: none;" id="navbar">
         <div class="logo" id="logo" onclick="window.location.href='index.html'">عَون</div>
         <div class="user-nav-right">
             <div class="coins-display">
@@ -943,7 +989,7 @@
         </div>
     </nav>
     
-    <div class="main-content">
+    <div class="main-content" style="display: none;" id="main-content">
         <section class="welcome-section">
             <h1 class="welcome-title">تلخيص PDF بالذكاء الاصطناعي</h1>
             <p class="welcome-subtitle">اسحب وأفلت ملف PDF أو انقر على المربع لرفع الملف</p>
@@ -1152,6 +1198,7 @@
         let firebaseApp;
         let firebaseAuth;
         let firebaseDatabase;
+        let currentUser = null;
         
         try {
             firebaseApp = firebase.initializeApp(firebaseConfig);
@@ -1186,22 +1233,121 @@
             "#DC2626", "#059669", "#2563EB", "#D97706", 
             "#7C3AED", "#DB2777", "#0F172A", "#64748B"
         ];
-        
-        // معرف المستخدم الفعلي من قاعدة البيانات
-        const CURRENT_USER_ID = "236152"; // الـ ID الحقيقي من قاعدة البيانات
 
-        // تحميل رصيد عملات المستخدم من Firebase
-        async function loadUserCoins() {
+        // البحث عن المستخدم بواسطة الإيميل
+        async function getUserByEmail(email) {
             try {
                 if (!firebaseDatabase) {
-                    console.warn("⚠️ Firebase غير مهيئ");
-                    document.getElementById('coins-count').textContent = "686";
-                    return 686;
+                    console.warn("Firebase غير مهيئ");
+                    return null;
                 }
                 
-                const snapshot = await firebaseDatabase.ref(`users_Awn/${CURRENT_USER_ID}/coin`).once('value');
+                const usersRef = firebaseDatabase.ref('users_Awn');
+                const snapshot = await usersRef.once('value');
+                
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    
+                    for (const [userId, userData] of Object.entries(users)) {
+                        if (userId !== 'noty_publick' && userData.email === email) {
+                            return {
+                                id: userId,
+                                email: userData.email,
+                                name: userData.name || '',
+                                coin: userData.coin || 0,
+                                admin: userData.admin === true || false,
+                                banned: userData.banned === true || false,
+                                created_at: userData.created_at || null,
+                                timestamp: userData.timestamp || null,
+                                referral_used: userData.referral_used || '',
+                                referrals: userData.referrals || {},
+                                noty_user: userData.noty_user || null,
+                                dbId: userData.id
+                            };
+                        }
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('❌ خطأ في البحث عن المستخدم:', error);
+                return null;
+            }
+        }
+
+        // تحميل بيانات المستخدم
+        async function loadUserData() {
+            try {
+                const user = firebaseAuth.currentUser;
+                if (!user) {
+                    console.log("⚠️ لا يوجد مستخدم مسجل، التوجيه إلى صفحة تسجيل الدخول");
+                    window.location.replace('login.html');
+                    return false;
+                }
+
+                const userData = await getUserByEmail(user.email);
+                
+                if (!userData) {
+                    console.log("⚠️ لم يتم العثور على بيانات المستخدم، تسجيل الخروج");
+                    await firebaseAuth.signOut();
+                    window.location.replace('login.html');
+                    return false;
+                }
+                
+                if (!userData.email || !userData.dbId) {
+                    console.log("⚠️ بيانات المستخدم غير مكتملة");
+                    await firebaseAuth.signOut();
+                    window.location.replace('login.html');
+                    return false;
+                }
+                
+                if (userData.banned === true) {
+                    console.log("⚠️ المستخدم محظور");
+                    await firebaseAuth.signOut();
+                    window.location.replace('login.html');
+                    return false;
+                }
+                
+                currentUser = { 
+                    id: userData.id,
+                    dbId: userData.dbId,
+                    email: userData.email,
+                    name: userData.name || '',
+                    coin: userData.coin || 0,
+                    admin: userData.admin === true || false
+                };
+                
+                document.getElementById('coins-count').textContent = userData.coin || 0;
+                
+                return true;
+                
+            } catch (error) {
+                console.error('❌ خطأ في تحميل بيانات المستخدم:', error);
+                return false;
+            }
+        }
+
+        // إخفاء شاشة التحميل
+        function hideLoadingScreen() {
+            setTimeout(() => {
+                document.getElementById('loading-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('navbar').style.display = 'flex';
+                    document.getElementById('main-content').style.display = 'block';
+                }, 500);
+            }, 1000);
+        }
+
+        // تحميل رصيد العملات من Firebase
+        async function loadUserCoins() {
+            try {
+                if (!currentUser || !firebaseDatabase) {
+                    console.warn("المستخدم غير مسجل أو Firebase غير مهيئ");
+                    return 0;
+                }
+                
+                const snapshot = await firebaseDatabase.ref(`users_Awn/${currentUser.id}/coin`).once('value');
                 const coins = snapshot.val();
-                console.log("💰 رصيد العملات من Firebase:", coins);
                 
                 if (coins !== null && coins !== undefined) {
                     document.getElementById('coins-count').textContent = coins;
@@ -1212,8 +1358,8 @@
                 }
             } catch (error) {
                 console.error("❌ خطأ في تحميل رصيد العملات:", error);
-                document.getElementById('coins-count').textContent = "686";
-                return 686;
+                document.getElementById('coins-count').textContent = "0";
+                return 0;
             }
         }
 
@@ -1241,12 +1387,12 @@
         // تحديث رصيد عملات المستخدم في Firebase
         async function updateUserCoins(deductAmount) {
             try {
-                if (!firebaseDatabase) {
-                    throw new Error("Firebase غير متوفر");
+                if (!firebaseDatabase || !currentUser) {
+                    throw new Error("Firebase غير متوفر أو المستخدم غير مسجل");
                 }
                 
                 // الحصول على الرصيد الحالي
-                const snapshot = await firebaseDatabase.ref(`users_Awn/${CURRENT_USER_ID}/coin`).once('value');
+                const snapshot = await firebaseDatabase.ref(`users_Awn/${currentUser.id}/coin`).once('value');
                 const currentCoins = parseFloat(snapshot.val()) || 0;
                 
                 console.log("💳 تحديث الرصيد:", { 
@@ -1261,7 +1407,7 @@
                 const newCoins = currentCoins - deductAmount;
                 
                 // تحديث الرصيد في Firebase
-                await firebaseDatabase.ref(`users_Awn/${CURRENT_USER_ID}`).update({
+                await firebaseDatabase.ref(`users_Awn/${currentUser.id}`).update({
                     coin: newCoins
                 });
                 
@@ -1282,7 +1428,7 @@
         // حفظ النتائج في Firebase
         async function saveToDatabase(results, fileName) {
             try {
-                if (!firebaseDatabase) {
+                if (!firebaseDatabase || !currentUser) {
                     console.warn("Firebase غير متوفر، تخطي الحفظ");
                     return null;
                 }
@@ -1291,7 +1437,7 @@
                 currentRecordId = recordId;
                 
                 const recordData = {
-                    userId: CURRENT_USER_ID,
+                    userId: currentUser.id,
                     fileName: fileName,
                     aiSessionName: `ملخص_${fileName}_${Date.now()}`,
                     serviceType: "تلخيص",
@@ -1306,57 +1452,10 @@
                 
                 await firebaseDatabase.ref(`records/${recordId}`).set(recordData);
                 
-                // حفظ الرسم على الصفحات إذا كان موجود
-                await saveCanvasDrawings(recordId);
-                
                 return recordId;
             } catch (error) {
                 console.error("❌ خطأ في حفظ النتائج:", error);
                 return null;
-            }
-        }
-
-        // حفظ الرسم على الصفحات
-        async function saveCanvasDrawings(recordId) {
-            if (!firebaseDatabase || !canvasContexts.length) return;
-            
-            try {
-                const drawings = canvasContexts.map((canvas, index) => {
-                    return {
-                        page: index + 1,
-                        dataUrl: canvas.canvas.toDataURL()
-                    };
-                });
-                
-                await firebaseDatabase.ref(`records/${recordId}/drawings`).set(drawings);
-                console.log("🎨 تم حفظ الرسومات");
-            } catch (error) {
-                console.error("❌ خطأ في حفظ الرسومات:", error);
-            }
-        }
-
-        // تحميل الرسم على الصفحات من قاعدة البيانات
-        async function loadCanvasDrawings(recordId) {
-            if (!firebaseDatabase) return;
-            
-            try {
-                const snapshot = await firebaseDatabase.ref(`records/${recordId}/drawings`).once('value');
-                const drawings = snapshot.val();
-                
-                if (drawings && Array.isArray(drawings)) {
-                    drawings.forEach((drawing, index) => {
-                        if (index < canvasContexts.length) {
-                            const img = new Image();
-                            img.onload = function() {
-                                canvasContexts[index].drawImage(img, 0, 0);
-                            };
-                            img.src = drawing.dataUrl;
-                        }
-                    });
-                    console.log("🖼️ تم تحميل الرسومات المحفوظة");
-                }
-            } catch (error) {
-                console.error("❌ خطأ في تحميل الرسومات:", error);
             }
         }
 
@@ -1755,11 +1854,6 @@ FINAL FAILURE POLICY
                     document.getElementById(`laws-section-${index}`).style.display = 'block';
                 }
             });
-            
-            // تحميل الرسومات المحفوظة إذا كانت موجودة
-            if (currentRecordId) {
-                loadCanvasDrawings(currentRecordId);
-            }
         }
 
         // إعداد أحداث الرسم على Canvas
@@ -1866,13 +1960,8 @@ FINAL FAILURE POLICY
         }
 
         // تسجيل أحداث DOM بعد تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('✅ تم تحميل صفحة تلخيص PDF بنجاح');
-            
-            // تحميل رصيد العملات عند بدء التحميل
-            loadUserCoins().then(coins => {
-                console.log("💰 رصيد العملات المحمل:", coins);
-            });
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('✅ تم تحميل صفحة تلخيص PDF');
             
             // تهيئة أداة اختيار الألوان
             const colorPicker = document.createElement('div');
@@ -1880,6 +1969,64 @@ FINAL FAILURE POLICY
             colorPicker.className = 'color-picker';
             document.body.appendChild(colorPicker);
             
+            // تسجيل الدخول وفحص المستخدم
+            const unsubscribe = firebaseAuth.onAuthStateChanged(async (user) => {
+                if (!user) {
+                    console.log("⚠️ المستخدم غير مسجل، التوجيه إلى login.html");
+                    window.location.replace('login.html');
+                    return;
+                }
+                
+                try {
+                    const userData = await getUserByEmail(user.email);
+                    
+                    if (!userData) {
+                        await firebaseAuth.signOut();
+                        window.location.replace('login.html');
+                        return;
+                    }
+                    
+                    if (!userData.email || !userData.dbId) {
+                        await firebaseAuth.signOut();
+                        window.location.replace('login.html');
+                        return;
+                    }
+                    
+                    if (userData.banned === true) {
+                        await firebaseAuth.signOut();
+                        window.location.replace('login.html');
+                        return;
+                    }
+                    
+                    currentUser = { 
+                        id: userData.id,
+                        dbId: userData.dbId,
+                        email: userData.email,
+                        name: userData.name || '',
+                        coin: userData.coin || 0,
+                        admin: userData.admin === true || false
+                    };
+                    
+                    document.getElementById('coins-count').textContent = userData.coin || 0;
+                    
+                    hideLoadingScreen();
+                    
+                    // الآن بعد تسجيل الدخول، نستمر في إعداد الأحداث
+                    setupEventListeners();
+                    
+                } catch (error) {
+                    console.error("❌ خطأ في فحص المستخدم:", error);
+                    window.location.replace('login.html');
+                } finally {
+                    setTimeout(() => {
+                        unsubscribe();
+                    }, 100);
+                }
+            });
+        });
+
+        // إعداد جميع الأحداث
+        function setupEventListeners() {
             // زر العودة
             document.getElementById('back-btn').addEventListener('click', function() {
                 window.location.href = 'index.html';
@@ -2089,7 +2236,7 @@ FINAL FAILURE POLICY
             document.getElementById('pen-btn').classList.add('active');
             
             console.log("✅ تم تسجيل جميع الأحداث بنجاح");
-        });
+        }
     </script>
 </body>
 </html>
