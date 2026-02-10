@@ -28,17 +28,19 @@
         }
         
         :root {
-            --bg-color: #F5F1E8; /* لون بيج بدلاً من الأبيض */
+            --bg-color: #F5F1E8;
             --card-color: #FFFFFF;
             --text-primary: #1E293B;
             --text-secondary: #64748B;
-            --accent-dark: #8B7355; /* لون بني فاتح يناسب البيج */
+            --accent-dark: #8B7355;
             --accent-light: #D4B996;
             --beige-gradient: linear-gradient(145deg, #F5F1E8, #E8E1D1);
             --border-radius: 24px;
             --border-radius-large: 32px;
             --navbar-height: 80px;
             --transition-quick: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --success-color: #059669;
+            --error-color: #DC2626;
         }
         
         body {
@@ -373,15 +375,15 @@
         }
         
         .confirm-btn {
-            background: linear-gradient(145deg, #059669, #047857);
+            background: linear-gradient(145deg, var(--success-color), #047857);
             color: white;
-            border: 3px solid #059669;
+            border: 3px solid var(--success-color);
         }
         
         .cancel-btn {
-            background: linear-gradient(145deg, #DC2626, #B91C1C);
+            background: linear-gradient(145deg, var(--error-color), #B91C1C);
             color: white;
-            border: 3px solid #DC2626;
+            border: 3px solid var(--error-color);
         }
         
         .action-btn:hover {
@@ -552,6 +554,8 @@
             font-size: 1.1rem;
             line-height: 1.8;
             color: var(--text-primary);
+            overflow-y: auto;
+            max-height: 800px;
         }
         
         .raw-summary {
@@ -686,6 +690,57 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border: 3px solid var(--accent-dark);
+            z-index: 10001;
+            min-width: 300px;
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-color: var(--success-color);
+        }
+        
+        .notification.error {
+            border-color: var(--error-color);
+        }
+        
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .notification-icon {
+            font-size: 24px;
+        }
+        
+        .notification.success .notification-icon {
+            color: var(--success-color);
+        }
+        
+        .notification.error .notification-icon {
+            color: var(--error-color);
+        }
+        
+        .notification-text {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+        }
+        
         /* Responsive Design */
         @media (max-width: 1200px) {
             .main-content {
@@ -774,6 +829,12 @@
                 gap: 20px;
                 align-items: flex-start;
             }
+            
+            .notification {
+                left: 20px;
+                right: 20px;
+                min-width: auto;
+            }
         }
         
         @media (max-width: 576px) {
@@ -858,11 +919,21 @@
     </style>
 </head>
 <body>
-    <!-- Loading Screen (للتحميل فقط) -->
+    <!-- Loading Screen -->
     <div class="loading-screen" id="loading-screen" style="display: none;">
         <div class="loading-logo">عَون</div>
         <div class="loading-spinner"></div>
         <div class="loading-text" id="loading-text">جاري التحميل...</div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <div class="notification-icon" id="notification-icon">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <div class="notification-text" id="notification-text"></div>
+        </div>
     </div>
     
     <!-- Navbar -->
@@ -898,7 +969,7 @@
             
             <input type="file" id="pdfFile" accept=".pdf" style="display: none;">
             
-            <button class="upload-btn" id="upload-btn" onclick="processPDF()" disabled>
+            <button class="upload-btn" id="upload-btn" onclick="handleUploadButton()" disabled>
                 <i class="fas fa-upload"></i>
                 تحليل الملف
             </button>
@@ -1097,7 +1168,12 @@
             resultTitle: document.getElementById('result-title'),
             resultContent: document.getElementById('result-content'),
             rawSummary: document.getElementById('raw-summary'),
-            rawPoints: document.getElementById('raw-points')
+            rawPoints: document.getElementById('raw-points'),
+            
+            // الإشعارات
+            notification: document.getElementById('notification'),
+            notificationIcon: document.getElementById('notification-icon'),
+            notificationText: document.getElementById('notification-text')
         };
         
         // المتغيرات العامة
@@ -1121,7 +1197,7 @@
             optionalComment: ''
         };
         
-        // إعدادات السيرفر (مأخوذة من تجربه.html)
+        // إعدادات السيرفر
         const SERVER = "https://wet-aidan-kimon-66eadaf6.koyeb.app";
         const ID = "12345";
         const PASS = "12345abcde57";
@@ -1129,6 +1205,29 @@
         // تحجيم الخط
         let currentFontSize = 16;
         let resultFontSize = 16;
+        
+        // ========== الوظائف الأساسية ==========
+        
+        function showNotification(message, type = 'info') {
+            elements.notificationText.textContent = message;
+            elements.notification.className = 'notification';
+            
+            if (type === 'success') {
+                elements.notification.classList.add('success');
+                elements.notificationIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            } else if (type === 'error') {
+                elements.notification.classList.add('error');
+                elements.notificationIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+            } else {
+                elements.notificationIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
+            }
+            
+            elements.notification.classList.add('show');
+            
+            setTimeout(() => {
+                elements.notification.classList.remove('show');
+            }, 3000);
+        }
         
         function changeFontSize(action) {
             if (action === 'increase' && currentFontSize < 24) {
@@ -1150,7 +1249,8 @@
             elements.resultContent.style.fontSize = resultFontSize + 'px';
         }
         
-        // تحميل بيانات المستخدم
+        // ========== إدارة المستخدم ==========
+        
         async function loadUserData() {
             try {
                 const user = auth.currentUser;
@@ -1159,7 +1259,6 @@
                     return;
                 }
                 
-                // البحث عن المستخدم بالبريد الإلكتروني
                 const usersRef = database.ref('users_Awn');
                 const snapshot = await usersRef.once('value');
                 
@@ -1199,7 +1298,6 @@
             }
         }
         
-        // إعداد المستخدم
         async function setupUser() {
             try {
                 await loadUserData();
@@ -1216,26 +1314,26 @@
             }
         }
         
-        // إعداد حدث اختيار الملف
+        // ========== إدارة الملفات ==========
+        
         function setupFileUpload() {
             elements.pdfFile.addEventListener('change', handleFileSelect);
         }
         
-        // معالجة اختيار الملف
         async function handleFileSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
             
             // التحقق من امتداد الملف
             if (!file.name.toLowerCase().endsWith('.pdf')) {
-                alert('الرجاء رفع ملف PDF فقط');
+                showNotification('الرجاء رفع ملف PDF فقط', 'error');
                 resetFileInput();
                 return;
             }
             
             // التحقق من حجم الملف (10MB كحد أقصى)
             if (file.size > 10 * 1024 * 1024) {
-                alert('حجم الملف كبير جداً. الحد الأقصى هو 10MB');
+                showNotification('حجم الملف كبير جداً. الحد الأقصى هو 10MB', 'error');
                 resetFileInput();
                 return;
             }
@@ -1245,9 +1343,23 @@
             elements.uploadArea.style.borderColor = 'var(--accent-dark)';
             elements.uploadArea.style.backgroundColor = 'rgba(139, 115, 85, 0.1)';
             elements.uploadBtn.disabled = false;
+            
+            showNotification('تم رفع الملف بنجاح. انقر على "تحليل الملف" للمتابعة', 'success');
         }
         
-        // تحليل ملف PDF باستخدام نفس تقنية محلل.html
+        // دالة زر تحليل الملف
+        async function handleUploadButton() {
+            if (!selectedFile) {
+                showNotification('الرجاء اختيار ملف PDF أولاً', 'error');
+                return;
+            }
+            
+            const success = await analyzePDF(selectedFile);
+            if (success) {
+                showNotification('تم تحليل الملف بنجاح', 'success');
+            }
+        }
+        
         async function analyzePDF(file) {
             try {
                 showLoading('جاري تحليل الملف...');
@@ -1257,7 +1369,7 @@
                 
                 let totalWords = 0;
                 
-                // تحليل كل صفحة (مثل كود محلل.html)
+                // تحليل كل صفحة
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const content = await page.getTextContent();
@@ -1265,15 +1377,13 @@
                     if (content.items.length > 0) {
                         let text = '';
                         content.items.forEach(t => text += t.str + ' ');
-                        // حساب الكلمات (نفس منطق محلل.html)
                         totalWords += text.trim().split(/\s+/).filter(w => w.length >= 2).length;
                     } else {
-                        // إذا كانت الصفحة فارغة، نضيف 250 كلمة تقديرية
                         totalWords += 250;
                     }
                 }
                 
-                // حساب التكلفة (نفس منطق محلل.html)
+                // حساب التكلفة بنفس منطق محلل.html
                 let coins = Math.ceil((totalWords / 1000) * 2) / 2;
                 if (coins < 1) coins = 1;
                 
@@ -1287,7 +1397,7 @@
                 
                 hideLoading();
                 
-                // عرض معلومات التكلفة (عدد الصفحات والتكلفة فقط، بدون الكلمات)
+                // عرض معلومات التكلفة
                 elements.pageCount.textContent = fileInfo.pages;
                 elements.costAmount.textContent = fileInfo.cost + ' عملة';
                 elements.costPreview.classList.add('show');
@@ -1297,13 +1407,12 @@
             } catch (error) {
                 console.error('Error analyzing PDF:', error);
                 hideLoading();
-                alert('حدث خطأ أثناء تحليل الملف. الرجاء المحاولة مرة أخرى.');
+                showNotification('حدث خطأ أثناء تحليل الملف. الرجاء المحاولة مرة أخرى.', 'error');
                 resetFileInput();
                 return false;
             }
         }
         
-        // إعادة تعيين إدخال الملف
         function resetFileInput() {
             elements.pdfFile.value = '';
             selectedFile = null;
@@ -1314,41 +1423,32 @@
             elements.costPreview.classList.remove('show');
         }
         
-        // معالجة PDF
-        async function processPDF() {
-            if (!selectedFile) {
-                alert('الرجاء اختيار ملف PDF أولاً');
+        function cancelProcess() {
+            resetFileInput();
+            elements.costPreview.classList.remove('show');
+            showNotification('تم إلغاء العملية', 'info');
+        }
+        
+        function confirmProcess() {
+            if (!fileInfo.cost || fileInfo.cost === 0) {
+                showNotification('الرجاء تحليل الملف أولاً', 'error');
                 return;
             }
             
-            // تحليل الملف أولاً
-            const analysisSuccess = await analyzePDF(selectedFile);
-            if (!analysisSuccess) return;
-            
-            // التحقق من رصيد المستخدم
             if (userCoins < fileInfo.cost) {
-                alert('رصيدك غير كافي لهذه العملية. الرجاء شحن رصيدك.');
+                showNotification('رصيدك غير كافي لهذه العملية. الرجاء شحن رصيدك.', 'error');
                 return;
             }
             
             // الانتقال إلى قسم الإعدادات
             elements.uploadSection.style.display = 'none';
             elements.settingsSection.classList.add('show');
+            
+            showNotification('الرجاء تحديد إعدادات التلخيص', 'info');
         }
         
-        // إلغاء العملية
-        function cancelProcess() {
-            resetFileInput();
-            elements.costPreview.classList.remove('show');
-            elements.uploadSection.style.display = 'block';
-        }
+        // ========== إعدادات التلخيص ==========
         
-        // تأكيد المتابعة
-        async function confirmProcess() {
-            await processPDF();
-        }
-        
-        // إعداد أحداث الإعدادات
         function setupSettingsEvents() {
             // طريقة الشرح
             document.querySelectorAll('#explanation-level .option-btn').forEach(btn => {
@@ -1390,7 +1490,6 @@
             document.getElementById('custom-language').addEventListener('input', function() {
                 if (this.value.trim()) {
                     selectedSettings.customLanguage = this.value.trim();
-                    // إذا كتب لغة مخصصة، نختارها بدلاً من الخيارات المحددة
                     selectedSettings.outputLanguage = this.value.trim();
                 }
             });
@@ -1401,9 +1500,7 @@
             });
         }
         
-        // إنشاء البرومبت (مستوحى من تجربه.html)
         function createPrompt() {
-            // استخدام اللغة المخصصة إذا تم إدخالها
             const outputLanguage = selectedSettings.customLanguage || selectedSettings.outputLanguage;
             
             return `
@@ -1504,27 +1601,23 @@ ABSOLUTE CONSTRAINTS:
 `;
         }
         
-        // إنشاء التلخيص
         async function generateSummary() {
             if (!selectedFile) {
-                alert('الرجاء اختيار ملف PDF أولاً');
+                showNotification('الرجاء اختيار ملف PDF أولاً', 'error');
                 return;
             }
             
-            // التحقق من رصيد المستخدم مرة أخرى
             if (userCoins < fileInfo.cost) {
-                alert('رصيدك غير كافي لهذه العملية. الرجاء شحن رصيدك.');
+                showNotification('رصيدك غير كافي لهذه العملية. الرجاء شحن رصيدك.', 'error');
                 return;
             }
             
-            // تعطيل زر الإنشاء أثناء المعالجة
             elements.generateBtn.disabled = true;
             elements.generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإنشاء...';
             
             try {
                 showLoading('جاري إنشاء التلخيص...');
                 
-                // تحويل الملف إلى base64 (مستوحى من تجربه.html)
                 const base64 = await new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onload = () => resolve(reader.result.split(",")[1]);
@@ -1532,10 +1625,8 @@ ABSOLUTE CONSTRAINTS:
                     reader.readAsDataURL(selectedFile);
                 });
                 
-                // إنشاء البرومبت
                 const prompt = createPrompt();
                 
-                // إرسال الطلب إلى السيرفر (مستوحى من تجربه.html)
                 const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -1553,7 +1644,6 @@ ABSOLUTE CONSTRAINTS:
                 
                 const text = await response.text();
                 
-                // محاولة تحليل JSON
                 let result;
                 try {
                     result = JSON.parse(text);
@@ -1562,27 +1652,22 @@ ABSOLUTE CONSTRAINTS:
                     throw new Error('رد غير صالح من السيرفر');
                 }
                 
-                // التحقق من وجود أخطاء
                 if (result.head === "Not Output" && result.raw === "Not Output" && result.page === "Not Output") {
                     throw new Error('الملف فارغ أو غير قابل للقراءة');
                 }
                 
-                // خصم العملات بعد نجاح العملية
                 await deductCoins(fileInfo.cost);
-                
-                // حفظ النتيجة في قاعدة البيانات
                 await saveResultToDatabase(result);
-                
-                // عرض النتيجة
                 displayResult(result);
                 
-                // إخفاء قسم الإعدادات وإظهار قسم النتيجة
                 elements.settingsSection.classList.remove('show');
                 elements.resultSection.classList.add('show');
                 
+                showNotification('تم إنشاء التلخيص بنجاح', 'success');
+                
             } catch (error) {
                 console.error('Error generating summary:', error);
-                alert('حدث خطأ أثناء إنشاء التلخيص: ' + error.message);
+                showNotification('حدث خطأ أثناء إنشاء التلخيص: ' + error.message, 'error');
             } finally {
                 hideLoading();
                 elements.generateBtn.disabled = false;
@@ -1590,16 +1675,12 @@ ABSOLUTE CONSTRAINTS:
             }
         }
         
-        // خصم العملات
         async function deductCoins(amount) {
             try {
                 const newCoins = userCoins - amount;
                 userCoins = newCoins;
                 
-                // تحديث في Firebase
                 await database.ref(`users_Awn/${currentUser.id}/coin`).set(newCoins);
-                
-                // تحديث العرض
                 elements.coinsCount.textContent = newCoins;
                 
             } catch (error) {
@@ -1608,7 +1689,6 @@ ABSOLUTE CONSTRAINTS:
             }
         }
         
-        // حفظ النتيجة في قاعدة البيانات
         async function saveResultToDatabase(result) {
             try {
                 const recordId = 'record_' + Date.now();
@@ -1626,20 +1706,14 @@ ABSOLUTE CONSTRAINTS:
                 
             } catch (error) {
                 console.error('Error saving result to database:', error);
-                // لا نرمي الخطأ هنا لأن العملية الأساسية تمت بنجاح
             }
         }
         
-        // عرض النتيجة
         function displayResult(result) {
-            // عرض العنوان
             elements.resultTitle.textContent = result.head || 'ملخص الملف';
-            
-            // عرض المحتوى الرئيسي
             elements.resultContent.innerHTML = '';
             
             if (result.page) {
-                // تحويل النص إلى فقرات
                 const paragraphs = result.page.split('\n').filter(p => p.trim());
                 paragraphs.forEach(paragraph => {
                     const p = document.createElement('p');
@@ -1651,7 +1725,6 @@ ABSOLUTE CONSTRAINTS:
                 elements.resultContent.textContent = 'لا يوجد محتوى للعرض';
             }
             
-            // عرض النقاط الرئيسية
             elements.rawPoints.innerHTML = '';
             
             if (result.raw && Array.isArray(result.raw) && result.raw.length > 0) {
@@ -1666,12 +1739,10 @@ ABSOLUTE CONSTRAINTS:
                 elements.rawPoints.appendChild(li);
             }
             
-            // إعادة تعيين حجم خط النتيجة
             resultFontSize = 16;
             elements.resultContent.style.fontSize = resultFontSize + 'px';
         }
         
-        // عرض شاشة التحميل
         function showLoading(text = 'جاري التحميل...') {
             elements.loadingText.textContent = text;
             elements.loadingScreen.style.display = 'flex';
@@ -1680,7 +1751,6 @@ ABSOLUTE CONSTRAINTS:
             }, 10);
         }
         
-        // إخفاء شاشة التحميل
         function hideLoading() {
             elements.loadingScreen.style.opacity = '0';
             setTimeout(() => {
@@ -1688,9 +1758,9 @@ ABSOLUTE CONSTRAINTS:
             }, 500);
         }
         
-        // تهيئة التطبيق
+        // ========== تهيئة التطبيق ==========
+        
         async function initApp() {
-            // مراقبة حالة المصادقة
             const unsubscribe = auth.onAuthStateChanged(async (user) => {
                 if (!user) {
                     window.location.replace('login.html');
@@ -1712,13 +1782,11 @@ ABSOLUTE CONSTRAINTS:
             });
         }
         
-        // منع الرجوع في المتصفح
         history.pushState(null, null, window.location.href);
         window.addEventListener('popstate', function(event) {
             history.pushState(null, null, window.location.href);
         });
         
-        // تهيئة التطبيق عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
