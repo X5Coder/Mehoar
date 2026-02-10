@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1317,10 +1318,6 @@
                     حسابي
                     <i class="fas fa-user"></i>
                 </button>
-                <button class="menu-option" id="referral-btn">
-                    احالاتي
-                    <i class="fas fa-users"></i>
-                </button>
                 <button class="menu-option" id="store-btn">
                     متجر عَون
                     <i class="fas fa-store"></i>
@@ -1511,7 +1508,6 @@
             homeBtn: document.getElementById('home-btn'),
             logsBtn: document.getElementById('logs-btn'),
             accountBtn: document.getElementById('account-btn'),
-            referralBtn: document.getElementById('referral-btn'),
             storeBtn: document.getElementById('store-btn'),
             developerCredit: document.getElementById('developer-credit'),
             adminPanel: document.getElementById('admin-panel'),
@@ -1562,6 +1558,15 @@
                     
                     for (const [userId, userData] of Object.entries(users)) {
                         if (userId !== 'noty_publick' && userData.email === email) {
+                            // حساب عدد الإحالات
+                            let referralCount = 0;
+                            if (userData.referrals && typeof userData.referrals === 'object') {
+                                // حساب العقد التي تبدأ بـ "ref" ويليها رقم
+                                referralCount = Object.keys(userData.referrals).filter(key => 
+                                    key.startsWith('ref') && /^ref\d+$/.test(key)
+                                ).length;
+                            }
+                            
                             return {
                                 id: userId,
                                 email: userData.email,
@@ -1573,6 +1578,7 @@
                                 timestamp: userData.timestamp || null,
                                 referral_used: userData.referral_used || '',
                                 referrals: userData.referrals || {},
+                                referralCount: referralCount,
                                 noty_user: userData.noty_user || null,
                                 dbId: userData.id
                             };
@@ -1686,11 +1692,6 @@
                 window.location.href = 'account.html';
             });
 
-            elements.referralBtn.addEventListener('click', () => {
-                elements.settingsMenu.classList.remove('active');
-                window.location.href = 'referral.html';
-            });
-
             elements.storeBtn.addEventListener('click', () => {
                 elements.settingsMenu.classList.remove('active');
                 window.open('https://salla.sa/Aaw-2026', '_blank');
@@ -1785,13 +1786,15 @@
                         const userData = childSnapshot.val();
                         
                         if (userData.email && userData.id) {
-                            // حساب الإحالات ref1, ref2, ref3, إلخ
+                            // حساب عدد الإحالات ref1, ref2, ref3, إلخ
                             let referralCount = 0;
                             const referralsList = [];
                             
                             if (userData.referrals && typeof userData.referrals === 'object') {
                                 // حساب الإحالات من ref1, ref2, ref3, إلخ
-                                const refKeys = Object.keys(userData.referrals);
+                                const refKeys = Object.keys(userData.referrals).filter(key => 
+                                    key.startsWith('ref') && /^ref\d+$/.test(key)
+                                );
                                 referralCount = refKeys.length;
                                 
                                 // فرز الإحالات حسب الرقم في ref1, ref2, إلخ
@@ -1920,7 +1923,7 @@
                     referralsHTML = `
                         <div class="user-referrals">
                             <div class="user-referrals-title">
-                                الإحالات (${user.referralCount})
+                                إحالات المستخدم (${user.referralCount})
                             </div>
                             ${user.referralsList.map(ref => `
                                 <div class="referral-item">
@@ -2226,6 +2229,7 @@
             
             notificationTimeouts.set(uniqueId, timeoutId);
             
+            // إضافة مستمع الحدث لزر الإغلاق (علامة X)
             notification.querySelector('.notification-close').addEventListener('click', () => {
                 if (notificationTimeouts.has(uniqueId)) {
                     clearTimeout(notificationTimeouts.get(uniqueId));
