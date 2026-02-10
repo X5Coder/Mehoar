@@ -25,22 +25,24 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
         
         :root {
-            --bg-color: #F5F1E8;
+            --bg-color: #E5D8C6;
             --card-color: #FFFFFF;
             --text-primary: #1E293B;
             --text-secondary: #64748B;
-            --accent-dark: #8B7355;
-            --accent-light: #D4B996;
-            --beige-gradient: linear-gradient(145deg, #F5F1E8, #E8E1D1);
+            --accent-dark: #5D4037;
+            --accent-light: #8D6E63;
+            --beige-gradient: linear-gradient(145deg, #D7CCC8, #BCAAA4);
             --border-radius: 24px;
             --border-radius-large: 32px;
             --navbar-height: 80px;
             --transition-quick: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --success-color: #059669;
             --error-color: #DC2626;
+            --border-color: #000000;
         }
         
         body {
@@ -50,6 +52,8 @@
             min-height: 100vh;
             direction: rtl;
             -webkit-font-smoothing: antialiased;
+            max-width: 100vw;
+            overflow-x: hidden;
         }
         
         /* Loading Screens */
@@ -72,7 +76,7 @@
             font-family: 'Almarai', sans-serif;
             font-weight: 900;
             font-size: 64px;
-            background: linear-gradient(145deg, var(--accent-dark), #A68B6A);
+            background: linear-gradient(145deg, var(--accent-dark), #795548);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -82,7 +86,7 @@
         .loading-spinner {
             width: 60px;
             height: 60px;
-            border: 4px solid rgba(139, 115, 85, 0.1);
+            border: 4px solid rgba(93, 64, 55, 0.1);
             border-left-color: var(--accent-dark);
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -106,7 +110,7 @@
             left: 0;
             right: 0;
             height: var(--navbar-height);
-            background: rgba(245, 241, 232, 0.96);
+            background: rgba(229, 216, 198, 0.96);
             backdrop-filter: saturate(200%) blur(30px);
             -webkit-backdrop-filter: saturate(200%) blur(30px);
             display: flex;
@@ -114,11 +118,11 @@
             justify-content: space-between;
             padding: 0 28px;
             z-index: 10000;
-            border-bottom: 2px solid rgba(139, 115, 85, 0.1);
-            box-shadow: 0 10px 40px rgba(139, 115, 85, 0.08);
+            border-bottom: 2px solid rgba(93, 64, 55, 0.1);
+            box-shadow: 0 10px 40px rgba(93, 64, 55, 0.08);
             margin: 0 20px;
             width: calc(100% - 40px);
-            border: 3px solid var(--accent-dark);
+            border: 3px solid var(--border-color);
             border-radius: 28px;
         }
         
@@ -126,7 +130,7 @@
             font-family: 'Almarai', sans-serif;
             font-weight: 900;
             font-size: 42px;
-            background: linear-gradient(145deg, var(--accent-dark), #A68B6A);
+            background: linear-gradient(145deg, var(--accent-dark), #795548);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -147,7 +151,7 @@
         }
         
         .coins-display {
-            background: linear-gradient(145deg, var(--accent-dark), #A68B6A);
+            background: linear-gradient(145deg, var(--accent-dark), #795548);
             color: white;
             padding: 12px 24px;
             border-radius: 20px;
@@ -156,51 +160,19 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 8px 24px rgba(139, 115, 85, 0.2);
-            border: 3px solid var(--accent-dark);
+            box-shadow: 0 8px 24px rgba(93, 64, 55, 0.2);
+            border: 3px solid var(--border-color);
             transition: var(--transition-quick);
         }
         
         .coins-display:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(139, 115, 85, 0.3);
+            box-shadow: 0 12px 32px rgba(93, 64, 55, 0.3);
         }
         
         .coins-display i {
             font-size: 18px;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-        }
-        
-        .font-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 3px solid var(--accent-dark);
-        }
-        
-        .font-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: var(--beige-gradient);
-            border: 2px solid var(--accent-dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition-quick);
-            font-weight: 800;
-            font-size: 18px;
-            color: var(--accent-dark);
-        }
-        
-        .font-btn:hover {
-            transform: translateY(-2px);
-            background: var(--accent-dark);
-            color: white;
         }
         
         /* Main Content */
@@ -209,8 +181,9 @@
             padding-left: 28px;
             padding-right: 28px;
             padding-bottom: 100px;
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
+            width: 100%;
         }
         
         /* Upload Section */
@@ -219,8 +192,8 @@
             border-radius: var(--border-radius-large);
             padding: 40px;
             margin-bottom: 40px;
-            border: 4px solid var(--accent-dark);
-            box-shadow: 0 16px 48px rgba(139, 115, 85, 0.08);
+            border: 4px solid var(--border-color);
+            box-shadow: 0 16px 48px rgba(93, 64, 55, 0.08);
             text-align: center;
         }
         
@@ -248,12 +221,13 @@
             margin-bottom: 30px;
             cursor: pointer;
             transition: var(--transition-quick);
-            background: rgba(212, 185, 150, 0.05);
+            background: rgba(141, 110, 99, 0.05);
+            border-color: var(--border-color);
         }
         
         .upload-area:hover {
             border-color: var(--accent-dark);
-            background: rgba(212, 185, 150, 0.1);
+            background: rgba(141, 110, 99, 0.1);
         }
         
         .upload-icon {
@@ -277,7 +251,7 @@
         }
         
         .upload-btn {
-            background: linear-gradient(145deg, var(--accent-dark), #A68B6A);
+            background: linear-gradient(145deg, var(--accent-dark), #795548);
             color: white;
             border: none;
             border-radius: var(--border-radius);
@@ -290,11 +264,12 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
+            border: 3px solid var(--border-color);
         }
         
         .upload-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(139, 115, 85, 0.25);
+            box-shadow: 0 12px 32px rgba(93, 64, 55, 0.25);
         }
         
         .upload-btn:disabled {
@@ -306,11 +281,11 @@
         
         /* Cost Preview */
         .cost-preview {
-            background: rgba(212, 185, 150, 0.1);
+            background: rgba(141, 110, 99, 0.1);
             border-radius: var(--border-radius);
             padding: 25px;
             margin-top: 30px;
-            border: 3px solid var(--accent-light);
+            border: 3px solid var(--border-color);
             display: none;
         }
         
@@ -372,18 +347,17 @@
             cursor: pointer;
             transition: var(--transition-quick);
             min-width: 150px;
+            border: 3px solid var(--border-color);
         }
         
         .confirm-btn {
             background: linear-gradient(145deg, var(--success-color), #047857);
             color: white;
-            border: 3px solid var(--success-color);
         }
         
         .cancel-btn {
             background: linear-gradient(145deg, var(--error-color), #B91C1C);
             color: white;
-            border: 3px solid var(--error-color);
         }
         
         .action-btn:hover {
@@ -397,8 +371,8 @@
             border-radius: var(--border-radius-large);
             padding: 40px;
             margin-bottom: 40px;
-            border: 4px solid var(--accent-dark);
-            box-shadow: 0 16px 48px rgba(139, 115, 85, 0.08);
+            border: 4px solid var(--border-color);
+            box-shadow: 0 16px 48px rgba(93, 64, 55, 0.08);
             display: none;
         }
         
@@ -415,10 +389,10 @@
         }
         
         .setting-group {
-            background: rgba(212, 185, 150, 0.05);
+            background: rgba(141, 110, 99, 0.05);
             border-radius: var(--border-radius);
             padding: 25px;
-            border: 3px solid var(--accent-light);
+            border: 3px solid var(--border-color);
         }
         
         .setting-title {
@@ -444,7 +418,7 @@
         
         .option-btn {
             padding: 12px;
-            border: 3px solid var(--accent-light);
+            border: 3px solid var(--border-color);
             border-radius: var(--border-radius);
             background: white;
             font-family: 'Tajawal', sans-serif;
@@ -469,7 +443,7 @@
         .text-input {
             width: 100%;
             padding: 14px 18px;
-            border: 3px solid var(--accent-light);
+            border: 3px solid var(--border-color);
             border-radius: var(--border-radius);
             font-family: 'Tajawal', sans-serif;
             font-size: 1rem;
@@ -480,11 +454,11 @@
         .text-input:focus {
             outline: none;
             border-color: var(--accent-dark);
-            box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
+            box-shadow: 0 0 0 3px rgba(93, 64, 55, 0.1);
         }
         
         .generate-btn {
-            background: linear-gradient(145deg, var(--accent-dark), #A68B6A);
+            background: linear-gradient(145deg, var(--accent-dark), #795548);
             color: white;
             border: none;
             border-radius: var(--border-radius);
@@ -497,11 +471,12 @@
             display: block;
             margin: 0 auto;
             min-width: 250px;
+            border: 3px solid var(--border-color);
         }
         
         .generate-btn:hover:not(:disabled) {
             transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(139, 115, 85, 0.25);
+            box-shadow: 0 12px 32px rgba(93, 64, 55, 0.25);
         }
         
         .generate-btn:disabled {
@@ -517,8 +492,8 @@
             border-radius: var(--border-radius-large);
             padding: 40px;
             margin-bottom: 40px;
-            border: 4px solid var(--accent-dark);
-            box-shadow: 0 16px 48px rgba(139, 115, 85, 0.08);
+            border: 4px solid var(--border-color);
+            box-shadow: 0 16px 48px rgba(93, 64, 55, 0.08);
             display: none;
         }
         
@@ -533,7 +508,7 @@
             align-items: center;
             margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 3px solid rgba(139, 115, 85, 0.1);
+            border-bottom: 3px solid rgba(93, 64, 55, 0.1);
         }
         
         .result-title {
@@ -544,26 +519,231 @@
             letter-spacing: -1px;
         }
         
-        .result-content {
+        .result-content-container {
+            position: relative;
             background: #f9f9f9;
             border-radius: var(--border-radius);
-            padding: 30px;
+            border: 3px solid var(--border-color);
+            overflow: hidden;
             min-height: 500px;
-            border: 3px solid rgba(139, 115, 85, 0.1);
+            max-height: 800px;
+            padding: 20px;
+        }
+        
+        .result-content {
             font-family: 'Tajawal', sans-serif;
             font-size: 1.1rem;
             line-height: 1.8;
             color: var(--text-primary);
-            overflow-y: auto;
-            max-height: 800px;
+            position: relative;
+            z-index: 1;
+            padding: 10px;
+            min-height: 500px;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        /* Drawing Canvas */
+        .drawing-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            cursor: crosshair;
+            touch-action: none;
+        }
+        
+        /* Drawing Controls */
+        .drawing-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            border: 3px solid var(--border-color);
+            z-index: 10;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 200px;
+        }
+        
+        .drawing-controls.show {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .drawing-controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .drawing-controls-title {
+            font-family: 'Almarai', sans-serif;
+            font-weight: 800;
+            color: var(--accent-dark);
+            font-size: 1.1rem;
+        }
+        
+        .close-drawing {
+            background: var(--error-color);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .tool-selection {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .tool-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            text-align: center;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 500;
+        }
+        
+        .tool-btn.selected {
+            background: var(--accent-dark);
+            color: white;
+            border-color: var(--accent-dark);
+        }
+        
+        .color-selection {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .color-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition-quick);
+        }
+        
+        .color-btn.selected {
+            transform: scale(1.1);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .drawing-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .drawing-action-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            text-align: center;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 500;
+        }
+        
+        .drawing-action-btn:hover {
+            transform: translateY(-2px);
+            background: #f5f5f5;
+        }
+        
+        /* Pen Button */
+        .pen-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(145deg, var(--accent-dark), #795548);
+            color: white;
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 5;
+            transition: var(--transition-quick);
+            box-shadow: 0 8px 24px rgba(93, 64, 55, 0.2);
+        }
+        
+        .pen-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 12px 32px rgba(93, 64, 55, 0.3);
+        }
+        
+        .pen-btn i {
+            font-size: 24px;
+        }
+        
+        /* Font Controls for Result */
+        .font-controls-result {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 3px solid var(--border-color);
+        }
+        
+        .font-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--beige-gradient);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-quick);
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--accent-dark);
+        }
+        
+        .font-btn:hover {
+            transform: translateY(-2px);
+            background: var(--accent-dark);
+            color: white;
         }
         
         .raw-summary {
-            background: rgba(212, 185, 150, 0.1);
+            background: rgba(141, 110, 99, 0.1);
             border-radius: var(--border-radius);
             padding: 25px;
             margin-top: 30px;
-            border: 3px solid var(--accent-light);
+            border: 3px solid var(--border-color);
         }
         
         .raw-title {
@@ -610,7 +790,7 @@
             text-align: center;
             padding: 60px 28px 40px;
             color: var(--text-secondary);
-            border-top: 3px solid rgba(139, 115, 85, 0.1);
+            border-top: 3px solid rgba(93, 64, 55, 0.1);
             margin-top: 100px;
         }
         
@@ -648,19 +828,19 @@
             width: 56px;
             height: 56px;
             border-radius: 16px;
-            background: linear-gradient(145deg, var(--accent-dark), #A68B6A);
-            border: 3px solid var(--accent-dark);
+            background: linear-gradient(145deg, var(--accent-dark), #795548);
+            border: 3px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: var(--transition-quick);
-            box-shadow: 0 8px 24px rgba(139, 115, 85, 0.15);
+            box-shadow: 0 8px 24px rgba(93, 64, 55, 0.15);
         }
         
         .support-link:hover {
             transform: translateY(-5px) scale(1.1);
-            box-shadow: 0 16px 40px rgba(139, 115, 85, 0.25);
+            box-shadow: 0 16px 40px rgba(93, 64, 55, 0.25);
         }
         
         .support-link i {
@@ -675,7 +855,7 @@
             color: rgba(100, 116, 139, 0.7);
             margin-top: 30px;
             padding-top: 20px;
-            border-top: 2px solid rgba(139, 115, 85, 0.05);
+            border-top: 2px solid rgba(93, 64, 55, 0.05);
             cursor: pointer;
             transition: var(--transition-quick);
         }
@@ -699,7 +879,7 @@
             border-radius: var(--border-radius);
             padding: 20px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            border: 3px solid var(--accent-dark);
+            border: 3px solid var(--border-color);
             z-index: 10001;
             min-width: 300px;
             transform: translateX(120%);
@@ -742,36 +922,9 @@
         }
         
         /* Responsive Design */
-        @media (max-width: 1200px) {
-            .main-content {
-                max-width: 100%;
-            }
-            
-            .settings-grid {
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .main-content {
-                padding-top: calc(var(--navbar-height) + 50px);
-                padding-left: 24px;
-                padding-right: 24px;
-                padding-bottom: 80px;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .upload-section, .settings-section, .result-section {
-                padding: 32px 28px;
-            }
-        }
-        
         @media (max-width: 768px) {
             .native-navbar {
-                padding: 0 24px;
+                padding: 0 20px;
                 margin: 0 16px;
                 top: 12px;
                 width: calc(100% - 32px);
@@ -787,20 +940,31 @@
                 font-size: 15px;
             }
             
-            .font-controls {
-                padding: 6px 12px;
-            }
-            
-            .font-btn {
-                width: 36px;
-                height: 36px;
-                font-size: 16px;
-            }
-            
             .main-content {
                 padding-top: calc(70px + 40px);
                 padding-left: 20px;
                 padding-right: 20px;
+                padding-bottom: 60px;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .upload-section, .settings-section, .result-section {
+                padding: 28px 20px;
+                margin-left: 0;
+                margin-right: 0;
+                width: 100%;
+                border-radius: 24px;
+            }
+            
+            .upload-area {
+                padding: 40px 20px;
+            }
+            
+            .upload-icon {
+                font-size: 50px;
             }
             
             .cost-details {
@@ -820,8 +984,18 @@
                 min-width: 100%;
             }
             
+            .settings-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
             .options-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .generate-btn {
+                min-width: 100%;
+                padding: 16px 30px;
             }
             
             .result-header {
@@ -830,27 +1004,46 @@
                 align-items: flex-start;
             }
             
+            .pen-btn {
+                width: 48px;
+                height: 48px;
+                top: 15px;
+                right: 15px;
+            }
+            
+            .drawing-controls {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 90%;
+                max-width: 320px;
+            }
+            
+            .font-controls-result {
+                width: 100%;
+                justify-content: center;
+            }
+            
             .notification {
                 left: 20px;
                 right: 20px;
                 min-width: auto;
+                top: 80px;
             }
         }
         
-        @media (max-width: 576px) {
+        @media (max-width: 480px) {
             .native-navbar {
-                padding: 0 20px;
+                padding: 0 16px;
                 margin: 0 12px;
                 top: 10px;
                 width: calc(100% - 24px);
+                height: 65px;
             }
             
             .logo {
                 font-size: 32px;
-            }
-            
-            .nav-left {
-                gap: 16px;
             }
             
             .coins-display {
@@ -861,59 +1054,72 @@
             .main-content {
                 padding-left: 16px;
                 padding-right: 16px;
+                padding-top: calc(65px + 30px);
             }
             
             .section-title {
-                font-size: 1.8rem;
+                font-size: 1.6rem;
+            }
+            
+            .section-subtitle {
+                font-size: 1rem;
             }
             
             .upload-section, .settings-section, .result-section {
-                padding: 28px 24px;
+                padding: 24px 16px;
             }
             
             .upload-area {
-                padding: 40px 20px;
-            }
-            
-            .upload-icon {
-                font-size: 50px;
-            }
-            
-            .generate-btn {
-                min-width: 100%;
-            }
-            
-            .support-links {
-                gap: 16px;
-            }
-            
-            .support-link {
-                width: 52px;
-                height: 52px;
-            }
-            
-            .support-link i {
-                font-size: 24px;
-            }
-        }
-        
-        @media (max-width: 400px) {
-            .coins-display {
-                padding: 8px 14px;
-                font-size: 13px;
-            }
-            
-            .coins-display i {
-                font-size: 16px;
+                padding: 30px 16px;
             }
             
             .options-grid {
                 grid-template-columns: 1fr;
             }
             
-            .font-controls {
-                flex-direction: column;
-                gap: 8px;
+            .generate-btn {
+                padding: 14px 20px;
+                font-size: 1.1rem;
+            }
+            
+            .pen-btn {
+                width: 44px;
+                height: 44px;
+                top: 10px;
+                right: 10px;
+            }
+            
+            .pen-btn i {
+                font-size: 20px;
+            }
+            
+            .font-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .logo {
+                font-size: 28px;
+            }
+            
+            .coins-display {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+            
+            .section-title {
+                font-size: 1.4rem;
+            }
+            
+            .upload-icon {
+                font-size: 40px;
+            }
+            
+            .upload-text {
+                font-size: 1rem;
             }
         }
     </style>
@@ -940,11 +1146,6 @@
     <nav class="native-navbar" id="navbar">
         <div class="logo" onclick="window.location.href='home.html'">عَون</div>
         <div class="nav-left">
-            <div class="font-controls" id="font-controls">
-                <button class="font-btn" onclick="changeFontSize('increase')">+</button>
-                <span style="font-weight: 700; color: var(--accent-dark);">الخط</span>
-                <button class="font-btn" onclick="changeFontSize('decrease')">-</button>
-            </div>
             <div class="coins-display">
                 <i class="fas fa-coins"></i>
                 <span id="coins-count">0</span>
@@ -964,15 +1165,9 @@
                     <i class="fas fa-file-pdf"></i>
                 </div>
                 <div class="upload-text" id="upload-text">انقر لرفع ملف PDF</div>
-                <div class="upload-hint">الحد الأقصى لحجم الملف: 10MB</div>
             </div>
             
             <input type="file" id="pdfFile" accept=".pdf" style="display: none;">
-            
-            <button class="upload-btn" id="upload-btn" onclick="handleUploadButton()" disabled>
-                <i class="fas fa-upload"></i>
-                تحليل الملف
-            </button>
             
             <div class="cost-preview" id="cost-preview">
                 <h3 class="cost-title">تفاصيل التكلفة</h3>
@@ -1079,15 +1274,49 @@
         <section class="result-section" id="result-section">
             <div class="result-header">
                 <h2 class="result-title" id="result-title">ملخص الملف</h2>
-                <div class="font-controls">
-                    <button class="font-btn" onclick="changeResultFontSize('increase')">+</button>
-                    <span style="font-weight: 700; color: var(--accent-dark);">الخط</span>
+                <div class="font-controls-result">
                     <button class="font-btn" onclick="changeResultFontSize('decrease')">-</button>
+                    <span style="font-weight: 700; color: var(--accent-dark);">حجم الخط</span>
+                    <button class="font-btn" onclick="changeResultFontSize('increase')">+</button>
                 </div>
             </div>
             
-            <div class="result-content" id="result-content">
-                <!-- سيتم ملء المحتوى هنا -->
+            <div class="result-content-container" id="result-content-container">
+                <div class="result-content" id="result-content"></div>
+                <canvas class="drawing-canvas" id="drawing-canvas"></canvas>
+                <div class="pen-btn" id="pen-btn" onclick="toggleDrawingControls()">
+                    <i class="fas fa-pen"></i>
+                </div>
+                <div class="drawing-controls" id="drawing-controls">
+                    <div class="drawing-controls-header">
+                        <div class="drawing-controls-title">أدوات الرسم</div>
+                        <button class="close-drawing" onclick="toggleDrawingControls()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="tool-selection">
+                        <button class="tool-btn selected" data-tool="pen" onclick="selectTool('pen')">قلم</button>
+                        <button class="tool-btn" data-tool="highlighter" onclick="selectTool('highlighter')">هايلايتر</button>
+                    </div>
+                    <div class="color-selection">
+                        <div class="color-btn" style="background: #FF0000;" data-color="#FF0000" onclick="selectColor('#FF0000')"></div>
+                        <div class="color-btn" style="background: #00FF00;" data-color="#00FF00" onclick="selectColor('#00FF00')"></div>
+                        <div class="color-btn" style="background: #0000FF;" data-color="#0000FF" onclick="selectColor('#0000FF')"></div>
+                        <div class="color-btn" style="background: #FFFF00;" data-color="#FFFF00" onclick="selectColor('#FFFF00')"></div>
+                        <div class="color-btn" style="background: #FFA500;" data-color="#FFA500" onclick="selectColor('#FFA500')"></div>
+                        <div class="color-btn" style="background: #800080;" data-color="#800080" onclick="selectColor('#800080')"></div>
+                        <div class="color-btn" style="background: #000000;" data-color="#000000" onclick="selectColor('#000000')"></div>
+                        <div class="color-btn" style="background: #FFFFFF; border-color: #000;" data-color="#FFFFFF" onclick="selectColor('#FFFFFF')"></div>
+                    </div>
+                    <div class="drawing-actions">
+                        <button class="drawing-action-btn" onclick="clearDrawing()">
+                            <i class="fas fa-trash"></i> مسح
+                        </button>
+                        <button class="drawing-action-btn" onclick="saveDrawing()">
+                            <i class="fas fa-save"></i> حفظ
+                        </button>
+                    </div>
+                </div>
             </div>
             
             <div class="raw-summary" id="raw-summary">
@@ -1169,8 +1398,15 @@
         const PASS = "12345abcde57";
         
         // تحجيم الخط
-        let currentFontSize = 16;
         let resultFontSize = 16;
+        
+        // متغيرات الرسم
+        let isDrawing = false;
+        let currentTool = 'pen';
+        let currentColor = '#000000';
+        let drawingHistory = [];
+        let canvas = null;
+        let ctx = null;
         
         // ========== الوظائف الأساسية ==========
         
@@ -1208,27 +1444,17 @@
             }
         }
         
-        function changeFontSize(action) {
-            if (action === 'increase' && currentFontSize < 24) {
-                currentFontSize += 1;
-            } else if (action === 'decrease' && currentFontSize > 12) {
-                currentFontSize -= 1;
-            }
-            
-            document.body.style.fontSize = currentFontSize + 'px';
-        }
-        
         function changeResultFontSize(action) {
+            const resultContent = document.getElementById('result-content');
+            if (!resultContent) return;
+            
             if (action === 'increase' && resultFontSize < 24) {
-                resultFontSize += 1;
+                resultFontSize += 2;
             } else if (action === 'decrease' && resultFontSize > 12) {
-                resultFontSize -= 1;
+                resultFontSize -= 2;
             }
             
-            const resultContent = document.getElementById('result-content');
-            if (resultContent) {
-                resultContent.style.fontSize = resultFontSize + 'px';
-            }
+            resultContent.style.fontSize = resultFontSize + 'px';
         }
         
         // ========== إدارة المستخدم ==========
@@ -1306,15 +1532,45 @@
         
         function setupFileUpload() {
             const pdfFile = document.getElementById('pdfFile');
+            const uploadArea = document.getElementById('upload-area');
+            
             if (pdfFile) {
                 pdfFile.addEventListener('change', handleFileSelect);
+            }
+            
+            if (uploadArea) {
+                uploadArea.addEventListener('dragover', handleDragOver);
+                uploadArea.addEventListener('drop', handleDrop);
+            }
+        }
+        
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const uploadArea = document.getElementById('upload-area');
+            if (uploadArea) {
+                uploadArea.style.borderColor = 'var(--accent-dark)';
+                uploadArea.style.backgroundColor = 'rgba(141, 110, 99, 0.1)';
+            }
+        }
+        
+        async function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                await handleFile(files[0]);
             }
         }
         
         async function handleFileSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
+            await handleFile(file);
+        }
+        
+        async function handleFile(file) {
             // التحقق من امتداد الملف
             if (!file.name.toLowerCase().endsWith('.pdf')) {
                 showNotification('الرجاء رفع ملف PDF فقط', 'error');
@@ -1322,39 +1578,18 @@
                 return;
             }
             
-            // التحقق من حجم الملف (10MB كحد أقصى)
-            if (file.size > 10 * 1024 * 1024) {
-                showNotification('حجم الملف كبير جداً. الحد الأقصى هو 10MB', 'error');
-                resetFileInput();
-                return;
-            }
-            
             selectedFile = file;
             const uploadText = document.getElementById('upload-text');
             const uploadArea = document.getElementById('upload-area');
-            const uploadBtn = document.getElementById('upload-btn');
             
             if (uploadText) uploadText.textContent = file.name;
             if (uploadArea) {
                 uploadArea.style.borderColor = 'var(--accent-dark)';
-                uploadArea.style.backgroundColor = 'rgba(139, 115, 85, 0.1)';
-            }
-            if (uploadBtn) uploadBtn.disabled = false;
-            
-            showNotification('تم رفع الملف بنجاح. انقر على "تحليل الملف" للمتابعة', 'success');
-        }
-        
-        // دالة زر تحليل الملف
-        async function handleUploadButton() {
-            if (!selectedFile) {
-                showNotification('الرجاء اختيار ملف PDF أولاً', 'error');
-                return;
+                uploadArea.style.backgroundColor = 'rgba(141, 110, 99, 0.1)';
             }
             
-            const success = await analyzePDF(selectedFile);
-            if (success) {
-                showNotification('تم تحليل الملف بنجاح', 'success');
-            }
+            // تحليل الملف تلقائياً
+            await analyzePDF(file);
         }
         
         async function analyzePDF(file) {
@@ -1408,14 +1643,13 @@
                 if (costAmount) costAmount.textContent = fileInfo.cost + ' عملة';
                 if (costPreview) costPreview.classList.add('show');
                 
-                return true;
+                showNotification('تم تحليل الملف بنجاح', 'success');
                 
             } catch (error) {
                 console.error('Error analyzing PDF:', error);
                 hideLoading();
                 showNotification('حدث خطأ أثناء تحليل الملف. الرجاء المحاولة مرة أخرى.', 'error');
                 resetFileInput();
-                return false;
             }
         }
         
@@ -1423,7 +1657,6 @@
             const pdfFile = document.getElementById('pdfFile');
             const uploadText = document.getElementById('upload-text');
             const uploadArea = document.getElementById('upload-area');
-            const uploadBtn = document.getElementById('upload-btn');
             const costPreview = document.getElementById('cost-preview');
             
             if (pdfFile) pdfFile.value = '';
@@ -1433,7 +1666,6 @@
                 uploadArea.style.borderColor = '';
                 uploadArea.style.backgroundColor = '';
             }
-            if (uploadBtn) uploadBtn.disabled = true;
             if (costPreview) costPreview.classList.remove('show');
         }
         
@@ -1444,33 +1676,25 @@
             showNotification('تم إلغاء العملية', 'info');
         }
         
-        // ========== دالة زر المتابعة المصححة ==========
+        // ========== دالة زر المتابعة ==========
         function confirmProcess() {
             console.log('confirmProcess called');
             
-            // الحصول على العناصر مباشرة
             const uploadSection = document.getElementById('upload-section');
             const settingsSection = document.getElementById('settings-section');
             const costPreview = document.getElementById('cost-preview');
             
-            // التحقق من العناصر
             if (!uploadSection || !settingsSection || !costPreview) {
-                console.error('Required elements not found:', {
-                    uploadSection: !!uploadSection,
-                    settingsSection: !!settingsSection,
-                    costPreview: !!costPreview
-                });
+                console.error('Required elements not found');
                 showNotification('حدث خطأ في تحميل العناصر', 'error');
                 return;
             }
             
-            // التحقق من وجود fileInfo
             if (!fileInfo || !fileInfo.cost || fileInfo.cost === 0) {
                 showNotification('الرجاء تحليل الملف أولاً', 'error');
                 return;
             }
             
-            // التحقق من رصيد المستخدم
             console.log('User coins:', userCoins, 'File cost:', fileInfo.cost);
             
             if (userCoins < fileInfo.cost) {
@@ -1478,16 +1702,10 @@
                 return;
             }
             
-            // إخفاء قسم الرفع
             uploadSection.style.display = 'none';
-            
-            // إظهار قسم الإعدادات
             settingsSection.classList.add('show');
-            
-            // إخفاء معاينة التكلفة
             costPreview.classList.remove('show');
             
-            // تمرير إلى بداية الصفحة
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
             showNotification('الرجاء تحديد إعدادات التلخيص', 'success');
@@ -1681,7 +1899,6 @@ ABSOLUTE CONSTRAINTS:
             try {
                 showLoading('جاري إنشاء التلخيص...');
                 
-                // تحويل الملف إلى base64
                 const base64 = await new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onload = () => {
@@ -1693,11 +1910,9 @@ ABSOLUTE CONSTRAINTS:
                     reader.readAsDataURL(selectedFile);
                 });
                 
-                // إنشاء الـ prompt
                 const prompt = createPrompt();
                 console.log('Generated prompt:', prompt);
                 
-                // إرسال الطلب إلى السيرفر
                 const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
                     headers: { 
@@ -1723,7 +1938,6 @@ ABSOLUTE CONSTRAINTS:
                 
                 let result;
                 try {
-                    // تنظيف الرد من أي نص غير JSON
                     const jsonMatch = text.match(/\{[\s\S]*\}/);
                     if (jsonMatch) {
                         result = JSON.parse(jsonMatch[0]);
@@ -1737,28 +1951,20 @@ ABSOLUTE CONSTRAINTS:
                 
                 console.log('Parsed result:', result);
                 
-                // التحقق من الاستجابة الفارغة
                 if (result.head === "Not Output" && result.raw === "Not Output" && result.page === "Not Output") {
                     throw new Error('الملف فارغ أو غير قابل للقراءة');
                 }
                 
-                // خصم العملات
                 await deductCoins(fileInfo.cost);
-                
-                // حفظ النتيجة في قاعدة البيانات
                 await saveResultToDatabase(result);
-                
-                // عرض النتيجة
                 displayResult(result);
                 
-                // الانتقال إلى قسم النتائج
                 const settingsSection = document.getElementById('settings-section');
                 const resultSection = document.getElementById('result-section');
                 
                 if (settingsSection) settingsSection.classList.remove('show');
                 if (resultSection) resultSection.classList.add('show');
                 
-                // تمرير إلى بداية الصفحة
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 
                 showNotification('تم إنشاء التلخيص بنجاح', 'success');
@@ -1818,7 +2024,6 @@ ABSOLUTE CONSTRAINTS:
         }
         
         function displayResult(result) {
-            // تعيين العنوان
             const resultTitle = document.getElementById('result-title');
             const resultContent = document.getElementById('result-content');
             const rawPoints = document.getElementById('raw-points');
@@ -1827,7 +2032,6 @@ ABSOLUTE CONSTRAINTS:
                 resultTitle.textContent = result.head || 'ملخص الملف';
             }
             
-            // تعيين المحتوى الرئيسي
             if (resultContent) {
                 resultContent.innerHTML = '';
                 
@@ -1843,9 +2047,10 @@ ABSOLUTE CONSTRAINTS:
                 } else {
                     resultContent.textContent = 'لا يوجد محتوى للعرض';
                 }
+                
+                resultContent.style.fontSize = resultFontSize + 'px';
             }
             
-            // تعيين النقاط الرئيسية
             if (rawPoints) {
                 rawPoints.innerHTML = '';
                 
@@ -1862,11 +2067,276 @@ ABSOLUTE CONSTRAINTS:
                 }
             }
             
-            // إعادة تعيين حجم الخط
-            resultFontSize = 16;
-            if (resultContent) {
-                resultContent.style.fontSize = resultFontSize + 'px';
+            // تهيئة لوحة الرسم بعد عرض النتيجة
+            setTimeout(initDrawingCanvas, 100);
+        }
+        
+        // ========== وظائف الرسم ==========
+        
+        function initDrawingCanvas() {
+            canvas = document.getElementById('drawing-canvas');
+            if (!canvas) return;
+            
+            const container = document.getElementById('result-content-container');
+            if (!container) return;
+            
+            // تعيين أبعاد الكانفاس لتتناسب مع الحاوية
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+            
+            ctx = canvas.getContext('2d');
+            if (!ctx) return;
+            
+            // تهيئة حدثات الرسم
+            setupDrawingEvents();
+            
+            // تحميل الرسم المحفوظ إن وجد
+            loadSavedDrawing();
+        }
+        
+        function setupDrawingEvents() {
+            if (!canvas || !ctx) return;
+            
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // دعم اللمس
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', stopDrawing);
+        }
+        
+        function handleTouchStart(e) {
+            e.preventDefault();
+            if (e.touches.length === 1) {
+                const touch = e.touches[0];
+                const rect = canvas.getBoundingClientRect();
+                startDrawing({
+                    clientX: touch.clientX,
+                    clientY: touch.clientY,
+                    offsetX: touch.clientX - rect.left,
+                    offsetY: touch.clientY - rect.top
+                });
             }
+        }
+        
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (e.touches.length === 1) {
+                const touch = e.touches[0];
+                const rect = canvas.getBoundingClientRect();
+                draw({
+                    clientX: touch.clientX,
+                    clientY: touch.clientY,
+                    offsetX: touch.clientX - rect.left,
+                    offsetY: touch.clientY - rect.top
+                });
+            }
+        }
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+            
+            // إضافة إلى السجل
+            drawingHistory.push({
+                type: 'start',
+                x: e.offsetX,
+                y: e.offsetY,
+                tool: currentTool,
+                color: currentColor
+            });
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            ctx.lineTo(e.offsetX, e.offsetY);
+            
+            if (currentTool === 'pen') {
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = currentColor;
+            } else if (currentTool === 'highlighter') {
+                ctx.lineWidth = 10;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = currentColor + '80'; // شفافية 50%
+            }
+            
+            ctx.stroke();
+            
+            // إضافة إلى السجل
+            drawingHistory.push({
+                type: 'draw',
+                x: e.offsetX,
+                y: e.offsetY,
+                tool: currentTool,
+                color: currentColor
+            });
+        }
+        
+        function stopDrawing() {
+            if (isDrawing) {
+                isDrawing = false;
+                ctx.closePath();
+                
+                // إضافة إلى السجل
+                drawingHistory.push({
+                    type: 'end',
+                    tool: currentTool,
+                    color: currentColor
+                });
+            }
+        }
+        
+        function toggleDrawingControls() {
+            const drawingControls = document.getElementById('drawing-controls');
+            if (drawingControls) {
+                if (drawingControls.classList.contains('show')) {
+                    drawingControls.classList.remove('show');
+                } else {
+                    drawingControls.classList.add('show');
+                }
+            }
+        }
+        
+        function selectTool(tool) {
+            currentTool = tool;
+            
+            const toolBtns = document.querySelectorAll('.tool-btn');
+            toolBtns.forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.getAttribute('data-tool') === tool) {
+                    btn.classList.add('selected');
+                }
+            });
+            
+            console.log('Selected tool:', tool);
+        }
+        
+        function selectColor(color) {
+            currentColor = color;
+            
+            const colorBtns = document.querySelectorAll('.color-btn');
+            colorBtns.forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.getAttribute('data-color') === color) {
+                    btn.classList.add('selected');
+                }
+            });
+            
+            console.log('Selected color:', color);
+        }
+        
+        function clearDrawing() {
+            if (!ctx || !canvas) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawingHistory = [];
+            
+            // حذف من قاعدة البيانات
+            if (currentUser) {
+                database.ref(`drawings/${currentUser.id}`).remove()
+                    .then(() => {
+                        console.log('Drawing cleared from database');
+                        showNotification('تم مسح الرسم', 'success');
+                    })
+                    .catch(error => {
+                        console.error('Error clearing drawing from database:', error);
+                    });
+            }
+        }
+        
+        async function saveDrawing() {
+            if (!ctx || !canvas || !currentUser) return;
+            
+            try {
+                const drawingData = {
+                    history: drawingHistory,
+                    canvasSize: {
+                        width: canvas.width,
+                        height: canvas.height
+                    },
+                    timestamp: Date.now()
+                };
+                
+                await database.ref(`drawings/${currentUser.id}`).set(drawingData);
+                showNotification('تم حفظ الرسم', 'success');
+                console.log('Drawing saved to database');
+                
+            } catch (error) {
+                console.error('Error saving drawing:', error);
+                showNotification('حدث خطأ أثناء حفظ الرسم', 'error');
+            }
+        }
+        
+        async function loadSavedDrawing() {
+            if (!ctx || !canvas || !currentUser) return;
+            
+            try {
+                const snapshot = await database.ref(`drawings/${currentUser.id}`).once('value');
+                if (snapshot.exists()) {
+                    const drawingData = snapshot.val();
+                    
+                    if (drawingData.history && Array.isArray(drawingData.history)) {
+                        drawingHistory = drawingData.history;
+                        redrawFromHistory();
+                        console.log('Drawing loaded from database');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading drawing:', error);
+            }
+        }
+        
+        function redrawFromHistory() {
+            if (!ctx || !drawingHistory.length) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            let currentPath = null;
+            
+            drawingHistory.forEach(entry => {
+                if (entry.type === 'start') {
+                    currentPath = {
+                        points: [{x: entry.x, y: entry.y}],
+                        tool: entry.tool,
+                        color: entry.color
+                    };
+                } else if (entry.type === 'draw' && currentPath) {
+                    currentPath.points.push({x: entry.x, y: entry.y});
+                } else if (entry.type === 'end' && currentPath) {
+                    drawPath(currentPath);
+                    currentPath = null;
+                }
+            });
+        }
+        
+        function drawPath(path) {
+            if (!ctx || !path.points.length) return;
+            
+            ctx.beginPath();
+            ctx.moveTo(path.points[0].x, path.points[0].y);
+            
+            for (let i = 1; i < path.points.length; i++) {
+                ctx.lineTo(path.points[i].x, path.points[i].y);
+            }
+            
+            if (path.tool === 'pen') {
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = path.color;
+            } else if (path.tool === 'highlighter') {
+                ctx.lineWidth = 10;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = path.color + '80';
+            }
+            
+            ctx.stroke();
+            ctx.closePath();
         }
         
         function showLoading(text = 'جاري التحميل...') {
@@ -1909,7 +2379,6 @@ ABSOLUTE CONSTRAINTS:
                     setupFileUpload();
                     setupSettingsEvents();
                     
-                    // إضافة event listener إضافي لزر المتابعة للتأكد
                     const confirmBtn = document.querySelector('.confirm-btn');
                     if (confirmBtn) {
                         confirmBtn.addEventListener('click', function(e) {
@@ -1937,13 +2406,11 @@ ABSOLUTE CONSTRAINTS:
             });
         }
         
-        // منع الرجوع إلى الوراء
         history.pushState(null, null, window.location.href);
         window.addEventListener('popstate', function(event) {
             history.pushState(null, null, window.location.href);
         });
         
-        // بدء التطبيق
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
