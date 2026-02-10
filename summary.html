@@ -169,6 +169,192 @@
             font-size: 16px;
         }
         
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: 15px;
+        }
+        
+        .toolbar-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: white;
+            border: 1px solid rgba(139, 115, 85, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            color: var(--accent-primary);
+            font-size: 18px;
+            position: relative;
+        }
+        
+        .toolbar-btn:hover {
+            background: rgba(139, 115, 85, 0.1);
+        }
+        
+        .toolbar-btn.active {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+        
+        .pen-indicator {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 8px solid var(--accent-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .pen-indicator.led {
+            border-bottom-color: currentColor;
+            animation: ledPulse 0.5s ease;
+        }
+        
+        @keyframes ledPulse {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        .led-fade {
+            animation: ledFadeOut 2s ease forwards;
+        }
+        
+        @keyframes ledFadeOut {
+            0% { opacity: 0.7; }
+            100% { opacity: 0; }
+        }
+        
+        /* Color Palette */
+        .color-palette {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            background: white;
+            border-radius: 16px;
+            padding: 12px;
+            box-shadow: var(--shadow-heavy);
+            border: 1px solid rgba(139, 115, 85, 0.1);
+            display: none;
+            flex-wrap: wrap;
+            gap: 8px;
+            width: 200px;
+            z-index: 1000;
+        }
+        
+        .color-palette.show {
+            display: flex;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .color-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid rgba(139, 115, 85, 0.2);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-option.selected {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 6px rgba(139, 115, 85, 0.3);
+        }
+        
+        .pen-type {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        
+        .pen-type-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid rgba(139, 115, 85, 0.2);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+        
+        .pen-type-btn.selected {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+        
+        /* Audio Controls */
+        .audio-controls {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            background: white;
+            border-radius: 16px;
+            padding: 12px;
+            box-shadow: var(--shadow-heavy);
+            border: 1px solid rgba(139, 115, 85, 0.1);
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            width: 150px;
+            z-index: 1000;
+        }
+        
+        .audio-controls.show {
+            display: flex;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        .audio-control-btn {
+            padding: 8px 12px;
+            border: 1px solid rgba(139, 115, 85, 0.2);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .audio-control-btn:hover {
+            background: rgba(139, 115, 85, 0.1);
+        }
+        
         /* Main Content */
         .main-content {
             padding-top: calc(var(--navbar-height) + 30px);
@@ -490,19 +676,19 @@
             color: var(--accent-primary);
         }
         
-        .toolbar {
+        .result-toolbar {
             display: flex;
             align-items: center;
             gap: 12px;
-            background: rgba(139, 115, 85, 0.05);
-            padding: 8px 16px;
-            border-radius: 16px;
         }
         
         .font-controls-result {
             display: flex;
             align-items: center;
             gap: 8px;
+            background: rgba(139, 115, 85, 0.05);
+            padding: 6px 12px;
+            border-radius: 16px;
         }
         
         .font-btn {
@@ -522,32 +708,6 @@
         }
         
         .font-btn:hover {
-            background: var(--accent-primary);
-            color: white;
-            border-color: var(--accent-primary);
-        }
-        
-        .toolbar-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: white;
-            border: 1px solid rgba(139, 115, 85, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            color: var(--accent-primary);
-            font-size: 18px;
-            position: relative;
-        }
-        
-        .toolbar-btn:hover {
-            background: rgba(139, 115, 85, 0.1);
-        }
-        
-        .toolbar-btn.active {
             background: var(--accent-primary);
             color: white;
             border-color: var(--accent-primary);
@@ -579,10 +739,10 @@
         }
         
         .highlighted-word {
-            background-color: rgba(56, 161, 105, 0.2);
-            padding: 2px 4px;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
+            background-color: rgba(56, 161, 105, 0.15);
+            padding: 2px 0;
+            border-radius: 2px;
+            transition: background-color 0.1s ease;
         }
         
         /* Drawing Canvas */
@@ -600,46 +760,6 @@
         
         .drawing-canvas.active {
             pointer-events: auto;
-        }
-        
-        /* Color Palette */
-        .color-palette {
-            position: absolute;
-            bottom: -50px;
-            right: 0;
-            background: white;
-            border-radius: 16px;
-            padding: 12px;
-            box-shadow: var(--shadow-heavy);
-            border: 1px solid rgba(139, 115, 85, 0.1);
-            display: none;
-            flex-wrap: wrap;
-            gap: 8px;
-            width: 180px;
-            z-index: 1000;
-        }
-        
-        .color-palette.show {
-            display: flex;
-            animation: fadeIn 0.3s ease-out;
-        }
-        
-        .color-option {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 2px solid rgba(139, 115, 85, 0.2);
-            cursor: pointer;
-            transition: var(--transition-smooth);
-        }
-        
-        .color-option:hover {
-            transform: scale(1.1);
-        }
-        
-        .color-option.selected {
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 6px rgba(139, 115, 85, 0.3);
         }
         
         /* Raw Summary */
@@ -837,17 +957,6 @@
             }
         }
         
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
         /* Responsive Design */
         @media (max-width: 1200px) {
             .main-content {
@@ -876,6 +985,16 @@
             .coins-display {
                 padding: 8px 16px;
                 font-size: 13px;
+            }
+            
+            .toolbar {
+                gap: 8px;
+            }
+            
+            .toolbar-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
             }
             
             .main-content {
@@ -941,7 +1060,7 @@
                 font-size: 1.3rem;
             }
             
-            .toolbar {
+            .result-toolbar {
                 width: 100%;
                 justify-content: center;
             }
@@ -964,6 +1083,16 @@
             
             .raw-points li {
                 padding: 12px 16px;
+            }
+            
+            .color-palette {
+                width: 180px;
+                top: 45px;
+            }
+            
+            .audio-controls {
+                width: 140px;
+                top: 45px;
             }
             
             .notification {
@@ -1011,21 +1140,19 @@
                 font-size: 14px;
             }
             
-            .toolbar-btn {
-                width: 36px;
-                height: 36px;
-                font-size: 16px;
-            }
-            
             .result-content {
                 padding: 16px;
                 min-height: 300px;
             }
             
+            .toolbar-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            
             .color-palette {
-                bottom: -60px;
                 width: 160px;
-                gap: 6px;
             }
             
             .color-option {
@@ -1066,9 +1193,7 @@
             }
             
             .toolbar {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 8px;
+                gap: 6px;
             }
         }
     </style>
@@ -1095,6 +1220,40 @@
     <nav class="native-navbar" id="navbar">
         <div class="logo" id="home-logo" onclick="reloadPage()">عون</div>
         <div class="nav-left">
+            <div class="toolbar">
+                <button class="toolbar-btn" id="pen-btn" onclick="togglePen()" title="القلم (اضغط مطولاً للألوان)">
+                    <i class="fas fa-pen"></i>
+                    <div class="pen-indicator" id="pen-indicator"></div>
+                </button>
+                
+                <button class="toolbar-btn" id="audio-btn" onclick="toggleAudio()" title="الصوت">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+                
+                <div class="color-palette" id="color-palette">
+                    <div class="pen-type">
+                        <button class="pen-type-btn" onclick="selectPenType('normal')" id="normal-pen">قلم عادي</button>
+                        <button class="pen-type-btn" onclick="selectPenType('led')" id="led-pen">قلم LED</button>
+                    </div>
+                    <div class="color-option" style="background: #3B82F6;" onclick="selectColor('#3B82F6')" title="أزرق"></div>
+                    <div class="color-option" style="background: #EF4444;" onclick="selectColor('#EF4444')" title="أحمر"></div>
+                    <div class="color-option" style="background: #10B981;" onclick="selectColor('#10B981')" title="أخضر"></div>
+                    <div class="color-option" style="background: #F59E0B;" onclick="selectColor('#F59E0B')" title="أصفر"></div>
+                    <div class="color-option" style="background: #8B5CF6;" onclick="selectColor('#8B5CF6')" title="بنفسجي"></div>
+                </div>
+                
+                <div class="audio-controls" id="audio-controls">
+                    <button class="audio-control-btn" onclick="pauseResumeAudio()" id="pause-btn">
+                        <i class="fas fa-pause"></i>
+                        إيقاف/متابعة
+                    </button>
+                    <button class="audio-control-btn" onclick="restartAudio()">
+                        <i class="fas fa-redo"></i>
+                        إعادة تشغيل
+                    </button>
+                </div>
+            </div>
+            
             <div class="coins-display">
                 <i class="fas fa-coins"></i>
                 <span id="coins-count">0</span>
@@ -1224,27 +1383,11 @@
         <section class="result-section" id="result-section">
             <div class="result-header">
                 <h2 class="result-title" id="result-title">ملخص الملف</h2>
-                <div class="toolbar">
+                <div class="result-toolbar">
                     <div class="font-controls-result">
                         <button class="font-btn" onclick="changeResultFontSize('decrease')">-</button>
                         <span style="font-weight: 600; color: var(--accent-primary); padding: 0 8px;">حجم الخط</span>
                         <button class="font-btn" onclick="changeResultFontSize('increase')">+</button>
-                    </div>
-                    
-                    <button class="toolbar-btn" id="audio-btn" onclick="toggleAudio()" title="تشغيل/إيقاف الصوت">
-                        <i class="fas fa-volume-up"></i>
-                    </button>
-                    
-                    <button class="toolbar-btn" id="pen-btn" onclick="togglePen()" title="القلم (اضغط مطولاً للألوان)" oncontextmenu="showColorPalette(event)">
-                        <i class="fas fa-pen"></i>
-                    </button>
-                    
-                    <div class="color-palette" id="color-palette">
-                        <div class="color-option" style="background: #3B82F6;" onclick="selectColor('#3B82F6')" title="أزرق"></div>
-                        <div class="color-option" style="background: #EF4444;" onclick="selectColor('#EF4444')" title="أحمر"></div>
-                        <div class="color-option" style="background: #10B981;" onclick="selectColor('#10B981')" title="أخضر"></div>
-                        <div class="color-option" style="background: #F59E0B;" onclick="selectColor('#F59E0B')" title="أصفر"></div>
-                        <div class="color-option" style="background: #8B5CF6;" onclick="selectColor('#8B5CF6')" title="بنفسجي"></div>
                     </div>
                 </div>
             </div>
@@ -1339,20 +1482,25 @@
         
         // الصوت
         let isAudioPlaying = false;
+        let isAudioPaused = false;
         let audioUtterance = null;
         let currentWordIndex = 0;
         let textWords = [];
         let originalHTML = '';
+        let wordElements = [];
+        let wordStartTimes = [];
         
         // الرسم
         let isDrawingEnabled = false;
         let isDrawing = false;
         let currentColor = '#3B82F6';
+        let currentPenType = 'normal'; // 'normal' أو 'led'
         let canvas = null;
         let ctx = null;
         let lastX = 0;
         let lastY = 0;
         let penLongPressTimer = null;
+        let ledFadeTimer = null;
         
         // ========== الوظائف الأساسية ==========
         
@@ -1413,7 +1561,7 @@
             const contentHeight = resultContent.scrollHeight + 80;
             container.style.minHeight = Math.max(400, contentHeight) + 'px';
             
-            // ضبط موضع النقاط الرئيسية ليكون مباشرة تحت المحتوى
+            // ضبط موضع النقاط الرئيسية
             const containerRect = container.getBoundingClientRect();
             const containerBottom = containerRect.bottom + window.scrollY;
             
@@ -1425,6 +1573,7 @@
         
         function toggleAudio() {
             const audioBtn = document.getElementById('audio-btn');
+            const audioControls = document.getElementById('audio-controls');
             const resultContent = document.getElementById('result-content');
             
             if (!resultContent || resultContent.textContent.trim() === '') {
@@ -1435,11 +1584,41 @@
             if (isAudioPlaying) {
                 stopAudio();
                 audioBtn.classList.remove('active');
-                showNotification('تم إيقاف الصوت', 'info');
+                hideAudioControls();
             } else {
                 startAudio();
                 audioBtn.classList.add('active');
-                showNotification('جاري قراءة النص...', 'success');
+                showAudioControls();
+            }
+        }
+        
+        function showAudioControls() {
+            const audioControls = document.getElementById('audio-controls');
+            if (audioControls) {
+                audioControls.classList.add('show');
+                
+                // إخفاء عناصر التحكم عند النقر في أي مكان آخر
+                setTimeout(() => {
+                    document.addEventListener('click', hideAudioControlsOutside, { once: true });
+                }, 10);
+            }
+        }
+        
+        function hideAudioControls() {
+            const audioControls = document.getElementById('audio-controls');
+            if (audioControls) {
+                audioControls.classList.remove('show');
+            }
+        }
+        
+        function hideAudioControlsOutside(e) {
+            const audioControls = document.getElementById('audio-controls');
+            const audioBtn = document.getElementById('audio-btn');
+            
+            if (audioControls && audioBtn && 
+                !audioControls.contains(e.target) && 
+                !audioBtn.contains(e.target)) {
+                hideAudioControls();
             }
         }
         
@@ -1455,16 +1634,40 @@
             textWords = text.split(/\s+/);
             currentWordIndex = 0;
             
-            // إنشاء كلام
+            // إنشاء كلام بصوت رجل
             audioUtterance = new SpeechSynthesisUtterance(text);
             audioUtterance.lang = 'ar-SA';
-            audioUtterance.rate = 0.9;
-            audioUtterance.pitch = 1;
+            audioUtterance.rate = 0.85; // أبطأ قليلاً
+            audioUtterance.pitch = 1.0; // صوت طبيعي (رجولي)
+            audioUtterance.volume = 1;
+            
+            // البحث عن صوت رجل إن أمكن
+            const voices = speechSynthesis.getVoices();
+            const arabicVoice = voices.find(voice => 
+                voice.lang.startsWith('ar') && 
+                voice.name.toLowerCase().includes('male'));
+            
+            if (arabicVoice) {
+                audioUtterance.voice = arabicVoice;
+            }
+            
+            // إعداد توقيت الكلمات
+            wordElements = [];
+            wordStartTimes = [];
+            let currentTime = 0;
+            
+            // حساب الوقت التقريبي لكل كلمة (100ms للكلمة)
+            textWords.forEach((word, index) => {
+                wordStartTimes[index] = currentTime;
+                currentTime += 100; // 100ms لكل كلمة
+            });
             
             // عند بدء الكلام
             audioUtterance.onstart = function() {
                 isAudioPlaying = true;
-                highlightCurrentWord();
+                isAudioPaused = false;
+                updatePauseButton();
+                startWordHighlighting();
             };
             
             // عند انتهاء الكلام
@@ -1476,7 +1679,7 @@
                 
                 // استعادة النص الأصلي
                 resultContent.innerHTML = originalHTML;
-                showNotification('تم إنهاء القراءة', 'success');
+                hideAudioControls();
             };
             
             // عند الخطأ
@@ -1486,29 +1689,38 @@
                 const audioBtn = document.getElementById('audio-btn');
                 if (audioBtn) audioBtn.classList.remove('active');
                 resultContent.innerHTML = originalHTML;
-                showNotification('حدث خطأ في القراءة الصوتية', 'error');
+                hideAudioControls();
             };
             
             // بدء القراءة
             speechSynthesis.speak(audioUtterance);
         }
         
-        function stopAudio() {
-            if (audioUtterance) {
-                speechSynthesis.cancel();
-                isAudioPlaying = false;
-                
-                const resultContent = document.getElementById('result-content');
-                const audioBtn = document.getElementById('audio-btn');
-                
-                if (resultContent && originalHTML) {
-                    resultContent.innerHTML = originalHTML;
+        function startWordHighlighting() {
+            if (!isAudioPlaying) return;
+            
+            highlightCurrentWord();
+            
+            // تحديث كل 50 مللي ثانية لتزامن أفضل
+            const updateInterval = setInterval(() => {
+                if (!isAudioPlaying || isAudioPaused) {
+                    clearInterval(updateInterval);
+                    return;
                 }
-                if (audioBtn) {
-                    audioBtn.classList.remove('active');
+                
+                // حساب الوقت المنقضي
+                const elapsedTime = Date.now() - audioStartTime;
+                currentWordIndex = Math.floor(elapsedTime / 100); // 100ms لكل كلمة
+                
+                if (currentWordIndex < textWords.length) {
+                    highlightCurrentWord();
+                } else {
+                    clearInterval(updateInterval);
                 }
-            }
+            }, 50);
         }
+        
+        let audioStartTime = 0;
         
         function highlightCurrentWord() {
             if (!isAudioPlaying || currentWordIndex >= textWords.length) return;
@@ -1546,14 +1758,60 @@
             });
             
             resultContent.innerHTML = newHTML;
+        }
+        
+        function pauseResumeAudio() {
+            if (!audioUtterance) return;
             
-            // الانتقال للكلمة التالية بعد فترة
-            setTimeout(() => {
-                if (isAudioPlaying) {
-                    currentWordIndex++;
-                    highlightCurrentWord();
+            if (isAudioPaused) {
+                speechSynthesis.resume();
+                isAudioPaused = false;
+                audioStartTime = Date.now() - (currentWordIndex * 100);
+                startWordHighlighting();
+            } else {
+                speechSynthesis.pause();
+                isAudioPaused = true;
+            }
+            
+            updatePauseButton();
+        }
+        
+        function updatePauseButton() {
+            const pauseBtn = document.getElementById('pause-btn');
+            if (pauseBtn) {
+                if (isAudioPaused) {
+                    pauseBtn.innerHTML = '<i class="fas fa-play"></i> متابعة';
+                } else {
+                    pauseBtn.innerHTML = '<i class="fas fa-pause"></i> إيقاف';
                 }
-            }, 100); // تحديث كل 100 مللي ثانية
+            }
+        }
+        
+        function restartAudio() {
+            stopAudio();
+            setTimeout(() => {
+                startAudio();
+            }, 100);
+        }
+        
+        function stopAudio() {
+            if (audioUtterance) {
+                speechSynthesis.cancel();
+                isAudioPlaying = false;
+                isAudioPaused = false;
+                
+                const resultContent = document.getElementById('result-content');
+                const audioBtn = document.getElementById('audio-btn');
+                
+                if (resultContent && originalHTML) {
+                    resultContent.innerHTML = originalHTML;
+                }
+                if (audioBtn) {
+                    audioBtn.classList.remove('active');
+                }
+                
+                hideAudioControls();
+            }
         }
         
         // ========== ميزة الرسم ==========
@@ -1568,6 +1826,10 @@
             ctx = canvas.getContext('2d');
             if (!ctx) return;
             
+            // إعداد جودة عالية للرسم
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
             setupDrawingEvents();
         }
         
@@ -1579,8 +1841,8 @@
             canvas.addEventListener('mouseup', stopDrawing);
             canvas.addEventListener('mouseout', stopDrawing);
             
-            canvas.addEventListener('touchstart', handleTouchStart);
-            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
             canvas.addEventListener('touchend', stopDrawing);
         }
         
@@ -1616,6 +1878,11 @@
             
             ctx.beginPath();
             ctx.moveTo(lastX, lastY);
+            
+            // تفعيل LED إذا كان نوع القلم LED
+            if (currentPenType === 'led') {
+                activateLED();
+            }
         }
         
         function draw(e) {
@@ -1625,20 +1892,50 @@
             const currentX = e.clientX - rect.left;
             const currentY = e.clientY - rect.top;
             
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = currentColor;
+            // إعدادات الرسم حسب نوع القلم
+            if (currentPenType === 'normal') {
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = currentColor;
+            } else if (currentPenType === 'led') {
+                ctx.lineWidth = 4;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = currentColor;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = currentColor;
+            }
             
+            // رسم خط سلس
             ctx.lineTo(currentX, currentY);
             ctx.stroke();
             
+            // إعادة بدء المسار للرسم السلس
+            ctx.beginPath();
+            ctx.moveTo(currentX, currentY);
+            
             lastX = currentX;
             lastY = currentY;
+            
+            // إعادة تفعيل LED أثناء الرسم
+            if (currentPenType === 'led') {
+                resetLEDTimer();
+            }
         }
         
         function stopDrawing() {
             isDrawing = false;
-            ctx.closePath();
+            
+            if (currentPenType === 'led') {
+                startLEDFadeOut();
+            }
+            
+            // إعادة تعيين إعدادات الظل للقلم LED
+            if (ctx && currentPenType === 'led') {
+                ctx.shadowBlur = 0;
+                ctx.shadowColor = 'transparent';
+            }
         }
         
         function togglePen() {
@@ -1648,11 +1945,10 @@
                 disableDrawing();
                 penBtn.classList.remove('active');
                 hideColorPalette();
-                showNotification('تم إلغاء تفعيل القلم', 'info');
+                resetLED();
             } else {
                 enableDrawing();
                 penBtn.classList.add('active');
-                showNotification('تم تفعيل القلم. اضغط مطولاً لاختيار لون.', 'success');
             }
         }
         
@@ -1712,12 +2008,74 @@
                 penBtn.style.color = color;
             }
             
-            showNotification(`تم اختيار اللون`, 'success');
             hideColorPalette();
             
             // إذا لم يكن القلم مفعلاً، فعّله
             if (!isDrawingEnabled) {
                 togglePen();
+            }
+        }
+        
+        function selectPenType(type) {
+            currentPenType = type;
+            
+            // تحديث الأزرار المختارة
+            const normalPenBtn = document.getElementById('normal-pen');
+            const ledPenBtn = document.getElementById('led-pen');
+            
+            if (normalPenBtn) normalPenBtn.classList.remove('selected');
+            if (ledPenBtn) ledPenBtn.classList.remove('selected');
+            
+            if (type === 'normal') {
+                if (normalPenBtn) normalPenBtn.classList.add('selected');
+            } else if (type === 'led') {
+                if (ledPenBtn) ledPenBtn.classList.add('selected');
+            }
+            
+            // إعادة تعيين LED
+            resetLED();
+        }
+        
+        function activateLED() {
+            const penIndicator = document.getElementById('pen-indicator');
+            if (penIndicator) {
+                penIndicator.style.color = currentColor;
+                penIndicator.classList.add('led');
+                penIndicator.style.opacity = '0.7';
+                
+                // إعادة تعيين مؤقت التلاشي
+                resetLEDTimer();
+            }
+        }
+        
+        function resetLED() {
+            const penIndicator = document.getElementById('pen-indicator');
+            if (penIndicator) {
+                penIndicator.classList.remove('led');
+                penIndicator.classList.remove('led-fade');
+                penIndicator.style.opacity = '0';
+            }
+            
+            if (ledFadeTimer) {
+                clearTimeout(ledFadeTimer);
+                ledFadeTimer = null;
+            }
+        }
+        
+        function resetLEDTimer() {
+            if (ledFadeTimer) {
+                clearTimeout(ledFadeTimer);
+            }
+            
+            ledFadeTimer = setTimeout(() => {
+                startLEDFadeOut();
+            }, 500); // يبدأ التلاشي بعد 500ms من عدم النشاط
+        }
+        
+        function startLEDFadeOut() {
+            const penIndicator = document.getElementById('pen-indicator');
+            if (penIndicator && currentPenType === 'led') {
+                penIndicator.classList.add('led-fade');
             }
         }
         
@@ -2423,6 +2781,9 @@ ABSOLUTE CONSTRAINTS:
                     await setupUser();
                     setupFileUpload();
                     setupSettingsEvents();
+                    
+                    // تهيئة زر القلم
+                    selectPenType('normal');
                     
                     const confirmBtn = document.querySelector('.confirm-btn');
                     if (confirmBtn) {
