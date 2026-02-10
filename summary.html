@@ -1387,6 +1387,9 @@
                 let coins = Math.ceil((totalWords / 1000) * 2) / 2;
                 if (coins < 1) coins = 1;
                 
+                // تقريب لرقم واحد بعد العلامة العشرية
+                coins = Math.round(coins * 10) / 10;
+                
                 fileInfo = {
                     name: file.name,
                     size: file.size,
@@ -1394,6 +1397,8 @@
                     words: totalWords,
                     cost: coins
                 };
+                
+                console.log('File analysis complete:', fileInfo); // للتصحيح
                 
                 hideLoading();
                 
@@ -1429,22 +1434,37 @@
             showNotification('تم إلغاء العملية', 'info');
         }
         
+        // ========== دالة زر المتابعة المصححة ==========
         function confirmProcess() {
-            if (!fileInfo.cost || fileInfo.cost === 0) {
+            console.log('confirmProcess called');
+            
+            // التحقق من وجود fileInfo
+            if (!fileInfo || !fileInfo.cost || fileInfo.cost === 0) {
                 showNotification('الرجاء تحليل الملف أولاً', 'error');
                 return;
             }
             
+            // التحقق من رصيد المستخدم
+            console.log('User coins:', userCoins, 'File cost:', fileInfo.cost);
+            
             if (userCoins < fileInfo.cost) {
-                showNotification('رصيدك غير كافي لهذه العملية. الرجاء شحن رصيدك.', 'error');
+                showNotification(`رصيدك غير كافي. تحتاج ${fileInfo.cost} عملة بينما رصيدك ${userCoins}`, 'error');
                 return;
             }
             
-            // الانتقال إلى قسم الإعدادات
+            // إخفاء قسم الرفع
             elements.uploadSection.style.display = 'none';
+            
+            // إظهار قسم الإعدادات
             elements.settingsSection.classList.add('show');
             
-            showNotification('الرجاء تحديد إعدادات التلخيص', 'info');
+            // إخفاء معاينة التكلفة
+            elements.costPreview.classList.remove('show');
+            
+            // تمرير إلى بداية الصفحة
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            showNotification('الرجاء تحديد إعدادات التلخيص', 'success');
         }
         
         // ========== إعدادات التلخيص ==========
@@ -1456,6 +1476,7 @@
                     document.querySelectorAll('#explanation-level .option-btn').forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
                     selectedSettings.explanationLevel = this.getAttribute('data-value');
+                    console.log('Selected explanation level:', selectedSettings.explanationLevel);
                 });
             });
             
@@ -1465,6 +1486,7 @@
                     document.querySelectorAll('#dialect .option-btn').forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
                     selectedSettings.dialect = this.getAttribute('data-value');
+                    console.log('Selected dialect:', selectedSettings.dialect);
                 });
             });
             
@@ -1474,6 +1496,7 @@
                     document.querySelectorAll('#explainer-persona .option-btn').forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
                     selectedSettings.explainerPersona = this.getAttribute('data-value');
+                    console.log('Selected explainer persona:', selectedSettings.explainerPersona);
                 });
             });
             
@@ -1483,6 +1506,7 @@
                     document.querySelectorAll('#output-language .option-btn').forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
                     selectedSettings.outputLanguage = this.getAttribute('data-value');
+                    console.log('Selected output language:', selectedSettings.outputLanguage);
                 });
             });
             
@@ -1491,20 +1515,21 @@
                 if (this.value.trim()) {
                     selectedSettings.customLanguage = this.value.trim();
                     selectedSettings.outputLanguage = this.value.trim();
+                    console.log('Custom language set:', selectedSettings.outputLanguage);
                 }
             });
             
             // التعليق الاختياري
             document.getElementById('optional-comment').addEventListener('input', function() {
                 selectedSettings.optionalComment = this.value.trim();
+                console.log('Optional comment set:', selectedSettings.optionalComment);
             });
         }
         
         function createPrompt() {
             const outputLanguage = selectedSettings.customLanguage || selectedSettings.outputLanguage;
             
-            return `
-ROLE:
+            return `ROLE:
 You are an AI specialized in **strict PDF analysis and summarization** following Google Gemini Flash 2.5 Lite standards.
 You must strictly follow the instructions below with ZERO deviation.
 
@@ -1515,7 +1540,7 @@ INPUT VARIABLES (IN ARABIC):
 اللهجة             = ${selectedSettings.dialect}
 مستوى_الشرح        = ${selectedSettings.explanationLevel}
 شخصية_الشارح       = ${selectedSettings.explainerPersona}
-تعليق_اختياري      = ${selectedSettings.optionalComment || '(فارغ → ignore completely)'}
+تعليق_اختياري      = ${selectedSettings.optionalComment || 'اختياري اذا لم يكتب لم يؤثر'}
 
 ========================
 TASK:
@@ -1597,8 +1622,7 @@ ABSOLUTE CONSTRAINTS:
 - Do NOT output anything except the final JSON
 - Do NOT mention instructions or analysis steps
 - Do NOT hallucinate or guess
-- Be strict, literal, and deterministic
-`;
+- Be strict, literal, and deterministic`;
         }
         
         async function generateSummary() {
@@ -1608,7 +1632,7 @@ ABSOLUTE CONSTRAINTS:
             }
             
             if (userCoins < fileInfo.cost) {
-                showNotification('رصيدك غير كافي لهذه العملية. الرجاء شحن رصيدك.', 'error');
+                showNotification(`رصيدك غير كافي. تحتاج ${fileInfo.cost} عملة بينما رصيدك ${userCoins}`, 'error');
                 return;
             }
             
@@ -1618,18 +1642,29 @@ ABSOLUTE CONSTRAINTS:
             try {
                 showLoading('جاري إنشاء التلخيص...');
                 
+                // تحويل الملف إلى base64
                 const base64 = await new Promise((resolve, reject) => {
                     const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result.split(",")[1]);
+                    reader.onload = () => {
+                        const result = reader.result;
+                        const base64Data = result.split(',')[1];
+                        resolve(base64Data);
+                    };
                     reader.onerror = reject;
                     reader.readAsDataURL(selectedFile);
                 });
                 
+                // إنشاء الـ prompt
                 const prompt = createPrompt();
+                console.log('Generated prompt:', prompt);
                 
+                // إرسال الطلب إلى السيرفر
                 const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
                     body: JSON.stringify({
                         id: ID,
                         pass: PASS,
@@ -1638,30 +1673,51 @@ ABSOLUTE CONSTRAINTS:
                     })
                 });
                 
+                console.log('Response status:', response.status);
+                
                 if (!response.ok) {
                     throw new Error(`خطأ في السيرفر: ${response.status}`);
                 }
                 
                 const text = await response.text();
+                console.log('Raw response:', text);
                 
                 let result;
                 try {
-                    result = JSON.parse(text);
+                    // تنظيف الرد من أي نص غير JSON
+                    const jsonMatch = text.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        result = JSON.parse(jsonMatch[0]);
+                    } else {
+                        result = JSON.parse(text);
+                    }
                 } catch (e) {
                     console.error('Error parsing JSON:', e, 'Response:', text);
                     throw new Error('رد غير صالح من السيرفر');
                 }
                 
+                console.log('Parsed result:', result);
+                
+                // التحقق من الاستجابة الفارغة
                 if (result.head === "Not Output" && result.raw === "Not Output" && result.page === "Not Output") {
                     throw new Error('الملف فارغ أو غير قابل للقراءة');
                 }
                 
+                // خصم العملات
                 await deductCoins(fileInfo.cost);
+                
+                // حفظ النتيجة في قاعدة البيانات
                 await saveResultToDatabase(result);
+                
+                // عرض النتيجة
                 displayResult(result);
                 
+                // الانتقال إلى قسم النتائج
                 elements.settingsSection.classList.remove('show');
                 elements.resultSection.classList.add('show');
+                
+                // تمرير إلى بداية الصفحة
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 
                 showNotification('تم إنشاء التلخيص بنجاح', 'success');
                 
@@ -1683,6 +1739,8 @@ ABSOLUTE CONSTRAINTS:
                 await database.ref(`users_Awn/${currentUser.id}/coin`).set(newCoins);
                 elements.coinsCount.textContent = newCoins;
                 
+                console.log(`Deducted ${amount} coins. New balance: ${newCoins}`);
+                
             } catch (error) {
                 console.error('Error deducting coins:', error);
                 throw error;
@@ -1699,10 +1757,12 @@ ABSOLUTE CONSTRAINTS:
                     timestamp: Date.now(),
                     fileName: fileInfo.name,
                     cost: fileInfo.cost,
-                    pages: fileInfo.pages
+                    pages: fileInfo.pages,
+                    settings: selectedSettings
                 };
                 
                 await database.ref(`records/${recordId}`).set(recordData);
+                console.log('Result saved to database:', recordId);
                 
             } catch (error) {
                 console.error('Error saving result to database:', error);
@@ -1710,7 +1770,10 @@ ABSOLUTE CONSTRAINTS:
         }
         
         function displayResult(result) {
+            // تعيين العنوان
             elements.resultTitle.textContent = result.head || 'ملخص الملف';
+            
+            // تعيين المحتوى الرئيسي
             elements.resultContent.innerHTML = '';
             
             if (result.page) {
@@ -1719,12 +1782,14 @@ ABSOLUTE CONSTRAINTS:
                     const p = document.createElement('p');
                     p.textContent = paragraph;
                     p.style.marginBottom = '20px';
+                    p.style.lineHeight = '1.8';
                     elements.resultContent.appendChild(p);
                 });
             } else {
                 elements.resultContent.textContent = 'لا يوجد محتوى للعرض';
             }
             
+            // تعيين النقاط الرئيسية
             elements.rawPoints.innerHTML = '';
             
             if (result.raw && Array.isArray(result.raw) && result.raw.length > 0) {
@@ -1739,6 +1804,7 @@ ABSOLUTE CONSTRAINTS:
                 elements.rawPoints.appendChild(li);
             }
             
+            // إعادة تعيين حجم الخط
             resultFontSize = 16;
             elements.resultContent.style.fontSize = resultFontSize + 'px';
         }
@@ -1761,8 +1827,11 @@ ABSOLUTE CONSTRAINTS:
         // ========== تهيئة التطبيق ==========
         
         async function initApp() {
+            showLoading('جاري تحميل البيانات...');
+            
             const unsubscribe = auth.onAuthStateChanged(async (user) => {
                 if (!user) {
+                    hideLoading();
                     window.location.replace('login.html');
                     return;
                 }
@@ -1771,9 +1840,25 @@ ABSOLUTE CONSTRAINTS:
                     await setupUser();
                     setupFileUpload();
                     setupSettingsEvents();
+                    
+                    // إضافة event listener إضافي لزر المتابعة للتأكد
+                    const confirmBtn = document.querySelector('.confirm-btn');
+                    if (confirmBtn) {
+                        confirmBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            confirmProcess();
+                        });
+                    }
+                    
+                    console.log('App initialized successfully');
+                    console.log('Current user:', currentUser);
+                    
+                    hideLoading();
+                    
                 } catch (error) {
                     console.error('Error initializing app:', error);
-                    window.location.replace('login.html');
+                    hideLoading();
+                    showNotification('حدث خطأ في تحميل التطبيق', 'error');
                 } finally {
                     setTimeout(() => {
                         unsubscribe();
@@ -1782,11 +1867,13 @@ ABSOLUTE CONSTRAINTS:
             });
         }
         
+        // منع الرجوع إلى الوراء
         history.pushState(null, null, window.location.href);
         window.addEventListener('popstate', function(event) {
             history.pushState(null, null, window.location.href);
         });
         
+        // بدء التطبيق
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
