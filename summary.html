@@ -46,6 +46,8 @@
             --shadow-light: 0 4px 12px rgba(139, 115, 85, 0.1);
             --shadow-medium: 0 8px 24px rgba(139, 115, 85, 0.15);
             --shadow-heavy: 0 12px 36px rgba(139, 115, 85, 0.2);
+            --highlight-color: #FF6B6B;
+            --highlight-bg: #FFF5F5;
         }
         
         body {
@@ -553,6 +555,105 @@
             min-height: 500px;
         }
         
+        /* تنسيقات خاصة للشرح المنظم */
+        .highlighted-word {
+            background-color: var(--highlight-bg);
+            color: var(--highlight-color);
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+            display: inline-block;
+            border: 1px solid rgba(255, 107, 107, 0.2);
+        }
+        
+        .section-title-star {
+            color: var(--accent-primary);
+            font-weight: 800;
+            font-size: 1.2em;
+            margin: 25px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(139, 115, 85, 0.2);
+            display: block;
+            line-height: 1.4;
+        }
+        
+        .structured-list {
+            margin: 15px 0;
+            padding-right: 20px;
+        }
+        
+        .structured-item {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: rgba(139, 115, 85, 0.03);
+            border-radius: 8px;
+            border-right: 3px solid var(--accent-secondary);
+        }
+        
+        .number-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .number-item::before {
+            content: attr(data-number) ")";
+            font-weight: 700;
+            color: var(--accent-primary);
+            min-width: 25px;
+        }
+        
+        .bullet-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .bullet-item::before {
+            content: "•";
+            font-weight: 700;
+            color: var(--accent-secondary);
+            min-width: 25px;
+        }
+        
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .check-item::before {
+            content: "✓";
+            font-weight: 700;
+            color: var(--success-color);
+            min-width: 25px;
+        }
+        
+        .separator {
+            color: var(--accent-secondary);
+            margin: 0 5px;
+            font-weight: bold;
+        }
+        
+        .group-item {
+            background: rgba(56, 161, 105, 0.05);
+            border: 1px solid rgba(56, 161, 105, 0.2);
+            border-radius: 6px;
+            padding: 10px 15px;
+            margin: 8px 0;
+        }
+        
+        .quote-item {
+            font-style: italic;
+            color: var(--accent-dark);
+            background: rgba(139, 115, 85, 0.05);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-right: 2px solid var(--accent-dark);
+            margin: 8px 0;
+        }
+        
         /* Raw Summary */
         .raw-summary {
             background: rgba(139, 115, 85, 0.05);
@@ -876,6 +977,15 @@
                 min-width: auto;
                 top: 70px;
             }
+            
+            .section-title-star {
+                font-size: 1.1em;
+                margin: 20px 0 12px 0;
+            }
+            
+            .structured-item {
+                padding: 6px 10px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -927,6 +1037,11 @@
             .support-link {
                 width: 44px;
                 height: 44px;
+            }
+            
+            .section-title-star {
+                font-size: 1em;
+                margin: 15px 0 10px 0;
             }
         }
         
@@ -1580,7 +1695,7 @@
 يجب عليك اتباع التعليمات التالية حرفياً بدون أي انحراف.
 
 ========================
-المتغيرات المدخلة (باللغة العربية):
+INPUT VARIABLES (IN ARABIC):
 ========================
 لغة_الإخراج        = ${outputLanguage}
 اللهجة             = ${selectedSettings.dialect}
@@ -1589,71 +1704,161 @@
 تعليق_اختياري      = ${selectedSettings.optionalComment || 'اختياري اذا لم يكتب لم يؤثر'}
 
 ========================
-قواعد المعالجة الأساسية (إلزامية وصارمة):
+STRICT EXPLANATION & FORMATTING SYSTEM (ADDED):
 ========================
-0. قبل إنشاء أي مخرجات، يجب عليك:
-   - استيعاب وإعادة بناء المحتوى الكامل لملف PDF داخلياً.
-   - تحليل المستند من الكلمة الأولى إلى الأخيرة دون استثناء.
-   - إذا كان PDF مقسماً إلى وحدات أو أقسام أو دروس → تعامل معها كمستند واحد متصل.
-   - ممنوع منعاً باتاً التلخيص أو الضغط أو إنشاء المخرجات قبل اكتمال التحليل الكامل.
-   - بناء تمثيل داخلي كامل للمستند قبل البدء في التلخيص.
+- The explanation inside the "page" field MUST follow a strict structured format.
+- ALL explanations MUST be visually organized and readable.
 
-1. تغطية شاملة:
-   - يجب تضمين كل وحدة، قسم، فصل، جدول، قائمة، ملاحظة، مثال، وملحق.
-   - لا يجوز تخطي أي جزء حتى لو كان مكرراً أو طويلاً.
-   - يُسمح بالضغط فقط بإعادة الصياغة، وليس بحذف المحتوى.
+FORMATTING RULES (MANDATORY):
+1. Every main concept, section, or unit MUST start with:
+   **Section Title**
+   - The title MUST be wrapped with EXACTLY two asterisks on each side (**).
+   - No extra symbols, no markdown variations.
 
-2. الحفاظ على البنية المنطقية:
-   - احتفظ بالتدفق المنطقي الأصلي للمستند.
-   - حافظ على التقدم المفاهيمي من البداية إلى النهاية.
-   - يجب أن تعكس المستندات التعليمية التقدم من وحدة إلى أخرى.
+2. Content under each title MUST:
+   - Be placed directly below the title.
+   - Be structured using ONLY the following symbols:
+     • Numbers: 1) 2) 3)
+     • Bullets: •
+     • Checkmarks: ✓
+     • Separators: |
+     • Braces: { }
+     • Quotes: « »
+   - NO other symbols or formatting styles are allowed.
 
-3. معالجة التعليقات:
-   - إذا كان تعليق_اختياري غير فارغ:
-     * عالجه كتعليمات ذات أولوية عالية.
-     * اضبط التركيز والعمق وأسلوب الشرح وفقاً لذلك.
-     * لا تقدم معرفة خارجية أبداً.
-   - إذا كان فارغاً → تجاهله تماماً.
+3. Logical organization rules:
+   - Use numbers for sequences, steps, or ordered ideas.
+   - Use bullets (•) for lists or grouped points.
+   - Use ✓ to highlight confirmed rules, definitions, or constraints explicitly stated in the PDF.
+   - Use | to separate parallel ideas.
+   - Use { } to group related sub-points.
+   - Use « » for terms, labels, or exact phrases from the PDF.
 
-4. قاعدة اكتمال الملخص:
-   - يجب أن يحل الملخص محل قراءة الـ PDF بالكامل.
-   - الطول غير محدود.
-   - يجب أن يظهر أي تعريفات رئيسية، قواعد، خطوات، قيود، شروحات، واستنتاجات.
+4. Readability enforcement:
+   - Each section MUST be self-contained and clearly structured.
+   - No long unbroken paragraphs.
+   - Every unit or chapter MUST appear as a clearly titled section.
 
-5. الحماية من المخرجات الجزئية:
-   - إذا اكتشفت معالجة جزئية أو أقسام مفقودة → توقف وأعد معالجة المستند بالكامل.
-
-========================
-المهمة:
-========================
-1. قم بتحليل ملف PDF المقدم **من الكلمة الأولى إلى الأخيرة فقط**.
-2. لا تستخدم أي معرفة خارجية.
-3. لا تستنتج أو تخمن أو تضيف شروحات غير موجودة في الـ PDF.
-4. إذا كان الـ PDF فارغاً، تالفاً، غير قابل للقراءة، أو ليس له محتوى ذو معنى → أرجع JSON البديل كما هو محدد أدناه.
-5. أنشئ **ملخصاً كاملاً** في **صفحة واحدة**، باتباع ما يلي بدقة:
-   - مستوى الشرح: مستوى_الشرح
-   - شخصية الشارح: شخصية_الشارح
-   - لغة الإخراج: لغة_الإخراج
-   - اللهجة: اللهجة
-   - التعليق الاختياري: تعليق_اختياري
-   - يجب أن يغطي الملخص **100% من محتوى الـ PDF** بدون حذف أي شيء.
-   - يجب أن يعكس الملخص جميع الوحدات والأقسام.
-6. **قواعد حقل raw**:
-   - استخرج **3–5 عبارات مباشرة** (ليست أسئلة).
-   - الأولوية:
-     أ) القواعد الصريحة، القوانين، أو القيود.
-     ب) وإلا فأهم النقاط في المستند.
-   - يجب أن تمثل الجمل المستند بأكمله، وليس وحدة واحدة.
-   - يجب أن تكون كل جملة مفهومة بمفردها.
+5. Consistency:
+   - This formatting system MUST be applied uniformly across the ENTIRE "page" content.
+   - No mixing of styles.
+   - No deviation allowed.
 
 ========================
-تنسيق المخرجات (صارم):
+CORE PROCESSING RULES (STRICT & MANDATORY):
 ========================
-- يجب أن تكون المخرجات **JSON صالح فقط**
-- لا تستخدم Markdown
-- لا تضيف نصاً إضافياً
-- لا تضع تعليقات
-- يجب أن تظهر المفاتيح **بالضبط بهذا الترتيب**
+0. BEFORE generating ANY output you MUST:
+   - Fully ingest and internally reconstruct the ENTIRE PDF content.
+   - Analyze the document FROM THE FIRST WORD TO THE LAST WORD without exception.
+   - If the PDF is divided into units, sections, modules, lessons, or parts → treat ALL of them as ONE continuous document.
+   - You are STRICTLY FORBIDDEN from summarizing, compressing, or generating output before completing full analysis.
+   - Build a COMPLETE internal representation of the document before summarization.
+
+1. Coverage enforcement:
+   - Every unit, section, chapter, table, list, note, example, and appendix MUST be included.
+   - No part may be skipped even if repetitive or long.
+   - Compression is allowed ONLY by rephrasing, NEVER by deletion.
+
+2. Structural integrity:
+   - Preserve the original logical flow of the document.
+   - Maintain conceptual progression from beginning to end.
+   - Educational documents MUST reflect unit-by-unit progression.
+
+3. Comment handling:
+   - If تعليق_اختياري is NOT empty:
+     * Treat it as a HIGH PRIORITY directive.
+     * Adjust focus, depth, and explanation style accordingly.
+     * NEVER introduce external knowledge.
+   - If empty → ignore completely.
+
+4. Summary completeness rule:
+   - The summary MUST fully replace reading the PDF.
+   - Length is UNLIMITED.
+   - Any key definitions, rules, steps, constraints, explanations, and conclusions MUST appear.
+
+5. Anti-partial-output safeguard:
+   - If you detect partial processing or missing sections → STOP and reprocess the entire document.
+
+========================
+DOCUMENT INGESTION & VALIDATION (ENTERPRISE):
+========================
+A. Full-document ingestion:
+   - Treat the PDF as ATOMIC: either fully processed or invalid.
+   - Partial processing is STRICTLY FORBIDDEN.
+
+B. Unit & section detection:
+   - Detect ALL structural divisions including:
+     * Units
+     * Chapters
+     * Lessons
+     * Sections
+     * Headings & subheadings
+     * Tables & lists
+     * Appendices
+   - Internally map ALL detected divisions in correct order.
+   - EVERY detected division MUST be reflected in the final summary.
+
+C. Multi-unit safeguard:
+   - If multiple units exist:
+     * EACH unit MUST be summarized.
+     * ALL units MUST be merged into ONE coherent explanation.
+     * NEVER prioritize early units over later ones.
+
+========================
+INTERNAL SELF-AUDIT (HIDDEN – MANDATORY):
+========================
+Before producing the final JSON you MUST internally verify:
+
+1. Coverage check:
+   - Content from the FIRST section is included.
+   - Content from the MIDDLE sections is included.
+   - Content from the LAST section is included.
+   - If any check fails → REPROCESS.
+
+2. Completeness validation:
+   - Assume the user will NEVER read the PDF.
+   - If the summary alone is insufficient → EXPAND it.
+
+3. Anti-omission rule:
+   - No definitions, steps, constraints, examples, or conclusions may be omitted.
+
+4. Consistency validation:
+   - Ensure logical continuity with no topic jumps.
+   - Ensure all units are represented.
+
+========================
+TASK:
+========================
+1. Analyze the provided PDF **from the first word to the last word only**.
+2. Do NOT use any external knowledge.
+3. Do NOT infer, guess, or add explanations not present in the PDF.
+4. If the PDF is empty, corrupted, unreadable, or has no meaningful content → return the fallback JSON exactly as defined below.
+5. Generate a **full summary** in a **single page**, strictly following:
+   - Explanation level: مستوى_الشرح
+   - Explainer persona: شخصية_الشارح
+   - Output language: لغة_الإخراج
+   - Dialect: اللهجة
+   - Optional comment: تعليق_اختياري
+   - The summary must cover **100% of the PDF content** with NO omissions.
+   - The summary MUST reflect ALL units and sections.
+   - The "page" field MUST follow the STRICT EXPLANATION & FORMATTING SYSTEM.
+
+6. **RAW field rules**:
+   - Extract **3–5 direct statements** (not questions).
+   - Priority:
+     a) Explicit rules, laws, or constraints.
+     b) Otherwise the most important points.
+   - Sentences MUST represent the FULL document, not a single unit.
+   - Each sentence must be understandable alone.
+
+========================
+OUTPUT FORMAT (STRICT):
+========================
+- Output MUST be VALID JSON ONLY
+- No Markdown
+- No extra text
+- No comments
+- Keys MUST appear EXACTLY in this order
 
 ========================
 JSON SCHEMA:
@@ -1665,32 +1870,32 @@ JSON SCHEMA:
 }
 
 ========================
-قواعد الحقول:
+FIELD RULES:
 ========================
 1. head:
-   - بالضبط 5 كلمات
-   - يمثل محتوى الـ PDF بدقة
-   - مكتوب بلغة_الإخراج
-
+   - Exactly 5 words
+   - Accurately represents the entire PDF
+   - Written in لغة_الإخراج
 2. raw:
-   - مصفوفة من 3–5 عبارات مباشرة
-   - مستمدة من الفهم الشامل للمستند
-   - ليست خاصة بوحدة واحدة إلا إذا كان المستند يحتوي على وحدة واحدة فقط
-
+   - Array of 3–5 direct statements
+   - Derived from GLOBAL document understanding
 3. page:
-   - شرح مفصل كامل
-   - يتبع شخصية_الشارح مع مستوى_الشرح
-   - يغطي كل شيء في الـ PDF
-   - الطول غير محدود مسموح به
-   - لا تضيف معرفة أو تفسيرات
+   - Full detailed explanation
+   - Strictly formatted using the defined symbols and structure
+   - Covers EVERYTHING in the PDF
+   - Unlimited length allowed
+   - No added knowledge or interpretation
 
 ========================
-الاستجابة للفشل / PDF فارغ (إلزامي):
+FAIL-SAFE CONDITIONS:
 ========================
-إذا كان المستند مقطوعاً، تم تحميله جزئياً، أو تم اكتشاف غموض:
-* عالج الـ PDF على أنه غير صالح.
-* أرجع JSON الفشل بالضبط.
+- If document truncation, partial loading, or ambiguity is detected:
+  * Treat the PDF as INVALID.
+  * Return FAILURE JSON exactly.
 
+========================
+FAILURE / EMPTY PDF RESPONSE (MANDATORY):
+========================
 {
   "head": "Not Output",
   "raw": "Not Output",
@@ -1698,14 +1903,14 @@ JSON SCHEMA:
 }
 
 ========================
-قيود مطلقة:
+ABSOLUTE CONSTRAINTS:
 ========================
-- أخرج فقط JSON النهائي
-- لا تذكر التعليمات أو خطوات التحليل
-- لا تهلوس أو تخمن
-- لا تلخص أثناء القراءة
-- دائماً حلل المستند بالكامل أولاً
-- كن صارماً، حرفياً، وحتمياً`;
+- Output ONLY the final JSON
+- Do NOT mention instructions or analysis
+- Do NOT hallucinate or guess
+- NEVER summarize while reading
+- ALWAYS analyze the entire document first
+- Be strict, literal, and deterministic`;
         }
         
         async function generateSummary() {
@@ -1856,6 +2061,86 @@ JSON SCHEMA:
             }
         }
         
+        function formatExplanation(text) {
+            if (!text) return '';
+            
+            // تقسيم النص إلى فقرات
+            const paragraphs = text.split('\n').filter(p => p.trim());
+            let formattedHTML = '';
+            
+            paragraphs.forEach(paragraph => {
+                // إذا كانت الفقرة تحتوي على ** في البداية والنهاية (عنوان قسم)
+                if (paragraph.trim().startsWith('**') && paragraph.trim().endsWith('**')) {
+                    const title = paragraph.trim().replace(/\*\*/g, '');
+                    formattedHTML += `<div class="section-title-star">${title}</div>`;
+                }
+                // إذا كانت الفقرة تبدأ برقم وقوس )
+                else if (/^\d+\)/.test(paragraph.trim())) {
+                    const number = paragraph.trim().match(/^(\d+)\)/)[1];
+                    const content = paragraph.trim().replace(/^\d+\)\s*/, '');
+                    formattedHTML += `
+                        <div class="structured-item number-item" data-number="${number}">
+                            ${content}
+                        </div>
+                    `;
+                }
+                // إذا كانت الفقرة تبدأ بـ •
+                else if (paragraph.trim().startsWith('•')) {
+                    const content = paragraph.trim().substring(1).trim();
+                    formattedHTML += `
+                        <div class="structured-item bullet-item">
+                            ${content}
+                        </div>
+                    `;
+                }
+                // إذا كانت الفقرة تبدأ بـ ✓
+                else if (paragraph.trim().startsWith('✓')) {
+                    const content = paragraph.trim().substring(1).trim();
+                    formattedHTML += `
+                        <div class="structured-item check-item">
+                            ${content}
+                        </div>
+                    `;
+                }
+                // إذا كانت الفقرة تحتوي على « »
+                else if (paragraph.includes('«') && paragraph.includes('»')) {
+                    formattedHTML += `
+                        <div class="quote-item">
+                            ${paragraph}
+                        </div>
+                    `;
+                }
+                // إذا كانت الفقرة تحتوي على { }
+                else if (paragraph.includes('{') && paragraph.includes('}')) {
+                    formattedHTML += `
+                        <div class="group-item">
+                            ${paragraph.replace(/{/g, '<span class="separator">{</span>').replace(/}/g, '<span class="separator">}</span>')}
+                        </div>
+                    `;
+                }
+                // إذا كانت الفقرة تحتوي على |
+                else if (paragraph.includes('|')) {
+                    formattedHTML += `
+                        <div class="structured-item">
+                            ${paragraph.replace(/\|/g, '<span class="separator">|</span>')}
+                        </div>
+                    `;
+                }
+                // إذا كانت الفقرة تحتوي على كلمات بين ** في المنتصف
+                else if (paragraph.includes('**')) {
+                    // استبدال **كلمة** بـ <span class="highlighted-word">كلمة</span>
+                    const highlighted = paragraph.replace(/\*\*([^*]+)\*\*/g, '<span class="highlighted-word">$1</span>');
+                    formattedHTML += `<p>${highlighted}</p>`;
+                }
+                // الفقرات العادية
+                else {
+                    formattedHTML += `<p>${paragraph}</p>`;
+                }
+            });
+            
+            return formattedHTML;
+        }
+        
         function displayResult(result) {
             const resultTitle = document.getElementById('result-title');
             const resultContent = document.getElementById('result-content');
@@ -1870,14 +2155,8 @@ JSON SCHEMA:
                 resultContent.innerHTML = '';
                 
                 if (result.page) {
-                    const paragraphs = result.page.split('\n').filter(p => p.trim());
-                    paragraphs.forEach(paragraph => {
-                        const p = document.createElement('p');
-                        p.textContent = paragraph;
-                        p.style.marginBottom = '20px';
-                        p.style.lineHeight = '1.8';
-                        resultContent.appendChild(p);
-                    });
+                    const formattedContent = formatExplanation(result.page);
+                    resultContent.innerHTML = formattedContent;
                 } else {
                     resultContent.textContent = 'لا يوجد محتوى للعرض';
                 }
