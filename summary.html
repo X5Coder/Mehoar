@@ -174,6 +174,14 @@
             align-items: center;
             gap: 12px;
             margin-left: 15px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .toolbar.visible {
+            opacity: 1;
+            visibility: visible;
         }
         
         .toolbar-btn {
@@ -654,6 +662,7 @@
             width: 100%;
             min-height: auto;
             transition: min-height 0.3s ease;
+            overflow: hidden;
         }
         
         .result-content {
@@ -672,32 +681,54 @@
             min-height: 500px;
             user-select: none;
             -webkit-user-select: none;
+            position: relative;
         }
         
         .highlighted-word {
             background-color: rgba(56, 161, 105, 0.3);
             padding: 2px 4px;
             border-radius: 4px;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             display: inline-block;
             margin: 0 1px;
         }
         
-        /* Drawing Canvas */
-        .drawing-canvas {
-            position: fixed;
+        /* Drawing Layers */
+        .drawing-layer {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 999;
-            cursor: crosshair;
             pointer-events: none;
-            touch-action: none;
+            z-index: 1;
         }
         
-        .drawing-canvas.active {
+        .drawing-layer.active {
             pointer-events: auto;
+        }
+        
+        .drawing-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+        
+        .erase-highlight {
+            position: absolute;
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px dashed #EF4444;
+            border-radius: 4px;
+            pointer-events: none;
+            z-index: 3;
+            display: none;
+        }
+        
+        .erase-highlight.active {
+            display: block;
         }
         
         /* Raw Summary */
@@ -710,6 +741,8 @@
             max-width: 1000px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
+            z-index: 1;
         }
         
         .raw-title {
@@ -761,6 +794,8 @@
             color: var(--text-secondary);
             border-top: 1px solid rgba(139, 115, 85, 0.1);
             margin-top: 40px;
+            position: relative;
+            z-index: 1;
         }
         
         .copyright {
@@ -1023,11 +1058,6 @@
                 padding: 12px 16px;
             }
             
-            .color-palette {
-                width: 180px;
-                top: 45px;
-            }
-            
             .audio-controls {
                 width: 140px;
                 top: 45px;
@@ -1087,15 +1117,6 @@
                 width: 32px;
                 height: 32px;
                 font-size: 14px;
-            }
-            
-            .color-palette {
-                width: 160px;
-            }
-            
-            .color-option {
-                width: 28px;
-                height: 28px;
             }
             
             .support-links {
@@ -1158,12 +1179,12 @@
     <nav class="native-navbar" id="navbar">
         <div class="logo" id="home-logo" onclick="reloadPage()">عون</div>
         <div class="nav-left">
-            <div class="toolbar">
+            <div class="toolbar" id="toolbar">
                 <button class="toolbar-btn" id="pen-btn" onclick="togglePen()" title="أداة الكتابة (اللون الأحمر)">
                     <i class="fas fa-pen"></i>
                 </button>
                 
-                <button class="toolbar-btn" id="erase-btn" onclick="clearDrawings()" title="مسح الرسومات" style="display: none;">
+                <button class="toolbar-btn" id="erase-btn" onclick="toggleErase()" title="أداة الحذف" style="display: none;">
                     <i class="fas fa-eraser"></i>
                 </button>
                 
@@ -1322,8 +1343,15 @@
             </div>
             
             <div class="result-content-container" id="result-content-container">
-                <div class="result-content" id="result-content"></div>
+                <div class="result-content" id="result-content">
+                    <!-- سيتم إضافة المحتوى هنا -->
+                </div>
+                <!-- طبقة الرسم -->
+                <div class="drawing-layer" id="drawing-layer"></div>
+                <!-- كانفاس الرسم -->
                 <canvas class="drawing-canvas" id="drawing-canvas"></canvas>
+                <!-- تسليط الضوء على الحذف -->
+                <div class="erase-highlight" id="erase-highlight"></div>
             </div>
             
             <div class="raw-summary" id="raw-summary">
@@ -1419,13 +1447,20 @@
         let wordElements = [];
         let audioStartTime = 0;
         let wordHighlightInterval = null;
+        const WORD_DURATION = 350; // 350ms لكل كلمة (أبطأ)
         
-        // أداة الكتابة
+        // الرسم والحذف
         let isWritingEnabled = false;
+        let isErasingEnabled = false;
         let canvas = null;
         let ctx = null;
-        let drawings = []; // لتخزين الرسومات
+        let drawingLayer = null;
+        let eraseHighlight = null;
+        let drawings = [];
         let currentDrawing = null;
+        let currentEraseArea = null;
+        let isDrawing = false;
+        let isErasing = false;
         
         // ========== الوظائف الأساسية ==========
         
@@ -1486,12 +1521,22 @@
             const contentHeight = resultContent.scrollHeight + 80;
             container.style.minHeight = Math.max(400, contentHeight) + 'px';
             
-            // ضبط موضع النقاط الرئيسية
-            const containerRect = container.getBoundingClientRect();
-            const containerBottom = containerRect.bottom + window.scrollY;
-            
-            rawSummary.style.marginTop = '40px';
-            rawSummary.style.marginBottom = '40px';
+            // إعادة ضبط موضع وحجم الكانفاس
+            resizeCanvas();
+        }
+        
+        function showToolbar() {
+            const toolbar = document.getElementById('toolbar');
+            if (toolbar) {
+                toolbar.classList.add('visible');
+            }
+        }
+        
+        function hideToolbar() {
+            const toolbar = document.getElementById('toolbar');
+            if (toolbar) {
+                toolbar.classList.remove('visible');
+            }
         }
         
         // ========== ميزة الصوت (معدلة) ==========
@@ -1567,7 +1612,7 @@
             // إنشاء كلام بصوت رجل
             audioUtterance = new SpeechSynthesisUtterance(text);
             audioUtterance.lang = 'ar-SA';
-            audioUtterance.rate = 0.7; // سرعة بطيئة جداً
+            audioUtterance.rate = 0.6; // سرعة بطيئة جداً
             audioUtterance.pitch = 1.0; // صوت طبيعي (رجولي)
             audioUtterance.volume = 1;
             
@@ -1638,16 +1683,6 @@
             
             // حساب طول النص لتحديد السرعة
             const totalWords = textWords.length;
-            const estimatedDuration = (totalWords * 200); // 200ms لكل كلمة لبطء شديد
-            
-            // إنشاء جدول توقيت للكلمات
-            const wordDurations = [];
-            let totalTime = 0;
-            
-            for (let i = 0; i < totalWords; i++) {
-                wordDurations[i] = totalTime;
-                totalTime += 200; // 200ms لكل كلمة
-            }
             
             // تحديث التظليل كل 50ms بدقة
             wordHighlightInterval = setInterval(() => {
@@ -1658,7 +1693,7 @@
                 }
                 
                 const elapsedTime = Date.now() - audioStartTime;
-                currentWordIndex = Math.floor(elapsedTime / 200);
+                currentWordIndex = Math.floor(elapsedTime / WORD_DURATION);
                 
                 if (currentWordIndex < totalWords) {
                     highlightCurrentWord();
@@ -1723,7 +1758,7 @@
             if (isAudioPaused) {
                 speechSynthesis.resume();
                 isAudioPaused = false;
-                audioStartTime = Date.now() - (currentWordIndex * 200);
+                audioStartTime = Date.now() - (currentWordIndex * WORD_DURATION);
                 startWordHighlighting();
             } else {
                 speechSynthesis.pause();
@@ -1783,15 +1818,17 @@
             }
         }
         
-        // ========== أداة الكتابة (معدلة) ==========
+        // ========== أدوات الرسم والحذف (معدلة) ==========
         
-        function initWritingCanvas() {
+        function initDrawingTools() {
+            drawingLayer = document.getElementById('drawing-layer');
             canvas = document.getElementById('drawing-canvas');
-            if (!canvas) return;
+            eraseHighlight = document.getElementById('erase-highlight');
             
-            // ضبط حجم الكانفاس بحجم النافذة
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            if (!drawingLayer || !canvas || !eraseHighlight) return;
+            
+            // ضبط حجم الكانفاس
+            resizeCanvas();
             
             ctx = canvas.getContext('2d');
             if (!ctx) return;
@@ -1804,40 +1841,59 @@
             ctx.lineJoin = 'round';
             ctx.strokeStyle = '#EF4444'; // اللون الأحمر
             
-            setupWritingEvents();
+            setupDrawingEvents();
             
             // إعادة رسم الرسومات السابقة
             redrawAll();
         }
         
-        function setupWritingEvents() {
-            if (!canvas || !ctx) return;
+        function resizeCanvas() {
+            const resultContent = document.getElementById('result-content');
+            const container = document.getElementById('result-content-container');
             
-            canvas.addEventListener('mousedown', startWriting);
-            canvas.addEventListener('mousemove', write);
-            canvas.addEventListener('mouseup', stopWriting);
-            canvas.addEventListener('mouseout', stopWriting);
+            if (!resultContent || !container || !canvas) return;
             
-            canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
-            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
-            canvas.addEventListener('touchend', stopWriting);
+            // ضبط حجم الكانفاس ليتناسب مع المحتوى
+            const contentRect = resultContent.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
             
-            // منع النقر على الأدوات
-            document.addEventListener('mousedown', preventToolbarClick, true);
+            canvas.width = contentRect.width;
+            canvas.height = contentRect.height;
+            
+            // ضبط موقع الكانفاس
+            canvas.style.width = contentRect.width + 'px';
+            canvas.style.height = contentRect.height + 'px';
+            canvas.style.top = (contentRect.top - containerRect.top) + 'px';
+            canvas.style.left = (contentRect.left - containerRect.left) + 'px';
+            canvas.style.position = 'absolute';
+            
+            // ضبط موقع طبقة الرسم
+            if (drawingLayer) {
+                drawingLayer.style.width = contentRect.width + 'px';
+                drawingLayer.style.height = contentRect.height + 'px';
+                drawingLayer.style.top = (contentRect.top - containerRect.top) + 'px';
+                drawingLayer.style.left = (contentRect.left - containerRect.left) + 'px';
+            }
         }
         
-        function preventToolbarClick(e) {
-            const toolbar = document.querySelector('.toolbar');
-            if (toolbar && toolbar.contains(e.target)) {
-                e.stopPropagation();
-            }
+        function setupDrawingEvents() {
+            if (!drawingLayer || !canvas || !ctx) return;
+            
+            drawingLayer.addEventListener('mousedown', startDrawingOrErasing);
+            drawingLayer.addEventListener('mousemove', drawOrErase);
+            drawingLayer.addEventListener('mouseup', stopDrawingOrErasing);
+            drawingLayer.addEventListener('mouseleave', stopDrawingOrErasing);
+            
+            drawingLayer.addEventListener('touchstart', handleTouchStart, { passive: false });
+            drawingLayer.addEventListener('touchmove', handleTouchMove, { passive: false });
+            drawingLayer.addEventListener('touchend', stopDrawingOrErasing);
         }
         
         function handleTouchStart(e) {
             e.preventDefault();
-            if (e.touches.length === 1 && isWritingEnabled) {
+            if (e.touches.length === 1 && (isWritingEnabled || isErasingEnabled)) {
                 const touch = e.touches[0];
-                startWriting({
+                startDrawingOrErasing({
                     clientX: touch.clientX,
                     clientY: touch.clientY
                 });
@@ -1846,44 +1902,72 @@
         
         function handleTouchMove(e) {
             e.preventDefault();
-            if (e.touches.length === 1 && currentDrawing && isWritingEnabled) {
+            if (e.touches.length === 1 && (isDrawing || isErasing) && (isWritingEnabled || isErasingEnabled)) {
                 const touch = e.touches[0];
-                write({
+                drawOrErase({
                     clientX: touch.clientX,
                     clientY: touch.clientY
                 });
             }
         }
         
-        function startWriting(e) {
-            if (!isWritingEnabled) return;
-            
-            currentDrawing = {
-                points: [],
-                color: '#EF4444',
-                width: 2
-            };
-            
-            const rect = canvas.getBoundingClientRect();
+        function startDrawingOrErasing(e) {
+            const rect = drawingLayer.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             
-            currentDrawing.points.push({ x, y });
+            if (isWritingEnabled) {
+                startDrawing(x, y);
+            } else if (isErasingEnabled) {
+                startErasing(x, y);
+            }
+        }
+        
+        function startDrawing(x, y) {
+            isDrawing = true;
+            
+            currentDrawing = {
+                type: 'draw',
+                points: [{x, y}],
+                color: '#EF4444',
+                width: 2
+            };
             
             ctx.beginPath();
             ctx.moveTo(x, y);
         }
         
-        function write(e) {
-            if (!currentDrawing || !isWritingEnabled) return;
+        function startErasing(x, y) {
+            isErasing = true;
             
-            const rect = canvas.getBoundingClientRect();
+            currentEraseArea = {
+                type: 'erase',
+                points: [{x, y}],
+                width: 20
+            };
+            
+            // إظهار تسليط الضوء على الحذف
+            updateEraseHighlight(x, y);
+        }
+        
+        function drawOrErase(e) {
+            if (!isDrawing && !isErasing) return;
+            
+            const rect = drawingLayer.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             
-            currentDrawing.points.push({ x, y });
+            if (isDrawing) {
+                continueDrawing(x, y);
+            } else if (isErasing) {
+                continueErasing(x, y);
+            }
+        }
+        
+        function continueDrawing(x, y) {
+            currentDrawing.points.push({x, y});
             
-            // الرسم
+            // الرسم على الكانفاس
             ctx.lineTo(x, y);
             ctx.stroke();
             
@@ -1892,13 +1976,67 @@
             ctx.moveTo(x, y);
         }
         
-        function stopWriting() {
-            if (currentDrawing) {
-                if (currentDrawing.points.length > 1) {
-                    drawings.push(currentDrawing);
+        function continueErasing(x, y) {
+            currentEraseArea.points.push({x, y});
+            
+            // تحديث تسليط الضوء على الحذف
+            updateEraseHighlight(x, y);
+            
+            // البحث عن الرسومات داخل منطقة الحذف وحذفها
+            eraseDrawingsAt(x, y);
+        }
+        
+        function updateEraseHighlight(x, y) {
+            if (!eraseHighlight) return;
+            
+            const size = 20;
+            eraseHighlight.style.width = size + 'px';
+            eraseHighlight.style.height = size + 'px';
+            eraseHighlight.style.left = (x - size/2) + 'px';
+            eraseHighlight.style.top = (y - size/2) + 'px';
+            eraseHighlight.classList.add('active');
+        }
+        
+        function eraseDrawingsAt(x, y) {
+            const eraseRadius = 10;
+            const drawingsToKeep = [];
+            
+            drawings.forEach(drawing => {
+                let keepDrawing = true;
+                
+                // البحث عن النقاط داخل منطقة الحذف
+                drawing.points.forEach(point => {
+                    const distance = Math.sqrt(Math.pow(point.x - x, 2) + Math.pow(point.y - y, 2));
+                    if (distance <= eraseRadius) {
+                        keepDrawing = false;
+                    }
+                });
+                
+                if (keepDrawing) {
+                    drawingsToKeep.push(drawing);
                 }
+            });
+            
+            if (drawingsToKeep.length < drawings.length) {
+                drawings = drawingsToKeep;
+                redrawAll();
+                showNotification('تم حذف جزء من الرسم', 'success');
+            }
+        }
+        
+        function stopDrawingOrErasing() {
+            if (isDrawing && currentDrawing && currentDrawing.points.length > 1) {
+                drawings.push(currentDrawing);
                 currentDrawing = null;
             }
+            
+            if (isErasing && eraseHighlight) {
+                eraseHighlight.classList.remove('active');
+            }
+            
+            isDrawing = false;
+            isErasing = false;
+            currentEraseArea = null;
         }
         
         function redrawAll() {
@@ -1909,7 +2047,7 @@
             
             // إعادة رسم جميع الرسومات
             drawings.forEach(drawing => {
-                if (drawing.points.length > 0) {
+                if (drawing.points.length > 1) {
                     ctx.beginPath();
                     ctx.moveTo(drawing.points[0].x, drawing.points[0].y);
                     ctx.strokeStyle = drawing.color;
@@ -1940,57 +2078,81 @@
                 enableWriting();
                 penBtn.classList.add('active');
                 eraseBtn.style.display = 'flex';
+                disableErasing();
+            }
+        }
+        
+        function toggleErase() {
+            const penBtn = document.getElementById('pen-btn');
+            const eraseBtn = document.getElementById('erase-btn');
+            
+            if (isErasingEnabled) {
+                disableErasing();
+                eraseBtn.classList.remove('active');
+            } else {
+                enableErasing();
+                eraseBtn.classList.add('active');
+                disableWriting();
+                penBtn.classList.remove('active');
             }
         }
         
         function enableWriting() {
             isWritingEnabled = true;
-            if (canvas) {
-                canvas.classList.add('active');
-                canvas.style.cursor = 'text';
+            isErasingEnabled = false;
+            
+            if (drawingLayer) {
+                drawingLayer.classList.add('active');
+                drawingLayer.style.cursor = 'crosshair';
             }
-            initWritingCanvas();
+            
+            initDrawingTools();
         }
         
         function disableWriting() {
             isWritingEnabled = false;
-            currentDrawing = null;
-            if (canvas) {
-                canvas.classList.remove('active');
-                canvas.style.cursor = 'default';
+            stopDrawingOrErasing();
+            
+            if (drawingLayer) {
+                drawingLayer.classList.remove('active');
+                drawingLayer.style.cursor = 'default';
             }
         }
         
-        function clearDrawings() {
-            drawings = [];
-            if (ctx && canvas) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function enableErasing() {
+            isErasingEnabled = true;
+            isWritingEnabled = false;
+            
+            if (drawingLayer) {
+                drawingLayer.classList.add('active');
+                drawingLayer.style.cursor = 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\' viewBox=\'0 0 20 20\'%3E%3Ccircle cx=\'10\' cy=\'10\' r=\'9\' fill=\'none\' stroke=\'%23EF4444\' stroke-width=\'2\'/%3E%3C/svg%3E") 10 10, auto';
             }
-            showNotification('تم مسح جميع الرسومات', 'success');
+            
+            initDrawingTools();
         }
         
-        // إعادة ضبط حجم الكانفاس عند تغيير حجم النافذة
+        function disableErasing() {
+            isErasingEnabled = false;
+            stopDrawingOrErasing();
+            
+            if (drawingLayer) {
+                drawingLayer.classList.remove('active');
+                drawingLayer.style.cursor = 'default';
+            }
+            
+            if (eraseHighlight) {
+                eraseHighlight.classList.remove('active');
+            }
+        }
+        
+        // إعادة ضبط حجم الكانفاس عند تغيير حجم النافذة أو تمرير الصفحة
         window.addEventListener('resize', function() {
-            if (canvas && ctx) {
-                // حفظ الرسومات الحالية
-                const tempDrawings = [...drawings];
-                
-                // إعادة ضبط حجم الكانفاس
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                
-                // إعادة تعيين إعدادات الرسم
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = 'high';
-                ctx.lineWidth = 2;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.strokeStyle = '#EF4444';
-                
-                // استعادة الرسومات
-                drawings = tempDrawings;
-                redrawAll();
-            }
+            resizeCanvas();
+            redrawAll();
+        });
+        
+        window.addEventListener('scroll', function() {
+            resizeCanvas();
         });
         
         // ========== إدارة المستخدم ==========
@@ -2531,6 +2693,9 @@ JSON SCHEMA:
                 if (settingsSection) settingsSection.classList.remove('show');
                 if (resultSection) resultSection.classList.add('show');
                 
+                // إظهار الأدوات
+                showToolbar();
+                
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 
                 showNotification('تم إنشاء التلخيص بنجاح', 'success');
@@ -2619,6 +2784,11 @@ JSON SCHEMA:
                     const contentHeight = resultContent.scrollHeight + 80;
                     container.style.minHeight = Math.max(400, contentHeight) + 'px';
                 }
+                
+                // تهيئة أدوات الرسم بعد تحميل المحتوى
+                setTimeout(() => {
+                    initDrawingTools();
+                }, 100);
             }
             
             if (rawPoints) {
@@ -2636,24 +2806,6 @@ JSON SCHEMA:
                     rawPoints.appendChild(li);
                 }
             }
-            
-            // ضبط موضع النقاط الرئيسية
-            setTimeout(() => {
-                adjustRawSummaryPosition();
-            }, 100);
-        }
-        
-        function adjustRawSummaryPosition() {
-            const container = document.getElementById('result-content-container');
-            const rawSummary = document.getElementById('raw-summary');
-            
-            if (!container || !rawSummary) return;
-            
-            const containerRect = container.getBoundingClientRect();
-            const containerBottom = containerRect.bottom + window.scrollY;
-            
-            rawSummary.style.marginTop = '40px';
-            rawSummary.style.marginBottom = '40px';
         }
         
         function showLoading(text = 'جاري التحميل...') {
@@ -2696,6 +2848,9 @@ JSON SCHEMA:
                     setupFileUpload();
                     setupSettingsEvents();
                     
+                    // إخفاء الأدوات في البداية
+                    hideToolbar();
+                    
                     const confirmBtn = document.querySelector('.confirm-btn');
                     if (confirmBtn) {
                         confirmBtn.addEventListener('click', function(e) {
@@ -2704,11 +2859,6 @@ JSON SCHEMA:
                             confirmProcess();
                         });
                     }
-                    
-                    // إعدادات إضافية
-                    window.addEventListener('resize', function() {
-                        adjustRawSummaryPosition();
-                    });
                     
                     hideLoading();
                     
