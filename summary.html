@@ -10,6 +10,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -1050,6 +1053,10 @@
     </div>
     
     <script>
+        // تهيئة PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        
         // تهيئة Firebase
         firebase.initializeApp({
             apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
@@ -1238,58 +1245,62 @@
             elements.uploadArea.style.borderColor = 'var(--accent-dark)';
             elements.uploadArea.style.backgroundColor = 'rgba(139, 115, 85, 0.1)';
             elements.uploadBtn.disabled = false;
-            
-            // تحليل الملف لحساب الكلمات والصفحات
-            await analyzePDF(file);
         }
         
-        // تحليل ملف PDF
+        // تحليل ملف PDF باستخدام نفس تقنية محلل.html
         async function analyzePDF(file) {
             try {
                 showLoading('جاري تحليل الملف...');
                 
-                // قراءة ملف PDF وتحليل محتواه
-                const arrayBuffer = await file.arrayBuffer();
-                const pdfData = new Uint8Array(arrayBuffer);
+                const buffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(buffer).promise;
                 
-                // استخدام مكتبة PDF.js (إذا كانت متاحة) أو حساب تقديري
-                // في هذا المثال، سنستخدم تقديرات بسيطة
-                // ملاحظة: في التطبيق الفعلي، يجب استخدام مكتبة PDF.js لتحليل PDF
+                let totalWords = 0;
                 
-                // تقدير عدد الصفحات (افتراض: كل 5000 بايت = صفحة واحدة، بحد أدنى 1)
-                const estimatedPages = Math.max(1, Math.round(file.size / 5000));
+                // تحليل كل صفحة (مثل كود محلل.html)
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    
+                    if (content.items.length > 0) {
+                        let text = '';
+                        content.items.forEach(t => text += t.str + ' ');
+                        // حساب الكلمات (نفس منطق محلل.html)
+                        totalWords += text.trim().split(/\s+/).filter(w => w.length >= 2).length;
+                    } else {
+                        // إذا كانت الصفحة فارغة، نضيف 250 كلمة تقديرية
+                        totalWords += 250;
+                    }
+                }
                 
-                // تقدير عدد الكلمات (افتراض: كل 5 كيلوبايت = 1000 كلمة)
-                const estimatedWords = Math.round(file.size / 5);
+                // حساب التكلفة (نفس منطق محلل.html)
+                let coins = Math.ceil((totalWords / 1000) * 2) / 2;
+                if (coins < 1) coins = 1;
                 
                 fileInfo = {
                     name: file.name,
                     size: file.size,
-                    pages: estimatedPages,
-                    words: estimatedWords,
-                    cost: calculateCost(estimatedWords)
+                    pages: pdf.numPages,
+                    words: totalWords,
+                    cost: coins
                 };
                 
                 hideLoading();
                 
-                // عرض معلومات التكلفة
+                // عرض معلومات التكلفة (عدد الصفحات والتكلفة فقط، بدون الكلمات)
                 elements.pageCount.textContent = fileInfo.pages;
                 elements.costAmount.textContent = fileInfo.cost + ' عملة';
                 elements.costPreview.classList.add('show');
+                
+                return true;
                 
             } catch (error) {
                 console.error('Error analyzing PDF:', error);
                 hideLoading();
                 alert('حدث خطأ أثناء تحليل الملف. الرجاء المحاولة مرة أخرى.');
                 resetFileInput();
+                return false;
             }
-        }
-        
-        // حساب التكلفة (مستوحى من ملف محلل.html)
-        function calculateCost(wordCount) {
-            // قاعدة حساب التكلفة: كل 1000 كلمة = 1 عملة، بحد أدنى 1 عملة
-            const cost = Math.max(1, Math.round(wordCount / 1000));
-            return cost;
         }
         
         // إعادة تعيين إدخال الملف
@@ -1304,11 +1315,15 @@
         }
         
         // معالجة PDF
-        function processPDF() {
+        async function processPDF() {
             if (!selectedFile) {
                 alert('الرجاء اختيار ملف PDF أولاً');
                 return;
             }
+            
+            // تحليل الملف أولاً
+            const analysisSuccess = await analyzePDF(selectedFile);
+            if (!analysisSuccess) return;
             
             // التحقق من رصيد المستخدم
             if (userCoins < fileInfo.cost) {
@@ -1325,11 +1340,12 @@
         function cancelProcess() {
             resetFileInput();
             elements.costPreview.classList.remove('show');
+            elements.uploadSection.style.display = 'block';
         }
         
         // تأكيد المتابعة
-        function confirmProcess() {
-            processPDF();
+        async function confirmProcess() {
+            await processPDF();
         }
         
         // إعداد أحداث الإعدادات
@@ -1602,7 +1618,8 @@ ABSOLUTE CONSTRAINTS:
                     data: result,
                     timestamp: Date.now(),
                     fileName: fileInfo.name,
-                    cost: fileInfo.cost
+                    cost: fileInfo.cost,
+                    pages: fileInfo.pages
                 };
                 
                 await database.ref(`records/${recordId}`).set(recordData);
