@@ -1142,40 +1142,6 @@
         const auth = firebase.auth();
         const database = firebase.database();
         
-        // العناصر الرئيسية
-        const elements = {
-            loadingScreen: document.getElementById('loading-screen'),
-            loadingText: document.getElementById('loading-text'),
-            navbar: document.getElementById('navbar'),
-            coinsCount: document.getElementById('coins-count'),
-            mainContent: document.getElementById('main-content'),
-            
-            // قسم الرفع
-            uploadArea: document.getElementById('upload-area'),
-            uploadText: document.getElementById('upload-text'),
-            uploadBtn: document.getElementById('upload-btn'),
-            pdfFile: document.getElementById('pdfFile'),
-            costPreview: document.getElementById('cost-preview'),
-            pageCount: document.getElementById('page-count'),
-            costAmount: document.getElementById('cost-amount'),
-            
-            // قسم الإعدادات
-            settingsSection: document.getElementById('settings-section'),
-            generateBtn: document.getElementById('generate-btn'),
-            
-            // قسم النتيجة
-            resultSection: document.getElementById('result-section'),
-            resultTitle: document.getElementById('result-title'),
-            resultContent: document.getElementById('result-content'),
-            rawSummary: document.getElementById('raw-summary'),
-            rawPoints: document.getElementById('raw-points'),
-            
-            // الإشعارات
-            notification: document.getElementById('notification'),
-            notificationIcon: document.getElementById('notification-icon'),
-            notificationText: document.getElementById('notification-text')
-        };
-        
         // المتغيرات العامة
         let currentUser = null;
         let userCoins = 0;
@@ -1209,24 +1175,37 @@
         // ========== الوظائف الأساسية ==========
         
         function showNotification(message, type = 'info') {
-            elements.notificationText.textContent = message;
-            elements.notification.className = 'notification';
-            
-            if (type === 'success') {
-                elements.notification.classList.add('success');
-                elements.notificationIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
-            } else if (type === 'error') {
-                elements.notification.classList.add('error');
-                elements.notificationIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
-            } else {
-                elements.notificationIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
+            try {
+                const notification = document.getElementById('notification');
+                const notificationIcon = document.getElementById('notification-icon');
+                const notificationText = document.getElementById('notification-text');
+                
+                if (!notification || !notificationIcon || !notificationText) {
+                    console.error('Notification elements not found');
+                    return;
+                }
+                
+                notificationText.textContent = message;
+                notification.className = 'notification';
+                
+                if (type === 'success') {
+                    notification.classList.add('success');
+                    notificationIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                } else if (type === 'error') {
+                    notification.classList.add('error');
+                    notificationIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+                } else {
+                    notificationIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
+                }
+                
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            } catch (error) {
+                console.error('Error in showNotification:', error);
             }
-            
-            elements.notification.classList.add('show');
-            
-            setTimeout(() => {
-                elements.notification.classList.remove('show');
-            }, 3000);
         }
         
         function changeFontSize(action) {
@@ -1246,7 +1225,10 @@
                 resultFontSize -= 1;
             }
             
-            elements.resultContent.style.fontSize = resultFontSize + 'px';
+            const resultContent = document.getElementById('result-content');
+            if (resultContent) {
+                resultContent.style.fontSize = resultFontSize + 'px';
+            }
         }
         
         // ========== إدارة المستخدم ==========
@@ -1278,7 +1260,10 @@
                             };
                             
                             userCoins = userData.coin || 0;
-                            elements.coinsCount.textContent = userCoins;
+                            const coinsCount = document.getElementById('coins-count');
+                            if (coinsCount) {
+                                coinsCount.textContent = userCoins;
+                            }
                             userFound = true;
                             break;
                         }
@@ -1303,8 +1288,11 @@
                 await loadUserData();
                 
                 if (currentUser && currentUser.banned !== true) {
-                    elements.navbar.style.display = 'flex';
-                    elements.mainContent.style.display = 'block';
+                    const navbar = document.getElementById('navbar');
+                    const mainContent = document.getElementById('main-content');
+                    
+                    if (navbar) navbar.style.display = 'flex';
+                    if (mainContent) mainContent.style.display = 'block';
                 } else {
                     window.location.replace('login.html');
                 }
@@ -1317,7 +1305,10 @@
         // ========== إدارة الملفات ==========
         
         function setupFileUpload() {
-            elements.pdfFile.addEventListener('change', handleFileSelect);
+            const pdfFile = document.getElementById('pdfFile');
+            if (pdfFile) {
+                pdfFile.addEventListener('change', handleFileSelect);
+            }
         }
         
         async function handleFileSelect(event) {
@@ -1339,10 +1330,16 @@
             }
             
             selectedFile = file;
-            elements.uploadText.textContent = file.name;
-            elements.uploadArea.style.borderColor = 'var(--accent-dark)';
-            elements.uploadArea.style.backgroundColor = 'rgba(139, 115, 85, 0.1)';
-            elements.uploadBtn.disabled = false;
+            const uploadText = document.getElementById('upload-text');
+            const uploadArea = document.getElementById('upload-area');
+            const uploadBtn = document.getElementById('upload-btn');
+            
+            if (uploadText) uploadText.textContent = file.name;
+            if (uploadArea) {
+                uploadArea.style.borderColor = 'var(--accent-dark)';
+                uploadArea.style.backgroundColor = 'rgba(139, 115, 85, 0.1)';
+            }
+            if (uploadBtn) uploadBtn.disabled = false;
             
             showNotification('تم رفع الملف بنجاح. انقر على "تحليل الملف" للمتابعة', 'success');
         }
@@ -1383,7 +1380,7 @@
                     }
                 }
                 
-                // حساب التكلفة بنفس منطق محلل.html
+                // حساب التكلفة
                 let coins = Math.ceil((totalWords / 1000) * 2) / 2;
                 if (coins < 1) coins = 1;
                 
@@ -1398,14 +1395,18 @@
                     cost: coins
                 };
                 
-                console.log('File analysis complete:', fileInfo); // للتصحيح
+                console.log('File analysis complete:', fileInfo);
                 
                 hideLoading();
                 
                 // عرض معلومات التكلفة
-                elements.pageCount.textContent = fileInfo.pages;
-                elements.costAmount.textContent = fileInfo.cost + ' عملة';
-                elements.costPreview.classList.add('show');
+                const pageCount = document.getElementById('page-count');
+                const costAmount = document.getElementById('cost-amount');
+                const costPreview = document.getElementById('cost-preview');
+                
+                if (pageCount) pageCount.textContent = fileInfo.pages;
+                if (costAmount) costAmount.textContent = fileInfo.cost + ' عملة';
+                if (costPreview) costPreview.classList.add('show');
                 
                 return true;
                 
@@ -1419,24 +1420,49 @@
         }
         
         function resetFileInput() {
-            elements.pdfFile.value = '';
+            const pdfFile = document.getElementById('pdfFile');
+            const uploadText = document.getElementById('upload-text');
+            const uploadArea = document.getElementById('upload-area');
+            const uploadBtn = document.getElementById('upload-btn');
+            const costPreview = document.getElementById('cost-preview');
+            
+            if (pdfFile) pdfFile.value = '';
             selectedFile = null;
-            elements.uploadText.textContent = 'انقر لرفع ملف PDF';
-            elements.uploadArea.style.borderColor = '';
-            elements.uploadArea.style.backgroundColor = '';
-            elements.uploadBtn.disabled = true;
-            elements.costPreview.classList.remove('show');
+            if (uploadText) uploadText.textContent = 'انقر لرفع ملف PDF';
+            if (uploadArea) {
+                uploadArea.style.borderColor = '';
+                uploadArea.style.backgroundColor = '';
+            }
+            if (uploadBtn) uploadBtn.disabled = true;
+            if (costPreview) costPreview.classList.remove('show');
         }
         
         function cancelProcess() {
             resetFileInput();
-            elements.costPreview.classList.remove('show');
+            const costPreview = document.getElementById('cost-preview');
+            if (costPreview) costPreview.classList.remove('show');
             showNotification('تم إلغاء العملية', 'info');
         }
         
         // ========== دالة زر المتابعة المصححة ==========
         function confirmProcess() {
             console.log('confirmProcess called');
+            
+            // الحصول على العناصر مباشرة
+            const uploadSection = document.getElementById('upload-section');
+            const settingsSection = document.getElementById('settings-section');
+            const costPreview = document.getElementById('cost-preview');
+            
+            // التحقق من العناصر
+            if (!uploadSection || !settingsSection || !costPreview) {
+                console.error('Required elements not found:', {
+                    uploadSection: !!uploadSection,
+                    settingsSection: !!settingsSection,
+                    costPreview: !!costPreview
+                });
+                showNotification('حدث خطأ في تحميل العناصر', 'error');
+                return;
+            }
             
             // التحقق من وجود fileInfo
             if (!fileInfo || !fileInfo.cost || fileInfo.cost === 0) {
@@ -1453,13 +1479,13 @@
             }
             
             // إخفاء قسم الرفع
-            elements.uploadSection.style.display = 'none';
+            uploadSection.style.display = 'none';
             
             // إظهار قسم الإعدادات
-            elements.settingsSection.classList.add('show');
+            settingsSection.classList.add('show');
             
             // إخفاء معاينة التكلفة
-            elements.costPreview.classList.remove('show');
+            costPreview.classList.remove('show');
             
             // تمرير إلى بداية الصفحة
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1471,9 +1497,10 @@
         
         function setupSettingsEvents() {
             // طريقة الشرح
-            document.querySelectorAll('#explanation-level .option-btn').forEach(btn => {
+            const explanationLevelBtns = document.querySelectorAll('#explanation-level .option-btn');
+            explanationLevelBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    document.querySelectorAll('#explanation-level .option-btn').forEach(b => b.classList.remove('selected'));
+                    explanationLevelBtns.forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
                     selectedSettings.explanationLevel = this.getAttribute('data-value');
                     console.log('Selected explanation level:', selectedSettings.explanationLevel);
@@ -1481,9 +1508,10 @@
             });
             
             // اللهجة
-            document.querySelectorAll('#dialect .option-btn').forEach(btn => {
+            const dialectBtns = document.querySelectorAll('#dialect .option-btn');
+            dialectBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    document.querySelectorAll('#dialect .option-btn').forEach(b => b.classList.remove('selected'));
+                    dialectBtns.forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
                     selectedSettings.dialect = this.getAttribute('data-value');
                     console.log('Selected dialect:', selectedSettings.dialect);
@@ -1491,9 +1519,10 @@
             });
             
             // شخصية الشارح
-            document.querySelectorAll('#explainer-persona .option-btn').forEach(btn => {
+            const explainerPersonaBtns = document.querySelectorAll('#explainer-persona .option-btn');
+            explainerPersonaBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    document.querySelectorAll('#explainer-persona .option-btn').forEach(b => b.classList.remove('selected'));
+                    explainerPersonaBtns.forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
                     selectedSettings.explainerPersona = this.getAttribute('data-value');
                     console.log('Selected explainer persona:', selectedSettings.explainerPersona);
@@ -1501,9 +1530,10 @@
             });
             
             // لغة الإخراج
-            document.querySelectorAll('#output-language .option-btn').forEach(btn => {
+            const outputLanguageBtns = document.querySelectorAll('#output-language .option-btn');
+            outputLanguageBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    document.querySelectorAll('#output-language .option-btn').forEach(b => b.classList.remove('selected'));
+                    outputLanguageBtns.forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
                     selectedSettings.outputLanguage = this.getAttribute('data-value');
                     console.log('Selected output language:', selectedSettings.outputLanguage);
@@ -1511,19 +1541,25 @@
             });
             
             // اللغة المخصصة
-            document.getElementById('custom-language').addEventListener('input', function() {
-                if (this.value.trim()) {
-                    selectedSettings.customLanguage = this.value.trim();
-                    selectedSettings.outputLanguage = this.value.trim();
-                    console.log('Custom language set:', selectedSettings.outputLanguage);
-                }
-            });
+            const customLanguage = document.getElementById('custom-language');
+            if (customLanguage) {
+                customLanguage.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        selectedSettings.customLanguage = this.value.trim();
+                        selectedSettings.outputLanguage = this.value.trim();
+                        console.log('Custom language set:', selectedSettings.outputLanguage);
+                    }
+                });
+            }
             
             // التعليق الاختياري
-            document.getElementById('optional-comment').addEventListener('input', function() {
-                selectedSettings.optionalComment = this.value.trim();
-                console.log('Optional comment set:', selectedSettings.optionalComment);
-            });
+            const optionalComment = document.getElementById('optional-comment');
+            if (optionalComment) {
+                optionalComment.addEventListener('input', function() {
+                    selectedSettings.optionalComment = this.value.trim();
+                    console.log('Optional comment set:', selectedSettings.optionalComment);
+                });
+            }
         }
         
         function createPrompt() {
@@ -1636,8 +1672,11 @@ ABSOLUTE CONSTRAINTS:
                 return;
             }
             
-            elements.generateBtn.disabled = true;
-            elements.generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإنشاء...';
+            const generateBtn = document.getElementById('generate-btn');
+            if (generateBtn) {
+                generateBtn.disabled = true;
+                generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإنشاء...';
+            }
             
             try {
                 showLoading('جاري إنشاء التلخيص...');
@@ -1713,8 +1752,11 @@ ABSOLUTE CONSTRAINTS:
                 displayResult(result);
                 
                 // الانتقال إلى قسم النتائج
-                elements.settingsSection.classList.remove('show');
-                elements.resultSection.classList.add('show');
+                const settingsSection = document.getElementById('settings-section');
+                const resultSection = document.getElementById('result-section');
+                
+                if (settingsSection) settingsSection.classList.remove('show');
+                if (resultSection) resultSection.classList.add('show');
                 
                 // تمرير إلى بداية الصفحة
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1726,8 +1768,11 @@ ABSOLUTE CONSTRAINTS:
                 showNotification('حدث خطأ أثناء إنشاء التلخيص: ' + error.message, 'error');
             } finally {
                 hideLoading();
-                elements.generateBtn.disabled = false;
-                elements.generateBtn.innerHTML = '<i class="fas fa-robot"></i> إنشاء التلخيص التلقائي';
+                const generateBtn = document.getElementById('generate-btn');
+                if (generateBtn) {
+                    generateBtn.disabled = false;
+                    generateBtn.innerHTML = '<i class="fas fa-robot"></i> إنشاء التلخيص التلقائي';
+                }
             }
         }
         
@@ -1737,7 +1782,10 @@ ABSOLUTE CONSTRAINTS:
                 userCoins = newCoins;
                 
                 await database.ref(`users_Awn/${currentUser.id}/coin`).set(newCoins);
-                elements.coinsCount.textContent = newCoins;
+                const coinsCount = document.getElementById('coins-count');
+                if (coinsCount) {
+                    coinsCount.textContent = newCoins;
+                }
                 
                 console.log(`Deducted ${amount} coins. New balance: ${newCoins}`);
                 
@@ -1771,57 +1819,77 @@ ABSOLUTE CONSTRAINTS:
         
         function displayResult(result) {
             // تعيين العنوان
-            elements.resultTitle.textContent = result.head || 'ملخص الملف';
+            const resultTitle = document.getElementById('result-title');
+            const resultContent = document.getElementById('result-content');
+            const rawPoints = document.getElementById('raw-points');
+            
+            if (resultTitle) {
+                resultTitle.textContent = result.head || 'ملخص الملف';
+            }
             
             // تعيين المحتوى الرئيسي
-            elements.resultContent.innerHTML = '';
-            
-            if (result.page) {
-                const paragraphs = result.page.split('\n').filter(p => p.trim());
-                paragraphs.forEach(paragraph => {
-                    const p = document.createElement('p');
-                    p.textContent = paragraph;
-                    p.style.marginBottom = '20px';
-                    p.style.lineHeight = '1.8';
-                    elements.resultContent.appendChild(p);
-                });
-            } else {
-                elements.resultContent.textContent = 'لا يوجد محتوى للعرض';
+            if (resultContent) {
+                resultContent.innerHTML = '';
+                
+                if (result.page) {
+                    const paragraphs = result.page.split('\n').filter(p => p.trim());
+                    paragraphs.forEach(paragraph => {
+                        const p = document.createElement('p');
+                        p.textContent = paragraph;
+                        p.style.marginBottom = '20px';
+                        p.style.lineHeight = '1.8';
+                        resultContent.appendChild(p);
+                    });
+                } else {
+                    resultContent.textContent = 'لا يوجد محتوى للعرض';
+                }
             }
             
             // تعيين النقاط الرئيسية
-            elements.rawPoints.innerHTML = '';
-            
-            if (result.raw && Array.isArray(result.raw) && result.raw.length > 0) {
-                result.raw.forEach(point => {
+            if (rawPoints) {
+                rawPoints.innerHTML = '';
+                
+                if (result.raw && Array.isArray(result.raw) && result.raw.length > 0) {
+                    result.raw.forEach(point => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
+                        rawPoints.appendChild(li);
+                    });
+                } else {
                     const li = document.createElement('li');
-                    li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
-                    elements.rawPoints.appendChild(li);
-                });
-            } else {
-                const li = document.createElement('li');
-                li.innerHTML = '<i class="fas fa-info-circle"></i> لا توجد نقاط رئيسية';
-                elements.rawPoints.appendChild(li);
+                    li.innerHTML = '<i class="fas fa-info-circle"></i> لا توجد نقاط رئيسية';
+                    rawPoints.appendChild(li);
+                }
             }
             
             // إعادة تعيين حجم الخط
             resultFontSize = 16;
-            elements.resultContent.style.fontSize = resultFontSize + 'px';
+            if (resultContent) {
+                resultContent.style.fontSize = resultFontSize + 'px';
+            }
         }
         
         function showLoading(text = 'جاري التحميل...') {
-            elements.loadingText.textContent = text;
-            elements.loadingScreen.style.display = 'flex';
-            setTimeout(() => {
-                elements.loadingScreen.style.opacity = '1';
-            }, 10);
+            const loadingScreen = document.getElementById('loading-screen');
+            const loadingText = document.getElementById('loading-text');
+            
+            if (loadingScreen && loadingText) {
+                loadingText.textContent = text;
+                loadingScreen.style.display = 'flex';
+                setTimeout(() => {
+                    loadingScreen.style.opacity = '1';
+                }, 10);
+            }
         }
         
         function hideLoading() {
-            elements.loadingScreen.style.opacity = '0';
-            setTimeout(() => {
-                elements.loadingScreen.style.display = 'none';
-            }, 500);
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }
         }
         
         // ========== تهيئة التطبيق ==========
@@ -1846,6 +1914,8 @@ ABSOLUTE CONSTRAINTS:
                     if (confirmBtn) {
                         confirmBtn.addEventListener('click', function(e) {
                             e.preventDefault();
+                            e.stopPropagation();
+                            console.log('Confirm button clicked via event listener');
                             confirmProcess();
                         });
                     }
