@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>عون - خدمة ترجمة PDF</title>
+    <title>عون - ترجمة ملفات PDF</title>
     
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -19,12 +19,21 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     
+    <!-- highlight.js for code blocks -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
     <style>
+        /* ====== التصميم الأصلي بالكامل – كما هو دون تغيير ====== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         
         :root {
@@ -37,35 +46,40 @@
             --accent-dark: #5D4037;
             --border-color: #D4A574;
             --border-radius: 16px;
-            --border-radius-large: 24px;
+            --border-radius-lg: 20px;
+            --border-radius-xl: 24px;
             --navbar-height: 70px;
-            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --success-color: #38A169;
-            --error-color: #E53E3E;
-            --warning-color: #DD6B20;
-            --shadow-light: 0 2px 8px rgba(139, 115, 85, 0.08);
-            --shadow-medium: 0 4px 16px rgba(139, 115, 85, 0.12);
-            --shadow-heavy: 0 8px 24px rgba(139, 115, 85, 0.15);
-            --highlight-color: #FF6B6B;
-            --highlight-bg: #FFF5F5;
-            --code-bg: #2D3748;
-            --code-color: #E2E8F0;
+            --transition-smooth: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --transition-card: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            --success-color: #4CAF50;
+            --error-color: #F44336;
+            --warning-color: #FF9800;
+            --info-color: #2196F3;
+            --gradient-primary: linear-gradient(145deg, #8B7355 0%, #A9927D 100%);
+            --gradient-success: linear-gradient(145deg, #4CAF50 0%, #45a049 100%);
+            --gradient-error: linear-gradient(145deg, #F44336 0%, #d32f2f 100%);
+            --shadow-light: 0 4px 12px rgba(139, 115, 85, 0.1);
+            --shadow-medium: 0 8px 24px rgba(139, 115, 85, 0.15);
+            --shadow-heavy: 0 12px 36px rgba(139, 115, 85, 0.2);
         }
         
         body {
-            font-family: 'Almarai', 'Tajawal', -apple-system, sans-serif;
+            font-family: 'Almarai', 'Tajawal', sans-serif;
             background: var(--bg-color);
             color: var(--text-primary);
             min-height: 100vh;
             direction: rtl;
             -webkit-font-smoothing: antialiased;
-            width: 100%;
-            max-width: 100vw;
+            width: 100vw;
             overflow-x: hidden;
             padding-top: env(safe-area-inset-top);
-            position: relative;
+            padding-bottom: env(safe-area-inset-bottom);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
+        /* Loading Screen */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -78,29 +92,26 @@
             align-items: center;
             justify-content: center;
             z-index: 99999;
-            transition: opacity 0.3s ease;
-            padding: 20px;
-            width: 100%;
-            height: 100%;
+            transition: opacity 0.5s ease;
         }
         
         .loading-logo {
             font-family: 'Almarai', sans-serif;
             font-weight: 800;
-            font-size: clamp(36px, 10vw, 48px);
+            font-size: 56px;
             color: var(--accent-primary);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             letter-spacing: -1px;
         }
         
         .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(139, 115, 85, 0.1);
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(139, 115, 85, 0.1);
             border-left-color: var(--accent-primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         @keyframes spin {
@@ -110,12 +121,13 @@
         .loading-text {
             font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
-            font-size: 1rem;
+            font-size: 1.1rem;
             text-align: center;
-            max-width: 90%;
+            max-width: 80%;
             line-height: 1.6;
         }
         
+        /* Navbar */
         .native-navbar {
             position: fixed;
             top: 0;
@@ -123,133 +135,160 @@
             right: 0;
             height: var(--navbar-height);
             background: var(--bg-color);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 16px;
+            padding: 0 max(25px, env(safe-area-inset-right));
             z-index: 10000;
-            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
+            border-bottom: 1px solid rgba(139, 115, 85, 0.12);
             box-shadow: var(--shadow-light);
-            width: 100%;
+            padding-top: env(safe-area-inset-top);
         }
         
         .logo {
             font-family: 'Almarai', sans-serif;
             font-weight: 900;
-            font-size: clamp(28px, 8vw, 36px);
+            font-size: 42px;
             color: var(--accent-primary);
             cursor: pointer;
             transition: var(--transition-smooth);
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
         }
         
         .nav-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 18px;
         }
         
         .coins-display {
-            background: linear-gradient(145deg, var(--accent-primary), var(--accent-secondary));
+            background: var(--gradient-primary);
             color: white;
-            padding: 8px 16px;
-            border-radius: 14px;
+            padding: 12px 25px;
+            border-radius: var(--border-radius-lg);
             font-weight: 700;
-            font-size: 13px;
+            font-size: 15px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 10px;
             box-shadow: var(--shadow-light);
             transition: var(--transition-smooth);
-            white-space: nowrap;
         }
         
+        .coins-display:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        /* Main Content */
         .main-content {
             padding-top: calc(var(--navbar-height) + 20px);
-            padding-left: 16px;
-            padding-right: 16px;
-            padding-bottom: 40px;
-            max-width: 100%;
-            margin: 0 auto;
+            padding-left: max(20px, env(safe-area-inset-left));
+            padding-right: max(20px, env(safe-area-inset-right));
+            padding-bottom: 50px;
             width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - var(--navbar-height) - 70px);
         }
         
+        /* Upload Section */
         .upload-section {
             background: white;
-            border-radius: var(--border-radius-large);
-            padding: 24px 20px;
-            margin-bottom: 20px;
+            border-radius: var(--border-radius-xl);
+            padding: 35px;
+            margin-bottom: 35px;
             box-shadow: var(--shadow-medium);
             text-align: center;
-            border: 1px solid rgba(139, 115, 85, 0.1);
+            border: 1px solid rgba(139, 115, 85, 0.12);
             width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         
         .section-title {
             font-family: 'Almarai', sans-serif;
-            font-size: clamp(1.3rem, 6vw, 1.8rem);
+            font-size: clamp(1.8rem, 4vw, 2.2rem);
             font-weight: 800;
             color: var(--accent-primary);
-            margin-bottom: 8px;
-            word-break: break-word;
+            margin-bottom: 15px;
+            text-align: center;
         }
         
         .section-subtitle {
             font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
-            font-size: clamp(0.9rem, 4vw, 1rem);
-            margin-bottom: 20px;
+            font-size: clamp(1rem, 2vw, 1.1rem);
+            margin-bottom: 30px;
             font-weight: 400;
-            word-break: break-word;
+            line-height: 1.6;
+            text-align: center;
         }
         
         .upload-area {
-            border: 2px dashed var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 30px 16px;
-            margin-bottom: 20px;
+            border: 3px dashed var(--border-color);
+            border-radius: var(--border-radius-xl);
+            padding: min(50px, 8vh) 25px;
+            margin-bottom: 30px;
             cursor: pointer;
             transition: var(--transition-smooth);
             background: rgba(212, 165, 116, 0.05);
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         
         .upload-area:hover {
             border-color: var(--accent-primary);
             background: rgba(212, 165, 116, 0.1);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
         }
         
         .upload-icon {
-            font-size: 42px;
+            font-size: clamp(48px, 8vw, 56px);
             color: var(--accent-primary);
-            margin-bottom: 12px;
+            margin-bottom: 20px;
         }
         
         .upload-text {
             font-family: 'Tajawal', sans-serif;
-            font-size: 1rem;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
             color: var(--text-primary);
-            margin-bottom: 6px;
+            margin-bottom: 10px;
             font-weight: 500;
-            word-break: break-word;
         }
         
         .upload-hint {
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.8rem;
+            font-size: clamp(0.9rem, 2vw, 0.95rem);
             color: var(--text-secondary);
             font-style: italic;
         }
         
+        /* Cost Preview */
         .cost-preview {
-            background: rgba(139, 115, 85, 0.05);
-            border-radius: var(--border-radius);
-            padding: 20px 16px;
-            margin-top: 20px;
-            border: 1px solid rgba(139, 115, 85, 0.1);
+            background: rgba(139, 115, 85, 0.06);
+            border-radius: var(--border-radius-xl);
+            padding: 25px;
+            margin-top: 30px;
+            border: 1px solid rgba(139, 115, 85, 0.12);
             display: none;
-            animation: slideUp 0.3s ease-out;
+            animation: slideUp 0.4s ease-out;
             width: 100%;
         }
         
@@ -259,140 +298,158 @@
         
         .cost-title {
             font-family: 'Almarai', sans-serif;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: var(--accent-primary);
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             text-align: center;
         }
         
         .cost-details {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 25px;
         }
         
         .cost-item {
             text-align: center;
-            width: 100%;
-            padding: 8px 0;
-            background: white;
-            border-radius: var(--border-radius);
-            border: 1px solid rgba(139, 115, 85, 0.1);
+            flex: 1;
+            min-width: 160px;
         }
         
         .cost-label {
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             color: var(--text-secondary);
-            margin-bottom: 4px;
+            margin-bottom: 8px;
         }
         
         .cost-value {
             font-family: 'Almarai', sans-serif;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: 800;
             color: var(--accent-primary);
         }
         
         .cost-actions {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
         
         .action-btn {
-            padding: 14px 20px;
+            padding: 16px 32px;
             border: none;
             border-radius: var(--border-radius);
             font-family: 'Almarai', sans-serif;
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
             transition: var(--transition-smooth);
-            width: 100%;
+            min-width: 160px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-button);
+            touch-action: manipulation;
+        }
+        
+        .action-btn:active {
+            transform: scale(0.98);
         }
         
         .confirm-btn {
-            background: linear-gradient(145deg, var(--success-color), #2F855A);
+            background: var(--gradient-success);
             color: white;
         }
         
         .cancel-btn {
-            background: linear-gradient(145deg, var(--error-color), #C53030);
+            background: var(--gradient-error);
             color: white;
         }
         
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-light);
-        }
-        
-        .action-btn:active {
-            transform: translateY(0);
-        }
-        
+        /* ====== قسم اختيار اللغة (تصميم أصلي) ====== */
         .language-section {
             background: white;
-            border-radius: var(--border-radius-large);
-            padding: 24px 20px;
-            margin-bottom: 20px;
+            border-radius: var(--border-radius-xl);
+            padding: 35px;
+            margin-bottom: 35px;
             box-shadow: var(--shadow-medium);
-            border: 1px solid rgba(139, 115, 85, 0.1);
+            border: 1px solid rgba(139, 115, 85, 0.12);
             display: none;
-            animation: slideUp 0.3s ease-out;
+            animation: slideUp 0.4s ease-out;
             width: 100%;
+            max-width: 900px;
         }
         
         .language-section.show {
             display: block;
         }
         
-        .language-input-container {
-            position: relative;
-            margin-bottom: 24px;
-            width: 100%;
+        .language-selector {
+            background: rgba(139, 115, 85, 0.04);
+            border-radius: var(--border-radius-xl);
+            padding: 30px;
+            margin: 20px 0;
+            border: 1px solid rgba(139, 115, 85, 0.12);
         }
         
-        .language-input {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid rgba(139, 115, 85, 0.2);
-            border-radius: var(--border-radius);
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1rem;
-            transition: var(--transition-smooth);
+        .selector-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+        
+        .selected-language-box {
             background: white;
+            border: 2px solid var(--accent-primary);
+            border-radius: var(--border-radius-lg);
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             cursor: pointer;
+            transition: var(--transition-smooth);
+            margin-bottom: 10px;
         }
         
-        .language-input:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
+        .selected-language-box:hover {
+            background: rgba(139, 115, 85, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .selected-language-text {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-dark);
+        }
+        
+        .dropdown-icon {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
         }
         
         .languages-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
             background: white;
-            border: 2px solid var(--accent-primary);
-            border-radius: var(--border-radius);
-            margin-top: 5px;
-            max-height: 250px;
-            overflow-y: auto;
-            display: none;
-            z-index: 1000;
+            border-radius: var(--border-radius-lg);
             box-shadow: var(--shadow-heavy);
-            width: 100%;
+            max-height: 350px;
+            overflow-y: auto;
+            border: 1px solid rgba(139, 115, 85, 0.2);
+            display: none;
+            margin-top: 5px;
         }
         
         .languages-dropdown.show {
@@ -400,381 +457,358 @@
         }
         
         .language-option {
-            padding: 12px 18px;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(139, 115, 85, 0.08);
             cursor: pointer;
-            transition: var(--transition-smooth);
-            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
+            transition: background 0.2s;
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
-        }
-        
-        .language-option:last-child {
-            border-bottom: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
         .language-option:hover {
-            background: rgba(139, 115, 85, 0.05);
+            background: rgba(139, 115, 85, 0.1);
         }
         
-        .processing-info {
+        .language-option i {
+            color: var(--accent-primary);
+            width: 24px;
             text-align: center;
-            margin: 20px 0;
-            padding: 16px;
-            background: rgba(139, 115, 85, 0.05);
-            border-radius: var(--border-radius);
-            width: 100%;
         }
         
         .translate-btn {
-            background: linear-gradient(145deg, var(--accent-primary), var(--accent-secondary));
+            background: var(--gradient-primary);
             color: white;
             border: none;
             border-radius: var(--border-radius);
-            padding: 14px 24px;
+            padding: 18px 45px;
             font-family: 'Almarai', sans-serif;
-            font-size: 1rem;
+            font-size: 1.2rem;
             font-weight: 700;
             cursor: pointer;
             transition: var(--transition-smooth);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            width: 100%;
-            margin: 0 auto;
+            gap: 12px;
+            margin: 30px auto 0;
+            min-width: 280px;
+            box-shadow: var(--shadow-button);
         }
         
         .translate-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            transform: none !important;
         }
         
-        .result-section {
-            background: var(--bg-color);
-            border-radius: var(--border-radius-large);
-            padding: 0;
-            margin-bottom: 20px;
+        /* ====== صفحة عرض الترجمة (الأوراق) ====== */
+        .translation-section {
+            background: white;
+            border-radius: var(--border-radius-xl);
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: var(--shadow-heavy);
+            border: 1px solid rgba(139, 115, 85, 0.12);
             display: none;
-            animation: slideUp 0.3s ease-out;
+            animation: slideUp 0.4s ease-out;
             width: 100%;
+            max-width: 1200px;
         }
         
-        .result-section.show {
+        .translation-section.show {
             display: block;
         }
         
-        .result-header {
+        .translation-header {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
-            align-items: flex-start;
-            padding: 16px 20px;
-            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
-            background: white;
-            border-radius: var(--border-radius-large) var(--border-radius-large) 0 0;
-            margin-bottom: 16px;
-            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
         }
         
-        .result-title {
+        .translation-title {
             font-family: 'Almarai', sans-serif;
-            font-size: clamp(1.2rem, 5vw, 1.5rem);
+            font-size: 1.8rem;
             font-weight: 800;
             color: var(--accent-primary);
-            word-break: break-word;
         }
         
-        .result-toolbar {
+        .zoom-controls {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            justify-content: flex-start;
+            gap: 15px;
+            background: rgba(139, 115, 85, 0.08);
+            padding: 10px 18px;
+            border-radius: var(--border-radius);
         }
         
-        .font-controls-result {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(139, 115, 85, 0.05);
-            padding: 6px 12px;
-            border-radius: 14px;
-            width: auto;
-        }
-        
-        .font-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+        .zoom-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--border-radius);
+            border: none;
             background: white;
-            border: 1px solid rgba(139, 115, 85, 0.2);
+            color: var(--accent-primary);
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-light);
+            transition: var(--transition-smooth);
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: var(--transition-smooth);
+        }
+        
+        .zoom-btn:hover {
+            background: var(--accent-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .zoom-level {
+            font-size: 1.1rem;
             font-weight: 700;
-            font-size: 16px;
-            color: var(--accent-primary);
+            color: var(--accent-dark);
+            min-width: 70px;
+            text-align: center;
+            align-self: center;
         }
         
         .pages-container {
-            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
-            width: 100%;
-        }
-        
-        .page-wrapper {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-medium);
-            padding: 0;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            margin: 0 auto;
-            width: 100%;
-            max-width: 100%;
-            border: 1px solid rgba(139, 115, 85, 0.1);
-        }
-        
-        .page-header {
-            background: linear-gradient(145deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
-            padding: 12px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-start;
-            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
-            width: 100%;
-        }
-        
-        .page-number {
-            font-family: 'Almarai', sans-serif;
-            font-weight: 700;
-            font-size: 1rem;
-        }
-        
-        .page-copy-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 8px;
-            padding: 6px 14px;
-            color: white;
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            display: flex;
             align-items: center;
-            gap: 6px;
-            width: auto;
+            gap: 50px;
+            padding: 20px 0;
+        }
+        
+        /* ورقة A4 - حجم متكيف مع المحتوى */
+        .page-paper {
+            background: white;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px 60px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Tajawal', sans-serif;
+            line-height: 1.9;
+            color: var(--text-primary);
+            direction: rtl;
+            text-align: right;
+            word-wrap: break-word;
+            white-space: normal;
+            transition: all 0.2s;
+            font-size: 1rem;
+            position: relative;
+            height: auto;
+            min-height: 300px;
         }
         
         .page-content {
-            padding: 20px 16px;
-            font-family: 'Tajawal', sans-serif;
-            line-height: 1.7;
-            color: var(--text-primary);
-            min-height: auto;
-            transition: all 0.3s ease;
-            overflow-wrap: break-word;
-            white-space: pre-wrap;
-            word-break: break-word;
             width: 100%;
-            max-width: 100%;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            direction: rtl;
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
         }
         
-        .highlighted-text {
-            background-color: var(--highlight-bg);
-            color: var(--highlight-color);
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin: 0 2px;
-            display: inline-block;
-            border: 1px solid rgba(255, 107, 107, 0.2);
-        }
-        
-        .code-block {
-            background: var(--code-bg);
-            color: var(--code-color);
+        /* تنسيق النص المميز */
+        .page-content strong, .page-content b {
+            color: var(--accent-primary);
+            background: rgba(139, 115, 85, 0.1);
+            padding: 0 6px;
             border-radius: 8px;
-            padding: 16px;
-            margin: 12px 0;
+            font-weight: 800;
+        }
+        
+        /* تنسيق code blocks */
+        .page-content pre {
+            background: #1e1e2f;
+            color: #f8f8f2;
+            padding: 25px 20px;
+            border-radius: 20px;
+            direction: ltr;
+            text-align: left;
             overflow-x: auto;
             position: relative;
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 0.85rem;
-            line-height: 1.5;
-            border-left: 4px solid var(--accent-secondary);
-            width: 100%;
-            max-width: 100%;
+            margin: 25px 0;
+            font-size: 0.95rem;
+            box-shadow: var(--shadow-medium);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .page-content code {
+            font-family: 'Courier New', monospace;
+            white-space: pre;
         }
         
         .code-header {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-start;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            width: 100%;
-        }
-        
-        .code-label {
-            color: var(--accent-secondary);
-            font-weight: 600;
-            font-size: 0.85rem;
+            justify-content: flex-end;
+            margin-bottom: 15px;
         }
         
         .copy-code-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 6px;
-            padding: 5px 12px;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 10px;
             color: white;
+            padding: 8px 18px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .copy-code-btn:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        .page-label {
+            display: inline-block;
+            margin-bottom: 20px;
+            font-family: 'Almarai', sans-serif;
+            font-weight: 700;
+            color: var(--accent-secondary);
+            border-bottom: 3px solid var(--border-color);
+            padding-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .exit-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 18px 45px;
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
             cursor: pointer;
             transition: var(--transition-smooth);
             display: flex;
             align-items: center;
-            gap: 5px;
-            width: auto;
+            justify-content: center;
+            gap: 12px;
+            margin: 50px auto 20px;
+            min-width: 260px;
+            box-shadow: var(--shadow-button);
         }
         
-        .code-content {
-            overflow-x: auto;
-            padding: 8px 0;
-            width: 100%;
+        .exit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-button-hover);
         }
         
-        .code-content pre {
-            white-space: pre-wrap;
-            word-break: break-word;
-            font-family: inherit;
-            font-size: 0.85rem;
-            width: 100%;
-        }
-        
+        /* Footer */
         .footer {
             text-align: center;
-            padding: 30px 16px;
+            padding: 45px 20px;
             color: var(--text-secondary);
-            border-top: 1px solid rgba(139, 115, 85, 0.1);
-            margin-top: 30px;
+            border-top: 1px solid rgba(139, 115, 85, 0.12);
+            margin-top: 45px;
             position: relative;
             z-index: 1;
             width: 100%;
+            max-width: 900px;
+            display: block;
         }
         
-        .copyright {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.85rem;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            font-weight: 400;
-            word-break: break-word;
-        }
-        
-        .support-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-        
-        .support-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--accent-primary);
-            margin-bottom: 4px;
+        .footer.hidden {
+            display: none;
         }
         
         .support-links {
             display: flex;
-            gap: 12px;
+            gap: 20px;
             justify-content: center;
-            flex-wrap: wrap;
+            margin: 20px 0;
         }
         
         .support-link {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: linear-gradient(145deg, var(--accent-primary), var(--accent-secondary));
+            width: 56px;
+            height: 56px;
+            border-radius: var(--border-radius);
+            background: var(--gradient-primary);
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: var(--transition-smooth);
-            box-shadow: var(--shadow-light);
+            box-shadow: var(--shadow-button);
+            text-decoration: none;
+        }
+        
+        .support-link:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-button-hover);
         }
         
         .support-link i {
-            font-size: 20px;
+            font-size: 26px;
             color: white;
         }
         
         .developer-credit {
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.8rem;
+            font-size: 0.95rem;
             color: rgba(100, 116, 139, 0.6);
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid rgba(139, 115, 85, 0.05);
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            word-break: break-word;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(139, 115, 85, 0.06);
         }
         
+        /* Notification */
         .notification {
             position: fixed;
-            top: 80px;
-            left: 16px;
-            right: 16px;
+            top: calc(var(--navbar-height) + 20px);
+            right: max(20px, env(safe-area-inset-right));
             background: white;
-            border-radius: 14px;
-            padding: 14px 16px;
+            border-radius: var(--border-radius);
+            padding: 20px;
             box-shadow: var(--shadow-heavy);
-            border: 1px solid rgba(139, 115, 85, 0.1);
+            border: 1px solid rgba(139, 115, 85, 0.12);
             z-index: 10001;
-            width: auto;
-            max-width: calc(100% - 32px);
-            transform: translateY(-120%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            margin: 0 auto;
+            min-width: min(320px, 90vw);
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
         .notification.show {
-            transform: translateY(0);
+            transform: translateX(0);
         }
         
         .notification.success {
-            border-right: 4px solid var(--success-color);
+            border-right: 5px solid var(--success-color);
         }
         
         .notification.error {
-            border-right: 4px solid var(--error-color);
+            border-right: 5px solid var(--error-color);
         }
         
         .notification-content {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
         }
         
         .notification-icon {
-            font-size: 18px;
-            flex-shrink: 0;
+            font-size: 24px;
         }
         
         .notification.success .notification-icon {
@@ -787,15 +821,13 @@
         
         .notification-text {
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.9rem;
-            word-break: break-word;
-            flex: 1;
+            font-size: 1.05rem;
         }
         
         @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(40px);
             }
             to {
                 opacity: 1;
@@ -803,86 +835,27 @@
             }
         }
         
-        @media (max-width: 360px) {
-            :root {
-                --navbar-height: 60px;
-            }
-            
-            .logo {
-                font-size: 24px;
-            }
-            
-            .coins-display {
-                padding: 6px 12px;
-                font-size: 12px;
-            }
-            
-            .upload-icon {
-                font-size: 36px;
-            }
-            
-            .section-title {
-                font-size: 1.2rem;
-            }
-            
-            .page-content {
-                padding: 16px 12px;
-                font-size: 14px;
-            }
-            
-            .code-block {
-                padding: 12px;
-            }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-paper { padding: 30px 25px; }
+            .zoom-controls { justify-content: center; }
+            .translation-header { flex-direction: column; align-items: center; }
         }
         
-        @media (min-width: 768px) {
-            .main-content {
-                padding-left: 20px;
-                padding-right: 20px;
-                max-width: 1200px;
-            }
-            
-            .cost-actions {
-                flex-direction: row;
-            }
-            
-            .result-header {
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-            }
-            
-            .result-toolbar {
-                width: auto;
-            }
-            
-            .page-header {
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-            }
-            
-            .code-header {
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-            }
-            
-            .notification {
-                left: auto;
-                right: 20px;
-                width: 320px;
-            }
+        @media (max-width: 480px) {
+            .page-paper { padding: 20px 15px; }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
     <div class="loading-screen" id="loading-screen" style="display: none;">
         <div class="loading-logo">عون</div>
         <div class="loading-spinner"></div>
         <div class="loading-text" id="loading-text">جاري التحميل...</div>
     </div>
     
+    <!-- Notification -->
     <div class="notification" id="notification">
         <div class="notification-content">
             <div class="notification-icon" id="notification-icon">
@@ -892,8 +865,9 @@
         </div>
     </div>
     
+    <!-- Navbar -->
     <nav class="native-navbar" id="navbar">
-        <div class="logo" id="home-logo" onclick="reloadPage()">عون</div>
+        <div class="logo" id="home-logo">عون</div>
         <div class="nav-left">
             <div class="coins-display">
                 <i class="fas fa-coins"></i>
@@ -902,12 +876,14 @@
         </div>
     </nav>
     
+    <!-- Main Content -->
     <div class="main-content" id="main-content">
+        <!-- ===== Upload Section ===== -->
         <section class="upload-section" id="upload-section">
-            <h1 class="section-title">خدمة ترجمة PDF</h1>
-            <p class="section-subtitle">ارفع ملف PDF الخاص بك واحصل على ترجمة كاملة بدقة عالية</p>
+            <h1 class="section-title">ترجمة ملفات PDF</h1>
+            <p class="section-subtitle">ارفع ملف PDF وسيقوم عون بترجمته كاملاً مع الحفاظ على التنسيق</p>
             
-            <div class="upload-area" id="upload-area" onclick="document.getElementById('pdfFile').click()">
+            <div class="upload-area" id="upload-area">
                 <div class="upload-icon">
                     <i class="fas fa-file-pdf"></i>
                 </div>
@@ -918,75 +894,103 @@
             <input type="file" id="pdfFile" accept=".pdf" style="display: none;">
             
             <div class="cost-preview" id="cost-preview">
-                <h3 class="cost-title">تفاصيل التكلفة</h3>
+                <h3 class="cost-title">تأكيد التكلفة</h3>
                 <div class="cost-details">
                     <div class="cost-item">
                         <div class="cost-label">عدد الصفحات</div>
                         <div class="cost-value" id="page-count">0</div>
                     </div>
                     <div class="cost-item">
-                        <div class="cost-label">التكلفة</div>
+                        <div class="cost-label">تكلفة الخدمة</div>
                         <div class="cost-value" id="cost-amount">0 عملة</div>
                     </div>
                 </div>
                 <div class="cost-actions">
-                    <button class="action-btn cancel-btn" onclick="cancelProcess()">
-                        <i class="fas fa-times"></i>
-                        إلغاء
+                    <button class="action-btn cancel-btn" id="cancel-btn">
+                        <i class="fas fa-times"></i> إلغاء
                     </button>
-                    <button class="action-btn confirm-btn" onclick="confirmProcess()">
-                        <i class="fas fa-check"></i>
-                        متابعة
+                    <button class="action-btn confirm-btn" id="confirm-btn">
+                        <i class="fas fa-check"></i> متابعة
                     </button>
                 </div>
             </div>
         </section>
         
+        <!-- ===== Language Selection Section ===== -->
         <section class="language-section" id="language-section">
             <h2 class="section-title">اختر لغة الترجمة</h2>
-            <p class="section-subtitle">اختر اللغة التي تريد الترجمة إليها</p>
+            <p class="section-subtitle">اختر اللغة التي تريد ترجمة المستند إليها</p>
             
-            <div class="language-input-container">
-                <input type="text" class="language-input" id="language-input" placeholder="انقر لاختيار اللغة" readonly>
-                <div class="languages-dropdown" id="languages-dropdown"></div>
+            <div class="language-selector">
+                <div class="selector-header">
+                    <i class="fas fa-language"></i>
+                    <span>لغة الترجمة</span>
+                </div>
+                
+                <div class="selected-language-box" id="selected-language-box">
+                    <span class="selected-language-text" id="selected-language-text">الإنجليزية</span>
+                    <span class="dropdown-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                
+                <!-- جميع لغات العالم -->
+                <div class="languages-dropdown" id="languages-dropdown">
+                    <div class="language-option" data-lang="الإنجليزية"><i class="fas fa-globe"></i> الإنجليزية</div>
+                    <div class="language-option" data-lang="الفرنسية"><i class="fas fa-globe"></i> الفرنسية</div>
+                    <div class="language-option" data-lang="الألمانية"><i class="fas fa-globe"></i> الألمانية</div>
+                    <div class="language-option" data-lang="الإسبانية"><i class="fas fa-globe"></i> الإسبانية</div>
+                    <div class="language-option" data-lang="الإيطالية"><i class="fas fa-globe"></i> الإيطالية</div>
+                    <div class="language-option" data-lang="البرتغالية"><i class="fas fa-globe"></i> البرتغالية</div>
+                    <div class="language-option" data-lang="الروسية"><i class="fas fa-globe"></i> الروسية</div>
+                    <div class="language-option" data-lang="الصينية"><i class="fas fa-globe"></i> الصينية</div>
+                    <div class="language-option" data-lang="اليابانية"><i class="fas fa-globe"></i> اليابانية</div>
+                    <div class="language-option" data-lang="الكورية"><i class="fas fa-globe"></i> الكورية</div>
+                    <div class="language-option" data-lang="التركية"><i class="fas fa-globe"></i> التركية</div>
+                    <div class="language-option" data-lang="الهندية"><i class="fas fa-globe"></i> الهندية</div>
+                    <div class="language-option" data-lang="الأردية"><i class="fas fa-globe"></i> الأردية</div>
+                    <div class="language-option" data-lang="السواحلية"><i class="fas fa-globe"></i> السواحلية</div>
+                    <div class="language-option" data-lang="الهولندية"><i class="fas fa-globe"></i> الهولندية</div>
+                    <div class="language-option" data-lang="اليونانية"><i class="fas fa-globe"></i> اليونانية</div>
+                    <div class="language-option" data-lang="العبرية"><i class="fas fa-globe"></i> العبرية</div>
+                    <div class="language-option" data-lang="الفارسية"><i class="fas fa-globe"></i> الفارسية</div>
+                    <div class="language-option" data-lang="السويدية"><i class="fas fa-globe"></i> السويدية</div>
+                    <div class="language-option" data-lang="النرويجية"><i class="fas fa-globe"></i> النرويجية</div>
+                    <div class="language-option" data-lang="الدنماركية"><i class="fas fa-globe"></i> الدنماركية</div>
+                    <div class="language-option" data-lang="البولندية"><i class="fas fa-globe"></i> البولندية</div>
+                    <div class="language-option" data-lang="التايلندية"><i class="fas fa-globe"></i> التايلندية</div>
+                    <div class="language-option" data-lang="الفيتنامية"><i class="fas fa-globe"></i> الفيتنامية</div>
+                </div>
+                
+                <button class="translate-btn" id="translate-btn" disabled>
+                    <i class="fas fa-robot"></i> ترجمة المستند
+                </button>
+            </div>
+        </section>
+        
+        <!-- ===== Translation Display Section (Pages) ===== -->
+        <section class="translation-section" id="translation-section">
+            <div class="translation-header">
+                <h2 class="translation-title">📄 المستند المترجم</h2>
+                <div class="zoom-controls">
+                    <button class="zoom-btn" id="zoom-out"><i class="fas fa-search-minus"></i></button>
+                    <span class="zoom-level" id="zoom-level">100%</span>
+                    <button class="zoom-btn" id="zoom-in"><i class="fas fa-search-plus"></i></button>
+                </div>
             </div>
             
-            <div class="processing-info">
-                <p style="font-family: 'Tajawal'; color: var(--text-secondary); margin-bottom: 8px;">
-                    <i class="fas fa-clock"></i>
-                    الترجمة قد تستغرق بضع دقائق
-                </p>
-                <p style="font-family: 'Tajawal'; font-size: 0.85rem; color: var(--text-secondary);">
-                    سيتم ترجمة جميع الصفحات بدقة عالية مع الحفاظ على التنسيق
-                </p>
+            <div id="pages-container" class="pages-container">
+                <!-- سيتم إنشاء الأوراق ديناميكياً -->
             </div>
             
-            <button class="translate-btn" id="translate-btn" onclick="startTranslation()">
-                <i class="fas fa-language"></i>
-                بدء الترجمة
+            <button class="exit-btn" id="exit-btn">
+                <i class="fas fa-home"></i> الصفحة الرئيسية
             </button>
         </section>
         
-        <section class="result-section" id="result-section">
-            <div class="result-header">
-                <h2 class="result-title" id="result-title">الترجمة</h2>
-                <div class="result-toolbar">
-                    <div class="font-controls-result">
-                        <button class="font-btn" onclick="changeFontSize('decrease')">-</button>
-                        <span style="font-weight: 600; color: var(--accent-primary); padding: 0 6px; font-size: 0.9rem;">حجم الخط</span>
-                        <button class="font-btn" onclick="changeFontSize('increase')">+</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="pages-container" id="pages-container"></div>
-        </section>
-        
-        <footer class="footer">
-            <p class="copyright">جميع الحقوق محفوظة لمنصة عون © 2026</p>
-            
+        <!-- Footer -->
+        <footer class="footer" id="footer">
+            <p class="copyright">جميع الحقوق محفوظة لمنصة عون© 2026</p>
             <div class="support-section">
-                <div class="support-title">الدعم الفني</div>
+                <div class="support-title">تواصل مع الدعم الفني</div>
                 <div class="support-links">
                     <a href="https://wa.me/966583617539" target="_blank" class="support-link">
                         <i class="fab fa-whatsapp"></i>
@@ -996,16 +1000,17 @@
                     </a>
                 </div>
             </div>
-            
-            <div class="developer-credit" onclick="window.open('https://t.me/X5Coder', '_blank')">
-                برمجة المطور 𝐊𝐈𝐌𝐎
+            <div class="developer-credit">
+                برمجة وتصميم المطور 𝐊𝐈𝐌𝐎
             </div>
         </footer>
     </div>
     
     <script>
+        // ========== إعدادات PDF.js ==========
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         
+        // ========== تهيئة Firebase (نفس الإعدادات) ==========
         firebase.initializeApp({
             apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
             authDomain: "marvel1-654dd.firebaseapp.com",
@@ -1019,467 +1024,644 @@
         const auth = firebase.auth();
         const database = firebase.database();
         
+        // ========== المتغيرات العامة ==========
         let currentUser = null;
         let userCoins = 0;
         let selectedFile = null;
-        let fileInfo = { name: '', size: 0, pages: 0, words: 0, cost: 0, finalCost: 0 };
-        let selectedLanguage = '';
+        let fileInfo = {
+            name: '',
+            size: 0,
+            pages: 0,
+            words: 0,
+            baseCost: 0,
+            finalCost: 0
+        };
         
-        const languages = [
-            "الإنجليزية", "العربية", "الإسبانية", "الفرنسية", "الألمانية", "الصينية", "اليابانية", "الكورية",
-            "الروسية", "البرتغالية", "الإيطالية", "الهولندية", "التركية", "الفارسية", "الأردية", "الهندية"
-        ];
+        let translationData = null;
+        let currentZoom = 100;
+        let selectedLanguage = 'الإنجليزية'; // اللغة الافتراضية
         
+        // إعدادات السيرفر (نفس الطريقة)
         const SERVER = "https://wet-aidan-kimon-66eadaf6.koyeb.app";
         const ID = "12345";
         const PASS = "12345abcde57";
         
-        let currentFontSize = 16;
-        const minFontSize = 12;
-        const maxFontSize = 22;
-        
+        // ========== الوظائف الأساسية ==========
         function reloadPage() { location.reload(); }
         
         function showNotification(message, type = 'info') {
-            const n = document.getElementById('notification');
-            const i = document.getElementById('notification-icon');
-            const t = document.getElementById('notification-text');
-            t.textContent = message;
-            n.className = 'notification';
-            if(type === 'success') { n.classList.add('success'); i.innerHTML = '<i class="fas fa-check-circle"></i>'; }
-            else if(type === 'error') { n.classList.add('error'); i.innerHTML = '<i class="fas fa-exclamation-circle"></i>'; }
-            else { i.innerHTML = '<i class="fas fa-info-circle"></i>'; }
-            n.classList.add('show');
-            setTimeout(() => n.classList.remove('show'), 3000);
+            const notification = document.getElementById('notification');
+            const notificationIcon = document.getElementById('notification-icon');
+            const notificationText = document.getElementById('notification-text');
+            
+            notificationText.textContent = message;
+            notification.className = 'notification';
+            
+            if (type === 'success') {
+                notification.classList.add('success');
+                notificationIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            } else if (type === 'error') {
+                notification.classList.add('error');
+                notificationIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+            } else {
+                notificationIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
+            }
+            
+            notification.classList.add('show');
+            setTimeout(() => notification.classList.remove('show'), 3500);
         }
         
-        function changeFontSize(a) {
-            const c = document.querySelectorAll('.page-content');
-            if(a === 'increase' && currentFontSize < maxFontSize) currentFontSize += 1;
-            else if(a === 'decrease' && currentFontSize > minFontSize) currentFontSize -= 1;
-            c.forEach(e => { e.style.fontSize = currentFontSize + 'px'; adjustPageHeight(e.closest('.page-wrapper')); });
+        function showLoading(text = 'جاري التحميل...') {
+            const loadingScreen = document.getElementById('loading-screen');
+            document.getElementById('loading-text').textContent = text;
+            loadingScreen.style.display = 'flex';
+            setTimeout(() => loadingScreen.style.opacity = '1', 10);
         }
         
-        function adjustPageHeight(w) { if(!w) return; const c = w.querySelector('.page-content'); if(c) w.style.minHeight = (c.scrollHeight + 40) + 'px'; }
+        function hideLoading() {
+            const loadingScreen = document.getElementById('loading-screen');
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => loadingScreen.style.display = 'none', 300);
+        }
         
+        function hideFooter() { document.getElementById('footer').classList.add('hidden'); }
+        function showFooter() { document.getElementById('footer').classList.remove('hidden'); }
+        
+        // ========== تحميل بيانات المستخدم ==========
         async function loadUserData() {
-            const user = auth.currentUser;
-            if(!user) { window.location.replace('login.html'); return; }
-            const snapshot = await database.ref('users_Awn').once('value');
-            if(snapshot.exists()) {
-                const users = snapshot.val();
-                for(const [id, d] of Object.entries(users)) {
-                    if(id !== 'noty_publick' && d.email === user.email) {
-                        currentUser = { id, email: d.email, name: d.name || '', coin: d.coin || 0, admin: d.admin === true, banned: d.banned === true };
-                        userCoins = d.coin || 0;
-                        document.getElementById('coins-count').textContent = userCoins;
-                        return;
+            try {
+                const user = auth.currentUser;
+                if (!user) { window.location.replace('login.html'); return; }
+                
+                const usersRef = database.ref('users_Awn');
+                const snapshot = await usersRef.once('value');
+                
+                if (snapshot.exists()) {
+                    for (const [userId, userData] of Object.entries(snapshot.val())) {
+                        if (userId !== 'noty_publick' && userData.email === user.email) {
+                            currentUser = {
+                                id: userId,
+                                email: userData.email,
+                                name: userData.name || '',
+                                coin: userData.coin || 0,
+                                banned: userData.banned === true
+                            };
+                            userCoins = userData.coin || 0;
+                            document.getElementById('coins-count').textContent = userCoins;
+                            return;
+                        }
                     }
                 }
+                await auth.signOut();
+                window.location.replace('login.html');
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                window.location.replace('login.html');
             }
-            await auth.signOut();
-            window.location.replace('login.html');
         }
         
-        async function setupUser() {
-            await loadUserData();
-            if(!currentUser || currentUser.banned) window.location.replace('login.html');
-        }
-        
+        // ========== إدارة رفع الملف ==========
         function setupFileUpload() {
-            const i = document.getElementById('pdfFile');
-            const a = document.getElementById('upload-area');
-            if(i) i.addEventListener('change', handleFileSelect);
-            if(a) { a.addEventListener('dragover', (e) => { e.preventDefault(); a.style.borderColor = 'var(--accent-primary)'; a.style.backgroundColor = 'rgba(139,115,85,0.1)'; }); a.addEventListener('drop', handleDrop); }
+            const pdfFile = document.getElementById('pdfFile');
+            const uploadArea = document.getElementById('upload-area');
+            const confirmBtn = document.getElementById('confirm-btn');
+            const cancelBtn = document.getElementById('cancel-btn');
+            
+            pdfFile.addEventListener('change', (e) => handleFile(e.target.files[0]));
+            uploadArea.addEventListener('click', () => pdfFile.click());
+            uploadArea.addEventListener('dragover', (e) => e.preventDefault());
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                handleFile(e.dataTransfer.files[0]);
+            });
+            
+            confirmBtn.addEventListener('click', confirmProcess);
+            cancelBtn.addEventListener('click', cancelProcess);
         }
-        
-        async function handleDrop(e) { e.preventDefault(); const f = e.dataTransfer.files; if(f.length > 0) await handleFile(f[0]); }
-        async function handleFileSelect(e) { const f = e.target.files[0]; if(f) await handleFile(f); }
         
         async function handleFile(file) {
-            if(!file.name.toLowerCase().endsWith('.pdf')) { showNotification('الرجاء رفع ملف PDF', 'error'); resetFileInput(); return; }
+            if (!file || !file.name.toLowerCase().endsWith('.pdf')) {
+                showNotification('الرجاء رفع ملف PDF فقط', 'error');
+                return;
+            }
+            
             selectedFile = file;
             document.getElementById('upload-text').textContent = file.name;
-            document.getElementById('upload-area').style.borderColor = 'var(--accent-primary)';
-            document.getElementById('upload-area').style.backgroundColor = 'rgba(212,165,116,0.1)';
             await analyzePDF(file);
         }
         
         async function analyzePDF(file) {
+            showLoading('عون يحلل الملف...');
             try {
-                showLoading('عون يحلل الملف...');
                 const buffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument(buffer).promise;
+                
                 let totalWords = 0;
-                for(let i = 1; i <= pdf.numPages; i++) {
+                for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const content = await page.getTextContent();
-                    if(content.items.length > 0) {
-                        let text = '';
-                        content.items.forEach(t => text += t.str + ' ');
-                        totalWords += text.trim().split(/\s+/).filter(w => w.length >= 2).length;
-                    } else totalWords += 250;
+                    let text = content.items.map(t => t.str).join(' ');
+                    totalWords += text.split(/\s+/).filter(w => w.length >= 2).length;
                 }
-                let coins = Math.ceil((totalWords / 1000) * 2) / 2;
-                if(coins < 1) coins = 1;
-                coins = Math.round(coins * 10) / 10;
-                fileInfo = { name: file.name, size: file.size, pages: pdf.numPages, words: totalWords, cost: coins, finalCost: coins * 2 };
-                hideLoading();
+                
+                let base = Math.ceil((totalWords / 1000) * 2) / 2;
+                if (base < 1) base = 1;
+                
+                // ⭐ التكلفة النهائية = ضعف السعر الأساسي (يظهر للمستخدم فقط السعر النهائي)
+                fileInfo = {
+                    name: file.name,
+                    pages: pdf.numPages,
+                    words: totalWords,
+                    baseCost: base,
+                    finalCost: base * 2
+                };
+                
                 document.getElementById('page-count').textContent = fileInfo.pages;
                 document.getElementById('cost-amount').textContent = fileInfo.finalCost + ' عملة';
                 document.getElementById('cost-preview').classList.add('show');
-                showNotification('تم تحليل الملف', 'success');
-            } catch(e) { hideLoading(); showNotification('خطأ في تحليل الملف', 'error'); resetFileInput(); }
+                hideLoading();
+                showNotification(`تم تحليل الملف، التكلفة: ${fileInfo.finalCost} عملة`, 'success');
+                
+            } catch (error) {
+                hideLoading();
+                showNotification('حدث خطأ أثناء تحليل الملف', 'error');
+                console.error(error);
+            }
         }
         
-        function resetFileInput() {
+        function cancelProcess() {
             document.getElementById('pdfFile').value = '';
             selectedFile = null;
             document.getElementById('upload-text').textContent = 'انقر لرفع ملف PDF';
-            const a = document.getElementById('upload-area');
-            a.style.borderColor = ''; a.style.backgroundColor = '';
             document.getElementById('cost-preview').classList.remove('show');
         }
         
-        function cancelProcess() { resetFileInput(); showNotification('تم الإلغاء', 'info'); }
-        
         function confirmProcess() {
-            if(!fileInfo.finalCost || userCoins < fileInfo.finalCost) { showNotification('رصيد غير كاف', 'error'); return; }
+            if (!selectedFile) {
+                showNotification('الرجاء اختيار ملف أولاً', 'error');
+                return;
+            }
+            
+            if (userCoins < fileInfo.finalCost) {
+                showNotification(`رصيدك غير كافٍ. تحتاج ${fileInfo.finalCost} عملة`, 'error');
+                return;
+            }
+            
+            // إخفاء قسم الرفع وإظهار قسم اختيار اللغة
             document.getElementById('upload-section').style.display = 'none';
             document.getElementById('language-section').classList.add('show');
             document.getElementById('cost-preview').classList.remove('show');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showNotification('الرجاء اختيار لغة الترجمة', 'info');
         }
         
-        function setupLanguageSelection() {
-            const i = document.getElementById('language-input');
-            const d = document.getElementById('languages-dropdown');
-            i.addEventListener('click', () => { d.classList.toggle('show'); populateLanguages(); });
-            document.addEventListener('click', (e) => { if(!i.contains(e.target) && !d.contains(e.target)) d.classList.remove('show'); });
-        }
-        
-        function populateLanguages() {
-            const d = document.getElementById('languages-dropdown');
-            d.innerHTML = '';
-            languages.forEach(l => {
-                const o = document.createElement('div');
-                o.className = 'language-option';
-                o.textContent = l;
-                o.onclick = () => { selectLanguage(l); };
-                d.appendChild(o);
-            });
-        }
-        
-        function selectLanguage(l) {
-            selectedLanguage = l;
-            document.getElementById('language-input').value = l;
-            document.getElementById('languages-dropdown').classList.remove('show');
-            showNotification(`تم اختيار ${l}`, 'success');
-        }
-        
-        function createPrompt() {
-            return `SYSTEM MODE: CONTROLLED EXECUTION ENGINE
-
-You are a non-conversational processing engine.
-You execute tasks only.
-
-PRIORITY RULE:
-You MUST strictly follow the output schema.
-You MUST NOT add explanations.
-You MUST NOT add comments.
-You MUST NOT add confirmations.
-You MUST NOT say "Sure", "Here is", or anything else.
-You MUST return JSON ONLY.
-If you output anything outside JSON → it is considered FAILURE.
-
-====================================================
-TASK: FULL PDF TRANSLATION ENGINE
-====================================================
-
-INPUT:
-- A PDF file.
-- ONE required parameter:
-  target_language = ${selectedLanguage}
-
-If "target_language" is missing, null, empty, or undefined:
-Return exactly:
-ERROR
-
-No extra text.
-
-====================================================
-CORE BEHAVIOR RULES
-====================================================
-
-1) You MUST read and fully analyze the entire PDF before generating output.
-
-2) You MUST detect:
-   - Total number of pages.
-   - Original language of the document.
-
-3) You MUST translate:
-   - EVERY word.
-   - EVERY sentence.
-   - EVERY paragraph.
-   - WITHOUT summarizing.
-   - WITHOUT skipping.
-   - WITHOUT compressing.
-   - WITHOUT losing formatting meaning.
-
-4) You MUST preserve:
-   - Line breaks.
-   - Paragraph spacing.
-   - Bullet structures.
-   - Symbols.
-   - Layout structure in text form.
-   - Sequence of lines exactly as they appear.
-
-5) If a page contains:
-   - Images with text → Extract and translate the text.
-   - Scanned content → Perform OCR and translate.
-   - Mixed content → Translate textual parts only.
-   - Code blocks → DO NOT translate code.
-
-6) Code Handling Rule:
-   Any detected programming code MUST remain EXACTLY as original.
-   It MUST be returned wrapped like this:
-   \`\`\`code_here_exactly_as_original\`\`
-
-7) If a sentence appears important or looks like a title,
-   wrap it using exactly:
-   **Important Sentence Here**
-
-8) You MUST translate into the exact "target_language" specified.
-   No fallback language allowed.
-
-====================================================
-ERROR HANDLING
-====================================================
-
-Return exactly:
-ERROR
-
-ONLY IF:
-- The file is empty.
-- The file is corrupted.
-- The file cannot be parsed.
-- The content is unreadable nonsense.
-- target_language is missing.
-
-No explanation.
-No extra characters.
-
-====================================================
-OUTPUT FORMAT (STRICT JSON ONLY)
-====================================================
-
-{
-  "pages": <number_of_pages>,
-  "language": "<detected_original_language>",
-  "translation": "<target_language>",
-  "page1": "<fully translated content preserving structure>",
-  "page2": "<fully translated content preserving structure>",
-  "page3": "<fully translated content preserving structure>"
-}
-
-Continue dynamically:
-page4 ...
-page5 ...
-Until ALL pages are translated.
-
-Rules:
-- Keys must be sequential.
-- No missing pages.
-- No extra keys.
-- No comments.
-- No markdown.
-- No text outside JSON.
-- No trailing commas.
-- Valid JSON only.
-
-====================================================
-ABSOLUTE RESTRICTION
-====================================================
-
-You are NOT allowed to:
-- Explain anything.
-- Apologize.
-- Add notes.
-- Add warnings.
-- Add metadata.
-- Add formatting outside JSON.
-- Add \`\`\`json fences.
-- Add text before or after JSON.
-
-Return JSON ONLY.
-Execution only.`;
-        }
-        
-        async function startTranslation() {
-            if(!selectedFile) { showNotification('اختر ملف PDF', 'error'); return; }
-            if(!selectedLanguage) { showNotification('اختر لغة', 'error'); return; }
-            if(userCoins < fileInfo.finalCost) { showNotification('رصيد غير كاف', 'error'); return; }
+        // ========== اختيار اللغة ==========
+        function setupLanguageSelector() {
+            const box = document.getElementById('selected-language-box');
+            const dropdown = document.getElementById('languages-dropdown');
+            const selectedText = document.getElementById('selected-language-text');
+            const translateBtn = document.getElementById('translate-btn');
             
-            const btn = document.getElementById('translate-btn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الترجمة...';
+            box.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+            
+            document.querySelectorAll('.language-option').forEach(opt => {
+                opt.addEventListener('click', function() {
+                    selectedLanguage = this.getAttribute('data-lang');
+                    selectedText.textContent = selectedLanguage;
+                    dropdown.classList.remove('show');
+                    translateBtn.disabled = false;
+                });
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!box.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+            
+            document.getElementById('translate-btn').addEventListener('click', startTranslation);
+        }
+        
+        // ========== بدء الترجمة (نفس طريقة الإرسال مع البرومت الكامل) ==========
+        async function startTranslation() {
+            if (!selectedFile) return;
+            
+            const translateBtn = document.getElementById('translate-btn');
+            translateBtn.disabled = true;
+            translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الترجمة...';
+            
+            hideFooter();
             
             try {
-                showLoading('عون يترجم...');
+                // 1. خصم العملات
+                await deductCoins(fileInfo.finalCost);
                 
-                const base64 = await new Promise((r, j) => {
-                    const reader = new FileReader();
-                    reader.onload = () => r(reader.result.split(',')[1]);
-                    reader.onerror = j;
-                    reader.readAsDataURL(selectedFile);
-                });
+                // 2. رسائل التحضير (عون يحلل، عون يترجم...)
+                showLoading('عون يحلل المستند...');
+                await delay(2000);
+                showLoading('عون يقرأ الصفحات...');
+                await delay(2000);
+                showLoading('عون يترجم... قد تستغرق الترجمة بضع دقائق');
+                await delay(2500);
                 
+                // 3. تحويل الملف إلى base64
+                const base64 = await fileToBase64(selectedFile);
+                
+                // ===== البرومت الكامل كما هو بدون أي تغيير =====
+                // المتغير الوحيد الذي يتغير هو لغة_الإخراج
+                const prompt = `ROLE:
+You are an AI specialized in **strict full-document PDF translation**.
+You must follow ALL instructions below with ZERO deviation.
+
+========================
+INPUT VARIABLE (MANDATORY):
+========================
+لغة_الإخراج = ${selectedLanguage}
+
+- This is the ONLY input variable.
+- It defines the target language for translation.
+- If not provided → RETURN ERROR.
+
+========================
+CORE PROCESSING RULES (STRICT & MANDATORY):
+========================
+0. BEFORE generating ANY output you MUST:
+   - Fully ingest, parse, and reconstruct the ENTIRE PDF.
+   - Process FROM the first character of page 1 TO the last character of the final page.
+   - Treat the document as ATOMIC (fully processed or invalid).
+   - Detect total number of pages.
+
+1. Full translation requirement:
+   - You MUST translate EVERY word, sentence, and paragraph.
+   - ZERO data loss allowed.
+   - This is NOT summarization.
+   - Do NOT omit, compress, or rephrase meaning.
+   - Preserve the original structure exactly.
+
+2. Layout preservation:
+   - Maintain:
+     * Line breaks
+     * Paragraph spacing
+     * Bullet structures
+     * Numbering
+     * Tables (text format)
+   - Output must visually mirror the original layout.
+
+3. Code handling:
+   - If code blocks are detected:
+     * DO NOT translate code.
+     * Return code EXACTLY as it is.
+     * Wrap it using triple backticks:
+       \`\`\` 
+       code here
+       \`\`\`
+   - Never alter variable names or syntax.
+
+4. Image handling:
+   - If the PDF contains images with text:
+     * Perform OCR internally.
+     * Translate detected text.
+     * Preserve positioning logically within the page content.
+
+5. Highlight rule:
+   - If a title or clearly emphasized sentence exists,
+     you MAY wrap it with:
+     **Highlighted Sentence**
+   - Use exactly two asterisks only.
+   - Do not overuse highlighting.
+
+6. Language detection:
+   - Detect the original language automatically.
+   - Include it in output field "language".
+
+========================
+STRICT VALIDATION:
+========================
+- If لغة_الإخراج is missing or empty:
+  RETURN EXACTLY:
+  EROR
+
+- If the PDF is:
+  * Empty
+  * Corrupted
+  * Unreadable
+  * Contains meaningless characters only
+  RETURN EXACTLY:
+  EROR
+
+========================
+OUTPUT FORMAT (STRICT):
+========================
+- Output MUST be VALID JSON ONLY
+- No Markdown
+- No comments
+- No explanations
+- No extra text
+- No formatting outside JSON
+
+========================
+JSON STRUCTURE (MANDATORY):
+========================
+{
+  "page": 0,
+  "language": "",
+  "translation": "",
+  "page1": "",
+  "page2": "",
+  "page3": ""
+}
+
+========================
+OUTPUT RULES:
+========================
+- "page" = total number of pages in the PDF.
+- "language" = detected original language of the document.
+- "translation" = لغة_الإخراج selected by the user.
+- Generate dynamic keys:
+  page1, page2, page3 ... pageN
+  where N = total pages.
+
+- Each pageX must contain:
+  * Fully translated text of that page.
+  * Exact structural preservation.
+  * Code blocks unchanged.
+  * OCR text translated if images contain text.
+
+- Do NOT skip any page.
+- Do NOT merge pages.
+- Do NOT truncate content even if large.
+- Translate the ENTIRE document regardless of size.
+
+========================
+INTERNAL SELF-AUDIT (HIDDEN – MANDATORY):
+========================
+Before returning output verify:
+- Every page was processed.
+- No untranslated text remains (except code).
+- Layout consistency maintained.
+- Total pages count matches generated page keys.
+- No missing page index.
+
+========================
+ABSOLUTE CONSTRAINTS:
+========================
+- NEVER summarize.
+- NEVER shorten.
+- NEVER interpret.
+- NEVER modify code.
+- NEVER output partial result.
+- NEVER add commentary.
+- Output ONLY valid JSON or EROR.
+- Be strict, literal, deterministic.`;
+                
+                // 4. إرسال إلى السيرفر (نفس الطريقة)
                 const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ id: ID, pass: PASS, data: createPrompt(), PDF_BASE64: base64 })
+                    body: JSON.stringify({
+                        id: ID,
+                        pass: PASS,
+                        data: prompt,
+                        PDF_BASE64: base64
+                    })
                 });
                 
-                if(!response.ok) throw new Error('خطأ في السيرفر');
+                const text = await response.text();
+                hideLoading();
                 
-                const responseText = await response.text();
-                let result = null;
-                
-                try { result = JSON.parse(responseText); } 
-                catch(e) {
-                    const match = responseText.match(/\{[\s\S]*\}/);
-                    if(match) { try { result = JSON.parse(match[0]); } catch(e2) {} }
+                // 5. التحقق من الأخطاء
+                if (text.includes('EROR')) {
+                    throw new Error('الملف غير صالح أو غير قابل للقراءة');
                 }
                 
-                if(!result) throw new Error('رد غير صالح');
-                if(result === "ERROR" || result.error === "ERROR" || result.pages === "ERROR") throw new Error('الملف غير صالح');
-                
-                hideLoading();
-                
-                userCoins -= fileInfo.finalCost;
-                await database.ref(`users_Awn/${currentUser.id}/coin`).set(userCoins);
-                document.getElementById('coins-count').textContent = userCoins;
-                
-                const id = 'translation_' + Date.now();
-                await database.ref(`records/${id}`).set({
-                    id: currentUser.id, process: 'ترجمة', data: result,
-                    timestamp: Date.now(), fileName: fileInfo.name,
-                    cost: fileInfo.finalCost, pages: fileInfo.pages, language: selectedLanguage
-                });
-                
-                displayResult(result);
-                
-                document.getElementById('language-section').classList.remove('show');
-                document.getElementById('result-section').classList.add('show');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                showNotification('تمت الترجمة', 'success');
-                
-            } catch(e) {
-                hideLoading();
-                showNotification(e.message, 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-language"></i> بدء الترجمة';
-            }
-        }
-        
-        function formatContent(text) {
-            if(!text) return '';
-            let f = text.replace(/\*\*(.*?)\*\*/g, '<span class="highlighted-text">$1</span>');
-            const blocks = f.match(/```[\s\S]*?```/g);
-            if(blocks) {
-                blocks.forEach((b, i) => {
-                    const code = b.replace(/```/g, '').trim();
-                    const id = 'c' + Date.now() + i;
-                    const html = `<div class="code-block"><div class="code-header"><div class="code-label">كود</div><button class="copy-code-btn" onclick="copyCode('${id}')"><i class="far fa-copy"></i> نسخ</button></div><div class="code-content"><pre id="${id}">${escapeHtml(code)}</pre></div></div>`;
-                    f = f.replace(b, html);
-                });
-            }
-            return f.replace(/\n/g, '<br>');
-        }
-        
-        function escapeHtml(t) {
-            return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-        
-        function copyCode(id) {
-            const e = document.getElementById(id);
-            if(e) navigator.clipboard.writeText(e.textContent).then(() => showNotification('تم النسخ', 'success'));
-        }
-        
-        function copyPageContent(n) {
-            const e = document.getElementById(`page-content-${n}`);
-            if(e) navigator.clipboard.writeText(e.textContent).then(() => showNotification(`تم نسخ صفحة ${n}`, 'success'));
-        }
-        
-        function displayResult(r) {
-            document.getElementById('result-title').textContent = `الترجمة إلى ${selectedLanguage}`;
-            const container = document.getElementById('pages-container');
-            container.innerHTML = '';
-            
-            let total = r.pages || 0;
-            if(total === 0) total = Object.keys(r).filter(k => k.startsWith('page') && k !== 'pages' && !isNaN(parseInt(k.replace('page', '')))).length;
-            
-            for(let i = 1; i <= total; i++) {
-                const key = `page${i}`;
-                let content = r[key] || '';
-                content = content.replace(/^[\s\n]+|[\s\n]+$/g, '').replace(/\n{3,}/g, '\n\n');
-                
-                const wrapper = document.createElement('div');
-                wrapper.className = 'page-wrapper';
-                wrapper.id = `page-${i}`;
-                wrapper.innerHTML = `
-                    <div class="page-header">
-                        <div class="page-number">صفحة ${i}</div>
-                        <button class="page-copy-btn" onclick="copyPageContent(${i})">
-                            <i class="far fa-copy"></i> نسخ
-                        </button>
-                    </div>
-                    <div class="page-content" id="page-content-${i}" style="font-size: ${currentFontSize}px;">
-                        ${formatContent(content)}
-                    </div>
-                `;
-                container.appendChild(wrapper);
-                setTimeout(() => adjustPageHeight(wrapper), 50);
-            }
-            
-            const info = document.createElement('div');
-            info.style.cssText = 'text-align: center; margin-top: 20px; padding: 16px; background: rgba(139,115,85,0.05); border-radius: var(--border-radius); width: 100%;';
-            info.innerHTML = `<p style="font-family: Tajawal; color: var(--text-secondary);"><i class="fas fa-info-circle"></i> تمت الترجمة من ${r.language || 'الأصلية'} إلى ${selectedLanguage}</p><p style="font-family: Tajawal; font-size: 0.85rem; color: var(--text-secondary); margin-top: 8px;">الصفحات: ${total} | التكلفة: ${fileInfo.finalCost} عملة</p>`;
-            container.appendChild(info);
-        }
-        
-        function showLoading(t = 'جاري التحميل...') {
-            const s = document.getElementById('loading-screen');
-            const l = document.getElementById('loading-text');
-            l.textContent = t;
-            s.style.display = 'flex';
-            setTimeout(() => s.style.opacity = '1', 10);
-        }
-        
-        function hideLoading() {
-            const s = document.getElementById('loading-screen');
-            s.style.opacity = '0';
-            setTimeout(() => s.style.display = 'none', 300);
-        }
-        
-        async function initApp() {
-            showLoading();
-            const u = auth.onAuthStateChanged(async (user) => {
-                if(!user) { hideLoading(); window.location.replace('login.html'); return; }
+                // 6. استخراج JSON
+                let json;
                 try {
-                    await setupUser();
-                    setupFileUpload();
-                    setupLanguageSelection();
-                    hideLoading();
-                } catch(e) { hideLoading(); showNotification('خطأ في التحميل', 'error'); }
-                setTimeout(() => u(), 100);
+                    const match = text.match(/\{[\s\S]*\}/);
+                    json = match ? JSON.parse(match[0]) : JSON.parse(text);
+                } catch (e) {
+                    console.error('JSON parse error:', e, 'Response:', text);
+                    throw new Error('استجابة غير صالحة من السيرفر');
+                }
+                
+                if (!json.page || json.page === 0) {
+                    throw new Error('لم يتم التعرف على صفحات الملف');
+                }
+                
+                translationData = json;
+                
+                // 7. حفظ النتيجة في Firebase (نفس طريقة الفلاش كارد)
+                await saveTranslationToDatabase(json);
+                
+                // 8. عرض صفحات الترجمة
+                displayTranslationPages(json);
+                
+                // 9. إخفاء قسم اللغة وإظهار قسم الترجمة
+                document.getElementById('language-section').classList.remove('show');
+                document.getElementById('translation-section').classList.add('show');
+                
+                showNotification('تمت الترجمة بنجاح!', 'success');
+                
+            } catch (error) {
+                hideLoading();
+                showNotification('فشلت الترجمة: ' + error.message, 'error');
+                console.error(error);
+                showFooter();
+            } finally {
+                translateBtn.disabled = false;
+                translateBtn.innerHTML = '<i class="fas fa-robot"></i> ترجمة المستند';
+            }
+        }
+        
+        // ========== دوال مساعدة ==========
+        function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+        
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
             });
         }
         
-        history.pushState(null, null, window.location.href);
-        window.addEventListener('popstate', () => history.pushState(null, null, window.location.href));
-        document.addEventListener('DOMContentLoaded', initApp);
+        async function deductCoins(amount) {
+            userCoins -= amount;
+            await database.ref(`users_Awn/${currentUser.id}/coin`).set(userCoins);
+            document.getElementById('coins-count').textContent = userCoins;
+        }
+        
+        async function saveTranslationToDatabase(data) {
+            try {
+                const recordId = 'translation_' + Date.now();
+                await database.ref(`records/${recordId}`).set({
+                    userId: currentUser.id,
+                    userName: currentUser.name || '',
+                    userEmail: currentUser.email,
+                    fileName: fileInfo.name,
+                    service: 'ترجمة PDF',
+                    targetLanguage: selectedLanguage,
+                    originalLanguage: data.language || 'غير معروف',
+                    pages: data.page,
+                    translationData: data,
+                    timestamp: Date.now(),
+                    cost: fileInfo.finalCost
+                });
+            } catch (error) {
+                console.error('Error saving to database:', error);
+            }
+        }
+        
+        // ========== عرض صفحات الترجمة ==========
+        function displayTranslationPages(data) {
+            const container = document.getElementById('pages-container');
+            container.innerHTML = '';
+            
+            const totalPages = data.page || Object.keys(data).filter(k => k.startsWith('page')).length;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                const pageKey = 'page' + i;
+                let pageText = data[pageKey] || '';
+                
+                const paper = document.createElement('div');
+                paper.className = 'page-paper';
+                paper.style.fontSize = currentZoom + '%';
+                
+                // رقم الصفحة
+                const label = document.createElement('div');
+                label.className = 'page-label';
+                label.innerHTML = `<i class="fas fa-file-alt"></i> صفحة ${i} من ${totalPages}`;
+                paper.appendChild(label);
+                
+                // محتوى الصفحة
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'page-content';
+                contentDiv.innerHTML = formatPageText(pageText);
+                
+                // إضافة أزرار نسخ للأكواد
+                attachCopyButtons(contentDiv);
+                
+                paper.appendChild(contentDiv);
+                container.appendChild(paper);
+            }
+            
+            // تفعيل highlight.js
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        }
+        
+        // معالجة النص: ** للنص المميز، ``` للكود
+        function formatPageText(text) {
+            if (!text) return '';
+            
+            // استبدال الكود بلوكات أولاً
+            let parts = text.split(/(```[\s\S]*?```)/g);
+            
+            for (let i = 0; i < parts.length; i++) {
+                if (parts[i].startsWith('```') && parts[i].endsWith('```')) {
+                    let codeContent = parts[i].slice(3, -3);
+                    codeContent = codeContent.replace(/^\s+/, '');
+                    let codeHtml = `<pre><code class="language-plaintext">${escapeHtml(codeContent)}</code></pre>`;
+                    parts[i] = codeHtml;
+                } else {
+                    // تحويل **نص** إلى <strong>
+                    let boldProcessed = parts[i].replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    parts[i] = boldProcessed.replace(/\n/g, '<br>');
+                }
+            }
+            return parts.join('');
+        }
+        
+        function escapeHtml(unsafe) {
+            return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+        
+        function attachCopyButtons(container) {
+            container.querySelectorAll('pre').forEach(pre => {
+                if (!pre.querySelector('.copy-code-btn')) {
+                    const btn = document.createElement('button');
+                    btn.className = 'copy-code-btn';
+                    btn.innerHTML = '<i class="fas fa-copy"></i> نسخ الكود';
+                    btn.onclick = function(e) {
+                        e.stopPropagation();
+                        const code = pre.querySelector('code')?.innerText || pre.innerText;
+                        navigator.clipboard.writeText(code).then(() => {
+                            showNotification('تم نسخ الكود', 'success');
+                        });
+                    };
+                    const header = document.createElement('div');
+                    header.className = 'code-header';
+                    header.appendChild(btn);
+                    pre.prepend(header);
+                }
+            });
+        }
+        
+        // ========== تكبير وتصغير ==========
+        function setupZoom() {
+            const zoomIn = document.getElementById('zoom-in');
+            const zoomOut = document.getElementById('zoom-out');
+            const zoomLevel = document.getElementById('zoom-level');
+            
+            zoomIn.addEventListener('click', () => {
+                currentZoom = Math.min(currentZoom + 10, 180);
+                zoomLevel.textContent = currentZoom + '%';
+                document.querySelectorAll('.page-paper').forEach(p => {
+                    p.style.fontSize = currentZoom + '%';
+                });
+            });
+            
+            zoomOut.addEventListener('click', () => {
+                currentZoom = Math.max(currentZoom - 10, 60);
+                zoomLevel.textContent = currentZoom + '%';
+                document.querySelectorAll('.page-paper').forEach(p => {
+                    p.style.fontSize = currentZoom + '%';
+                });
+            });
+        }
+        
+        // ========== تهيئة التطبيق ==========
+        async function initApp() {
+            showLoading('جاري تحميل البيانات...');
+            
+            auth.onAuthStateChanged(async (user) => {
+                if (!user) {
+                    hideLoading();
+                    window.location.replace('login.html');
+                    return;
+                }
+                
+                try {
+                    await loadUserData();
+                    
+                    if (currentUser?.banned) {
+                        await auth.signOut();
+                        window.location.replace('login.html');
+                        return;
+                    }
+                    
+                    setupFileUpload();
+                    setupLanguageSelector();
+                    setupZoom();
+                    
+                    document.getElementById('home-logo').addEventListener('click', reloadPage);
+                    document.getElementById('exit-btn').addEventListener('click', reloadPage);
+                    
+                    hideLoading();
+                    showFooter();
+                    
+                } catch (error) {
+                    console.error('Error initializing app:', error);
+                    hideLoading();
+                    showNotification('حدث خطأ في تحميل التطبيق', 'error');
+                }
+            });
+        }
+        
+        initApp();
     </script>
 </body>
 </html>
