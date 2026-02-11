@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -65,7 +64,6 @@
             padding-top: env(safe-area-inset-top);
         }
         
-        /* Loading Screen */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -113,7 +111,6 @@
             line-height: 1.6;
         }
         
-        /* Navbar */
         .native-navbar {
             position: fixed;
             top: 0;
@@ -141,10 +138,6 @@
             transition: var(--transition-smooth);
         }
         
-        .logo:hover {
-            transform: scale(1.05);
-        }
-        
         .nav-left {
             display: flex;
             align-items: center;
@@ -165,16 +158,6 @@
             transition: var(--transition-smooth);
         }
         
-        .coins-display:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
-        }
-        
-        .coins-display i {
-            font-size: 16px;
-        }
-        
-        /* Main Content */
         .main-content {
             padding-top: calc(var(--navbar-height) + 30px);
             padding-left: 20px;
@@ -185,7 +168,6 @@
             width: 100%;
         }
         
-        /* Upload Section */
         .upload-section {
             background: white;
             border-radius: var(--border-radius-large);
@@ -248,7 +230,6 @@
             font-style: italic;
         }
         
-        /* Cost Preview */
         .cost-preview {
             background: rgba(139, 115, 85, 0.05);
             border-radius: var(--border-radius);
@@ -332,12 +313,6 @@
             color: white;
         }
         
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-light);
-        }
-        
-        /* Language Selection Section */
         .language-section {
             background: white;
             border-radius: var(--border-radius-large);
@@ -407,10 +382,6 @@
             background: rgba(139, 115, 85, 0.05);
         }
         
-        .language-option:last-child {
-            border-bottom: none;
-        }
-        
         .translate-btn {
             background: linear-gradient(145deg, var(--accent-primary), var(--accent-secondary));
             color: white;
@@ -431,18 +402,11 @@
             gap: 10px;
         }
         
-        .translate-btn:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-medium);
-        }
-        
         .translate-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none !important;
         }
         
-        /* Result Section */
         .result-section {
             background: var(--bg-color);
             border-radius: var(--border-radius-large);
@@ -451,7 +415,6 @@
             display: none;
             animation: slideUp 0.4s ease-out;
             width: 100%;
-            min-height: auto;
         }
         
         .result-section.show {
@@ -507,12 +470,6 @@
             color: var(--accent-primary);
         }
         
-        .font-btn:hover {
-            background: var(--accent-primary);
-            color: white;
-            border-color: var(--accent-primary);
-        }
-        
         .pages-container {
             padding: 20px;
             display: flex;
@@ -529,7 +486,7 @@
             transition: all 0.3s ease;
             margin: 0 auto;
             width: 100%;
-            max-width: 210mm; /* A4 width */
+            max-width: 210mm;
             min-height: auto;
             border: 1px solid rgba(139, 115, 85, 0.1);
         }
@@ -563,11 +520,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-        
-        .page-copy-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
         }
         
         .page-content {
@@ -636,17 +588,11 @@
             gap: 5px;
         }
         
-        .copy-code-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-1px);
-        }
-        
         .code-content {
             overflow-x: auto;
             padding: 10px 0;
         }
         
-        /* Footer */
         .footer {
             text-align: center;
             padding: 40px 20px;
@@ -726,7 +672,6 @@
             color: var(--accent-primary);
         }
         
-        /* Notification */
         .notification {
             position: fixed;
             top: 90px;
@@ -777,7 +722,6 @@
             font-size: 0.95rem;
         }
         
-        /* Animations */
         @keyframes slideUp {
             from {
                 opacity: 0;
@@ -786,17 +730,6 @@
             to {
                 opacity: 1;
                 transform: translateY(0);
-            }
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .main-content {
-                max-width: 100%;
-            }
-            
-            .page-wrapper {
-                max-width: 100%;
             }
         }
         
@@ -826,38 +759,6 @@
                 font-size: 1.5rem;
             }
             
-            .upload-section, .language-section, .result-section {
-                padding: 24px 16px;
-                margin-left: 0;
-                margin-right: 0;
-            }
-            
-            .upload-area {
-                padding: 30px 16px;
-            }
-            
-            .cost-details {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .cost-item {
-                min-width: 100%;
-            }
-            
-            .cost-actions {
-                flex-direction: column;
-            }
-            
-            .action-btn {
-                min-width: 100%;
-            }
-            
-            .translate-btn {
-                min-width: 100%;
-                padding: 14px 24px;
-            }
-            
             .result-header {
                 flex-direction: column;
                 gap: 15px;
@@ -865,28 +766,11 @@
                 padding: 16px;
             }
             
-            .result-title {
-                font-size: 1.3rem;
-            }
-            
-            .result-toolbar {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .pages-container {
-                padding: 10px;
-            }
-            
             .page-header {
                 padding: 12px 20px;
                 flex-direction: column;
                 gap: 10px;
                 align-items: flex-start;
-            }
-            
-            .page-content {
-                padding: 20px;
             }
             
             .notification {
@@ -911,72 +795,19 @@
                 font-size: 1.3rem;
             }
             
-            .section-subtitle {
-                font-size: 0.95rem;
-            }
-            
-            .upload-icon {
-                font-size: 40px;
-            }
-            
-            .translate-btn {
-                padding: 12px 20px;
-                font-size: 1rem;
-            }
-            
-            .font-btn {
-                width: 28px;
-                height: 28px;
-                font-size: 14px;
-            }
-            
             .page-content {
                 padding: 16px;
-            }
-            
-            .support-links {
-                gap: 12px;
-            }
-            
-            .support-link {
-                width: 44px;
-                height: 44px;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .logo {
-                font-size: 22px;
-            }
-            
-            .coins-display {
-                padding: 5px 10px;
-                font-size: 11px;
-            }
-            
-            .section-title {
-                font-size: 1.2rem;
-            }
-            
-            .upload-icon {
-                font-size: 36px;
-            }
-            
-            .upload-text {
-                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
     <div class="loading-screen" id="loading-screen" style="display: none;">
         <div class="loading-logo">عون</div>
         <div class="loading-spinner"></div>
         <div class="loading-text" id="loading-text">جاري التحميل...</div>
     </div>
     
-    <!-- Notification -->
     <div class="notification" id="notification">
         <div class="notification-content">
             <div class="notification-icon" id="notification-icon">
@@ -986,7 +817,6 @@
         </div>
     </div>
     
-    <!-- Navbar -->
     <nav class="native-navbar" id="navbar">
         <div class="logo" id="home-logo" onclick="reloadPage()">عون</div>
         <div class="nav-left">
@@ -997,9 +827,7 @@
         </div>
     </nav>
     
-    <!-- Main Content -->
     <div class="main-content" id="main-content">
-        <!-- Upload Section -->
         <section class="upload-section" id="upload-section">
             <h1 class="section-title">خدمة ترجمة PDF</h1>
             <p class="section-subtitle">ارفع ملف PDF الخاص بك واحصل على ترجمة كاملة بدقة عالية باستخدام الذكاء الاصطناعي المتقدم</p>
@@ -1039,16 +867,13 @@
             </div>
         </section>
         
-        <!-- Language Selection Section -->
         <section class="language-section" id="language-section">
             <h2 class="section-title">اختر لغة الترجمة</h2>
             <p class="section-subtitle">اختر اللغة التي تريد ترجمة ملف PDF إليها</p>
             
             <div class="language-input-container">
                 <input type="text" class="language-input" id="language-input" placeholder="انقر هنا لاختيار لغة الترجمة" readonly>
-                <div class="languages-dropdown" id="languages-dropdown">
-                    <!-- سيتم ملء اللغات هنا -->
-                </div>
+                <div class="languages-dropdown" id="languages-dropdown"></div>
             </div>
             
             <div class="processing-info" style="text-align: center; margin: 25px 0; padding: 20px; background: rgba(139, 115, 85, 0.05); border-radius: var(--border-radius);">
@@ -1067,7 +892,6 @@
             </button>
         </section>
         
-        <!-- Result Section -->
         <section class="result-section" id="result-section">
             <div class="result-header">
                 <h2 class="result-title" id="result-title">الترجمة النهائية</h2>
@@ -1080,12 +904,9 @@
                 </div>
             </div>
             
-            <div class="pages-container" id="pages-container">
-                <!-- سيتم إضافة الصفحات هنا -->
-            </div>
+            <div class="pages-container" id="pages-container"></div>
         </section>
         
-        <!-- Footer -->
         <footer class="footer">
             <p class="copyright">جميع الحقوق محفوظة لمنصة عون© 2026</p>
             
@@ -1109,8 +930,7 @@
     
     <script>
         // تهيئة PDF.js
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         
         // تهيئة Firebase
         firebase.initializeApp({
@@ -1136,7 +956,7 @@
             pages: 0,
             words: 0,
             cost: 0,
-            finalCost: 0 // السعر بعد الضعف
+            finalCost: 0
         };
         
         let selectedLanguage = '';
@@ -1156,12 +976,9 @@
         const ID = "12345";
         const PASS = "12345abcde57";
         
-        // تحجيم الخط
         let currentFontSize = 16;
         const minFontSize = 12;
         const maxFontSize = 24;
-        
-        // ========== الوظائف الأساسية ==========
         
         function reloadPage() {
             location.reload();
@@ -1172,11 +989,6 @@
                 const notification = document.getElementById('notification');
                 const notificationIcon = document.getElementById('notification-icon');
                 const notificationText = document.getElementById('notification-text');
-                
-                if (!notification || !notificationIcon || !notificationText) {
-                    console.error('Notification elements not found');
-                    return;
-                }
                 
                 notificationText.textContent = message;
                 notification.className = 'notification';
@@ -1217,14 +1029,12 @@
         }
         
         function adjustPageHeight(pageWrapper) {
+            if (!pageWrapper) return;
             const pageContent = pageWrapper.querySelector('.page-content');
-            const minHeight = 297; // A4 height in mm
-            const contentHeight = pageContent.scrollHeight + 60; // إضافة هامش
-            
-            pageWrapper.style.minHeight = Math.max(minHeight, contentHeight) + 'px';
+            if (!pageContent) return;
+            const contentHeight = pageContent.scrollHeight + 60;
+            pageWrapper.style.minHeight = Math.max(297, contentHeight) + 'px';
         }
-        
-        // ========== إدارة المستخدم ==========
         
         async function loadUserData() {
             try {
@@ -1254,9 +1064,7 @@
                             
                             userCoins = userData.coin || 0;
                             const coinsCount = document.getElementById('coins-count');
-                            if (coinsCount) {
-                                coinsCount.textContent = userCoins;
-                            }
+                            if (coinsCount) coinsCount.textContent = userCoins;
                             userFound = true;
                             break;
                         }
@@ -1295,16 +1103,11 @@
             }
         }
         
-        // ========== إدارة الملفات ==========
-        
         function setupFileUpload() {
             const pdfFile = document.getElementById('pdfFile');
             const uploadArea = document.getElementById('upload-area');
             
-            if (pdfFile) {
-                pdfFile.addEventListener('change', handleFileSelect);
-            }
-            
+            if (pdfFile) pdfFile.addEventListener('change', handleFileSelect);
             if (uploadArea) {
                 uploadArea.addEventListener('dragover', handleDragOver);
                 uploadArea.addEventListener('drop', handleDrop);
@@ -1313,22 +1116,15 @@
         
         function handleDragOver(e) {
             e.preventDefault();
-            e.stopPropagation();
             const uploadArea = document.getElementById('upload-area');
-            if (uploadArea) {
-                uploadArea.style.borderColor = 'var(--accent-primary)';
-                uploadArea.style.backgroundColor = 'rgba(139, 115, 85, 0.1)';
-            }
+            uploadArea.style.borderColor = 'var(--accent-primary)';
+            uploadArea.style.backgroundColor = 'rgba(139, 115, 85, 0.1)';
         }
         
         async function handleDrop(e) {
             e.preventDefault();
-            e.stopPropagation();
-            
             const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                await handleFile(files[0]);
-            }
+            if (files.length > 0) await handleFile(files[0]);
         }
         
         async function handleFileSelect(event) {
@@ -1359,18 +1155,7 @@
         
         async function analyzePDF(file) {
             try {
-                const loadingMessages = [
-                    'عون يحلل الملف...',
-                    'عون يستخرج النص...',
-                    'عون يعد الصفحات...',
-                    'عون يحسب التكلفة...'
-                ];
-                
-                let messageIndex = 0;
-                const loadingInterval = setInterval(() => {
-                    showLoading(loadingMessages[messageIndex]);
-                    messageIndex = (messageIndex + 1) % loadingMessages.length;
-                }, 1500);
+                showLoading('عون يحلل الملف...');
                 
                 const buffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument(buffer).promise;
@@ -1390,13 +1175,10 @@
                     }
                 }
                 
-                clearInterval(loadingInterval);
-                
                 let coins = Math.ceil((totalWords / 1000) * 2) / 2;
                 if (coins < 1) coins = 1;
                 coins = Math.round(coins * 10) / 10;
                 
-                // حساب السعر النهائي (ضعف السعر)
                 const finalCoins = coins * 2;
                 
                 fileInfo = {
@@ -1415,7 +1197,6 @@
                 const costPreview = document.getElementById('cost-preview');
                 
                 if (pageCount) pageCount.textContent = fileInfo.pages;
-                // عرض السعر النهائي فقط (بدون إظهار الزيادة)
                 if (costAmount) costAmount.textContent = fileInfo.finalCost + ' عملة';
                 if (costPreview) costPreview.classList.add('show');
                 
@@ -1424,7 +1205,7 @@
             } catch (error) {
                 console.error('Error analyzing PDF:', error);
                 hideLoading();
-                showNotification('حدث خطأ أثناء تحليل الملف. الرجاء المحاولة مرة أخرى.', 'error');
+                showNotification('حدث خطأ أثناء تحليل الملف', 'error');
                 resetFileInput();
             }
         }
@@ -1447,8 +1228,6 @@
         
         function cancelProcess() {
             resetFileInput();
-            const costPreview = document.getElementById('cost-preview');
-            if (costPreview) costPreview.classList.remove('show');
             showNotification('تم إلغاء العملية', 'info');
         }
         
@@ -1457,18 +1236,13 @@
             const languageSection = document.getElementById('language-section');
             const costPreview = document.getElementById('cost-preview');
             
-            if (!uploadSection || !languageSection || !costPreview) {
-                showNotification('حدث خطأ في تحميل العناصر', 'error');
-                return;
-            }
-            
             if (!fileInfo || !fileInfo.finalCost || fileInfo.finalCost === 0) {
                 showNotification('الرجاء تحليل الملف أولاً', 'error');
                 return;
             }
             
             if (userCoins < fileInfo.finalCost) {
-                showNotification(`رصيدك غير كافي. تحتاج ${fileInfo.finalCost} عملة بينما رصيدك ${userCoins}`, 'error');
+                showNotification(`رصيدك غير كافي. تحتاج ${fileInfo.finalCost} عملة`, 'error');
                 return;
             }
             
@@ -1477,11 +1251,7 @@
             costPreview.classList.remove('show');
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            showNotification('الرجاء اختيار لغة الترجمة', 'success');
         }
-        
-        // ========== إدارة اختيار اللغة ==========
         
         function setupLanguageSelection() {
             const languageInput = document.getElementById('language-input');
@@ -1493,7 +1263,6 @@
                     populateLanguages();
                 });
                 
-                // إغلاق القائمة عند النقر خارجها
                 document.addEventListener('click', function(event) {
                     if (!languageInput.contains(event.target) && !languagesDropdown.contains(event.target)) {
                         languagesDropdown.classList.remove('show');
@@ -1504,17 +1273,13 @@
         
         function populateLanguages() {
             const languagesDropdown = document.getElementById('languages-dropdown');
-            if (!languagesDropdown) return;
-            
             languagesDropdown.innerHTML = '';
             
             languages.forEach(language => {
                 const option = document.createElement('div');
                 option.className = 'language-option';
                 option.textContent = language;
-                option.onclick = function() {
-                    selectLanguage(language);
-                };
+                option.onclick = function() { selectLanguage(language); };
                 languagesDropdown.appendChild(option);
             });
         }
@@ -1524,163 +1289,37 @@
             const languageInput = document.getElementById('language-input');
             const languagesDropdown = document.getElementById('languages-dropdown');
             
-            if (languageInput) {
-                languageInput.value = language;
-            }
-            if (languagesDropdown) {
-                languagesDropdown.classList.remove('show');
-            }
-            
+            languageInput.value = language;
+            languagesDropdown.classList.remove('show');
             showNotification(`تم اختيار اللغة: ${language}`, 'success');
         }
         
-        // ========== عملية الترجمة ==========
-        
         function createTranslationPrompt() {
-            return `ROLE:
-You are an AI specialized in **strict full-document PDF translation**.
-You must follow ALL instructions below with ZERO deviation.
+            return `أنت مساعد متخصص في ترجمة مستندات PDF.
+مهمتك هي ترجمة ملف PDF بالكامل إلى اللغة التالية: ${selectedLanguage}
 
-========================
-INPUT VARIABLE (MANDATORY):
-========================
-لغة_الإخراج = ${selectedLanguage}
+قواعد صارمة:
+1. ترجمة كل كلمة وجملة في الملف - ممنوع الحذف أو التلخيص
+2. الحفاظ على تنسيق النص الأصلي بالكامل (فواصل الأسطر، الفقرات، التعداد)
+3. الأكواد البرمجية: لا تترجمها، انسخها كما هي بين ثلاث علامات اقتباس
+4. النصوص المهمة: يمكن وضعها بين **نجمتين** للتحديد
+5. النصوص داخل الصور: حاول التعرف عليها وترجمتها إن أمكن
 
-- This is the ONLY input variable.
-- It defines the target language for translation.
-- If not provided → RETURN ERROR.
-
-========================
-CORE PROCESSING RULES (STRICT & MANDATORY):
-========================
-0. BEFORE generating ANY output you MUST:
-   - Fully ingest, parse, and reconstruct the ENTIRE PDF.
-   - Process FROM the first character of page 1 TO the last character of the final page.
-   - Treat the document as ATOMIC (fully processed or invalid).
-   - Detect total number of pages.
-
-1. Full translation requirement:
-   - You MUST translate EVERY word, sentence, and paragraph.
-   - ZERO data loss allowed.
-   - This is NOT summarization.
-   - Do NOT omit, compress, or rephrase meaning.
-   - Preserve the original structure exactly.
-
-2. Layout preservation:
-   - Maintain:
-     * Line breaks
-     * Paragraph spacing
-     * Bullet structures
-     * Numbering
-     * Tables (text format)
-   - Output must visually mirror the original layout.
-
-3. Code handling:
-   - If code blocks are detected:
-     * DO NOT translate code.
-     * Return code EXACTLY as it is.
-     * Wrap it using triple backticks:
-       \`\`\` 
-       code here
-       \`\`\`
-   - Never alter variable names or syntax.
-
-4. Image handling:
-   - If the PDF contains images with text:
-     * Perform OCR internally.
-     * Translate detected text.
-     * Preserve positioning logically within the page content.
-
-5. Highlight rule:
-   - If a title or clearly emphasized sentence exists,
-     you MAY wrap it with:
-     **Highlighted Sentence**
-   - Use exactly two asterisks only.
-   - Do not overuse highlighting.
-
-6. Language detection:
-   - Detect the original language automatically.
-   - Include it in output field "language".
-
-========================
-STRICT VALIDATION:
-========================
-- If لغة_الإخراج is missing or empty:
-  RETURN EXACTLY:
-  EROR
-
-- If the PDF is:
-  * Empty
-  * Corrupted
-  * Unreadable
-  * Contains meaningless characters only
-  RETURN EXACTLY:
-  EROR
-
-========================
-OUTPUT FORMAT (STRICT):
-========================
-- Output MUST be VALID JSON ONLY
-- No Markdown
-- No comments
-- No explanations
-- No extra text
-- No formatting outside JSON
-
-========================
-JSON STRUCTURE (MANDATORY):
-========================
+تنسيق الإخراج:
 {
-  "page": 0,
-  "language": "",
-  "translation": "",
-  "page1": "",
-  "page2": "",
-  "page3": ""
+  "page": [عدد الصفحات],
+  "language": "[اللغة الأصلية]",
+  "translation": "${selectedLanguage}",
+  "page1": "[نص الصفحة الأولى مترجماً]",
+  "page2": "[نص الصفحة الثانية مترجماً]",
+  "page3": "[نص الصفحة الثالثة مترجماً]"
+  // وهكذا لكل صفحة
 }
 
-========================
-OUTPUT RULES:
-========================
-- "page" = total number of pages in the PDF.
-- "language" = detected original language of the document.
-- "translation" = لغة_الإخراج selected by the user.
-- Generate dynamic keys:
-  page1, page2, page3 ... pageN
-  where N = total pages.
-
-- Each pageX must contain:
-  * Fully translated text of that page.
-  * Exact structural preservation.
-  * Code blocks unchanged.
-  * OCR text translated if images contain text.
-
-- Do NOT skip any page.
-- Do NOT merge pages.
-- Do NOT truncate content even if large.
-- Translate the ENTIRE document regardless of size.
-
-========================
-INTERNAL SELF-AUDIT (HIDDEN – MANDATORY):
-========================
-Before returning output verify:
-- Every page was processed.
-- No untranslated text remains (except code).
-- Layout consistency maintained.
-- Total pages count matches generated page keys.
-- No missing page index.
-
-========================
-ABSOLUTE CONSTRAINTS:
-========================
-- NEVER summarize.
-- NEVER shorten.
-- NEVER interpret.
-- NEVER modify code.
-- NEVER output partial result.
-- NEVER add commentary.
-- Output ONLY valid JSON or EROR.
-- Be strict, literal, deterministic.`;
+هام جداً:
+- الإخراج يجب أن يكون JSON صالح فقط
+- لا تكتب أي شيء خارج JSON
+- إذا حدث خطأ أو الملف غير صالح، أعد: {"error": "EROR"}`;
         }
         
         async function startTranslation() {
@@ -1695,30 +1334,18 @@ ABSOLUTE CONSTRAINTS:
             }
             
             if (userCoins < fileInfo.finalCost) {
-                showNotification(`رصيدك غير كافي. تحتاج ${fileInfo.finalCost} عملة بينما رصيدك ${userCoins}`, 'error');
+                showNotification(`رصيدك غير كافي. تحتاج ${fileInfo.finalCost} عملة`, 'error');
                 return;
             }
             
             const translateBtn = document.getElementById('translate-btn');
-            if (translateBtn) {
-                translateBtn.disabled = true;
-                translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحضير...';
-            }
+            translateBtn.disabled = true;
+            translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الترجمة...';
             
             try {
-                const loadingMessages = [
-                    'عون يحلل المحتوى...',
-                    'عون يستخرج النصوص...',
-                    'عون يجهز للترجمة...',
-                    'عون يبدأ عملية الترجمة...'
-                ];
+                showLoading('عون يحلل المحتوى...');
                 
-                let messageIndex = 0;
-                const loadingInterval = setInterval(() => {
-                    showLoading(loadingMessages[messageIndex]);
-                    messageIndex = (messageIndex + 1) % loadingMessages.length;
-                }, 2000);
-                
+                // تحويل الملف إلى Base64
                 const base64 = await new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onload = () => {
@@ -1732,12 +1359,10 @@ ABSOLUTE CONSTRAINTS:
                 
                 const prompt = createTranslationPrompt();
                 
+                // إرسال الطلب إلى السيرفر
                 const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
-                    headers: { 
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         id: ID,
                         pass: PASS,
@@ -1746,55 +1371,90 @@ ABSOLUTE CONSTRAINTS:
                     })
                 });
                 
-                clearInterval(loadingInterval);
-                
                 if (!response.ok) {
                     throw new Error(`خطأ في السيرفر: ${response.status}`);
                 }
                 
-                const text = await response.text();
-                let result;
+                // قراءة الرد كـ Text
+                const responseText = await response.text();
+                console.log('استجابة السيرفر الخام:', responseText.substring(0, 200) + '...');
                 
+                let result = null;
+                
+                // محاولة استخراج JSON بطرق متعددة
                 try {
-                    const jsonMatch = text.match(/\{[\s\S]*\}/);
+                    // الطريقة 1: محاولة Parse مباشر
+                    result = JSON.parse(responseText);
+                } catch (e1) {
+                    console.log('فشل الـ Parse المباشر، محاولة استخراج JSON...');
+                    
+                    // الطريقة 2: البحث عن أول { وآخر }
+                    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
                     if (jsonMatch) {
-                        result = JSON.parse(jsonMatch[0]);
-                    } else {
-                        result = JSON.parse(text);
+                        try {
+                            result = JSON.parse(jsonMatch[0]);
+                            console.log('تم استخراج JSON بنجاح باستخدام Regex');
+                        } catch (e2) {
+                            console.log('فشل استخراج JSON بـ Regex');
+                        }
                     }
-                } catch (e) {
-                    console.error('Error parsing JSON:', e, 'Response:', text);
-                    throw new Error('رد غير صالح من السيرفر');
+                    
+                    // الطريقة 3: تنظيف النص من التنسيقات الزائدة
+                    if (!result) {
+                        let cleaned = responseText
+                            .replace(/```json/g, '')
+                            .replace(/```/g, '')
+                            .replace(/\n/g, '')
+                            .replace(/\r/g, '')
+                            .replace(/\t/g, '')
+                            .trim();
+                        
+                        const cleanMatch = cleaned.match(/\{[\s\S]*\}/);
+                        if (cleanMatch) {
+                            try {
+                                result = JSON.parse(cleanMatch[0]);
+                                console.log('تم استخراج JSON بعد التنظيف');
+                            } catch (e3) {
+                                console.log('فشل استخراج JSON بعد التنظيف');
+                            }
+                        }
+                    }
                 }
                 
-                if (result.language === "EROR" || result.page === "EROR") {
-                    throw new Error('الملف فارغ أو غير قابل للقراءة');
+                // التحقق من وجود خطأ
+                if (!result) {
+                    throw new Error('لم نتمكن من استخراج JSON صالح من استجابة السيرفر');
                 }
                 
+                if (result.error === "EROR" || result.language === "EROR" || result.page === "EROR") {
+                    throw new Error('الملف غير صالح أو غير قابل للقراءة');
+                }
+                
+                hideLoading();
+                
+                // خصم العملات وحفظ النتيجة
                 await deductCoins(fileInfo.finalCost);
                 await saveResultToDatabase(result);
+                
+                // عرض النتيجة
                 displayTranslationResult(result);
                 
                 const languageSection = document.getElementById('language-section');
                 const resultSection = document.getElementById('result-section');
                 
-                if (languageSection) languageSection.classList.remove('show');
-                if (resultSection) resultSection.classList.add('show');
+                languageSection.classList.remove('show');
+                resultSection.classList.add('show');
                 
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                
                 showNotification('تمت الترجمة بنجاح', 'success');
                 
             } catch (error) {
+                hideLoading();
                 console.error('Error in translation:', error);
                 showNotification('حدث خطأ أثناء الترجمة: ' + error.message, 'error');
             } finally {
-                hideLoading();
-                const translateBtn = document.getElementById('translate-btn');
-                if (translateBtn) {
-                    translateBtn.disabled = false;
-                    translateBtn.innerHTML = '<i class="fas fa-language"></i> بدء عملية الترجمة';
-                }
+                translateBtn.disabled = false;
+                translateBtn.innerHTML = '<i class="fas fa-language"></i> بدء عملية الترجمة';
             }
         }
         
@@ -1805,10 +1465,7 @@ ABSOLUTE CONSTRAINTS:
                 
                 await database.ref(`users_Awn/${currentUser.id}/coin`).set(newCoins);
                 const coinsCount = document.getElementById('coins-count');
-                if (coinsCount) {
-                    coinsCount.textContent = newCoins;
-                }
-                
+                if (coinsCount) coinsCount.textContent = newCoins;
             } catch (error) {
                 console.error('Error deducting coins:', error);
                 throw error;
@@ -1830,7 +1487,6 @@ ABSOLUTE CONSTRAINTS:
                 };
                 
                 await database.ref(`records/${recordId}`).set(recordData);
-                
             } catch (error) {
                 console.error('Error saving result to database:', error);
             }
@@ -1839,10 +1495,9 @@ ABSOLUTE CONSTRAINTS:
         function formatPageContent(text) {
             if (!text) return '';
             
-            // معالجة الكود الموجود بين ```
             let formattedText = text;
             
-            // استبدال **النص** بـ <span class="highlighted-text">النص</span>
+            // معالجة التحديد بالنجوم
             formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<span class="highlighted-text">$1</span>');
             
             // معالجة كتل الكود
@@ -1856,12 +1511,11 @@ ABSOLUTE CONSTRAINTS:
                             <div class="code-header">
                                 <div class="code-label">كود</div>
                                 <button class="copy-code-btn" onclick="copyCode('${codeId}')">
-                                    <i class="far fa-copy"></i>
-                                    نسخ الكود
+                                    <i class="far fa-copy"></i> نسخ
                                 </button>
                             </div>
                             <div class="code-content">
-                                <pre id="${codeId}">${cleanCode}</pre>
+                                <pre id="${codeId}">${escapeHtml(cleanCode)}</pre>
                             </div>
                         </div>
                     `;
@@ -1869,23 +1523,27 @@ ABSOLUTE CONSTRAINTS:
                 });
             }
             
-            // الحفاظ على فواصل الأسطر
             formattedText = formattedText.replace(/\n/g, '<br>');
-            
             return formattedText;
+        }
+        
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
         
         function copyCode(codeId) {
             const codeElement = document.getElementById(codeId);
             if (!codeElement) return;
             
-            const codeText = codeElement.textContent;
-            
-            navigator.clipboard.writeText(codeText).then(() => {
-                showNotification('تم نسخ الكود بنجاح', 'success');
-            }).catch(err => {
-                console.error('Error copying code:', err);
-                showNotification('حدث خطأ أثناء نسخ الكود', 'error');
+            navigator.clipboard.writeText(codeElement.textContent).then(() => {
+                showNotification('تم نسخ الكود', 'success');
+            }).catch(() => {
+                showNotification('حدث خطأ أثناء النسخ', 'error');
             });
         }
         
@@ -1893,12 +1551,9 @@ ABSOLUTE CONSTRAINTS:
             const pageContent = document.getElementById(`page-content-${pageNumber}`);
             if (!pageContent) return;
             
-            const text = pageContent.textContent || pageContent.innerText;
-            
-            navigator.clipboard.writeText(text).then(() => {
-                showNotification(`تم نسخ صفحة ${pageNumber} بنجاح`, 'success');
-            }).catch(err => {
-                console.error('Error copying page content:', err);
+            navigator.clipboard.writeText(pageContent.textContent).then(() => {
+                showNotification(`تم نسخ صفحة ${pageNumber}`, 'success');
+            }).catch(() => {
                 showNotification('حدث خطأ أثناء النسخ', 'error');
             });
         }
@@ -1907,65 +1562,65 @@ ABSOLUTE CONSTRAINTS:
             const resultTitle = document.getElementById('result-title');
             const pagesContainer = document.getElementById('pages-container');
             
-            if (resultTitle) {
-                resultTitle.textContent = `الترجمة إلى ${selectedLanguage}`;
+            resultTitle.textContent = `الترجمة إلى ${selectedLanguage}`;
+            pagesContainer.innerHTML = '';
+            
+            // تحديد عدد الصفحات
+            const totalPages = result.page || 0;
+            
+            // إذا لم نجد عدد الصفحات، نحسبها من keys
+            let pagesCount = totalPages;
+            if (pagesCount === 0) {
+                const pageKeys = Object.keys(result).filter(key => key.startsWith('page') && key !== 'page' && !isNaN(parseInt(key.replace('page', ''))));
+                pagesCount = pageKeys.length;
             }
             
-            if (pagesContainer) {
-                pagesContainer.innerHTML = '';
+            for (let i = 1; i <= pagesCount; i++) {
+                const pageKey = `page${i}`;
+                let pageContent = result[pageKey] || '';
                 
-                const totalPages = result.page || 0;
+                // تنظيف المحتوى
+                pageContent = pageContent
+                    .replace(/^[\s\n]+|[\s\n]+$/g, '')
+                    .replace(/\n{3,}/g, '\n\n');
                 
-                for (let i = 1; i <= totalPages; i++) {
-                    const pageKey = `page${i}`;
-                    const pageContent = result[pageKey] || '';
-                    
-                    const pageWrapper = document.createElement('div');
-                    pageWrapper.className = 'page-wrapper';
-                    pageWrapper.id = `page-${i}`;
-                    
-                    const formattedContent = formatPageContent(pageContent);
-                    
-                    pageWrapper.innerHTML = `
-                        <div class="page-header">
-                            <div class="page-number">صفحة ${i}</div>
-                            <button class="page-copy-btn" onclick="copyPageContent(${i})">
-                                <i class="far fa-copy"></i>
-                                نسخ الصفحة
-                            </button>
-                        </div>
-                        <div class="page-content" id="page-content-${i}" style="font-size: ${currentFontSize}px;">
-                            ${formattedContent}
-                        </div>
-                    `;
-                    
-                    pagesContainer.appendChild(pageWrapper);
-                    
-                    // ضبط ارتفاع الصفحة بعد تحميل المحتوى
-                    setTimeout(() => {
-                        adjustPageHeight(pageWrapper);
-                    }, 100);
-                }
+                const pageWrapper = document.createElement('div');
+                pageWrapper.className = 'page-wrapper';
+                pageWrapper.id = `page-${i}`;
                 
-                // إضافة معلومات الترجمة في الأسفل
-                const infoDiv = document.createElement('div');
-                infoDiv.style.textAlign = 'center';
-                infoDiv.style.marginTop = '30px';
-                infoDiv.style.padding = '20px';
-                infoDiv.style.background = 'rgba(139, 115, 85, 0.05)';
-                infoDiv.style.borderRadius = 'var(--border-radius)';
-                infoDiv.innerHTML = `
-                    <p style="font-family: 'Tajawal'; color: var(--text-secondary);">
-                        <i class="fas fa-info-circle"></i>
-                        تمت الترجمة من ${result.language || 'لغة غير معروفة'} إلى ${selectedLanguage}
-                    </p>
-                    <p style="font-family: 'Tajawal'; font-size: 0.9rem; color: var(--text-secondary); margin-top: 10px;">
-                        إجمالي الصفحات: ${totalPages} صفحة | التكلفة: ${fileInfo.finalCost} عملة
-                    </p>
+                const formattedContent = formatPageContent(pageContent);
+                
+                pageWrapper.innerHTML = `
+                    <div class="page-header">
+                        <div class="page-number">صفحة ${i}</div>
+                        <button class="page-copy-btn" onclick="copyPageContent(${i})">
+                            <i class="far fa-copy"></i> نسخ الصفحة
+                        </button>
+                    </div>
+                    <div class="page-content" id="page-content-${i}" style="font-size: ${currentFontSize}px;">
+                        ${formattedContent}
+                    </div>
                 `;
                 
-                pagesContainer.appendChild(infoDiv);
+                pagesContainer.appendChild(pageWrapper);
+                
+                setTimeout(() => adjustPageHeight(pageWrapper), 100);
             }
+            
+            // إضافة معلومات الترجمة
+            const infoDiv = document.createElement('div');
+            infoDiv.style.cssText = 'text-align: center; margin-top: 30px; padding: 20px; background: rgba(139, 115, 85, 0.05); border-radius: var(--border-radius);';
+            infoDiv.innerHTML = `
+                <p style="font-family: 'Tajawal'; color: var(--text-secondary);">
+                    <i class="fas fa-info-circle"></i>
+                    تمت الترجمة من ${result.language || 'اللغة الأصلية'} إلى ${selectedLanguage}
+                </p>
+                <p style="font-family: 'Tajawal'; font-size: 0.9rem; color: var(--text-secondary); margin-top: 10px;">
+                    إجمالي الصفحات: ${pagesCount} | التكلفة: ${fileInfo.finalCost} عملة
+                </p>
+            `;
+            
+            pagesContainer.appendChild(infoDiv);
         }
         
         function showLoading(text = 'جاري التحميل...') {
@@ -1975,9 +1630,7 @@ ABSOLUTE CONSTRAINTS:
             if (loadingScreen && loadingText) {
                 loadingText.textContent = text;
                 loadingScreen.style.display = 'flex';
-                setTimeout(() => {
-                    loadingScreen.style.opacity = '1';
-                }, 10);
+                setTimeout(() => loadingScreen.style.opacity = '1', 10);
             }
         }
         
@@ -1985,13 +1638,9 @@ ABSOLUTE CONSTRAINTS:
             const loadingScreen = document.getElementById('loading-screen');
             if (loadingScreen) {
                 loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                }, 300);
+                setTimeout(() => loadingScreen.style.display = 'none', 300);
             }
         }
-        
-        // ========== تهيئة التطبيق ==========
         
         async function initApp() {
             showLoading('جاري تحميل البيانات...');
@@ -2007,26 +1656,13 @@ ABSOLUTE CONSTRAINTS:
                     await setupUser();
                     setupFileUpload();
                     setupLanguageSelection();
-                    
-                    const confirmBtn = document.querySelector('.confirm-btn');
-                    if (confirmBtn) {
-                        confirmBtn.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            confirmProcess();
-                        });
-                    }
-                    
                     hideLoading();
-                    
                 } catch (error) {
                     console.error('Error initializing app:', error);
                     hideLoading();
                     showNotification('حدث خطأ في تحميل التطبيق', 'error');
                 } finally {
-                    setTimeout(() => {
-                        unsubscribe();
-                    }, 100);
+                    setTimeout(() => unsubscribe(), 100);
                 }
             });
         }
