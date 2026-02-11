@@ -1244,7 +1244,7 @@
             box-shadow: var(--shadow-button-hover);
         }
         
-        /* Footer */
+        /* Footer - تم إخفاؤه */
         .footer {
             text-align: center;
             padding: 45px 20px;
@@ -1255,6 +1255,11 @@
             z-index: 1;
             width: 100%;
             max-width: 900px;
+            display: block; /* سيكون مخفيًا عند ظهور الأسئلة */
+        }
+        
+        .footer.hidden {
+            display: none;
         }
         
         .copyright {
@@ -1558,15 +1563,6 @@
             .stat-item {
                 min-width: calc(50% - 15px);
                 max-width: 180px;
-            }
-            
-            .support-links {
-                gap: 15px;
-            }
-            
-            .support-link {
-                width: 48px;
-                height: 48px;
             }
         }
         
@@ -2063,8 +2059,8 @@
             </div>
         </section>
         
-        <!-- Footer -->
-        <footer class="footer">
+        <!-- Footer - سيتم إخفاؤه تلقائياً عند ظهور الأسئلة -->
+        <footer class="footer" id="footer">
             <p class="copyright">جميع الحقوق محفوظة لمنصة عون© 2026</p>
             
             <div class="support-section">
@@ -2197,6 +2193,22 @@
             }
         }
         
+        // دالة إخفاء الفوتر
+        function hideFooter() {
+            const footer = document.getElementById('footer');
+            if (footer) {
+                footer.classList.add('hidden');
+            }
+        }
+        
+        // دالة إظهار الفوتر
+        function showFooter() {
+            const footer = document.getElementById('footer');
+            if (footer) {
+                footer.classList.remove('hidden');
+            }
+        }
+        
         // ========== إدارة المستخدم ==========
         
         async function loadUserData() {
@@ -2259,6 +2271,9 @@
                     
                     if (navbar) navbar.style.display = 'flex';
                     if (mainContent) mainContent.style.display = 'block';
+                    
+                    // إظهار الفوتر في البداية
+                    showFooter();
                 } else {
                     window.location.replace('login.html');
                 }
@@ -2792,6 +2807,9 @@ ABSOLUTE CONSTRAINTS:
                 if (questionsSection) questionsSection.classList.remove('show');
                 if (flashcardsSection) flashcardsSection.classList.add('show');
                 
+                // إخفاء الفوتر عند ظهور الفلاش كارد
+                hideFooter();
+                
                 initializeFlashcards();
                 
                 showNotification('تم إنشاء الفلاش كارد بنجاح', 'success');
@@ -3182,6 +3200,9 @@ ABSOLUTE CONSTRAINTS:
             
             if (flashcardsSection) flashcardsSection.classList.remove('show');
             if (resultsSection) resultsSection.classList.add('show');
+            
+            // إظهار الفوتر عند العودة للنتائج
+            showFooter();
             
             // إظهار شاشة المراجعة أولاً
             if (reviewLoading) reviewLoading.style.display = 'block';
