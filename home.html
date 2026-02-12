@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1398,42 +1397,6 @@
                     </div>
                 </div>
                 
-                <div class="service-card" data-service="translate">
-                    <div class="service-content">
-                        <div class="service-icon">
-                            <i class="fas fa-language"></i>
-                        </div>
-                        <div class="service-details">
-                            <h3 class="service-name">ترجمة PDF</h3>
-                            <p class="service-description">ترجمة جميع أنواع PDF بأي لغة في العالم مع الحفاظ على التنسيق والمحتوى الأصلي</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="service-card" data-service="chat">
-                    <div class="service-content">
-                        <div class="service-icon">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div class="service-details">
-                            <h3 class="service-name">شات بوت</h3>
-                            <p class="service-description">تواصل مع مساعد عَون المدعوم بالذكاء الاصطناعي للإجابة على جميع أسئلتك حول محتوى ملف PDF</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="service-card" data-service="map">
-                    <div class="service-content">
-                        <div class="service-icon">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <div class="service-details">
-                            <h3 class="service-name">خريطة ذهنية</h3>
-                            <p class="service-description">إنشاء خريطة ذهنية تساعدك على فهم محتوى PDF وترتيب المعلومات بدقة عالية</p>
-                        </div>
-                    </div>
-                </div>
-                
                 <div class="service-card" data-service="question">
                     <div class="service-content">
                         <div class="service-icon">
@@ -1442,18 +1405,6 @@
                         <div class="service-details">
                             <h3 class="service-name">توليد الأسئلة</h3>
                             <p class="service-description">تصميم أسئلة متنوعة تشمل الاختيار من متعدد، الصح والخطأ، والأسئلة المقالية، بمستويات صعوبة مختلفة</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="service-card" data-service="plan">
-                    <div class="service-content">
-                        <div class="service-icon">
-                            <i class="fas fa-calendar-alt"></i>
-                        </div>
-                        <div class="service-details">
-                            <h3 class="service-name">خطة مذاكرة</h3>
-                            <p class="service-description">إنشاء خطة مذاكرة لملف PDF مرتبة حسب الأهمية، معتمداً على تحليل دقيق باستخدام الذكاء الاصطناعي</p>
                         </div>
                     </div>
                 </div>
@@ -1537,7 +1488,6 @@
                     elements.navbar.style.display = 'flex';
                     elements.mainContent.style.display = 'block';
                     
-                    // بعد إخفاء شاشة التحميل بـ 1 ثانية، نعرض الإشعارات
                     setTimeout(() => {
                         if (!isAdmin && !hasShownNotifications) {
                             hasShownNotifications = true;
@@ -1558,10 +1508,8 @@
                     
                     for (const [userId, userData] of Object.entries(users)) {
                         if (userId !== 'noty_publick' && userData.email === email) {
-                            // حساب عدد الإحالات
                             let referralCount = 0;
                             if (userData.referrals && typeof userData.referrals === 'object') {
-                                // حساب العقد التي تبدأ بـ "ref" ويليها رقم
                                 referralCount = Object.keys(userData.referrals).filter(key => 
                                     key.startsWith('ref') && /^ref\d+$/.test(key)
                                 ).length;
@@ -1654,7 +1602,6 @@
                 elements.userContent.style.display = 'block';
                 setupUserEventListeners();
                 
-                // إعداد مراقبة الإشعارات
                 setupNotificationsMonitoring();
             }
         }
@@ -1712,11 +1659,7 @@
                     const pageMap = {
                         'summary': 'summary.html',
                         'flashcard': 'Flashcard.html',
-                        'translate': 'translate.html',
-                        'chat': 'chat.html',
-                        'map': 'map.html',
-                        'question': 'Question.html',
-                        'plan': 'plan.html'
+                        'question': 'Question.html'
                     };
                     
                     if (pageMap[service]) {
@@ -1726,28 +1669,23 @@
             });
         }
 
-        // إعداد مراقبة الإشعارات
         function setupNotificationsMonitoring() {
             if (!currentUser || !currentUser.id) return;
             
-            // مراقبة الإشعارات العامة
             database.ref('users_Awn/noty_publick').on('value', (snapshot) => {
                 const notification = snapshot.val();
                 
                 if (notification && typeof notification === 'string') {
-                    // عرض الإشعار بعد تأخير
                     setTimeout(() => {
                         showNotification('إشعار عام', notification, 'info', 'public');
                     }, 1000);
                 }
             });
             
-            // مراقبة الإشعارات الشخصية
             database.ref(`users_Awn/${currentUser.id}/noty_user`).on('value', (snapshot) => {
                 const notification = snapshot.val();
                 
                 if (notification && typeof notification === 'string') {
-                    // عرض الإشعار بعد تأخير
                     setTimeout(() => {
                         showNotification('إشعار شخصي', notification, 'info', 'personal');
                     }, 1500);
@@ -1786,25 +1724,21 @@
                         const userData = childSnapshot.val();
                         
                         if (userData.email && userData.id) {
-                            // حساب عدد الإحالات ref1, ref2, ref3, إلخ
                             let referralCount = 0;
                             const referralsList = [];
                             
                             if (userData.referrals && typeof userData.referrals === 'object') {
-                                // حساب الإحالات من ref1, ref2, ref3, إلخ
                                 const refKeys = Object.keys(userData.referrals).filter(key => 
                                     key.startsWith('ref') && /^ref\d+$/.test(key)
                                 );
                                 referralCount = refKeys.length;
                                 
-                                // فرز الإحالات حسب الرقم في ref1, ref2, إلخ
                                 refKeys.sort((a, b) => {
                                     const numA = parseInt(a.replace('ref', ''));
                                     const numB = parseInt(b.replace('ref', ''));
                                     return numA - numB;
                                 });
                                 
-                                // إعداد قائمة الإحالات
                                 refKeys.forEach((refKey) => {
                                     const refValue = userData.referrals[refKey];
                                     if (refValue) {
@@ -1827,8 +1761,8 @@
                                 timestamp: userData.timestamp || null,
                                 referral_used: userData.referral_used || '',
                                 referrals: userData.referrals || {},
-                                referralCount: referralCount, // عدد الإحالات
-                                referralsList: referralsList, // قائمة الإحالات
+                                referralCount: referralCount,
+                                referralsList: referralsList,
                                 noty_user: userData.noty_user || null,
                                 dbId: userData.id
                             };
@@ -2048,7 +1982,6 @@
             });
         }
 
-        // زر حذف الإشعار - يحذف العقدة كاملة
         window.deleteUserNotification = async function(userId) {
             if (!confirm('هل أنت متأكد من حذف إشعار هذا المستخدم؟')) return;
             
@@ -2113,7 +2046,6 @@
             if (!message) return;
             
             try {
-                // تحديث الإشعار الموجود أو إنشاء واحد جديد
                 await database.ref(`users_Awn/${userId}/noty_user`).set(message);
                 showNotification('تم', 'تم إرسال الإشعار الفردي', 'success', 'private-' + Date.now());
                 loadAllUsers();
@@ -2131,7 +2063,6 @@
             }
             
             try {
-                // تحديث الإشعار العام الموجود (عقدة واحدة فقط)
                 await database.ref('users_Awn/noty_publick').set(message);
                 
                 elements.publicNotificationInput.value = '';
@@ -2145,10 +2076,8 @@
         }
 
         function showNotification(title, message, type = 'info', notificationId = null) {
-            // إنشاء معرف فريد للإشعار
             const uniqueId = notificationId || 'notification-' + Date.now() + '-' + Math.random();
             
-            // التحقق من عدم تكرار نفس الرسالة
             let alreadyExists = false;
             activeNotifications.forEach((existingNotif, id) => {
                 if (existingNotif && existingNotif.querySelector('.notification-message')) {
@@ -2160,16 +2089,14 @@
             });
             
             if (alreadyExists) {
-                return; // لا تعرض نفس الرسالة مرتين
+                return;
             }
             
-            // إزالة المؤقت القديم إن وجد
             if (notificationTimeouts.has(uniqueId)) {
                 clearTimeout(notificationTimeouts.get(uniqueId));
                 notificationTimeouts.delete(uniqueId);
             }
             
-            // إزالة الإشعار القديم إن وجد
             if (activeNotifications.has(uniqueId)) {
                 const existingNotification = activeNotifications.get(uniqueId);
                 if (existingNotification && existingNotification.parentNode) {
@@ -2194,7 +2121,6 @@
                 </button>
             `;
             
-            // حساب الموضع للإشعار الجديد
             let topPosition = 20;
             activeNotifications.forEach((existingNotif, id) => {
                 if (existingNotif && existingNotif.parentNode) {
@@ -2219,17 +2145,14 @@
                 notification.style.right = '10px';
             }
             
-            // ظهور الإشعار مع أنيميشن
             setTimeout(() => notification.classList.add('show'), 10);
             
-            // إخفاء الإشعار بعد 5 ثواني مع أنيميشن خروج نحو اليمين
             const timeoutId = setTimeout(() => {
                 hideNotificationWithAnimation(notification, uniqueId, 'right');
-            }, 5000); // 5 ثواني
+            }, 5000);
             
             notificationTimeouts.set(uniqueId, timeoutId);
             
-            // إضافة مستمع الحدث لزر الإغلاق (علامة X)
             notification.querySelector('.notification-close').addEventListener('click', () => {
                 if (notificationTimeouts.has(uniqueId)) {
                     clearTimeout(notificationTimeouts.get(uniqueId));
@@ -2247,12 +2170,10 @@
             notification.classList.remove('show');
             notification.classList.add('hide');
             
-            // إضافة أنيميشن الخروج نحو اليمين
             if (direction === 'right') {
                 notification.style.transform = 'translateX(120%)';
             }
             
-            // إزالة الإشعار بعد انتهاء الأنيميشن
             setTimeout(() => {
                 if (notification.parentNode) {
                     notification.remove();
@@ -2376,7 +2297,6 @@
             if (!currentUser || !currentUser.id || isAdmin) return;
             
             try {
-                // التحقق من الإشعار العام
                 const publicSnap = await database.ref('users_Awn/noty_publick').once('value');
                 if (publicSnap.exists()) {
                     const publicNotification = publicSnap.val();
@@ -2387,7 +2307,6 @@
                     }
                 }
                 
-                // التحقق من الإشعار الشخصي
                 const userSnap = await database.ref(`users_Awn/${currentUser.id}/noty_user`).once('value');
                 if (userSnap.exists()) {
                     const userNotification = userSnap.val();
