@@ -62,7 +62,7 @@
             position: relative;
         }
         
-        /* Loading Screen - يظهر من اليمين */
+        /* Loading Screen */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -70,19 +70,18 @@
             right: 0;
             bottom: 0;
             background: var(--bg-color);
-            display: flex;
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 999999;
             opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
+            transition: opacity 0.3s ease;
         }
         
         .loading-screen.show {
+            display: flex;
             opacity: 1;
-            visibility: visible;
         }
         
         .loading-logo {
@@ -120,7 +119,7 @@
             max-width: 80%;
         }
         
-        /* Notification - يظهر من اليمين */
+        /* Notification */
         .notification {
             position: fixed;
             top: 90px;
@@ -399,7 +398,6 @@
             gap: 8px;
         }
         
-        /* Question Type Grid */
         .question-type-grid {
             display: flex;
             flex-direction: column;
@@ -446,7 +444,6 @@
             text-align: center;
         }
         
-        /* Slider */
         .slider-container {
             padding: 16px 0;
         }
@@ -502,7 +499,6 @@
             font-weight: 700;
         }
         
-        /* Difficulty Options */
         .options-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -527,7 +523,6 @@
             border-color: var(--accent-primary);
         }
         
-        /* Total Cost */
         .total-cost-box {
             display: flex;
             justify-content: space-between;
@@ -550,7 +545,6 @@
             color: var(--accent-primary);
         }
         
-        /* Generate Button */
         .generate-btn {
             background: var(--gradient-primary);
             color: white;
@@ -579,7 +573,6 @@
             cursor: not-allowed;
         }
         
-        /* Questions Display Section */
         .questions-display-section {
             background: white;
             border-radius: 24px;
@@ -646,7 +639,6 @@
             border-radius: 10px;
         }
         
-        /* Result Badge - يظهر فوق السؤال */
         .result-badge {
             position: absolute;
             top: -10px;
@@ -672,7 +664,6 @@
             color: white;
         }
         
-        /* Question Item */
         .question-item {
             background: white;
             border: 1px solid rgba(139, 115, 85, 0.15);
@@ -722,7 +713,6 @@
             line-height: 1.6;
         }
         
-        /* Options */
         .options-container {
             display: flex;
             flex-direction: column;
@@ -784,7 +774,6 @@
             flex: 1;
         }
         
-        /* True/False */
         .tf-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -823,7 +812,6 @@
             border-color: var(--error-color);
         }
         
-        /* Essay */
         .essay-textarea {
             width: 100%;
             min-height: 150px;
@@ -911,7 +899,6 @@
             margin-top: 12px;
         }
         
-        /* Submit Button - مثبت في الأسفل */
         .submit-container {
             position: fixed;
             bottom: 0;
@@ -956,7 +943,6 @@
             transform: scale(0.98);
         }
         
-        /* Results Section - تظهر فوق المحتوى */
         .results-section {
             background: white;
             border-radius: 24px;
@@ -1076,7 +1062,6 @@
             border-right: 4px solid var(--accent-primary);
         }
         
-        /* Footer */
         .footer {
             text-align: center;
             padding: 30px 20px;
@@ -1119,7 +1104,6 @@
             color: rgba(100, 116, 139, 0.5);
         }
         
-        /* Responsive */
         @media (max-width: 380px) {
             .options-grid {
                 grid-template-columns: 1fr;
@@ -1132,14 +1116,14 @@
     </style>
 </head>
 <body>
-    <!-- Loading Screen - يظهر من اليمين -->
+    <!-- Loading Screen -->
     <div class="loading-screen" id="loading-screen">
         <div class="loading-logo">عون</div>
         <div class="loading-spinner"></div>
         <div class="loading-text" id="loading-text">جاري التحميل...</div>
     </div>
     
-    <!-- Notification - يظهر من اليمين -->
+    <!-- Notification -->
     <div class="notification" id="notification">
         <div class="notification-content">
             <div class="notification-icon" id="notification-icon">
@@ -1186,7 +1170,7 @@
                     </div>
                     <div class="cost-item">
                         <div class="cost-label">التكلفة الأساسية</div>
-                        <div class="cost-value" id="cost-amount">0</div>
+                        <div class="cost-value" id="cost-amount">0 عملة</div>
                     </div>
                 </div>
                 <div class="cost-actions">
@@ -1265,7 +1249,7 @@
             
             <div class="total-cost-box">
                 <span class="total-cost-label">التكلفة الإجمالية:</span>
-                <span class="total-cost-value" id="total-cost-display">0</span>
+                <span class="total-cost-value" id="total-cost-display">0 عملة</span>
             </div>
             
             <button class="generate-btn" id="generate-btn">
@@ -1300,7 +1284,7 @@
             <div id="questions-container"></div>
         </div>
         
-        <!-- Submit Button - مثبت في الأسفل -->
+        <!-- Submit Button -->
         <div class="submit-container" id="submit-container" style="display: none;">
             <button class="submit-btn" id="submit-btn">
                 <i class="fas fa-check-circle"></i>
@@ -1407,10 +1391,12 @@
         // ========== تحميل بيانات المستخدم ==========
         async function loadUserData(user) {
             try {
+                console.log('جاري تحميل بيانات المستخدم...');
                 const snapshot = await database.ref('users_Awn').once('value');
                 
                 if (snapshot.exists()) {
                     const users = snapshot.val();
+                    let found = false;
                     
                     for (const [userId, userData] of Object.entries(users)) {
                         if (userId !== 'noty_publick' && userData.email === user.email) {
@@ -1424,68 +1410,98 @@
                             
                             userCoins = currentUser.coin;
                             document.getElementById('coins-count').textContent = userCoins;
-                            return;
+                            console.log('تم تحميل بيانات المستخدم:', currentUser.name, 'الرصيد:', userCoins);
+                            found = true;
+                            break;
                         }
                     }
+                    
+                    if (!found) {
+                        console.log('لم يتم العثور على المستخدم في قاعدة البيانات');
+                        await auth.signOut();
+                        window.location.replace('login.html');
+                    }
+                } else {
+                    console.log('لا توجد بيانات في قاعدة البيانات');
+                    await auth.signOut();
+                    window.location.replace('login.html');
                 }
-                
-                await auth.signOut();
-                window.location.replace('login.html');
             } catch (error) {
                 console.error('خطأ في تحميل بيانات المستخدم:', error);
+                showNotification('فشل تحميل بيانات المستخدم', 'error');
             }
         }
         
         // ========== إعداد مستمعي الأحداث ==========
         function setupEventListeners() {
+            console.log('إعداد مستمعي الأحداث...');
+            
             // رفع الملف
             const pdfFile = document.getElementById('pdfFile');
             const uploadArea = document.getElementById('upload-area');
             
-            uploadArea.addEventListener('click', (e) => {
+            // النقر على منطقة الرفع
+            uploadArea.addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 pdfFile.click();
             });
             
-            pdfFile.addEventListener('change', (e) => {
+            // تغيير الملف
+            pdfFile.addEventListener('change', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 if (this.files && this.files[0]) {
                     handleFile(this.files[0]);
                 }
             });
             
-            uploadArea.addEventListener('dragover', (e) => {
+            // السحب والإفلات
+            uploadArea.addEventListener('dragover', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 this.style.borderColor = 'var(--accent-primary)';
                 this.style.backgroundColor = 'rgba(212, 165, 116, 0.1)';
             });
             
-            uploadArea.addEventListener('dragleave', (e) => {
+            uploadArea.addEventListener('dragleave', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 this.style.borderColor = '';
                 this.style.backgroundColor = '';
             });
             
-            uploadArea.addEventListener('drop', (e) => {
+            uploadArea.addEventListener('drop', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 this.style.borderColor = '';
                 this.style.backgroundColor = '';
                 
                 if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    const file = e.dataTransfer.files[0];
+                    // تحديث input file
                     pdfFile.files = e.dataTransfer.files;
-                    handleFile(e.dataTransfer.files[0]);
+                    handleFile(file);
                 }
             });
             
             // أزرار التكلفة
-            document.getElementById('cancel-btn').addEventListener('click', cancelProcess);
-            document.getElementById('confirm-btn').addEventListener('click', confirmProcess);
+            document.getElementById('cancel-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                cancelProcess();
+            });
+            
+            document.getElementById('confirm-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                confirmProcess();
+            });
             
             // إعدادات الأسئلة
             setupQuestionsEvents();
             
             // الشعار
-            document.getElementById('home-logo').addEventListener('click', () => {
+            document.getElementById('home-logo').addEventListener('click', function(e) {
+                e.preventDefault();
                 location.reload();
             });
         }
@@ -1495,7 +1511,8 @@
             // أزرار نوع الأسئلة
             const typeBtns = document.querySelectorAll('#question-type .type-btn');
             typeBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
                     typeBtns.forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
                     currentSettings.questionType = this.dataset.type;
@@ -1507,7 +1524,8 @@
             
             // السلايدر
             const slider = document.getElementById('questions-slider');
-            slider.addEventListener('input', function() {
+            slider.addEventListener('input', function(e) {
+                e.preventDefault();
                 document.getElementById('questions-count').textContent = this.value;
                 currentSettings.questionsCount = parseInt(this.value);
                 updateExtraCost();
@@ -1517,7 +1535,8 @@
             // أزرار الصعوبة
             const difficultyBtns = document.querySelectorAll('#difficulty-level .option-btn');
             difficultyBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
                     difficultyBtns.forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
                     currentSettings.difficulty = this.dataset.value;
@@ -1525,10 +1544,16 @@
             });
             
             // زر التوليد
-            document.getElementById('generate-btn').addEventListener('click', generateQuestions);
+            document.getElementById('generate-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                generateQuestions();
+            });
             
             // زر التسليم
-            document.getElementById('submit-btn').addEventListener('click', submitAnswers);
+            document.getElementById('submit-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                submitAnswers();
+            });
             
             // تهيئة القيم
             updateQuestionLimit('اختياري');
@@ -1579,6 +1604,8 @@
         
         // ========== معالجة الملف ==========
         async function handleFile(file) {
+            console.log('معالجة الملف:', file.name, 'الحجم:', file.size);
+            
             if (!file.name.toLowerCase().endsWith('.pdf')) {
                 showNotification('الرجاء رفع ملف PDF فقط', 'error');
                 resetFileInput();
@@ -1590,13 +1617,34 @@
             document.getElementById('upload-text').style.color = 'var(--accent-primary)';
             document.getElementById('upload-text').style.fontWeight = 'bold';
             
-            // تحويل الملف إلى Base64 وحفظه
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                pdfBase64 = e.target.result.split(',')[1];
-                await analyzePDF(file);
-            };
-            reader.readAsDataURL(file);
+            // تحويل الملف إلى Base64
+            try {
+                showLoading('جاري تحويل الملف...');
+                
+                const reader = new FileReader();
+                
+                reader.onload = async function(e) {
+                    const base64Data = e.target.result.split(',')[1];
+                    pdfBase64 = base64Data;
+                    console.log('تم تحويل الملف إلى Base64');
+                    
+                    await analyzePDF(file);
+                };
+                
+                reader.onerror = function(error) {
+                    console.error('خطأ في قراءة الملف:', error);
+                    hideLoading();
+                    showNotification('فشل في قراءة الملف', 'error');
+                    resetFileInput();
+                };
+                
+                reader.readAsDataURL(file);
+            } catch (error) {
+                console.error('خطأ في معالجة الملف:', error);
+                hideLoading();
+                showNotification('فشل في معالجة الملف', 'error');
+                resetFileInput();
+            }
         }
         
         // ========== تحليل PDF ==========
@@ -1624,10 +1672,12 @@
                             totalWords += words;
                         }
                     } catch (pageError) {
+                        console.warn('خطأ في قراءة الصفحة', i, pageError);
                         totalWords += 200;
                     }
                 }
                 
+                // حساب التكلفة
                 let coins = Math.ceil((totalWords / 1000) * 2);
                 if (coins < 1) coins = 1;
                 if (coins > 50) coins = 50;
@@ -1639,11 +1689,15 @@
                     baseCost: coins
                 };
                 
+                console.log('تم تحليل الملف:', fileInfo);
+                
+                // تحديث الواجهة
                 document.getElementById('page-count').textContent = fileInfo.pages;
                 document.getElementById('cost-amount').textContent = coins + ' عملة';
                 document.getElementById('cost-preview').classList.add('show');
                 
                 updateTotalCost();
+                
                 hideLoading();
                 showNotification('تم تحليل الملف بنجاح', 'success');
                 
@@ -1683,6 +1737,11 @@
         
         // ========== تأكيد المتابعة ==========
         function confirmProcess() {
+            console.log('تأكيد المتابعة');
+            console.log('selectedFile:', selectedFile ? 'موجود' : 'غير موجود');
+            console.log('fileInfo.baseCost:', fileInfo.baseCost);
+            console.log('userCoins:', userCoins);
+            
             if (!selectedFile) {
                 showNotification('الرجاء اختيار ملف PDF أولاً', 'error');
                 return;
@@ -1694,7 +1753,7 @@
             }
             
             if (userCoins < fileInfo.baseCost) {
-                showNotification(`رصيدك غير كافٍ. تحتاج ${fileInfo.baseCost} عملة`, 'error');
+                showNotification(`رصيدك غير كافٍ. تحتاج ${fileInfo.baseCost} عملة ورصيدك ${userCoins}`, 'error');
                 return;
             }
             
@@ -1707,13 +1766,19 @@
         
         // ========== توليد الأسئلة ==========
         async function generateQuestions() {
+            console.log('بدء توليد الأسئلة');
+            console.log('selectedFile:', selectedFile ? 'موجود' : 'غير موجود');
+            console.log('pdfBase64:', pdfBase64 ? 'موجود' : 'غير موجود');
+            console.log('userCoins:', userCoins);
+            console.log('totalCost:', currentSettings.totalCost);
+            
             if (!selectedFile || !pdfBase64) {
                 showNotification('الرجاء اختيار ملف PDF أولاً', 'error');
                 return;
             }
             
             if (userCoins < currentSettings.totalCost) {
-                showNotification(`رصيدك غير كافٍ. تحتاج ${currentSettings.totalCost} عملة`, 'error');
+                showNotification(`رصيدك غير كافٍ. تحتاج ${currentSettings.totalCost} عملة ورصيدك ${userCoins}`, 'error');
                 return;
             }
             
@@ -1780,6 +1845,8 @@ ABSOLUTE CONSTRAINTS:
 - If PDF is invalid, return: INVALID_PDF`;
                 }
                 
+                console.log('إرسال الطلب إلى السيرفر...');
+                
                 const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -1796,6 +1863,7 @@ ABSOLUTE CONSTRAINTS:
                 }
                 
                 const text = await response.text();
+                console.log('استجابة السيرفر:', text.substring(0, 200) + '...');
                 
                 if (text.includes('INVALID_PDF')) {
                     throw new Error('الملف غير صالح أو لا يمكن قراءته');
@@ -1807,7 +1875,12 @@ ABSOLUTE CONSTRAINTS:
                     throw new Error('لم يتم توليد أي أسئلة');
                 }
                 
+                console.log('تم توليد', questions.length, 'سؤال');
+                
+                // خصم العملات
                 await deductCoins(currentSettings.totalCost);
+                
+                // حفظ النتائج
                 await saveToDatabase();
                 
                 // عرض الأسئلة
@@ -2295,6 +2368,8 @@ ABSOLUTE CONSTRAINTS:
 - Output MUST be plain text only.
 - If PDF is empty or unreadable, return exactly: INVALID_PDF`;
 
+                console.log('إرسال طلب تصحيح المقالي...');
+                
                 const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -2311,6 +2386,7 @@ ABSOLUTE CONSTRAINTS:
                 }
                 
                 const text = await response.text();
+                console.log('استجابة تصحيح المقالي:', text.substring(0, 200) + '...');
                 
                 if (text.includes('INVALID_PDF')) {
                     throw new Error('فشل في تصحيح الإجابات');
@@ -2437,14 +2513,24 @@ ABSOLUTE CONSTRAINTS:
         
         // ========== خصم العملات ==========
         async function deductCoins(amount) {
-            if (!currentUser) return;
+            if (!currentUser) {
+                console.log('لا يوجد مستخدم لخصم العملات');
+                return;
+            }
             
             try {
+                console.log('خصم', amount, 'عملات من', userCoins);
                 userCoins -= amount;
+                if (userCoins < 0) userCoins = 0;
+                
                 await database.ref(`users_Awn/${currentUser.id}/coin`).set(userCoins);
                 document.getElementById('coins-count').textContent = userCoins;
+                
+                console.log('تم خصم', amount, 'عملات. الرصيد المتبقي:', userCoins);
+                showNotification(`تم خصم ${amount} عملة`, 'success');
             } catch (error) {
                 console.error('خطأ في خصم العملات:', error);
+                showNotification('فشل في خصم العملات', 'error');
             }
         }
         
@@ -2462,6 +2548,7 @@ ABSOLUTE CONSTRAINTS:
                     questions: questions,
                     timestamp: Date.now()
                 });
+                console.log('تم حفظ النتائج في قاعدة البيانات');
             } catch (error) {
                 console.error('خطأ في حفظ النتائج:', error);
             }
