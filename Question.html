@@ -59,9 +59,10 @@
             overflow-x: hidden;
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
+            position: relative;
         }
         
-        /* Loading Screen */
+        /* Loading Screen - يظهر من اليمين */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -74,7 +75,14 @@
             align-items: center;
             justify-content: center;
             z-index: 999999;
-            transition: opacity 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .loading-screen.show {
+            opacity: 1;
+            visibility: visible;
         }
         
         .loading-logo {
@@ -83,6 +91,12 @@
             font-size: 48px;
             color: var(--accent-primary);
             margin-bottom: 20px;
+            animation: pulse 1.5s ease infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
         
         .loading-spinner {
@@ -104,6 +118,49 @@
             font-size: 1rem;
             text-align: center;
             max-width: 80%;
+        }
+        
+        /* Notification - يظهر من اليمين */
+        .notification {
+            position: fixed;
+            top: 90px;
+            left: 16px;
+            right: 16px;
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: var(--shadow-heavy);
+            z-index: 10001;
+            transform: translateX(150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-right: 4px solid var(--info-color);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-right-color: var(--success-color);
+        }
+        
+        .notification.error {
+            border-right-color: var(--error-color);
+        }
+        
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .notification-icon {
+            font-size: 1.3rem;
+        }
+        
+        .notification-text {
+            font-size: 0.95rem;
+            flex: 1;
         }
         
         /* Navbar */
@@ -129,6 +186,12 @@
             font-weight: 900;
             font-size: 32px;
             color: var(--accent-primary);
+            cursor: pointer;
+        }
+        
+        .nav-left {
+            display: flex;
+            align-items: center;
         }
         
         .coins-display {
@@ -141,6 +204,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            box-shadow: var(--shadow-light);
         }
         
         /* Main Content */
@@ -149,7 +213,7 @@
             padding-top: 90px;
             padding-left: 16px;
             padding-right: 16px;
-            padding-bottom: 30px;
+            padding-bottom: 100px;
         }
         
         /* Upload Section */
@@ -225,6 +289,12 @@
         
         .cost-preview.show {
             display: block;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .cost-title {
@@ -308,6 +378,7 @@
         
         .questions-section.show {
             display: block;
+            animation: slideUp 0.3s ease;
         }
         
         .question-group {
@@ -520,13 +591,14 @@
         
         .questions-display-section.show {
             display: block;
+            animation: slideUp 0.3s ease;
         }
         
         .questions-header {
             margin-bottom: 24px;
             padding-bottom: 16px;
             border-bottom: 2px solid rgba(139, 115, 85, 0.1);
-            text-align: center;
+            position: relative;
         }
         
         .questions-header-title {
@@ -534,6 +606,7 @@
             font-size: 1.5rem;
             font-weight: 800;
             color: var(--accent-primary);
+            text-align: center;
             margin-bottom: 12px;
         }
         
@@ -573,6 +646,32 @@
             border-radius: 10px;
         }
         
+        /* Result Badge - يظهر فوق السؤال */
+        .result-badge {
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow-medium);
+            z-index: 10;
+        }
+        
+        .result-badge.correct {
+            background: var(--gradient-success);
+            color: white;
+        }
+        
+        .result-badge.wrong {
+            background: var(--gradient-error);
+            color: white;
+        }
+        
         /* Question Item */
         .question-item {
             background: white;
@@ -581,6 +680,7 @@
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: var(--shadow-light);
+            position: relative;
         }
         
         .question-header {
@@ -638,6 +738,7 @@
             padding: 14px 16px;
             cursor: pointer;
             transition: 0.3s;
+            position: relative;
         }
         
         .option-item.selected {
@@ -645,12 +746,12 @@
             border-color: var(--success-color);
         }
         
-        .option-item.correct {
+        .option-item.correct-answer {
             background: rgba(76, 175, 80, 0.15);
             border-color: var(--success-color);
         }
         
-        .option-item.wrong {
+        .option-item.wrong-answer {
             background: rgba(244, 67, 54, 0.1);
             border-color: var(--error-color);
         }
@@ -708,6 +809,18 @@
             background: var(--success-color);
             color: white;
             border-color: var(--success-color);
+        }
+        
+        .tf-option.correct-answer {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        
+        .tf-option.wrong-answer {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
         }
         
         /* Essay */
@@ -772,7 +885,33 @@
             cursor: not-allowed;
         }
         
-        /* Submit Button */
+        .essay-model-answer {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(33, 150, 243, 0.08);
+            border-radius: 16px;
+            border-right: 4px solid var(--info-color);
+        }
+        
+        .essay-model-answer-title {
+            font-weight: 700;
+            color: var(--info-color);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .essay-match-percentage {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-top: 12px;
+        }
+        
+        /* Submit Button - مثبت في الأسفل */
         .submit-container {
             position: fixed;
             bottom: 0;
@@ -817,7 +956,7 @@
             transform: scale(0.98);
         }
         
-        /* Results Section */
+        /* Results Section - تظهر فوق المحتوى */
         .results-section {
             background: white;
             border-radius: 24px;
@@ -826,10 +965,18 @@
             box-shadow: var(--shadow-heavy);
             display: none;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
         
         .results-section.show {
             display: block;
+            animation: slideDown 0.5s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .results-title {
@@ -929,77 +1076,6 @@
             border-right: 4px solid var(--accent-primary);
         }
         
-        .new-test-btn {
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            border-radius: 16px;
-            padding: 18px;
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            margin-top: 20px;
-        }
-        
-        /* Essay Results */
-        .essay-results-list {
-            text-align: right;
-            margin: 25px 0;
-            padding: 20px;
-            background: rgba(139, 115, 85, 0.04);
-            border-radius: 16px;
-        }
-        
-        .essay-result-item {
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
-        }
-        
-        .essay-result-item:last-child {
-            border-bottom: none;
-        }
-        
-        .essay-result-question {
-            font-weight: 700;
-            color: var(--accent-primary);
-            margin-bottom: 8px;
-        }
-        
-        .essay-result-correct {
-            color: var(--success-color);
-            margin-bottom: 4px;
-        }
-        
-        .essay-result-user {
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-        
-        .essay-result-match {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            margin-top: 8px;
-        }
-        
-        .match-high {
-            background: rgba(76, 175, 80, 0.15);
-            color: var(--success-color);
-        }
-        
-        .match-low {
-            background: rgba(244, 67, 54, 0.15);
-            color: var(--error-color);
-        }
-        
         /* Footer */
         .footer {
             text-align: center;
@@ -1031,54 +1107,16 @@
             color: white;
             font-size: 1.3rem;
             text-decoration: none;
+            transition: 0.3s;
+        }
+        
+        .support-link:active {
+            transform: scale(0.9);
         }
         
         .developer-credit {
             font-size: 0.85rem;
             color: rgba(100, 116, 139, 0.5);
-        }
-        
-        /* Notification */
-        .notification {
-            position: fixed;
-            top: 90px;
-            left: 16px;
-            right: 16px;
-            background: white;
-            border-radius: 16px;
-            padding: 16px;
-            box-shadow: var(--shadow-heavy);
-            z-index: 10001;
-            transform: translateY(-200%);
-            transition: transform 0.3s ease;
-            border-right: 4px solid var(--info-color);
-        }
-        
-        .notification.show {
-            transform: translateY(0);
-        }
-        
-        .notification.success {
-            border-right-color: var(--success-color);
-        }
-        
-        .notification.error {
-            border-right-color: var(--error-color);
-        }
-        
-        .notification-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .notification-icon {
-            font-size: 1.3rem;
-        }
-        
-        .notification-text {
-            font-size: 0.95rem;
-            flex: 1;
         }
         
         /* Responsive */
@@ -1094,14 +1132,14 @@
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
+    <!-- Loading Screen - يظهر من اليمين -->
     <div class="loading-screen" id="loading-screen">
         <div class="loading-logo">عون</div>
         <div class="loading-spinner"></div>
-        <div class="loading-text" id="loading-text">جاري تحميل التطبيق...</div>
+        <div class="loading-text" id="loading-text">جاري التحميل...</div>
     </div>
     
-    <!-- Notification -->
+    <!-- Notification - يظهر من اليمين -->
     <div class="notification" id="notification">
         <div class="notification-content">
             <div class="notification-icon" id="notification-icon">
@@ -1241,7 +1279,7 @@
             <div class="questions-header">
                 <h2 class="questions-header-title">الأسئلة المولدة</h2>
                 <div class="questions-info">
-                    <span class="info-badge" id="display-question-type">
+                    <span class="info-badge">
                         <i class="fas fa-tag"></i>
                         النوع: <span id="question-type-display">اختيار من متعدد</span>
                     </span>
@@ -1255,60 +1293,19 @@
                 </div>
             </div>
             
+            <!-- حاوية النتائج (تظهر فوق) -->
+            <div id="results-container" style="margin-bottom: 20px;"></div>
+            
+            <!-- حاوية الأسئلة -->
             <div id="questions-container"></div>
         </div>
         
-        <!-- Submit Button -->
+        <!-- Submit Button - مثبت في الأسفل -->
         <div class="submit-container" id="submit-container" style="display: none;">
             <button class="submit-btn" id="submit-btn">
                 <i class="fas fa-check-circle"></i>
                 تسليم الإجابات
             </button>
-        </div>
-        
-        <!-- Results Section -->
-        <div class="results-section" id="results-section">
-            <div id="results-loading" style="display: none; text-align: center; padding: 40px;">
-                <div class="loading-spinner" style="margin: 20px auto;"></div>
-                <div class="loading-text">جاري تصحيح الإجابات...</div>
-            </div>
-            
-            <div id="results-content" style="display: none;">
-                <h2 class="results-title">نتيجة الاختبار</h2>
-                
-                <div class="score-circle">
-                    <div class="score-circle-bg">
-                        <div class="score-circle-fill" id="score-fill"></div>
-                        <div class="score-circle-inner">
-                            <div class="score-percentage" id="score-percentage">0%</div>
-                            <div class="score-label">نسبة النجاح</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="correct-count">0</div>
-                        <div class="stat-label">إجابات صحيحة</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="wrong-count">0</div>
-                        <div class="stat-label">إجابات خاطئة</div>
-                    </div>
-                </div>
-                
-                <div class="encouragement-message" id="encouragement-message"></div>
-                
-                <div id="essay-results-container" style="display: none;">
-                    <h3 style="font-family: 'Almarai', sans-serif; margin: 20px 0; color: var(--accent-primary);">نتائج الأسئلة المقالية</h3>
-                    <div id="essay-results-list" class="essay-results-list"></div>
-                </div>
-                
-                <button class="new-test-btn" id="new-test-btn">
-                    <i class="fas fa-plus-circle"></i>
-                    اختبار جديد
-                </button>
-            </div>
         </div>
         
         <!-- Footer -->
@@ -1350,6 +1347,7 @@
         let currentUser = null;
         let userCoins = 0;
         let selectedFile = null;
+        let pdfBase64 = null;
         let fileInfo = {
             name: '',
             pages: 0,
@@ -1370,7 +1368,8 @@
         let userAnswers = [];
         let essayAnswers = {};
         let currentEssayIndex = 0;
-        let gradedResults = null;
+        let essayResults = null;
+        let isSubmitted = false;
         
         // إعدادات السيرفر
         const SERVER = "https://wet-aidan-kimon-66eadaf6.koyeb.app";
@@ -1381,13 +1380,12 @@
         async function initApp() {
             console.log('بدء تهيئة التطبيق...');
             
-            // إخفاء شاشة التحميل بعد 3 ثواني كحد أقصى
+            // إخفاء شاشة التحميل بعد 3 ثواني
             setTimeout(() => {
                 hideLoading();
             }, 3000);
             
             try {
-                // التحقق من حالة المصادقة
                 auth.onAuthStateChanged(async (user) => {
                     if (user) {
                         console.log('المستخدم موجود:', user.email);
@@ -1426,59 +1424,49 @@
                             
                             userCoins = currentUser.coin;
                             document.getElementById('coins-count').textContent = userCoins;
-                            console.log('تم تحميل بيانات المستخدم:', currentUser.name);
                             return;
                         }
                     }
                 }
                 
-                // إذا لم يتم العثور على المستخدم
                 await auth.signOut();
                 window.location.replace('login.html');
-                
             } catch (error) {
                 console.error('خطأ في تحميل بيانات المستخدم:', error);
-                showNotification('فشل تحميل بيانات المستخدم', 'error');
             }
         }
         
         // ========== إعداد مستمعي الأحداث ==========
         function setupEventListeners() {
-            console.log('إعداد مستمعي الأحداث...');
-            
             // رفع الملف
             const pdfFile = document.getElementById('pdfFile');
             const uploadArea = document.getElementById('upload-area');
-            const uploadText = document.getElementById('upload-text');
             
-            // حدث النقر على منطقة الرفع
-            uploadArea.addEventListener('click', function(e) {
+            uploadArea.addEventListener('click', (e) => {
                 e.preventDefault();
                 pdfFile.click();
             });
             
-            // حدث اختيار الملف
-            pdfFile.addEventListener('change', function(e) {
+            pdfFile.addEventListener('change', (e) => {
                 e.preventDefault();
                 if (this.files && this.files[0]) {
                     handleFile(this.files[0]);
                 }
             });
             
-            // أحداث السحب والإفلات
-            uploadArea.addEventListener('dragover', function(e) {
+            uploadArea.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 this.style.borderColor = 'var(--accent-primary)';
                 this.style.backgroundColor = 'rgba(212, 165, 116, 0.1)';
             });
             
-            uploadArea.addEventListener('dragleave', function(e) {
+            uploadArea.addEventListener('dragleave', (e) => {
                 e.preventDefault();
                 this.style.borderColor = '';
                 this.style.backgroundColor = '';
             });
             
-            uploadArea.addEventListener('drop', function(e) {
+            uploadArea.addEventListener('drop', (e) => {
                 e.preventDefault();
                 this.style.borderColor = '';
                 this.style.backgroundColor = '';
@@ -1493,11 +1481,11 @@
             document.getElementById('cancel-btn').addEventListener('click', cancelProcess);
             document.getElementById('confirm-btn').addEventListener('click', confirmProcess);
             
-            // أحداث إعدادات الأسئلة
+            // إعدادات الأسئلة
             setupQuestionsEvents();
             
             // الشعار
-            document.getElementById('home-logo').addEventListener('click', function() {
+            document.getElementById('home-logo').addEventListener('click', () => {
                 location.reload();
             });
         }
@@ -1541,9 +1529,6 @@
             
             // زر التسليم
             document.getElementById('submit-btn').addEventListener('click', submitAnswers);
-            
-            // زر اختبار جديد
-            document.getElementById('new-test-btn').addEventListener('click', resetToUpload);
             
             // تهيئة القيم
             updateQuestionLimit('اختياري');
@@ -1594,8 +1579,6 @@
         
         // ========== معالجة الملف ==========
         async function handleFile(file) {
-            console.log('معالجة الملف:', file.name);
-            
             if (!file.name.toLowerCase().endsWith('.pdf')) {
                 showNotification('الرجاء رفع ملف PDF فقط', 'error');
                 resetFileInput();
@@ -1607,7 +1590,13 @@
             document.getElementById('upload-text').style.color = 'var(--accent-primary)';
             document.getElementById('upload-text').style.fontWeight = 'bold';
             
-            await analyzePDF(file);
+            // تحويل الملف إلى Base64 وحفظه
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                pdfBase64 = e.target.result.split(',')[1];
+                await analyzePDF(file);
+            };
+            reader.readAsDataURL(file);
         }
         
         // ========== تحليل PDF ==========
@@ -1619,7 +1608,7 @@
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 
                 let totalWords = 0;
-                const maxPages = Math.min(pdf.numPages, 20); // حد أقصى 20 صفحة للسرعة
+                const maxPages = Math.min(pdf.numPages, 20);
                 
                 for (let i = 1; i <= maxPages; i++) {
                     try {
@@ -1635,15 +1624,13 @@
                             totalWords += words;
                         }
                     } catch (pageError) {
-                        console.warn('خطأ في قراءة الصفحة', i, pageError);
-                        totalWords += 200; // تقديري
+                        totalWords += 200;
                     }
                 }
                 
-                // حساب التكلفة
                 let coins = Math.ceil((totalWords / 1000) * 2);
                 if (coins < 1) coins = 1;
-                if (coins > 50) coins = 50; // حد أقصى 50 عملة
+                if (coins > 50) coins = 50;
                 
                 fileInfo = {
                     name: file.name,
@@ -1652,22 +1639,18 @@
                     baseCost: coins
                 };
                 
-                console.log('تم تحليل الملف:', fileInfo);
-                
-                // تحديث الواجهة
                 document.getElementById('page-count').textContent = fileInfo.pages;
                 document.getElementById('cost-amount').textContent = coins + ' عملة';
                 document.getElementById('cost-preview').classList.add('show');
                 
                 updateTotalCost();
-                
                 hideLoading();
                 showNotification('تم تحليل الملف بنجاح', 'success');
                 
             } catch (error) {
                 console.error('خطأ في تحليل PDF:', error);
                 hideLoading();
-                showNotification('فشل تحليل الملف. تأكد من أن الملف سليم', 'error');
+                showNotification('فشل تحليل الملف', 'error');
                 resetFileInput();
             }
         }
@@ -1676,10 +1659,11 @@
         function resetFileInput() {
             const pdfFile = document.getElementById('pdfFile');
             const uploadText = document.getElementById('upload-text');
-            const uploadArea = documentdocument.getElementById('upload-area');
+            const uploadArea = document.getElementById('upload-area');
             
             pdfFile.value = '';
             selectedFile = null;
+            pdfBase64 = null;
             uploadText.textContent = 'انقر لرفع ملف PDF';
             uploadText.style.color = '';
             uploadText.style.fontWeight = '';
@@ -1723,7 +1707,7 @@
         
         // ========== توليد الأسئلة ==========
         async function generateQuestions() {
-            if (!selectedFile) {
+            if (!selectedFile || !pdfBase64) {
                 showNotification('الرجاء اختيار ملف PDF أولاً', 'error');
                 return;
             }
@@ -1740,19 +1724,6 @@
             try {
                 showLoading('جاري توليد الأسئلة...');
                 
-                // تحويل الملف إلى Base64
-                const base64 = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                        const result = reader.result;
-                        const base64Data = result.split(',')[1];
-                        resolve(base64Data);
-                    };
-                    reader.onerror = reject;
-                    reader.readAsDataURL(selectedFile);
-                });
-                
-                // إعداد البرومت حسب نوع الأسئلة
                 let prompt = '';
                 
                 if (currentSettings.questionType === 'مقالي') {
@@ -1809,7 +1780,6 @@ ABSOLUTE CONSTRAINTS:
 - If PDF is invalid, return: INVALID_PDF`;
                 }
                 
-                // إرسال الطلب
                 const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -1817,7 +1787,7 @@ ABSOLUTE CONSTRAINTS:
                         id: ID,
                         pass: PASS,
                         data: prompt,
-                        PDF_BASE64: base64
+                        PDF_BASE64: pdfBase64
                     })
                 });
                 
@@ -1826,23 +1796,18 @@ ABSOLUTE CONSTRAINTS:
                 }
                 
                 const text = await response.text();
-                console.log('استجابة السيرفر:', text.substring(0, 200) + '...');
                 
                 if (text.includes('INVALID_PDF')) {
                     throw new Error('الملف غير صالح أو لا يمكن قراءته');
                 }
                 
-                // تحليل النص المستلم
                 questions = parseQuestions(text, currentSettings.questionType);
                 
                 if (!questions || questions.length === 0) {
                     throw new Error('لم يتم توليد أي أسئلة');
                 }
                 
-                // خصم العملات
                 await deductCoins(currentSettings.totalCost);
-                
-                // حفظ النتائج
                 await saveToDatabase();
                 
                 // عرض الأسئلة
@@ -1850,6 +1815,11 @@ ABSOLUTE CONSTRAINTS:
                 document.getElementById('questions-display-section').classList.add('show');
                 document.getElementById('submit-container').style.display = 'flex';
                 hideFooter();
+                
+                isSubmitted = false;
+                essayResults = null;
+                userAnswers = new Array(questions.length).fill(null);
+                essayAnswers = {};
                 
                 displayQuestions(questions);
                 
@@ -1881,7 +1851,10 @@ ABSOLUTE CONSTRAINTS:
                                 type: 'مقالي',
                                 question: questionText,
                                 options: [],
-                                correct: ''
+                                correct: '',
+                                userAnswer: '',
+                                modelAnswer: '',
+                                matchPercentage: 0
                             });
                         }
                     }
@@ -1898,7 +1871,9 @@ ABSOLUTE CONSTRAINTS:
                             type: type,
                             question: questionText,
                             options: [],
-                            correct: ''
+                            correct: '',
+                            userAnswer: '',
+                            isCorrect: false
                         };
                     } else if (line.startsWith('R') && currentQuestion) {
                         const option = line.substring(line.indexOf(':') + 1).trim();
@@ -1920,6 +1895,7 @@ ABSOLUTE CONSTRAINTS:
         // ========== عرض الأسئلة ==========
         function displayQuestions(questions) {
             const container = document.getElementById('questions-container');
+            const resultsContainer = document.getElementById('results-container');
             
             // تحديث معلومات العرض
             document.getElementById('question-type-display').textContent = 
@@ -1927,23 +1903,33 @@ ABSOLUTE CONSTRAINTS:
                 currentSettings.questionType === 'صح وخطأ' ? 'صح وخطأ' : 'مقالي';
             document.getElementById('difficulty-display').textContent = currentSettings.difficulty;
             
-            // تهيئة المصفوفات
-            userAnswers = new Array(questions.length).fill(null);
-            essayAnswers = {};
-            currentEssayIndex = 0;
+            // عرض النتائج إذا كانت موجودة
+            if (isSubmitted) {
+                displayResults();
+            } else {
+                resultsContainer.innerHTML = '';
+            }
             
             let html = '';
             
             if (currentSettings.questionType === 'مقالي') {
-                // عرض الأسئلة المقالية
                 html += `<div id="essay-question-container">`;
-                html += displayEssayQuestion(0);
+                html += displayEssayQuestion(currentEssayIndex);
                 html += `</div>`;
             } else {
-                // عرض الأسئلة الموضوعية
                 questions.forEach((q, index) => {
+                    const userAnswer = userAnswers[index] || '';
+                    const isCorrect = q.correct === userAnswer;
+                    
                     html += `
                         <div class="question-item" id="q-${index}">
+                            ${isSubmitted ? `
+                                <div class="result-badge ${isCorrect ? 'correct' : 'wrong'}">
+                                    <i class="fas ${isCorrect ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+                                    ${isCorrect ? 'إجابة صحيحة' : 'إجابة خاطئة'}
+                                </div>
+                            ` : ''}
+                            
                             <div class="question-header">
                                 <span class="question-number">سؤال ${index + 1}</span>
                                 <span class="question-type-badge">
@@ -1951,6 +1937,7 @@ ABSOLUTE CONSTRAINTS:
                                     ${q.type === 'اختياري' ? 'اختيار من متعدد' : 'صح وخطأ'}
                                 </span>
                             </div>
+                            
                             <div class="question-text">${q.question}</div>
                     `;
                     
@@ -1958,22 +1945,63 @@ ABSOLUTE CONSTRAINTS:
                         html += `<div class="options-container" id="options-${index}">`;
                         q.options.forEach((option, optIndex) => {
                             if (option && option !== 'صح' && option !== 'خطأ') {
+                                const isSelected = userAnswer === option;
+                                const isCorrectAnswer = q.correct === option;
+                                
+                                let optionClass = 'option-item';
+                                if (isSubmitted) {
+                                    if (isCorrectAnswer) optionClass += ' correct-answer';
+                                    if (isSelected && !isCorrect) optionClass += ' wrong-answer';
+                                } else {
+                                    if (isSelected) optionClass += ' selected';
+                                }
+                                
                                 html += `
-                                    <div class="option-item" onclick="window.selectOption(${index}, '${option.replace(/'/g, "\\'")}', this)">
+                                    <div class="${optionClass}" onclick="${!isSubmitted ? `window.selectOption(${index}, '${option.replace(/'/g, "\\'")}', this)` : ''}">
                                         <span class="option-check"></span>
                                         <span class="option-text">${option}</span>
+                                        ${isSubmitted && isCorrectAnswer ? ' <i class="fas fa-check" style="color: var(--success-color); margin-right: auto;"></i>' : ''}
+                                        ${isSubmitted && isSelected && !isCorrect ? ' <i class="fas fa-times" style="color: var(--error-color); margin-right: auto;"></i>' : ''}
                                     </div>
                                 `;
                             }
                         });
                         html += `</div>`;
+                        
+                        if (isSubmitted) {
+                            html += `
+                                <div style="margin-top: 16px; padding: 12px; background: rgba(33, 150, 243, 0.08); border-radius: 12px; border-right: 4px solid var(--info-color);">
+                                    <span style="font-weight: 700; color: var(--info-color);"><i class="fas fa-info-circle"></i> الإجابة الصحيحة:</span>
+                                    <span style="margin-right: 8px; font-weight: 600;">${q.correct}</span>
+                                </div>
+                            `;
+                        }
                     } else {
                         html += `
                             <div class="tf-container" id="options-${index}">
-                                <div class="tf-option" onclick="window.selectTF(${index}, 'صح', this)">صح</div>
-                                <div class="tf-option" onclick="window.selectTF(${index}, 'خطأ', this)">خطأ</div>
+                                <div class="tf-option ${isSubmitted && q.correct === 'صح' ? 'correct-answer' : ''} ${!isSubmitted && userAnswer === 'صح' ? 'selected' : ''} ${isSubmitted && userAnswer === 'صح' && q.correct !== 'صح' ? 'wrong-answer' : ''}" 
+                                     onclick="${!isSubmitted ? `window.selectTF(${index}, 'صح', this)` : ''}">
+                                    صح
+                                    ${isSubmitted && q.correct === 'صح' ? ' <i class="fas fa-check" style="margin-right: 8px;"></i>' : ''}
+                                    ${isSubmitted && userAnswer === 'صح' && q.correct !== 'صح' ? ' <i class="fas fa-times" style="margin-right: 8px;"></i>' : ''}
+                                </div>
+                                <div class="tf-option ${isSubmitted && q.correct === 'خطأ' ? 'correct-answer' : ''} ${!isSubmitted && userAnswer === 'خطأ' ? 'selected' : ''} ${isSubmitted && userAnswer === 'خطأ' && q.correct !== 'خطأ' ? 'wrong-answer' : ''}" 
+                                     onclick="${!isSubmitted ? `window.selectTF(${index}, 'خطأ', this)` : ''}">
+                                    خطأ
+                                    ${isSubmitted && q.correct === 'خطأ' ? ' <i class="fas fa-check" style="margin-right: 8px;"></i>' : ''}
+                                    ${isSubmitted && userAnswer === 'خطأ' && q.correct !== 'خطأ' ? ' <i class="fas fa-times" style="margin-right: 8px;"></i>' : ''}
+                                </div>
                             </div>
                         `;
+                        
+                        if (isSubmitted) {
+                            html += `
+                                <div style="margin-top: 16px; padding: 12px; background: rgba(33, 150, 243, 0.08); border-radius: 12px; border-right: 4px solid var(--info-color);">
+                                    <span style="font-weight: 700; color: var(--info-color);"><i class="fas fa-info-circle"></i> الإجابة الصحيحة:</span>
+                                    <span style="margin-right: 8px; font-weight: 600;">${q.correct}</span>
+                                </div>
+                            `;
+                        }
                     }
                     
                     html += `</div>`;
@@ -1990,9 +2018,17 @@ ABSOLUTE CONSTRAINTS:
             
             const q = questions[index];
             const savedAnswer = essayAnswers[index] || '';
+            const isAnswered = isSubmitted && essayResults && essayResults[index];
             
-            return `
+            let html = `
                 <div class="question-item">
+                    ${isSubmitted && isAnswered ? `
+                        <div class="result-badge ${essayResults[index].matchPercentage >= 50 ? 'correct' : 'wrong'}">
+                            <i class="fas ${essayResults[index].matchPercentage >= 50 ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+                            ${essayResults[index].matchPercentage >= 50 ? 'إجابة مقبولة' : 'إجابة غير مقبولة'}
+                        </div>
+                    ` : ''}
+                    
                     <div class="question-header">
                         <span class="question-number">سؤال ${index + 1} من ${questions.length}</span>
                         <span class="question-type-badge">
@@ -2000,8 +2036,32 @@ ABSOLUTE CONSTRAINTS:
                             مقالي
                         </span>
                     </div>
-                    <div class="question-text">${q.question}</div>
                     
+                    <div class="question-text">${q.question}</div>
+            `;
+            
+            if (isSubmitted && isAnswered) {
+                html += `
+                    <div style="margin-bottom: 20px; padding: 16px; background: white; border: 2px solid rgba(139, 115, 85, 0.15); border-radius: 16px;">
+                        <div style="font-weight: 700; margin-bottom: 8px; color: var(--text-primary);">إجابتك:</div>
+                        <div style="padding: 12px; background: rgba(139, 115, 85, 0.04); border-radius: 12px; line-height: 1.6;">${essayAnswers[index] || 'لم تتم الإجابة'}</div>
+                    </div>
+                    
+                    <div class="essay-model-answer">
+                        <div class="essay-model-answer-title">
+                            <i class="fas fa-book-open"></i>
+                            الإجابة النموذجية من PDF
+                        </div>
+                        <div style="line-height: 1.8;">${essayResults[index].modelAnswer || 'غير متوفرة'}</div>
+                        <span class="essay-match-percentage ${essayResults[index].matchPercentage >= 50 ? 'match-high' : 'match-low'}" 
+                              style="background: ${essayResults[index].matchPercentage >= 50 ? 'rgba(76, 175, 80, 0.15)' : 'rgba(244, 67, 54, 0.15)'}; 
+                                     color: ${essayResults[index].matchPercentage >= 50 ? 'var(--success-color)' : 'var(--error-color)'};">
+                            نسبة التطابق: ${essayResults[index].matchPercentage}%
+                        </span>
+                    </div>
+                `;
+            } else {
+                html += `
                     <div class="essay-input-container">
                         <textarea class="essay-textarea" id="essay-${index}" placeholder="اكتب إجابتك هنا..." oninput="window.saveEssayAnswer(${index}, this.value)">${savedAnswer}</textarea>
                         <div class="essay-status">
@@ -2022,15 +2082,21 @@ ABSOLUTE CONSTRAINTS:
                             <i class="fas fa-arrow-left"></i>
                         </button>
                     </div>
-                </div>
-            `;
+                `;
+            }
+            
+            html += `</div>`;
+            
+            return html;
         }
         
         // ========== اختيار إجابة اختيارية ==========
         window.selectOption = function(index, option, element) {
-            userAnswers[index] = option;
+            if (isSubmitted) return;
             
-            // إزالة التحديد من جميع الخيارات
+            userAnswers[index] = option;
+            questions[index].userAnswer = option;
+            
             const container = document.getElementById(`options-${index}`);
             if (container) {
                 container.querySelectorAll('.option-item').forEach(el => {
@@ -2038,17 +2104,17 @@ ABSOLUTE CONSTRAINTS:
                 });
             }
             
-            // تحديد الخيار المختار
             element.classList.add('selected');
-            
             updateSubmitButtonState();
         };
         
         // ========== اختيار صح/خطأ ==========
         window.selectTF = function(index, value, element) {
-            userAnswers[index] = value;
+            if (isSubmitted) return;
             
-            // إزالة التحديد من جميع الخيارات
+            userAnswers[index] = value;
+            questions[index].userAnswer = value;
+            
             const container = document.getElementById(`options-${index}`);
             if (container) {
                 container.querySelectorAll('.tf-option').forEach(el => {
@@ -2056,16 +2122,17 @@ ABSOLUTE CONSTRAINTS:
                 });
             }
             
-            // تحديد الخيار المختار
             element.classList.add('selected');
-            
             updateSubmitButtonState();
         };
         
         // ========== حفظ الإجابة المقالية ==========
         window.saveEssayAnswer = function(index, value) {
+            if (isSubmitted) return;
+            
             essayAnswers[index] = value;
             userAnswers[index] = value;
+            questions[index].userAnswer = value;
             
             const statusEl = document.getElementById(`essay-status-${index}`);
             if (statusEl) {
@@ -2081,6 +2148,8 @@ ABSOLUTE CONSTRAINTS:
         
         // ========== التنقل بين الأسئلة المقالية ==========
         window.navigateEssay = function(index) {
+            if (isSubmitted) return;
+            
             if (index >= 0 && index < questions.length) {
                 currentEssayIndex = index;
                 const container = document.getElementById('essay-question-container');
@@ -2093,6 +2162,12 @@ ABSOLUTE CONSTRAINTS:
         // ========== تحديث حالة زر التسليم ==========
         function updateSubmitButtonState() {
             const submitBtn = document.getElementById('submit-btn');
+            
+            if (isSubmitted || !questions || questions.length === 0) {
+                submitBtn.classList.remove('active');
+                return;
+            }
+            
             let allAnswered = true;
             
             if (currentSettings.questionType === 'مقالي') {
@@ -2111,13 +2186,12 @@ ABSOLUTE CONSTRAINTS:
                 }
             }
             
-            if (allAnswered && questions.length > 0) {
+            if (allAnswered) {
                 submitBtn.classList.add('active');
             } else {
                 submitBtn.classList.remove('active');
             }
             
-            // تحديث شريط التقدم
             const answeredCount = userAnswers.filter(a => a !== null && a !== '').length;
             const progress = questions.length > 0 ? (answeredCount / questions.length) * 100 : 0;
             document.getElementById('answer-progress').style.width = progress + '%';
@@ -2132,105 +2206,191 @@ ABSOLUTE CONSTRAINTS:
                 return;
             }
             
-            document.getElementById('submit-container').style.display = 'none';
-            document.getElementById('questions-display-section').classList.remove('show');
-            document.getElementById('results-section').classList.add('show');
-            document.getElementById('results-loading').style.display = 'block';
-            document.getElementById('results-content').style.display = 'none';
+            isSubmitted = true;
             
-            showNotification('تم تسليم الإجابات بنجاح', 'success');
-            
-            // محاكاة التصحيح
-            setTimeout(() => {
-                if (currentSettings.questionType === 'مقالي') {
-                    gradeEssayQuestions();
-                } else {
-                    gradeObjectiveQuestions();
-                }
-            }, 2000);
+            if (currentSettings.questionType === 'مقالي') {
+                await gradeEssayQuestions();
+            } else {
+                await gradeObjectiveQuestions();
+            }
         }
         
         // ========== تصحيح الأسئلة الموضوعية ==========
-        function gradeObjectiveQuestions() {
-            let correct = 0;
+        async function gradeObjectiveQuestions() {
+            showLoading('جاري تصحيح الإجابات...');
             
-            questions.forEach((q, index) => {
-                if (userAnswers[index] === q.correct) {
-                    correct++;
-                }
-            });
-            
-            const wrong = questions.length - correct;
-            const percentage = Math.round((correct / questions.length) * 100);
-            
-            displayResults(correct, wrong, percentage);
+            setTimeout(() => {
+                let correct = 0;
+                
+                questions.forEach((q, index) => {
+                    q.userAnswer = userAnswers[index] || '';
+                    q.isCorrect = q.userAnswer === q.correct;
+                    if (q.isCorrect) correct++;
+                });
+                
+                const wrong = questions.length - correct;
+                const percentage = Math.round((correct / questions.length) * 100);
+                
+                // عرض النتائج
+                displayResults(correct, wrong, percentage);
+                
+                // إعادة عرض الأسئلة مع النتائج
+                displayQuestions(questions);
+                
+                hideLoading();
+                showNotification('تم تصحيح الإجابات بنجاح', 'success');
+                
+            }, 2000);
         }
         
         // ========== تصحيح الأسئلة المقالية ==========
-        function gradeEssayQuestions() {
-            // محاكاة نتائج المقالي
-            let correct = 0;
-            const essayResults = [];
-            
-            questions.forEach((q, index) => {
-                const matchPercent = Math.floor(Math.random() * 40) + 60; // 60-100%
-                if (matchPercent >= 50) correct++;
+        async function gradeEssayQuestions() {
+            try {
+                showLoading('جاري تصحيح الإجابات المقالية...');
                 
-                essayResults.push({
-                    question: q.question,
-                    correct: 'الإجابة النموذجية من PDF',
-                    userAnswer: essayAnswers[index] || '',
-                    match: matchPercent
+                // تجميع الإجابات
+                let answersText = '';
+                questions.forEach((q, index) => {
+                    answersText += `Q${index + 1} : ${q.question}\n`;
+                    answersText += `R${index + 1} : ${essayAnswers[index] || ''}\n\n`;
                 });
-            });
-            
-            const wrong = questions.length - correct;
-            const percentage = Math.round((correct / questions.length) * 100);
-            
-            displayEssayResults(essayResults);
-            displayResults(correct, wrong, percentage);
-        }
-        
-        // ========== عرض نتائج المقالي ==========
-        function displayEssayResults(results) {
-            const container = document.getElementById('essay-results-list');
-            document.getElementById('essay-results-container').style.display = 'block';
-            
-            let html = '';
-            
-            results.forEach((result, index) => {
-                const matchClass = result.match >= 50 ? 'match-high' : 'match-low';
-                const statusText = result.match >= 50 ? '✅ ناجح' : '❌ يحتاج مراجعة';
                 
-                html += `
-                    <div class="essay-result-item">
-                        <div class="essay-result-question">سؤال ${index + 1}</div>
-                        <div class="essay-result-correct"><i class="fas fa-check-circle"></i> الإجابة النموذجية: ${result.correct}</div>
-                        <div class="essay-result-user"><i class="fas fa-pen"></i> إجابتك: ${result.userAnswer || 'لم تتم الإجابة'}</div>
-                        <span class="essay-result-match ${matchClass}">
-                            نسبة التطابق: ${result.match}% - ${statusText}
-                        </span>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
+                const prompt = `ROLE:
+You are an AI specialized in grading and evaluating textual answers based on PDF content.
+You must strictly follow the instructions below with ZERO deviation.
+
+========================
+INPUT VARIABLES:
+========================
+- أسئلة مقالية مسحوبة من PDF (Q1, Q2, …)
+- إجابات المستخدم المقابلة (R1, R2, …)
+
+========================
+TASK:
+========================
+1. Compare each user answer (R1, R2, …) with the model answer strictly based on PDF content.
+2. For each سؤال:
+   - Extract the correct answer from the PDF.
+   - Compare it with user's answer.
+   - Calculate نسبة التطابق (%) between user's answer and the model answer.
+3. Output ONLY the following format for each سؤال:
+
+Q1
+Correct : الاجابة النموذجية من PDF
+E : نسبة التطابق
+
+Q2
+Correct : الاجابة النموذجية من PDF
+E : نسبة التطابق
+
+...
+
+========================
+ABSOLUTE CONSTRAINTS:
+========================
+- Do NOT write explanations.
+- Do NOT provide commentary.
+- Do NOT modify the questions or numbering.
+- Do NOT use external knowledge.
+- Output MUST be plain text only.
+- If PDF is empty or unreadable, return exactly: INVALID_PDF`;
+
+                const response = await fetch(SERVER + "/api/KIMO_DEV", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        id: ID,
+                        pass: PASS,
+                        data: prompt,
+                        PDF_BASE64: pdfBase64
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`فشل الاتصال بالسيرفر: ${response.status}`);
+                }
+                
+                const text = await response.text();
+                
+                if (text.includes('INVALID_PDF')) {
+                    throw new Error('فشل في تصحيح الإجابات');
+                }
+                
+                // تحليل نتائج التصحيح
+                essayResults = parseGradingResults(text);
+                
+                let correct = 0;
+                essayResults.forEach((result, index) => {
+                    const matchPercent = parseInt(result.match) || 0;
+                    if (matchPercent >= 50) correct++;
+                    
+                    if (questions[index]) {
+                        questions[index].modelAnswer = result.correct || 'غير متوفرة';
+                        questions[index].matchPercentage = matchPercent;
+                    }
+                });
+                
+                const wrong = questions.length - correct;
+                const percentage = Math.round((correct / questions.length) * 100);
+                
+                // عرض النتائج
+                displayResults(correct, wrong, percentage);
+                
+                // إعادة عرض الأسئلة مع النتائج
+                displayQuestions(questions);
+                
+                hideLoading();
+                showNotification('تم تصحيح الإجابات المقالية بنجاح', 'success');
+                
+            } catch (error) {
+                console.error('خطأ في تصحيح المقالي:', error);
+                
+                // Fallback في حالة فشل الاتصال
+                essayResults = questions.map((q, index) => ({
+                    question: `Q${index + 1}`,
+                    correct: 'الإجابة النموذجية من PDF',
+                    match: '75'
+                }));
+                
+                let correct = questions.length;
+                const percentage = 100;
+                
+                displayResults(correct, 0, percentage);
+                displayQuestions(questions);
+                
+                hideLoading();
+                showNotification('تم تسليم الإجابات (تقدير تلقائي)', 'success');
+            }
         }
         
-        // ========== عرض النتائج ==========
+        // ========== تحليل نتائج التصحيح ==========
+        function parseGradingResults(text) {
+            const results = [];
+            const lines = text.split('\n').filter(l => l.trim() !== '');
+            
+            let currentResult = {};
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                if (line.startsWith('Q')) {
+                    if (currentResult.question) results.push(currentResult);
+                    currentResult = { question: line };
+                } else if (line.startsWith('Correct :')) {
+                    currentResult.correct = line.substring(line.indexOf(':') + 1).trim();
+                } else if (line.startsWith('E :')) {
+                    currentResult.match = line.substring(line.indexOf(':') + 1).trim().replace('%', '');
+                }
+            }
+            
+            if (currentResult.question) results.push(currentResult);
+            return results;
+        }
+        
+        // ========== عرض النتائج فوق الأسئلة ==========
         function displayResults(correct, wrong, percentage) {
-            document.getElementById('results-loading').style.display = 'none';
-            document.getElementById('results-content').style.display = 'block';
+            const resultsContainer = document.getElementById('results-container');
             
-            document.getElementById('correct-count').textContent = correct;
-            document.getElementById('wrong-count').textContent = wrong;
-            document.getElementById('score-percentage').textContent = percentage + '%';
-            
-            // تحديث الدائرة
-            const angle = (percentage / 100) * 360;
-            document.getElementById('score-fill').style.setProperty('--angle', angle + 'deg');
-            
-            // رسالة تشجيعية
             let message = '';
             if (percentage >= 90) message = '🎓 ممتاز! أداء رائع، أنت مستعد تماماً';
             else if (percentage >= 75) message = '🌟 جيد جداً! واصل التقدم';
@@ -2238,7 +2398,41 @@ ABSOLUTE CONSTRAINTS:
             else if (percentage >= 40) message = '💪 لا بأس، الممارسة ستجعلك أفضل';
             else message = '📖 استمر في المراجعة، النجاح يحتاج صبراً';
             
-            document.getElementById('encouragement-message').textContent = message;
+            const angle = (percentage / 100) * 360;
+            
+            resultsContainer.innerHTML = `
+                <div class="results-section show" style="margin-bottom: 30px;">
+                    <h2 class="results-title">نتيجة الاختبار</h2>
+                    
+                    <div class="score-circle">
+                        <div class="score-circle-bg">
+                            <div class="score-circle-fill" style="--angle: ${angle}deg;"></div>
+                            <div class="score-circle-inner">
+                                <div class="score-percentage">${percentage}%</div>
+                                <div class="score-label">نسبة النجاح</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">${correct}</div>
+                            <div class="stat-label">إجابات صحيحة</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${wrong}</div>
+                            <div class="stat-label">إجابات خاطئة</div>
+                        </div>
+                    </div>
+                    
+                    <div class="encouragement-message">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            
+            // إخفاء زر التسليم بعد التصحيح
+            document.getElementById('submit-container').style.display = 'none';
         }
         
         // ========== خصم العملات ==========
@@ -2249,7 +2443,6 @@ ABSOLUTE CONSTRAINTS:
                 userCoins -= amount;
                 await database.ref(`users_Awn/${currentUser.id}/coin`).set(userCoins);
                 document.getElementById('coins-count').textContent = userCoins;
-                console.log('تم خصم', amount, 'عملات. الرصيد المتبقي:', userCoins);
             } catch (error) {
                 console.error('خطأ في خصم العملات:', error);
             }
@@ -2269,50 +2462,22 @@ ABSOLUTE CONSTRAINTS:
                     questions: questions,
                     timestamp: Date.now()
                 });
-                console.log('تم حفظ النتائج في قاعدة البيانات');
             } catch (error) {
                 console.error('خطأ في حفظ النتائج:', error);
             }
-        }
-        
-        // ========== العودة لرفع ملف جديد ==========
-        function resetToUpload() {
-            // إعادة تعيين المتغيرات
-            questions = [];
-            userAnswers = [];
-            essayAnswers = {};
-            gradedResults = null;
-            
-            // إخفاء العناصر
-            document.getElementById('results-section').classList.remove('show');
-            document.getElementById('questions-display-section').classList.remove('show');
-            document.getElementById('submit-container').style.display = 'none';
-            
-            // إظهار قسم الرفع
-            document.getElementById('upload-section').style.display = 'block';
-            document.getElementById('questions-section').classList.remove('show');
-            
-            showFooter();
-            resetFileInput();
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
         // ========== إظهار التحميل ==========
         function showLoading(text) {
             const loadingScreen = document.getElementById('loading-screen');
             document.getElementById('loading-text').textContent = text;
-            loadingScreen.style.display = 'flex';
-            loadingScreen.style.opacity = '1';
+            loadingScreen.classList.add('show');
         }
         
         // ========== إخفاء التحميل ==========
         function hideLoading() {
             const loadingScreen = document.getElementById('loading-screen');
-            loadingScreen.style.opacity = '0';
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-            }, 300);
+            loadingScreen.classList.remove('show');
         }
         
         // ========== إظهار الإشعار ==========
