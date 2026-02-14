@@ -418,7 +418,7 @@
             gap: 10px;
         }
         
-        /* Type Selection - فقط اختياري وصح/خطأ */
+        /* Type Selection */
         .type-options {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -1124,7 +1124,6 @@
             }
         }
         
-        /* Responsive */
         @media (max-width: 768px) {
             .native-navbar {
                 padding: 0 20px;
@@ -1188,7 +1187,7 @@
         <!-- Upload Section -->
         <section class="upload-section" id="upload-section">
             <h1 class="section-title">نظام الأسئلة الذكي</h1>
-            <p class="section-subtitle">ارفع ملف PDF الخاص بك واحصل على أسئلة ذكية مع الشرح</p>
+            <p class="section-subtitle">ارفع ملف PDF الخاص بك واحصل على أسئلة احترافية مع الشرح</p>
             
             <div class="upload-area" id="upload-area">
                 <div class="upload-icon">
@@ -1627,7 +1626,7 @@
         }
         
         function updateMaxQuestions() {
-            const maxQuestions = 80; // ثابت لأننا أزلنا المقالي
+            const maxQuestions = 80;
             currentSettings.maxQuestions = maxQuestions;
             document.getElementById('max-label').textContent = maxQuestions;
             document.getElementById('max-questions-value').textContent = maxQuestions;
@@ -1657,46 +1656,146 @@
             document.getElementById('total-cost-display').textContent = `${total} عملة`;
         }
         
-        // ========== إنشاء البرومبت ==========
+        // ========== إنشاء البرومبت حسب الطلب الجديد ==========
         function createPrompt() {
             return `ROLE:
-You are an AI specialized in strict PDF-based question generation.
-You must strictly follow the instructions below.
+You are an AI specialized in professional PDF-based exam generation.
+You must strictly follow all rules with ZERO deviation.
 
-INPUT:
+========================
+INPUT VARIABLES (IN ARABIC):
+========================
 عدد_الاسئلة = ${currentSettings.questionsCount}
 درجة_الصعوبة = ${currentSettings.difficulty}
 نوع_الاسئلة = ${currentSettings.questionType}
 
-TASK:
-1. Analyze the PDF from first to last word only.
-2. Generate exactly ${currentSettings.questionsCount} questions.
-3. Each question MUST include:
-   - The question
-   - The correct answer
-   - A detailed explanation for the answer
-4. All content must come strictly from the PDF.
-5. No external knowledge allowed.
+========================
+CORE DIRECTIVE:
+========================
 
-OUTPUT FORMAT:
-For each question, use this EXACT format:
+You must analyze the provided PDF from the first word to the last word with 100% coverage before generating any output.
 
-Q1: [السؤال]
-A1: [الإجابة الصحيحة]
-E1: [شرح مفصل للإجابة]
+All generated content MUST be derived strictly from the PDF content.
+No external knowledge.
+No hallucination.
+No invented facts.
+No generic filler explanations.
 
-Q2: [السؤال]
-A2: [الإجابة الصحيحة]
-E2: [شرح مفصل للإجابة]
+========================
+DIFFICULTY ENGINE (MANDATORY):
+========================
 
-... and so on until Q${currentSettings.questionsCount}
+• سهل:
+  - Questions must be direct.
+  - Answers clearly stated in the PDF.
+  - No inference required.
+  - Suitable for recall-level assessment.
 
-RULES:
-- Questions must match the difficulty level: ${currentSettings.difficulty}
-- All answers must be word-for-word from the PDF
-- Explanations must be detailed and from the PDF
-- No extra text, no JSON, no Markdown
-- If PDF is invalid, return exactly: INVALID_PDF`;
+• متوسط:
+  - Questions require understanding relationships between concepts in the PDF.
+  - May combine two related ideas.
+  - Still strictly derived from the document.
+
+• صعب:
+  - Questions must require deep comprehension of the entire PDF.
+  - May connect distant sections of the document.
+  - Require inference strictly based on document logic.
+  - Must feel analytical, not surface-level.
+
+========================
+QUESTION QUALITY RULES:
+========================
+
+- Questions must be professionally phrased.
+- No vague wording.
+- No repeated patterns.
+- No predictable option ordering.
+- Distractors (wrong choices) must:
+    • Be realistic.
+    • Be derived from the PDF.
+    • Be conceptually close to the correct answer.
+- Avoid trivial elimination patterns.
+- Avoid obviously wrong answers.
+
+========================
+OUTPUT FORMAT (STRICT):
+========================
+
+Output MUST be plain text only.
+No JSON.
+No Markdown.
+No commentary.
+No extra text before or after.
+
+========================
+IF نوع_الاسئلة = اختياري
+========================
+
+Return exactly in this structure:
+
+Type : اختياري
+
+Q1 : السؤال
+A : اختيار
+B : اختيار
+C : اختيار
+D : اختيار
+Correct : الحرف + نص الإجابة الصحيحة
+Explanation : تفسير الإجابة الصحيحة بناءً على نص الملف فقط
+
+Q2 : السؤال
+A : اختيار
+B : اختيار
+C : اختيار
+D : اختيار
+Correct : ...
+Explanation : ...
+
+(Repeat until exactly عدد_الاسئلة)
+
+Rules:
+- Only ONE correct answer per question.
+- Explanation must be concise and based strictly on PDF content.
+- Explanation must justify why the correct option is correct.
+
+========================
+IF نوع_الاسئلة = صح وخطأ
+========================
+
+Return exactly in this structure:
+
+Type : صح وخطأ
+
+Q1 : العبارة
+A : صح
+B : خطأ
+Correct : صح أو خطأ
+Explanation : تفسير الحكم بناءً على نص الملف فقط
+
+Q2 : العبارة
+A : صح
+B : خطأ
+Correct : ...
+Explanation : ...
+
+(Repeat until exactly عدد_الاسئلة)
+
+========================
+VALIDATION RULES:
+========================
+
+- The number of questions MUST equal عدد_الاسئلة exactly.
+- Every question must align with درجة_الصعوبة.
+- Explanations must be grounded in document content.
+- No duplicated questions.
+- No repeated answer sets.
+- If constraints cannot be satisfied → return exactly:
+
+CONSTRAINT_VIOLATION
+
+- If PDF is empty or unreadable → return exactly:
+
+INVALID_PDF`;
         }
         
         // ========== توليد الأسئلة ==========
@@ -1737,7 +1836,8 @@ RULES:
                 const text = await response.text();
                 hideLoading();
                 
-                if (text === "INVALID_PDF") throw new Error('الملف غير صالح');
+                if (text === "INVALID_PDF") throw new Error('الملف غير صالح أو فارغ');
+                if (text === "CONSTRAINT_VIOLATION") throw new Error('لا يمكن توليد أسئلة بهذه المواصفات');
                 
                 questionsData = parseQuestions(text);
                 if (!questionsData.length) throw new Error('لم يتم إنشاء أسئلة');
@@ -1759,32 +1859,44 @@ RULES:
             }
         }
         
-        // ========== تحليل النتيجة ==========
+        // ========== تحليل النتيجة حسب التنسيق الجديد ==========
         function parseQuestions(text) {
             const lines = text.split('\n').filter(l => l.trim());
             const questions = [];
             let current = {};
+            let questionType = '';
             
-            for (const line of lines) {
-                if (line.startsWith('Q')) {
-                    if (current.question) questions.push(current);
-                    current = { question: line.substring(line.indexOf(':') + 1).trim() };
-                } else if (line.startsWith('A')) {
-                    current.answer = line.substring(line.indexOf(':') + 1).trim();
-                } else if (line.startsWith('E')) {
-                    current.explanation = line.substring(line.indexOf(':') + 1).trim();
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                if (line.startsWith('Type :')) {
+                    questionType = line.replace('Type :', '').trim();
+                }
+                else if (line.startsWith('Q')) {
+                    if (current.question) {
+                        questions.push(current);
+                    }
+                    current = {
+                        type: questionType,
+                        question: line.substring(line.indexOf(':') + 1).trim(),
+                        options: [],
+                        correct: '',
+                        explanation: ''
+                    };
+                }
+                else if (line.match(/^[ABCD] :/) && current) {
+                    current.options.push(line.substring(line.indexOf(':') + 1).trim());
+                }
+                else if (line.startsWith('Correct :') && current) {
+                    current.correct = line.replace('Correct :', '').trim();
+                }
+                else if (line.startsWith('Explanation :') && current) {
+                    current.explanation = line.replace('Explanation :', '').trim();
                 }
             }
             if (current.question) questions.push(current);
             
-            // للأسئلة الاختيارية، نولد خيارات وهمية
-            return questions.map(q => ({
-                ...q,
-                type: currentSettings.questionType,
-                options: currentSettings.questionType === 'اختياري' 
-                    ? [q.answer, 'خيار آخر 1', 'خيار آخر 2', 'خيار آخر 3'] 
-                    : ['صح', 'خطأ']
-            }));
+            return questions;
         }
         
         async function deductCoins(amount) {
@@ -1813,7 +1925,7 @@ RULES:
             let html = '';
             questionsData.forEach((q, i) => {
                 html += `
-                    <div class="question-card" id="question-${i}" data-type="${q.type}">
+                    <div class="question-card" id="question-${i}">
                         <div class="question-header">
                             <div class="question-number-badge">${i+1}</div>
                             <div class="question-type-badge">${q.type}</div>
@@ -1857,10 +1969,21 @@ RULES:
             options.forEach(opt => opt.classList.remove('selected'));
             options[optIndex].classList.add('selected');
             
+            const selectedText = questionsData[qIndex].options[optIndex];
+            const correctText = questionsData[qIndex].correct;
+            
+            // استخراج نص الإجابة الصحيحة (قد يكون مع حرف مثل "A : نص" أو بدون)
+            let correctAnswerText = correctText;
+            if (correctText.includes(':')) {
+                correctAnswerText = correctText.substring(correctText.indexOf(':') + 1).trim();
+            } else if (correctText.match(/^[ABCD]/)) {
+                correctAnswerText = correctText.substring(1).trim();
+            }
+            
             userAnswers[qIndex] = {
                 selected: optIndex,
-                selectedText: questionsData[qIndex].options[optIndex],
-                isCorrect: questionsData[qIndex].options[optIndex] === questionsData[qIndex].answer
+                selectedText: selectedText,
+                isCorrect: selectedText === correctAnswerText
             };
             
             updateProgressBar();
@@ -1901,11 +2024,18 @@ RULES:
                 const options = document.querySelectorAll(`#options-${i} .option-item`);
                 const explanation = document.getElementById(`explanation-${i}`);
                 
+                // استخراج نص الإجابة الصحيحة
+                let correctAnswerText = q.correct;
+                if (correctAnswerText.includes(':')) {
+                    correctAnswerText = correctAnswerText.substring(correctAnswerText.indexOf(':') + 1).trim();
+                } else if (correctAnswerText.match(/^[ABCD]/)) {
+                    correctAnswerText = correctAnswerText.substring(1).trim();
+                }
+                
                 if (answer) {
-                    const isCorrect = answer.selectedText === q.answer;
+                    const isCorrect = answer.selectedText === correctAnswerText;
                     if (isCorrect) correctCount++;
                     
-                    // عرض النتيجة
                     resultDiv.innerHTML = isCorrect 
                         ? '<i class="fas fa-check-circle"></i> إجابة صحيحة ✓'
                         : '<i class="fas fa-times-circle"></i> إجابة خاطئة ✗';
@@ -1922,7 +2052,8 @@ RULES:
                     
                     // تلوين الخيارات
                     options.forEach((opt, idx) => {
-                        if (questionsData[i].options[idx] === q.answer) {
+                        const optText = q.options[idx];
+                        if (optText === correctAnswerText) {
                             opt.classList.add('correct-answer');
                         }
                         if (idx === answer.selected && !isCorrect) {
@@ -1938,7 +2069,7 @@ RULES:
                     
                     // عرض الإجابة الصحيحة
                     options.forEach((opt, idx) => {
-                        if (questionsData[i].options[idx] === q.answer) {
+                        if (q.options[idx] === correctAnswerText) {
                             opt.classList.add('correct-answer');
                         }
                     });
@@ -1963,10 +2094,10 @@ RULES:
             document.getElementById('score-details').textContent = `${correctCount} من ${total}`;
             
             let message = '';
-            if (percentage >= 90) message = '🌟 أداء استثنائي! أحسنت';
-            else if (percentage >= 70) message = '💪 عمل ممتاز! استمر';
-            else if (percentage >= 50) message = '📚 عمل جيد! يمكنك التحسن';
-            else message = '🌱 لا تستسلم! استمر في التعلم';
+            if (percentage >= 90) message = '🌟 أداء استثنائي! إتقان عالٍ جداً';
+            else if (percentage >= 70) message = '💪 عمل ممتاز! مستوى متقدم';
+            else if (percentage >= 50) message = '📚 عمل جيد! تحتاج لمراجعة بعض النقاط';
+            else message = '🌱 تحتاج للمزيد من المذاكرة، استمر ولا تيأس';
             document.getElementById('encouragement-message').textContent = message;
             
             document.getElementById('results-summary').style.display = 'block';
