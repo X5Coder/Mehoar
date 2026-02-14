@@ -43,11 +43,11 @@
             --transition-smooth: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             --success-color: #4CAF50;
             --error-color: #F44336;
-            --warning-color: #FF9800;
             --info-color: #2196F3;
             --gradient-primary: linear-gradient(145deg, #8B7355 0%, #A9927D 100%);
             --gradient-success: linear-gradient(145deg, #4CAF50 0%, #45a049 100%);
             --gradient-error: linear-gradient(145deg, #F44336 0%, #d32f2f 100%);
+            --gradient-info: linear-gradient(145deg, #2196F3 0%, #1976D2 100%);
             --shadow-light: 0 4px 12px rgba(139, 115, 85, 0.1);
             --shadow-medium: 0 8px 24px rgba(139, 115, 85, 0.15);
             --shadow-heavy: 0 12px 36px rgba(139, 115, 85, 0.2);
@@ -90,7 +90,6 @@
             font-size: 56px;
             color: var(--accent-primary);
             margin-bottom: 25px;
-            letter-spacing: -1px;
             animation: pulse 1.5s infinite;
         }
         
@@ -108,7 +107,6 @@
             border-radius: 50%;
             animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
             margin-bottom: 30px;
-            box-shadow: var(--shadow-light);
         }
         
         @keyframes spin {
@@ -121,21 +119,11 @@
             font-size: 1.3rem;
             text-align: center;
             max-width: 80%;
-            line-height: 1.8;
-            font-weight: 600;
             background: rgba(139, 115, 85, 0.1);
             padding: 15px 30px;
             border-radius: 50px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(139, 115, 85, 0.2);
-        }
-        
-        .loading-subtext {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: 1rem;
-            margin-top: 15px;
-            opacity: 0.8;
         }
         
         /* Navbar */
@@ -147,7 +135,6 @@
             height: var(--navbar-height);
             background: rgba(245, 241, 232, 0.9);
             backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -165,7 +152,6 @@
             color: var(--accent-primary);
             cursor: pointer;
             transition: var(--transition-smooth);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
         
         .logo:hover {
@@ -184,23 +170,16 @@
             padding: 12px 25px;
             border-radius: var(--border-radius-lg);
             font-weight: 700;
-            font-size: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
             box-shadow: var(--shadow-light);
             transition: var(--transition-smooth);
-            border: 1px solid rgba(255,255,255,0.2);
         }
         
         .coins-display:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-medium);
-        }
-        
-        .coins-display i {
-            font-size: 18px;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
         }
         
         /* Main Content */
@@ -215,7 +194,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: calc(100vh - var(--navbar-height) - 70px);
         }
         
         /* Upload Section */
@@ -249,8 +227,6 @@
             font-weight: 800;
             color: var(--accent-primary);
             margin-bottom: 15px;
-            text-align: center;
-            text-shadow: 2px 2px 4px rgba(139, 115, 85, 0.1);
         }
         
         .section-subtitle {
@@ -258,9 +234,6 @@
             color: var(--text-secondary);
             font-size: clamp(1rem, 2vw, 1.1rem);
             margin-bottom: 30px;
-            font-weight: 400;
-            text-align: center;
-            line-height: 1.6;
         }
         
         .upload-area {
@@ -276,28 +249,10 @@
             overflow: hidden;
         }
         
-        .upload-area::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(139, 115, 85, 0.1), transparent);
-            transform: rotate(45deg);
-            animation: shimmer 3s infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
-        }
-        
         .upload-area:hover {
             border-color: var(--accent-primary);
             background: rgba(212, 165, 116, 0.1);
             transform: translateY(-2px);
-            box-shadow: var(--shadow-light);
         }
         
         .upload-icon {
@@ -317,12 +272,10 @@
             font-size: clamp(1.1rem, 3vw, 1.3rem);
             color: var(--text-primary);
             margin-bottom: 10px;
-            font-weight: 500;
         }
         
         .upload-hint {
             font-family: 'Tajawal', sans-serif;
-            font-size: clamp(0.9rem, 2vw, 0.95rem);
             color: var(--text-secondary);
             font-style: italic;
         }
@@ -348,7 +301,6 @@
             font-weight: 700;
             color: var(--accent-primary);
             margin-bottom: 20px;
-            text-align: center;
         }
         
         .cost-details {
@@ -367,7 +319,6 @@
         
         .cost-label {
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
             color: var(--text-secondary);
             margin-bottom: 8px;
         }
@@ -402,27 +353,6 @@
             justify-content: center;
             gap: 10px;
             box-shadow: var(--shadow-button);
-            touch-action: manipulation;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .action-btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        .action-btn:active::after {
-            width: 300px;
-            height: 300px;
         }
         
         .action-btn:active {
@@ -475,7 +405,6 @@
         .question-group:hover {
             transform: translateY(-5px);
             box-shadow: var(--shadow-light);
-            border-color: var(--accent-primary);
         }
         
         .question-title {
@@ -489,10 +418,10 @@
             gap: 10px;
         }
         
-        /* Type Selection */
+        /* Type Selection - فقط اختياري وصح/خطأ */
         .type-options {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             margin-bottom: 25px;
         }
@@ -508,15 +437,11 @@
             cursor: pointer;
             transition: var(--transition-smooth);
             text-align: center;
-            min-height: 48px;
-            position: relative;
-            overflow: hidden;
         }
         
         .type-btn:hover {
             border-color: var(--accent-primary);
             transform: translateY(-3px);
-            box-shadow: var(--shadow-light);
         }
         
         .type-btn.selected {
@@ -538,7 +463,6 @@
             color: var(--accent-primary);
             text-align: center;
             margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(139, 115, 85, 0.2);
         }
         
         .slider-labels {
@@ -546,7 +470,6 @@
             justify-content: space-between;
             font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
-            font-size: 1rem;
             margin-bottom: 8px;
         }
         
@@ -554,16 +477,13 @@
             width: 100%;
             height: 25px;
             -webkit-appearance: none;
-            appearance: none;
             background: linear-gradient(to right, var(--accent-secondary), var(--accent-primary));
             outline: none;
             border-radius: 12px;
-            position: relative;
         }
         
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            appearance: none;
             width: 38px;
             height: 38px;
             border-radius: var(--border-radius);
@@ -575,13 +495,11 @@
         }
         
         .slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2) rotate(10deg);
-            box-shadow: var(--shadow-heavy);
+            transform: scale(1.2);
         }
         
         .max-questions {
             text-align: center;
-            font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
             font-size: 0.95rem;
             margin-top: 15px;
@@ -593,13 +511,12 @@
         .max-questions span {
             color: var(--accent-primary);
             font-weight: 700;
-            font-size: 1.1rem;
         }
         
         /* Difficulty Options */
         .options-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 12px;
         }
         
@@ -609,32 +526,25 @@
             border-radius: var(--border-radius);
             background: white;
             font-family: 'Tajawal', sans-serif;
-            font-size: 1rem;
-            font-weight: 500;
             cursor: pointer;
             transition: var(--transition-smooth);
             text-align: center;
-            min-height: 48px;
         }
         
         .option-btn:hover {
             border-color: var(--accent-primary);
             transform: translateY(-3px);
-            box-shadow: var(--shadow-light);
         }
         
         .option-btn.selected {
             background: var(--gradient-primary);
             color: white;
             border-color: var(--accent-primary);
-            box-shadow: var(--shadow-medium);
         }
         
         .additional-cost {
             text-align: center;
-            font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
-            font-size: 1rem;
             margin-top: 15px;
         }
         
@@ -666,25 +576,6 @@
             overflow: hidden;
         }
         
-        .generate-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
-        
-        .generate-btn:hover::before {
-            left: 100%;
-        }
-        
-        .generate-btn:active:not(:disabled) {
-            transform: scale(0.98);
-        }
-        
         .generate-btn:hover:not(:disabled) {
             transform: translateY(-5px);
             box-shadow: var(--shadow-button-hover);
@@ -695,7 +586,7 @@
             cursor: not-allowed;
         }
         
-        /* Questions Display Section - 2 Column View */
+        /* Questions Display Section */
         .questions-display-section {
             background: white;
             border-radius: var(--border-radius-xl);
@@ -732,12 +623,26 @@
         }
         
         .display-info {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
             background: rgba(139, 115, 85, 0.08);
             padding: 10px 20px;
             border-radius: var(--border-radius);
-            font-size: 1rem;
+        }
+        
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(139, 115, 85, 0.1);
+            border-radius: 4px;
+            margin: 20px 0 30px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 4px;
+            transition: width 0.3s ease;
         }
         
         /* 2 Column Grid */
@@ -767,7 +672,6 @@
         .question-card:hover {
             transform: translateY(-5px);
             box-shadow: var(--shadow-medium);
-            border-color: var(--accent-primary);
         }
         
         .question-card.correct {
@@ -799,7 +703,6 @@
             justify-content: center;
             font-weight: 800;
             font-size: 1.3rem;
-            box-shadow: var(--shadow-light);
         }
         
         .question-type-badge {
@@ -843,14 +746,11 @@
             transition: var(--transition-smooth);
             font-family: 'Tajawal', sans-serif;
             font-size: 1.1rem;
-            position: relative;
-            overflow: hidden;
         }
         
         .option-item:hover {
             border-color: var(--accent-primary);
             transform: translateX(-5px);
-            box-shadow: var(--shadow-light);
         }
         
         .option-item.selected {
@@ -896,7 +796,7 @@
             color: white;
         }
         
-        /* Result indicators */
+        /* Result indicator */
         .result-indicator {
             display: flex;
             align-items: center;
@@ -923,13 +823,13 @@
             color: var(--error-color);
         }
         
-        .model-answer {
+        /* Explanation box - يظهر فقط للإجابات الخاطئة */
+        .explanation-box {
             margin-top: 20px;
             padding: 20px;
             background: rgba(33, 150, 243, 0.1);
             border-radius: var(--border-radius);
             border-right: 5px solid var(--info-color);
-            font-family: 'Tajawal', sans-serif;
             animation: slideIn 0.5s ease-out;
         }
         
@@ -938,7 +838,7 @@
             to { opacity: 1; transform: translateX(0); }
         }
         
-        .model-answer-title {
+        .explanation-title {
             font-weight: 700;
             color: var(--info-color);
             margin-bottom: 10px;
@@ -947,41 +847,10 @@
             gap: 8px;
         }
         
-        .model-answer-text {
+        .explanation-text {
             font-size: 1.1rem;
             line-height: 1.8;
             color: var(--text-primary);
-        }
-        
-        /* Essay answer input */
-        .essay-answer-input {
-            margin-top: 20px;
-        }
-        
-        .essay-answer-input textarea {
-            width: 100%;
-            padding: 20px;
-            border: 2px solid rgba(139, 115, 85, 0.2);
-            border-radius: var(--border-radius);
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1.1rem;
-            line-height: 1.8;
-            resize: vertical;
-            min-height: 150px;
-            transition: var(--transition-smooth);
-            background: white;
-        }
-        
-        .essay-answer-input textarea:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: var(--shadow-light);
-        }
-        
-        .essay-answer-input textarea:disabled {
-            background: #f5f5f5;
-            cursor: not-allowed;
-            opacity: 0.8;
         }
         
         /* Submit Button */
@@ -1004,27 +873,6 @@
             justify-content: center;
             gap: 15px;
             box-shadow: var(--shadow-button);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .submit-answers-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
-        
-        .submit-answers-btn:hover::before {
-            left: 100%;
-        }
-        
-        .submit-answers-btn:active:not(:disabled) {
-            transform: scale(0.98);
         }
         
         .submit-answers-btn:hover:not(:disabled) {
@@ -1096,7 +944,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
             box-shadow: var(--shadow-medium);
         }
         
@@ -1134,107 +981,6 @@
             background: white;
             border-radius: var(--border-radius);
             border-right: 5px solid var(--accent-primary);
-            animation: pulse 2s infinite;
-        }
-        
-        /* Essay Results */
-        .essay-results {
-            margin-top: 50px;
-        }
-        
-        .essay-results-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: 2rem;
-            color: var(--accent-primary);
-            margin-bottom: 40px;
-            text-align: center;
-            position: relative;
-        }
-        
-        .essay-results-title::after {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background: var(--accent-primary);
-            border-radius: 3px;
-        }
-        
-        .essay-answer-box {
-            background: white;
-            border-radius: var(--border-radius-xl);
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(139, 115, 85, 0.15);
-            box-shadow: var(--shadow-light);
-            transition: var(--transition-smooth);
-        }
-        
-        .essay-answer-box:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-medium);
-        }
-        
-        .essay-answer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(139, 115, 85, 0.1);
-        }
-        
-        .essay-answer-number {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--accent-primary);
-        }
-        
-        .essay-question-text {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1.2rem;
-            line-height: 1.8;
-            margin-bottom: 25px;
-            padding: 20px;
-            background: rgba(139, 115, 85, 0.06);
-            border-radius: var(--border-radius);
-        }
-        
-        .essay-user-answer {
-            margin-bottom: 20px;
-            padding: 20px;
-            background: rgba(33, 150, 243, 0.08);
-            border-radius: var(--border-radius);
-            border-right: 5px solid var(--info-color);
-        }
-        
-        .essay-user-answer-title {
-            font-weight: 700;
-            color: var(--info-color);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .essay-model-answer {
-            padding: 20px;
-            background: rgba(76, 175, 80, 0.08);
-            border-radius: var(--border-radius);
-            border-right: 5px solid var(--success-color);
-        }
-        
-        .essay-model-answer-title {
-            font-weight: 700;
-            color: var(--success-color);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         
         /* Footer */
@@ -1271,7 +1017,6 @@
             font-size: 1.3rem;
             font-weight: 700;
             color: var(--accent-primary);
-            margin-bottom: 12px;
         }
         
         .support-links {
@@ -1285,34 +1030,12 @@
             height: 60px;
             border-radius: var(--border-radius);
             background: var(--gradient-primary);
-            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: var(--transition-smooth);
             box-shadow: var(--shadow-button);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .support-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
-        
-        .support-link:hover::before {
-            left: 100%;
-        }
-        
-        .support-link:active {
-            transform: scale(0.95);
         }
         
         .support-link:hover {
@@ -1323,11 +1046,9 @@
         .support-link i {
             font-size: 28px;
             color: white;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
         }
         
         .developer-credit {
-            font-family: 'Tajawal', sans-serif;
             font-size: 0.95rem;
             color: rgba(100, 116, 139, 0.6);
             margin-top: 25px;
@@ -1392,23 +1113,6 @@
             font-size: 1.05rem;
         }
         
-        /* Progress Bar */
-        .progress-bar-container {
-            width: 100%;
-            height: 8px;
-            background: rgba(139, 115, 85, 0.1);
-            border-radius: 4px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-        
-        .progress-bar-fill {
-            height: 100%;
-            background: var(--gradient-primary);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-        
         @keyframes slideUp {
             from {
                 opacity: 0;
@@ -1424,7 +1128,6 @@
         @media (max-width: 768px) {
             .native-navbar {
                 padding: 0 20px;
-                padding-top: env(safe-area-inset-top);
                 height: calc(65px + env(safe-area-inset-top));
             }
             
@@ -1432,35 +1135,8 @@
                 font-size: 32px;
             }
             
-            .coins-display {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-            
             .main-content {
                 padding-top: calc(65px + env(safe-area-inset-top) + 20px);
-                padding-left: 20px;
-                padding-right: 20px;
-            }
-            
-            .upload-section, .questions-section, .questions-display-section {
-                padding: 25px 20px;
-            }
-            
-            .upload-area {
-                padding: 35px 20px;
-            }
-            
-            .cost-details {
-                flex-direction: column;
-            }
-            
-            .cost-actions {
-                flex-direction: column;
-            }
-            
-            .action-btn {
-                min-width: 100%;
             }
             
             .type-options {
@@ -1471,23 +1147,9 @@
                 grid-template-columns: 1fr;
             }
             
-            .display-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .question-header {
-                justify-content: center;
-            }
-            
             .score-container {
                 flex-direction: column;
                 text-align: center;
-            }
-            
-            .score-circle {
-                width: 150px;
-                height: 150px;
             }
         }
     </style>
@@ -1498,7 +1160,6 @@
         <div class="loading-logo">عون</div>
         <div class="loading-spinner"></div>
         <div class="loading-text" id="loading-text">جاري التحميل...</div>
-        <div class="loading-subtext" id="loading-subtext"></div>
     </div>
     
     <!-- Notification -->
@@ -1527,7 +1188,7 @@
         <!-- Upload Section -->
         <section class="upload-section" id="upload-section">
             <h1 class="section-title">نظام الأسئلة الذكي</h1>
-            <p class="section-subtitle">ارفع ملف PDF الخاص بك واحصل على أسئلة ذكية باستخدام الذكاء الاصطناعي المتقدم</p>
+            <p class="section-subtitle">ارفع ملف PDF الخاص بك واحصل على أسئلة ذكية مع الشرح</p>
             
             <div class="upload-area" id="upload-area">
                 <div class="upload-icon">
@@ -1579,7 +1240,6 @@
                     <div class="type-options" id="question-type">
                         <button class="type-btn selected" data-value="اختياري">اختياري</button>
                         <button class="type-btn" data-value="صح وخطأ">صح وخطأ</button>
-                        <button class="type-btn" data-value="مقالي">مقالي</button>
                     </div>
                 </div>
                 
@@ -1625,26 +1285,14 @@
                         التكلفة النهائية
                     </h3>
                     <div style="text-align: center; padding: 20px 0;">
-                        <div style="font-family: 'Almarai', sans-serif; color: var(--text-secondary); font-size: 1rem; margin-bottom: 8px;">
-                            التكلفة الأساسية
-                        </div>
-                        <div style="font-family: 'Almarai', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--accent-primary); margin-bottom: 12px;" id="base-cost-display">
-                            0 عملة
-                        </div>
+                        <div style="color: var(--text-secondary); margin-bottom: 8px;">التكلفة الأساسية</div>
+                        <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-primary); margin-bottom: 12px;" id="base-cost-display">0 عملة</div>
                         <div style="height: 2px; background: rgba(139, 115, 85, 0.2); margin: 15px 0;"></div>
-                        <div style="font-family: 'Almarai', sans-serif; color: var(--text-secondary); font-size: 1rem; margin-bottom: 8px;">
-                            التكلفة الإضافية
-                        </div>
-                        <div style="font-family: 'Almarai', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--success-color); margin-bottom: 12px;" id="total-extra-cost">
-                            +0 عملة
-                        </div>
+                        <div style="color: var(--text-secondary); margin-bottom: 8px;">التكلفة الإضافية</div>
+                        <div style="font-size: 1.8rem; font-weight: 800; color: var(--success-color); margin-bottom: 12px;" id="total-extra-cost">+0 عملة</div>
                         <div style="height: 2px; background: rgba(139, 115, 85, 0.2); margin: 15px 0;"></div>
-                        <div style="font-family: 'Almarai', sans-serif; color: var(--accent-primary); font-size: 1rem; margin-bottom: 8px;">
-                            التكلفة الإجمالية
-                        </div>
-                        <div style="font-family: 'Almarai', sans-serif; font-size: 2.5rem; font-weight: 900; color: var(--accent-primary);" id="total-cost-display">
-                            0 عملة
-                        </div>
+                        <div style="color: var(--text-secondary); margin-bottom: 8px;">التكلفة الإجمالية</div>
+                        <div style="font-size: 2.5rem; font-weight: 900; color: var(--accent-primary);" id="total-cost-display">0 عملة</div>
                     </div>
                 </div>
             </div>
@@ -1667,14 +1315,12 @@
             </div>
             
             <!-- Progress Bar -->
-            <div class="progress-bar-container" id="progress-bar-container">
+            <div class="progress-bar-container">
                 <div class="progress-bar-fill" id="progress-bar-fill" style="width: 0%"></div>
             </div>
             
             <!-- Questions Grid - 2 Columns -->
-            <div class="questions-grid-2col" id="questions-container">
-                <!-- سيتم إضافة الأسئلة هنا ديناميكياً -->
-            </div>
+            <div class="questions-grid-2col" id="questions-container"></div>
             
             <button class="submit-answers-btn" id="submit-answers-btn" disabled>
                 <i class="fas fa-check-circle"></i>
@@ -1696,36 +1342,21 @@
                         <p id="score-details">0 من 0</p>
                     </div>
                 </div>
-                <div class="encouragement-message" id="encouragement-message">
-                    أحسنت! استمر في التعلم
-                </div>
-            </div>
-            
-            <div class="essay-results" id="essay-results" style="display: none;">
-                <h3 class="essay-results-title">الإجابات النموذجية للأسئلة المقالية</h3>
-                <div id="essay-answers-container"></div>
+                <div class="encouragement-message" id="encouragement-message">أحسنت! استمر في التعلم</div>
             </div>
         </section>
         
         <!-- Footer -->
         <footer class="footer" id="footer">
             <p class="copyright">جميع الحقوق محفوظة لمنصة عون © 2026</p>
-            
             <div class="support-section">
                 <div class="support-title">تواصل مع الدعم الفني</div>
                 <div class="support-links">
-                    <a href="https://wa.me/966583617539" target="_blank" class="support-link">
-                        <i class="fab fa-whatsapp"></i>
-                    </a>
-                    <a href="https://t.me/HNHv1" target="_blank" class="support-link">
-                        <i class="fab fa-telegram"></i>
-                    </a>
+                    <a href="https://wa.me/966583617539" target="_blank" class="support-link"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://t.me/HNHv1" target="_blank" class="support-link"><i class="fab fa-telegram"></i></a>
                 </div>
             </div>
-            
-            <div class="developer-credit">
-                برمجة وتصميم المطور 𝐊𝐈𝐌𝐎
-            </div>
+            <div class="developer-credit">برمجة وتصميم المطور 𝐊𝐈𝐌𝐎</div>
         </footer>
     </div>
     
@@ -1752,13 +1383,7 @@
         let currentUser = null;
         let userCoins = 0;
         let selectedFile = null;
-        let fileInfo = {
-            name: '',
-            size: 0,
-            pages: 0,
-            words: 0,
-            baseCost: 0
-        };
+        let fileInfo = { name: '', size: 0, pages: 0, words: 0, baseCost: 0 };
         
         let currentSettings = {
             questionsCount: 10,
@@ -1780,1243 +1405,613 @@
         
         // رسائل التحميل
         const loadingMessages = [
-            { main: 'عون يحلل إجاباتك...', sub: 'جاري فحص الإجابات بدقة' },
-            { main: 'عون يصحح الأسئلة...', sub: 'باستخدام أحدث تقنيات الذكاء الاصطناعي' },
-            { main: 'عون يحسب النتائج...', sub: 'تجميع وتحليل الإجابات' },
-            { main: 'عون يجهز التقرير...', sub: 'تنسيق النتائج النهائية' },
-            { main: 'عون يراجع الأداء...', sub: 'مقارنة بالإجابات النموذجية' }
+            'عون يحلل إجاباتك...',
+            'عون يصحح الأسئلة...',
+            'عون يحسب النتائج...',
+            'عون يجهز التقرير...',
+            'عون يراجع الأداء...'
         ];
         
         // ========== الوظائف الأساسية ==========
-        
-        function reloadPage() {
-            location.reload();
-        }
-        
         function showNotification(message, type = 'info') {
-            try {
-                const notification = document.getElementById('notification');
-                const notificationIcon = document.getElementById('notification-icon');
-                const notificationText = document.getElementById('notification-text');
-                
-                if (!notification || !notificationIcon || !notificationText) return;
-                
-                notificationText.textContent = message;
-                notification.className = 'notification';
-                
-                if (type === 'success') {
-                    notification.classList.add('success');
-                    notificationIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
-                } else if (type === 'error') {
-                    notification.classList.add('error');
-                    notificationIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
-                } else {
-                    notificationIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
-                }
-                
-                notification.classList.add('show');
-                
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 3000);
-            } catch (error) {
-                console.error('Error in showNotification:', error);
+            const notification = document.getElementById('notification');
+            const notificationIcon = document.getElementById('notification-icon');
+            const notificationText = document.getElementById('notification-text');
+            if (!notification) return;
+            
+            notificationText.textContent = message;
+            notification.className = 'notification';
+            
+            if (type === 'success') {
+                notification.classList.add('success');
+                notificationIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            } else if (type === 'error') {
+                notification.classList.add('error');
+                notificationIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
             }
+            
+            notification.classList.add('show');
+            setTimeout(() => notification.classList.remove('show'), 3000);
         }
         
-        function showLoading(text = 'جاري التحميل...', subtext = '') {
+        function showLoading(text) {
             const loadingScreen = document.getElementById('loading-screen');
             const loadingText = document.getElementById('loading-text');
-            const loadingSubtext = document.getElementById('loading-subtext');
-            
             if (loadingScreen && loadingText) {
                 loadingText.textContent = text;
-                if (loadingSubtext) loadingSubtext.textContent = subtext;
                 loadingScreen.style.display = 'flex';
-                setTimeout(() => {
-                    loadingScreen.style.opacity = '1';
-                }, 10);
             }
         }
         
         function hideLoading() {
             const loadingScreen = document.getElementById('loading-screen');
-            if (loadingScreen) {
-                loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                }, 300);
-            }
+            if (loadingScreen) loadingScreen.style.display = 'none';
         }
         
         function hideFooter() {
-            const footer = document.getElementById('footer');
-            if (footer) {
-                footer.classList.add('hidden');
-            }
+            document.getElementById('footer')?.classList.add('hidden');
         }
         
         function showFooter() {
-            const footer = document.getElementById('footer');
-            if (footer) {
-                footer.classList.remove('hidden');
-            }
+            document.getElementById('footer')?.classList.remove('hidden');
         }
         
-        // تحديث شريط التقدم
         function updateProgressBar() {
             if (!questionsData) return;
             
-            const answeredCount = userAnswers.filter(answer => answer !== null && answer !== undefined).length;
-            const totalQuestions = questionsData.length;
-            const percentage = (answeredCount / totalQuestions) * 100;
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            const percentage = (answeredCount / questionsData.length) * 100;
+            document.getElementById('progress-bar-fill').style.width = percentage + '%';
             
-            const progressBar = document.getElementById('progress-bar-fill');
-            if (progressBar) {
-                progressBar.style.width = percentage + '%';
-            }
-            
-            // تفعيل/تعطيل زر التسليم
             const submitBtn = document.getElementById('submit-answers-btn');
-            if (submitBtn) {
-                const allAnswered = userAnswers.every((answer, index) => {
-                    const question = questionsData[index];
-                    if (question.type === 'مقالي') {
-                        return answer && answer.essay && answer.essay.trim() !== '';
-                    } else {
-                        return answer !== null && answer !== undefined;
-                    }
-                });
-                
-                submitBtn.disabled = !allAnswered || answersSubmitted;
-                
-                if (allAnswered && !answersSubmitted) {
-                    submitBtn.style.opacity = '1';
-                    submitBtn.style.cursor = 'pointer';
-                } else {
-                    submitBtn.style.opacity = '0.6';
-                    submitBtn.style.cursor = 'not-allowed';
-                }
-            }
+            const allAnswered = userAnswers.every(a => a !== null);
+            submitBtn.disabled = !allAnswered || answersSubmitted;
         }
         
         // ========== إدارة المستخدم ==========
-        
         async function loadUserData() {
-            try {
-                const user = auth.currentUser;
-                if (!user) {
-                    window.location.replace('login.html');
-                    return;
-                }
-                
-                const usersRef = database.ref('users_Awn');
-                const snapshot = await usersRef.once('value');
-                
-                if (snapshot.exists()) {
-                    const users = snapshot.val();
-                    let userFound = false;
-                    
-                    for (const [userId, userData] of Object.entries(users)) {
-                        if (userId !== 'noty_publick' && userData.email === user.email) {
-                            currentUser = {
-                                id: userId,
-                                email: userData.email,
-                                name: userData.name || '',
-                                coin: userData.coin || 0,
-                                admin: userData.admin === true || false,
-                                banned: userData.banned === true || false
-                            };
-                            
-                            userCoins = userData.coin || 0;
-                            const coinsCount = document.getElementById('coins-count');
-                            if (coinsCount) {
-                                coinsCount.textContent = userCoins;
-                            }
-                            userFound = true;
-                            break;
-                        }
+            const user = auth.currentUser;
+            if (!user) return window.location.replace('login.html');
+            
+            const usersRef = database.ref('users_Awn');
+            const snapshot = await usersRef.once('value');
+            
+            if (snapshot.exists()) {
+                const users = snapshot.val();
+                for (const [userId, userData] of Object.entries(users)) {
+                    if (userId !== 'noty_publick' && userData.email === user.email) {
+                        currentUser = {
+                            id: userId,
+                            email: userData.email,
+                            name: userData.name || '',
+                            coin: userData.coin || 0,
+                            banned: userData.banned || false
+                        };
+                        userCoins = userData.coin || 0;
+                        document.getElementById('coins-count').textContent = userCoins;
+                        return;
                     }
-                    
-                    if (!userFound) {
-                        await auth.signOut();
-                        window.location.replace('login.html');
-                    }
-                } else {
-                    await auth.signOut();
-                    window.location.replace('login.html');
                 }
-            } catch (error) {
-                console.error('Error loading user data:', error);
-                window.location.replace('login.html');
             }
+            await auth.signOut();
+            window.location.replace('login.html');
         }
         
         async function setupUser() {
-            try {
-                await loadUserData();
-                
-                if (currentUser && currentUser.banned !== true) {
-                    const navbar = document.getElementById('navbar');
-                    const mainContent = document.getElementById('main-content');
-                    
-                    if (navbar) navbar.style.display = 'flex';
-                    if (mainContent) mainContent.style.display = 'block';
-                    
-                    showFooter();
-                } else {
-                    window.location.replace('login.html');
-                }
-            } catch (error) {
-                console.error('Error setting up user:', error);
-                window.location.replace('login.html');
-            }
+            await loadUserData();
+            if (currentUser?.banned) window.location.replace('login.html');
         }
         
         // ========== إدارة الملفات ==========
-        
         function setupFileUpload() {
             const pdfFile = document.getElementById('pdfFile');
             const uploadArea = document.getElementById('upload-area');
-            const confirmBtn = document.getElementById('confirm-btn');
-            const cancelBtn = document.getElementById('cancel-btn');
             
-            if (pdfFile) {
-                pdfFile.addEventListener('change', handleFileSelect);
-            }
-            
-            if (uploadArea) {
-                uploadArea.addEventListener('click', () => pdfFile.click());
-                uploadArea.addEventListener('dragover', handleDragOver);
-                uploadArea.addEventListener('drop', handleDrop);
-            }
-            
-            if (confirmBtn) {
-                confirmBtn.addEventListener('click', confirmProcess);
-            }
-            
-            if (cancelBtn) {
-                cancelBtn.addEventListener('click', cancelProcess);
-            }
-        }
-        
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const uploadArea = document.getElementById('upload-area');
-            if (uploadArea) {
+            uploadArea.addEventListener('click', () => pdfFile.click());
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
                 uploadArea.style.borderColor = 'var(--accent-primary)';
-                uploadArea.style.backgroundColor = 'rgba(212, 165, 116, 0.1)';
-            }
-        }
-        
-        async function handleDrop(e) {
-            e.preventDefault();
-            e.stopPropagation();
+            });
+            uploadArea.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                const file = e.dataTransfer.files[0];
+                if (file) await handleFile(file);
+            });
+            pdfFile.addEventListener('change', (e) => {
+                if (e.target.files[0]) handleFile(e.target.files[0]);
+            });
             
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                await handleFile(files[0]);
-            }
-        }
-        
-        async function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            await handleFile(file);
+            document.getElementById('confirm-btn').addEventListener('click', confirmProcess);
+            document.getElementById('cancel-btn').addEventListener('click', cancelProcess);
         }
         
         async function handleFile(file) {
             if (!file.name.toLowerCase().endsWith('.pdf')) {
                 showNotification('الرجاء رفع ملف PDF فقط', 'error');
-                resetFileInput();
                 return;
             }
             
             selectedFile = file;
-            const uploadText = document.getElementById('upload-text');
-            const uploadArea = document.getElementById('upload-area');
-            
-            if (uploadText) uploadText.textContent = file.name;
-            if (uploadArea) {
-                uploadArea.style.borderColor = 'var(--accent-primary)';
-                uploadArea.style.backgroundColor = 'rgba(212, 165, 116, 0.1)';
-            }
-            
+            document.getElementById('upload-text').textContent = file.name;
             await analyzePDF(file);
         }
         
         async function analyzePDF(file) {
-            try {
-                const pdfLoadingMessages = [
-                    'عون يحلل الملف...',
-                    'عون يستخرج النص...',
-                    'عون يعد الصفحات...',
-                    'عون يحسب التكلفة...'
-                ];
-                
-                let messageIndex = 0;
-                const loadingInterval = setInterval(() => {
-                    showLoading(pdfLoadingMessages[messageIndex]);
-                    messageIndex = (messageIndex + 1) % pdfLoadingMessages.length;
-                }, 1500);
-                
-                const buffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument(buffer).promise;
-                
-                let totalWords = 0;
-                
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    
-                    if (content.items.length > 0) {
-                        let text = '';
-                        content.items.forEach(t => text += t.str + ' ');
-                        totalWords += text.trim().split(/\s+/).filter(w => w.length >= 2).length;
-                    } else {
-                        totalWords += 250;
-                    }
-                }
-                
-                clearInterval(loadingInterval);
-                
-                let coins = Math.ceil((totalWords / 1000) * 2) / 2;
-                if (coins < 1) coins = 1;
-                coins = Math.round(coins * 10) / 10;
-                
-                fileInfo = {
-                    name: file.name,
-                    size: file.size,
-                    pages: pdf.numPages,
-                    words: totalWords,
-                    baseCost: coins
-                };
-                
-                hideLoading();
-                
-                const pageCount = document.getElementById('page-count');
-                const costAmount = document.getElementById('cost-amount');
-                const costPreview = document.getElementById('cost-preview');
-                const baseCostDisplay = document.getElementById('base-cost-display');
-                
-                if (pageCount) pageCount.textContent = fileInfo.pages;
-                if (costAmount) costAmount.textContent = fileInfo.baseCost + ' عملة';
-                if (baseCostDisplay) baseCostDisplay.textContent = fileInfo.baseCost + ' عملة';
-                if (costPreview) costPreview.classList.add('show');
-                
-                updateTotalCost();
-                
-                showNotification('تم تحليل الملف بنجاح', 'success');
-                
-            } catch (error) {
-                console.error('Error analyzing PDF:', error);
-                hideLoading();
-                showNotification('حدث خطأ أثناء تحليل الملف', 'error');
-                resetFileInput();
+            showLoading('عون يحلل الملف...');
+            
+            const buffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument(buffer).promise;
+            
+            let totalWords = 0;
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                if (content.items.length) {
+                    let text = '';
+                    content.items.forEach(t => text += t.str + ' ');
+                    totalWords += text.trim().split(/\s+/).filter(w => w.length >= 2).length;
+                } else totalWords += 250;
             }
+            
+            let coins = Math.ceil((totalWords / 1000) * 2) / 2;
+            if (coins < 1) coins = 1;
+            coins = Math.round(coins * 10) / 10;
+            
+            fileInfo = { name: file.name, pages: pdf.numPages, baseCost: coins };
+            
+            hideLoading();
+            document.getElementById('page-count').textContent = fileInfo.pages;
+            document.getElementById('cost-amount').textContent = fileInfo.baseCost + ' عملة';
+            document.getElementById('base-cost-display').textContent = fileInfo.baseCost + ' عملة';
+            document.getElementById('cost-preview').classList.add('show');
+            updateTotalCost();
+            showNotification('تم تحليل الملف بنجاح', 'success');
         }
         
         function resetFileInput() {
-            const pdfFile = document.getElementById('pdfFile');
-            const uploadText = document.getElementById('upload-text');
-            const uploadArea = document.getElementById('upload-area');
-            const costPreview = document.getElementById('cost-preview');
-            
-            if (pdfFile) pdfFile.value = '';
+            document.getElementById('pdfFile').value = '';
             selectedFile = null;
-            if (uploadText) uploadText.textContent = 'انقر لرفع ملف PDF';
-            if (uploadArea) {
-                uploadArea.style.borderColor = '';
-                uploadArea.style.backgroundColor = '';
-            }
-            if (costPreview) costPreview.classList.remove('show');
+            document.getElementById('upload-text').textContent = 'انقر لرفع ملف PDF';
+            document.getElementById('cost-preview').classList.remove('show');
         }
         
         function cancelProcess() {
             resetFileInput();
-            const costPreview = document.getElementById('cost-preview');
-            if (costPreview) costPreview.classList.remove('show');
             showNotification('تم إلغاء العملية', 'info');
         }
         
         function confirmProcess() {
-            const uploadSection = document.getElementById('upload-section');
-            const questionsSection = document.getElementById('questions-section');
-            const costPreview = document.getElementById('cost-preview');
-            
-            if (!uploadSection || !questionsSection || !costPreview) {
-                showNotification('حدث خطأ في تحميل العناصر', 'error');
-                return;
-            }
-            
-            if (!fileInfo || !fileInfo.baseCost || fileInfo.baseCost === 0) {
+            if (!fileInfo?.baseCost) {
                 showNotification('الرجاء تحليل الملف أولاً', 'error');
                 return;
             }
-            
             if (userCoins < fileInfo.baseCost) {
-                showNotification(`رصيدك غير كافي. تحتاج ${fileInfo.baseCost} عملة بينما رصيدك ${userCoins}`, 'error');
+                showNotification(`رصيدك غير كافي. تحتاج ${fileInfo.baseCost} عملة`, 'error');
                 return;
             }
             
-            uploadSection.style.display = 'none';
-            questionsSection.classList.add('show');
-            costPreview.classList.remove('show');
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            showNotification('الرجاء تحديد نوع الأسئلة وعددها', 'success');
+            document.getElementById('upload-section').style.display = 'none';
+            document.getElementById('questions-section').classList.add('show');
+            document.getElementById('cost-preview').classList.remove('show');
         }
         
         // ========== إعدادات الأسئلة ==========
-        
         function setupQuestionsEvents() {
-            // أزرار نوع الأسئلة
-            const typeBtns = document.querySelectorAll('#question-type .type-btn');
-            typeBtns.forEach(btn => {
+            // نوع الأسئلة
+            document.querySelectorAll('#question-type .type-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    typeBtns.forEach(b => b.classList.remove('selected'));
+                    document.querySelectorAll('#question-type .type-btn').forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
-                    currentSettings.questionType = this.getAttribute('data-value');
+                    currentSettings.questionType = this.dataset.value;
                     updateMaxQuestions();
                     updateQuestionsCount();
                 });
             });
             
-            // إعداد السلايدر
-            const questionsSlider = document.getElementById('questions-slider');
-            if (questionsSlider) {
-                questionsSlider.addEventListener('input', function() {
-                    updateQuestionsCount();
-                });
-            }
+            // السلايدر
+            document.getElementById('questions-slider').addEventListener('input', updateQuestionsCount);
             
-            // أزرار الصعوبة
-            const difficultyBtns = document.querySelectorAll('#difficulty-level .option-btn');
-            difficultyBtns.forEach(btn => {
+            // درجة الصعوبة
+            document.querySelectorAll('#difficulty-level .option-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    difficultyBtns.forEach(b => b.classList.remove('selected'));
+                    document.querySelectorAll('#difficulty-level .option-btn').forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
-                    currentSettings.difficulty = this.getAttribute('data-value');
+                    currentSettings.difficulty = this.dataset.value;
                 });
             });
             
-            // زر إنشاء الأسئلة
-            const generateBtn = document.getElementById('generate-btn');
-            if (generateBtn) {
-                generateBtn.addEventListener('click', generateQuestions);
-            }
+            document.getElementById('generate-btn').addEventListener('click', generateQuestions);
             
             updateMaxQuestions();
             updateQuestionsCount();
         }
         
         function updateMaxQuestions() {
-            const maxLabel = document.getElementById('max-label');
-            const maxQuestionsValue = document.getElementById('max-questions-value');
-            const questionsSlider = document.getElementById('questions-slider');
-            
-            let maxQuestions = 80; // افتراضي للاختياري وصح وخطأ
-            
-            if (currentSettings.questionType === 'مقالي') {
-                maxQuestions = 50;
-            }
-            
+            const maxQuestions = 80; // ثابت لأننا أزلنا المقالي
             currentSettings.maxQuestions = maxQuestions;
-            
-            if (maxLabel) maxLabel.textContent = maxQuestions;
-            if (maxQuestionsValue) maxQuestionsValue.textContent = maxQuestions;
-            if (questionsSlider) {
-                questionsSlider.max = maxQuestions;
-                if (parseInt(questionsSlider.value) > maxQuestions) {
-                    questionsSlider.value = maxQuestions;
-                }
-            }
+            document.getElementById('max-label').textContent = maxQuestions;
+            document.getElementById('max-questions-value').textContent = maxQuestions;
+            document.getElementById('questions-slider').max = maxQuestions;
         }
         
         function updateQuestionsCount() {
-            const slider = document.getElementById('questions-slider');
-            const countDisplay = document.getElementById('questions-count');
-            const extraCostDisplay = document.getElementById('extra-cost');
-            
-            if (!slider || !countDisplay) return;
-            
-            const count = parseInt(slider.value);
-            countDisplay.textContent = count;
+            const count = parseInt(document.getElementById('questions-slider').value);
+            document.getElementById('questions-count').textContent = count;
             currentSettings.questionsCount = count;
             
-            // حساب التكلفة الإضافية حسب نوع الأسئلة
+            // حساب التكلفة الإضافية
             let extraCost = 0;
-            
-            if (currentSettings.questionType === 'مقالي') {
-                // أسئلة مقالية
-                if (count >= 1 && count <= 10) {
-                    extraCost = 0;
-                } else if (count >= 11 && count <= 20) {
-                    extraCost = 8;
-                } else if (count >= 21 && count <= 30) {
-                    extraCost = 8;
-                } else if (count >= 31 && count <= 40) {
-                    extraCost = 12;
-                } else if (count >= 41 && count <= 50) {
-                    extraCost = 12;
-                }
-            } else {
-                // اختياري أو صح وخطأ
-                if (count >= 1 && count <= 10) {
-                    extraCost = 0;
-                } else if (count >= 11 && count <= 20) {
-                    extraCost = 0;
-                } else if (count >= 21 && count <= 40) {
-                    extraCost = 5;
-                } else if (count >= 41 && count <= 60) {
-                    extraCost = 8;
-                } else if (count >= 61 && count <= 80) {
-                    extraCost = 11;
-                }
-            }
+            if (count >= 21 && count <= 40) extraCost = 5;
+            else if (count >= 41 && count <= 60) extraCost = 8;
+            else if (count >= 61 && count <= 80) extraCost = 11;
             
             currentSettings.extraCost = extraCost;
-            
-            if (extraCostDisplay) {
-                extraCostDisplay.textContent = extraCost;
-            }
-            
+            document.getElementById('extra-cost').textContent = extraCost;
             updateTotalCost();
         }
         
         function updateTotalCost() {
-            const totalExtraCostDisplay = document.getElementById('total-extra-cost');
-            const totalCostDisplay = document.getElementById('total-cost-display');
-            
-            if (totalExtraCostDisplay && totalCostDisplay) {
-                const baseCost = fileInfo.baseCost || 0;
-                const extraCost = currentSettings.extraCost || 0;
-                const totalCost = baseCost + extraCost;
-                
-                currentSettings.totalCost = totalCost;
-                
-                totalExtraCostDisplay.textContent = `+${extraCost} عملة`;
-                totalCostDisplay.textContent = `${totalCost} عملة`;
-            }
+            const total = (fileInfo.baseCost || 0) + currentSettings.extraCost;
+            currentSettings.totalCost = total;
+            document.getElementById('total-extra-cost').textContent = `+${currentSettings.extraCost} عملة`;
+            document.getElementById('total-cost-display').textContent = `${total} عملة`;
         }
         
+        // ========== إنشاء البرومبت ==========
         function createPrompt() {
             return `ROLE:
-You are an AI specialized in strict PDF-based question generation following Google Gemini Flash 2.5 Lite standards.
-You must strictly follow the instructions below with ZERO deviation.
+You are an AI specialized in strict PDF-based question generation.
+You must strictly follow the instructions below.
 
-========================
-INPUT VARIABLES (IN ARABIC):
-========================
+INPUT:
 عدد_الاسئلة = ${currentSettings.questionsCount}
 درجة_الصعوبة = ${currentSettings.difficulty}
 نوع_الاسئلة = ${currentSettings.questionType}
 
-========================
 TASK:
-========================
-
-1. Analyze the provided PDF from the first word to the last word only.
-2. Do NOT use any external knowledge.
-3. Do NOT infer, guess, paraphrase, or generate any content that does not explicitly exist inside the PDF.
-4. Every word used in:
+1. Analyze the PDF from first to last word only.
+2. Generate exactly ${currentSettings.questionsCount} questions.
+3. Each question MUST include:
    - The question
-   - The answer choices
    - The correct answer
-   MUST exist verbatim inside the PDF text.
-5. You must strictly generate exactly عدد_الاسئلة questions — no more, no less.
-6. You must strictly follow the selected نوع_الاسئلة format.
-7. You must strictly follow the selected درجة_الصعوبة definition:
+   - A detailed explanation for the answer
+4. All content must come strictly from the PDF.
+5. No external knowledge allowed.
 
-   • سهل:
-     - Questions must be direct and explicitly stated in the PDF.
-     - Answers must be clearly found word-for-word in the text.
+OUTPUT FORMAT:
+For each question, use this EXACT format:
 
-   • متوسط:
-     - Questions must be logically derived only from the PDF content.
-     - Still fully based on the PDF only.
-     - No external additions allowed.
+Q1: [السؤال]
+A1: [الإجابة الصحيحة]
+E1: [شرح مفصل للإجابة]
 
-   • صعب:
-     - Questions must require deep understanding of the entire PDF.
-     - May combine multiple parts of the PDF.
-     - Still 100% restricted to PDF content only.
+Q2: [السؤال]
+A2: [الإجابة الصحيحة]
+E2: [شرح مفصل للإجابة]
 
-8. The AI must read the entire PDF from beginning to end before generating questions.
-9. If the PDF is empty, corrupted, unreadable, or contains no meaningful content, return exactly:
+... and so on until Q${currentSettings.questionsCount}
 
-INVALID_PDF
-
-========================
-OUTPUT FORMAT RULES (STRICT):
-========================
-
-- Output MUST be plain text only.
-- No JSON.
-- No Markdown.
-- No explanations.
-- No commentary.
-- No additional text before or after questions.
-- No deviation from the required structure.
-
-========================
-FORMAT RULES PER QUESTION TYPE:
-========================
-
-If نوع_الاسئلة = اختياري
-
-Return exactly in this format:
-
-Type : اختياري
-Q1 : السؤال
-R : اختيار
-R : اختيار
-R : اختيار
-R : اختيار
-Correct : الاختيار الصحيح
-
-(Repeat the same structure until reaching exactly عدد_الاسئلة)
-
-All answer choices must exist inside the PDF.
-All incorrect choices must also exist inside the PDF.
-No fabricated text is allowed.
-
---------------------------------------------------
-
-If نوع_الاسئلة = صح وخطأ
-
-Return exactly in this format:
-
-Type : صح وخطأ
-Q1 : السؤال
-R : صح
-R : خطأ
-Correct : الإجابة الصحيحة
-
-(Repeat the same structure until reaching exactly عدد_الاسئلة)
-
-The statement must be constructed strictly from PDF text only.
-
---------------------------------------------------
-
-If نوع_الاسئلة = مقالي
-
-Return exactly in this format:
-
-Type : مقالي
-Q1 : السؤال؟
-R : إجابة
-R : إجابة
-R : إجابة
-R : إجابة
-Correct : الإجابة الصحيحة
-
-(Repeat the same structure until reaching exactly عدد_الاسئلة)
-
-All answer options must exist word-for-word inside the PDF.
-The correct answer must be one of the listed answers.
-No external wording allowed.
-
-========================
-ABSOLUTE CONSTRAINTS:
-========================
-
-- The number of questions must exactly equal عدد_الاسئلة.
-- All generated content must come strictly from the PDF.
-- No hallucination.
-- No paraphrasing outside the PDF wording.
-- No external knowledge.
-- Deterministic behavior only.
-- If any constraint cannot be satisfied, return exactly:
-
-CONSTRAINT_VIOLATION`;
+RULES:
+- Questions must match the difficulty level: ${currentSettings.difficulty}
+- All answers must be word-for-word from the PDF
+- Explanations must be detailed and from the PDF
+- No extra text, no JSON, no Markdown
+- If PDF is invalid, return exactly: INVALID_PDF`;
         }
         
+        // ========== توليد الأسئلة ==========
         async function generateQuestions() {
             if (!selectedFile) {
                 showNotification('الرجاء اختيار ملف PDF أولاً', 'error');
                 return;
             }
-            
             if (userCoins < currentSettings.totalCost) {
-                showNotification(`رصيدك غير كافي. تحتاج ${currentSettings.totalCost} عملة بينما رصيدك ${userCoins}`, 'error');
+                showNotification(`رصيدك غير كافي`, 'error');
                 return;
             }
             
             const generateBtn = document.getElementById('generate-btn');
-            if (generateBtn) {
-                generateBtn.disabled = true;
-                generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإنشاء...';
-            }
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإنشاء...';
             
             try {
-                const genLoadingMessages = [
-                    'عون يحلل المحتوى...',
-                    'عون يجهز الأسئلة...',
-                    'عون ينسق الإجابات...',
-                    'عون يكمل العملية...'
-                ];
+                showLoading('عون يحلل المحتوى...');
                 
-                let messageIndex = 0;
-                const loadingInterval = setInterval(() => {
-                    showLoading(genLoadingMessages[messageIndex]);
-                    messageIndex = (messageIndex + 1) % genLoadingMessages.length;
-                }, 2000);
-                
-                const base64 = await new Promise((resolve, reject) => {
+                const base64 = await new Promise((resolve) => {
                     const reader = new FileReader();
-                    reader.onload = () => {
-                        const result = reader.result;
-                        const base64Data = result.split(',')[1];
-                        resolve(base64Data);
-                    };
-                    reader.onerror = reject;
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
                     reader.readAsDataURL(selectedFile);
                 });
                 
-                const prompt = createPrompt();
-                
                 const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
-                    headers: { 
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         id: ID,
                         pass: PASS,
-                        data: prompt,
+                        data: createPrompt(),
                         PDF_BASE64: base64
                     })
                 });
                 
-                clearInterval(loadingInterval);
-                
-                if (!response.ok) {
-                    throw new Error(`خطأ في السيرفر: ${response.status}`);
-                }
-                
                 const text = await response.text();
+                hideLoading();
                 
-                if (text === "INVALID_PDF" || text === "CONSTRAINT_VIOLATION") {
-                    throw new Error('الملف غير صالح أو لا يمكن قراءته');
-                }
+                if (text === "INVALID_PDF") throw new Error('الملف غير صالح');
                 
                 questionsData = parseQuestions(text);
-                
-                if (!questionsData || questionsData.length === 0) {
-                    throw new Error('لم يتم إنشاء أسئلة صالحة');
-                }
+                if (!questionsData.length) throw new Error('لم يتم إنشاء أسئلة');
                 
                 await deductCoins(currentSettings.totalCost);
                 await saveResultToDatabase(text);
                 
-                const questionsSection = document.getElementById('questions-section');
-                const questionsDisplaySection = document.getElementById('questions-display-section');
-                
-                if (questionsSection) questionsSection.classList.remove('show');
-                if (questionsDisplaySection) questionsDisplaySection.classList.add('show');
-                
+                document.getElementById('questions-section').classList.remove('show');
+                document.getElementById('questions-display-section').classList.add('show');
                 hideFooter();
-                
                 displayQuestions();
-                
                 showNotification('تم إنشاء الأسئلة بنجاح', 'success');
                 
             } catch (error) {
-                console.error('Error generating questions:', error);
-                showNotification('حدث خطأ أثناء إنشاء الأسئلة: ' + error.message, 'error');
+                showNotification('خطأ: ' + error.message, 'error');
             } finally {
-                hideLoading();
-                const generateBtn = document.getElementById('generate-btn');
-                if (generateBtn) {
-                    generateBtn.disabled = false;
-                    generateBtn.innerHTML = '<i class="fas fa-robot"></i> إنشاء الأسئلة';
-                }
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fas fa-robot"></i> إنشاء الأسئلة';
             }
         }
         
+        // ========== تحليل النتيجة ==========
         function parseQuestions(text) {
-            const lines = text.split('\n').filter(line => line.trim() !== '');
+            const lines = text.split('\n').filter(l => l.trim());
             const questions = [];
-            let currentQuestion = null;
+            let current = {};
             
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i].trim();
-                
-                if (line.startsWith('Type :')) {
-                    if (currentQuestion) {
-                        questions.push(currentQuestion);
-                    }
-                    currentQuestion = {
-                        type: line.replace('Type :', '').trim(),
-                        question: '',
-                        options: [],
-                        correct: ''
-                    };
-                } else if (line.startsWith('Q') && currentQuestion) {
-                    currentQuestion.question = line.substring(line.indexOf(':') + 1).trim();
-                } else if (line.startsWith('R :') && currentQuestion) {
-                    currentQuestion.options.push(line.replace('R :', '').trim());
-                } else if (line.startsWith('Correct :') && currentQuestion) {
-                    currentQuestion.correct = line.replace('Correct :', '').trim();
+            for (const line of lines) {
+                if (line.startsWith('Q')) {
+                    if (current.question) questions.push(current);
+                    current = { question: line.substring(line.indexOf(':') + 1).trim() };
+                } else if (line.startsWith('A')) {
+                    current.answer = line.substring(line.indexOf(':') + 1).trim();
+                } else if (line.startsWith('E')) {
+                    current.explanation = line.substring(line.indexOf(':') + 1).trim();
                 }
             }
+            if (current.question) questions.push(current);
             
-            if (currentQuestion) {
-                questions.push(currentQuestion);
-            }
-            
-            return questions;
+            // للأسئلة الاختيارية، نولد خيارات وهمية
+            return questions.map(q => ({
+                ...q,
+                type: currentSettings.questionType,
+                options: currentSettings.questionType === 'اختياري' 
+                    ? [q.answer, 'خيار آخر 1', 'خيار آخر 2', 'خيار آخر 3'] 
+                    : ['صح', 'خطأ']
+            }));
         }
         
         async function deductCoins(amount) {
-            try {
-                const newCoins = userCoins - amount;
-                userCoins = newCoins;
-                
-                await database.ref(`users_Awn/${currentUser.id}/coin`).set(newCoins);
-                const coinsCount = document.getElementById('coins-count');
-                if (coinsCount) {
-                    coinsCount.textContent = newCoins;
-                }
-            } catch (error) {
-                console.error('Error deducting coins:', error);
-                throw error;
-            }
+            userCoins -= amount;
+            await database.ref(`users_Awn/${currentUser.id}/coin`).set(userCoins);
+            document.getElementById('coins-count').textContent = userCoins;
         }
         
         async function saveResultToDatabase(result) {
-            try {
-                const recordId = 'questions_' + Date.now();
-                const recordData = {
-                    id: currentUser.id,
-                    process: 'توليد أسئلة',
-                    data: result,
-                    timestamp: Date.now(),
-                    fileName: fileInfo.name,
-                    baseCost: fileInfo.baseCost,
-                    extraCost: currentSettings.extraCost,
-                    totalCost: currentSettings.totalCost,
-                    pages: fileInfo.pages,
-                    questionsCount: currentSettings.questionsCount,
-                    questionType: currentSettings.questionType,
-                    difficulty: currentSettings.difficulty
-                };
-                
-                await database.ref(`records/${recordId}`).set(recordData);
-            } catch (error) {
-                console.error('Error saving result to database:', error);
-            }
+            await database.ref(`records/questions_${Date.now()}`).set({
+                userId: currentUser.id,
+                data: result,
+                timestamp: Date.now(),
+                fileName: fileInfo.name,
+                settings: currentSettings
+            });
         }
         
         // ========== عرض الأسئلة ==========
-        
         function displayQuestions() {
-            if (!questionsData) return;
-            
             const container = document.getElementById('questions-container');
-            const displayInfo = document.getElementById('display-info');
-            const questionTypeDisplay = document.getElementById('question-type-display');
-            const questionCountDisplay = document.getElementById('question-count-display');
-            const questionDifficultyDisplay = document.getElementById('question-difficulty-display');
-            
-            if (displayInfo) {
-                if (questionTypeDisplay) questionTypeDisplay.textContent = currentSettings.questionType;
-                if (questionCountDisplay) questionCountDisplay.textContent = questionsData.length;
-                if (questionDifficultyDisplay) questionDifficultyDisplay.textContent = currentSettings.difficulty;
-            }
+            document.getElementById('question-type-display').textContent = currentSettings.questionType;
+            document.getElementById('question-count-display').textContent = questionsData.length;
+            document.getElementById('question-difficulty-display').textContent = currentSettings.difficulty;
             
             let html = '';
-            
-            questionsData.forEach((q, index) => {
-                const questionNumber = index + 1;
-                
+            questionsData.forEach((q, i) => {
                 html += `
-                    <div class="question-card" id="question-${index}" data-type="${q.type}">
+                    <div class="question-card" id="question-${i}" data-type="${q.type}">
                         <div class="question-header">
-                            <div class="question-number-badge">${questionNumber}</div>
+                            <div class="question-number-badge">${i+1}</div>
                             <div class="question-type-badge">${q.type}</div>
                         </div>
-                        
                         <div class="question-text">${q.question}</div>
+                        <div class="options-container" id="options-${i}">
                 `;
                 
-                if (q.type === 'مقالي') {
-                    // عرض أسئلة مقالية
+                q.options.forEach((opt, optIndex) => {
+                    const letter = String.fromCharCode(65 + optIndex);
                     html += `
-                        <div class="essay-answer-input">
-                            <textarea id="essay-answer-${index}" placeholder="اكتب إجابتك هنا..." oninput="checkEssayAnswer(${index})" ${answersSubmitted ? 'disabled' : ''}></textarea>
+                        <div class="option-item" onclick="selectOption(${i}, ${optIndex})">
+                            <div class="option-marker">${letter}</div>
+                            <div>${opt}</div>
                         </div>
                     `;
-                } else {
-                    // عرض اختيارات للأسئلة الاختيارية أو صح/خطأ
-                    html += `<div class="options-container" id="options-${index}">`;
-                    
-                    q.options.forEach((option, optIndex) => {
-                        const optionLetter = String.fromCharCode(65 + optIndex); // A, B, C, D
-                        html += `
-                            <div class="option-item" data-question="${index}" data-option="${option}" data-index="${optIndex}" onclick="selectOption(${index}, ${optIndex})">
-                                <div class="option-marker">${optionLetter}</div>
-                                <div>${option}</div>
-                            </div>
-                        `;
-                    });
-                    
-                    html += `</div>`;
-                    
-                    // مكان لعرض نتيجة الإجابة
-                    html += `
-                        <div class="result-indicator" id="result-${index}" style="display: none;"></div>
-                    `;
-                }
+                });
                 
-                // مكان عرض الإجابة النموذجية للمقالي بعد التسليم
-                if (q.type === 'مقالي') {
-                    html += `
-                        <div class="model-answer" id="model-answer-${index}" style="display: none;">
-                            <div class="model-answer-title">
-                                <i class="fas fa-book-open"></i>
-                                الإجابة النموذجية:
-                            </div>
-                            <div class="model-answer-text">${q.correct}</div>
+                html += `</div>
+                        <div class="result-indicator" id="result-${i}" style="display: none;"></div>
+                        <div class="explanation-box" id="explanation-${i}" style="display: none;">
+                            <div class="explanation-title"><i class="fas fa-info-circle"></i> شرح الإجابة:</div>
+                            <div class="explanation-text">${q.explanation}</div>
                         </div>
-                    `;
-                }
-                
-                html += `</div>`;
+                    </div>
+                `;
             });
             
             container.innerHTML = html;
-            
-            // إعادة تعيين المتغيرات
             userAnswers = new Array(questionsData.length).fill(null);
             answersSubmitted = false;
-            
-            // إخفاء نتائج المقالي
             document.getElementById('results-summary').style.display = 'none';
-            document.getElementById('essay-results').style.display = 'none';
-            
-            // إظهار زر التسليم
-            document.getElementById('submit-answers-btn').style.display = 'flex';
-            
-            // تحديث شريط التقدم
             updateProgressBar();
         }
         
-        // دالة اختيار خيار (للأسئلة غير المقالية)
-        window.selectOption = function(questionIndex, optionIndex) {
-            if (answersSubmitted) return; // منع التغيير بعد التسليم
-            
-            const question = questionsData[questionIndex];
-            if (question.type === 'مقالي') return; // المقالي لا يحتوي على خيارات
-            
-            const optionItems = document.querySelectorAll(`#options-${questionIndex} .option-item`);
-            
-            // إزالة التحديد من جميع الخيارات
-            optionItems.forEach(item => {
-                item.classList.remove('selected');
-            });
-            
-            // تحديد الخيار المختار
-            optionItems[optionIndex].classList.add('selected');
-            
-            // حفظ الإجابة
-            userAnswers[questionIndex] = {
-                selected: optionIndex,
-                selectedText: question.options[optionIndex],
-                isCorrect: question.options[optionIndex] === question.correct
-            };
-            
-            // تحديث شريط التقدم
-            updateProgressBar();
-        };
-        
-        // دالة التحقق من إجابة المقالي
-        window.checkEssayAnswer = function(questionIndex) {
+        // ========== اختيار الإجابة ==========
+        window.selectOption = function(qIndex, optIndex) {
             if (answersSubmitted) return;
             
-            const essayAnswer = document.getElementById(`essay-answer-${questionIndex}`).value;
+            const options = document.querySelectorAll(`#options-${qIndex} .option-item`);
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[optIndex].classList.add('selected');
             
-            userAnswers[questionIndex] = {
-                essay: essayAnswer
+            userAnswers[qIndex] = {
+                selected: optIndex,
+                selectedText: questionsData[qIndex].options[optIndex],
+                isCorrect: questionsData[qIndex].options[optIndex] === questionsData[qIndex].answer
             };
             
-            // تحديث شريط التقدم
             updateProgressBar();
         };
         
-        // دالة تسليم الإجابات
+        // ========== تسليم الإجابات ==========
         document.getElementById('submit-answers-btn').addEventListener('click', function() {
             if (answersSubmitted) return;
             
-            const submitBtn = document.getElementById('submit-answers-btn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التصحيح...';
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التصحيح...';
             
-            // إظهار شاشة التحميل
-            let messageIndex = 0;
-            const loadingInterval = setInterval(() => {
-                const msg = loadingMessages[messageIndex];
-                showLoading(msg.main, msg.sub);
-                messageIndex = (messageIndex + 1) % loadingMessages.length;
-            }, 2000);
+            let msgIndex = 0;
+            const interval = setInterval(() => {
+                showLoading(loadingMessages[msgIndex]);
+                msgIndex = (msgIndex + 1) % loadingMessages.length;
+            }, 1000);
             
-            // محاكاة وقت التحميل (3 ثواني)
             setTimeout(() => {
-                clearInterval(loadingInterval);
+                clearInterval(interval);
                 hideLoading();
-                
                 submitAnswers();
-                
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> تسليم الإجابات';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> تسليم الإجابات';
             }, 3000);
         });
         
         function submitAnswers() {
             answersSubmitted = true;
             
-            // تجميع الإجابات المقالية
-            for (let i = 0; i < questionsData.length; i++) {
-                const question = questionsData[i];
+            let correctCount = 0;
+            
+            questionsData.forEach((q, i) => {
+                const answer = userAnswers[i];
+                const resultDiv = document.getElementById(`result-${i}`);
+                const questionCard = document.getElementById(`question-${i}`);
+                const options = document.querySelectorAll(`#options-${i} .option-item`);
+                const explanation = document.getElementById(`explanation-${i}`);
                 
-                if (question.type === 'مقالي') {
-                    // تعطيل حقل الإدخال
-                    const textarea = document.getElementById(`essay-answer-${i}`);
-                    if (textarea) textarea.disabled = true;
+                if (answer) {
+                    const isCorrect = answer.selectedText === q.answer;
+                    if (isCorrect) correctCount++;
                     
-                    // إظهار الإجابة النموذجية
-                    document.getElementById(`model-answer-${i}`).style.display = 'block';
-                } else {
-                    // عرض النتيجة للأسئلة غير المقالية
-                    const userAnswer = userAnswers[i];
+                    // عرض النتيجة
+                    resultDiv.innerHTML = isCorrect 
+                        ? '<i class="fas fa-check-circle"></i> إجابة صحيحة ✓'
+                        : '<i class="fas fa-times-circle"></i> إجابة خاطئة ✗';
+                    resultDiv.className = `result-indicator ${isCorrect ? 'correct' : 'incorrect'}`;
+                    resultDiv.style.display = 'flex';
                     
-                    if (userAnswer) {
-                        const resultDiv = document.getElementById(`result-${i}`);
-                        const questionBox = document.getElementById(`question-${i}`);
-                        const optionItems = document.querySelectorAll(`#options-${i} .option-item`);
-                        
-                        if (userAnswer.isCorrect) {
-                            resultDiv.innerHTML = `
-                                <i class="fas fa-check-circle" style="font-size: 1.3rem;"></i>
-                                <span>إجابة صحيحة ✓</span>
-                            `;
-                            resultDiv.className = 'result-indicator correct';
-                            questionBox.classList.add('correct');
-                        } else {
-                            resultDiv.innerHTML = `
-                                <i class="fas fa-times-circle" style="font-size: 1.3rem;"></i>
-                                <span>إجابة خاطئة ✗</span>
-                            `;
-                            resultDiv.className = 'result-indicator incorrect';
-                            questionBox.classList.add('incorrect');
-                        }
-                        
-                        resultDiv.style.display = 'flex';
-                        
-                        // تلوين الخيارات
-                        optionItems.forEach((item, idx) => {
-                            const optionText = question.options[idx];
-                            
-                            if (optionText === question.correct) {
-                                item.classList.add('correct-answer');
-                            }
-                            
-                            if (idx === userAnswer.selected) {
-                                if (!userAnswer.isCorrect) {
-                                    item.classList.add('wrong-answer');
-                                }
-                            }
-                        });
+                    if (isCorrect) {
+                        questionCard.classList.add('correct');
                     } else {
-                        // إذا لم يختر المستخدم إجابة
-                        const resultDiv = document.getElementById(`result-${i}`);
-                        resultDiv.innerHTML = `
-                            <i class="fas fa-exclamation-triangle" style="font-size: 1.3rem;"></i>
-                            <span>لم تقم باختيار إجابة</span>
-                        `;
-                        resultDiv.className = 'result-indicator incorrect';
-                        resultDiv.style.display = 'flex';
-                        
-                        // عرض الإجابة الصحيحة
-                        const optionItems = document.querySelectorAll(`#options-${i} .option-item`);
-                        optionItems.forEach((item, idx) => {
-                            if (questionsData[i].options[idx] === questionsData[i].correct) {
-                                item.classList.add('correct-answer');
-                            }
-                        });
+                        questionCard.classList.add('incorrect');
+                        // إظهار الشرح فقط للإجابات الخاطئة
+                        explanation.style.display = 'block';
                     }
                     
-                    // تعطيل جميع الخيارات
-                    document.querySelectorAll(`#options-${i} .option-item`).forEach(item => {
-                        item.style.pointerEvents = 'none';
+                    // تلوين الخيارات
+                    options.forEach((opt, idx) => {
+                        if (questionsData[i].options[idx] === q.answer) {
+                            opt.classList.add('correct-answer');
+                        }
+                        if (idx === answer.selected && !isCorrect) {
+                            opt.classList.add('wrong-answer');
+                        }
                     });
-                }
-            }
-            
-            // حساب الدرجة للأسئلة غير المقالية فقط
-            const nonEssayQuestions = questionsData.filter(q => q.type !== 'مقالي');
-            const correctAnswers = userAnswers.filter((ans, idx) => 
-                ans && questionsData[idx].type !== 'مقالي' && ans.isCorrect === true
-            ).length;
-            
-            const totalNonEssay = nonEssayQuestions.length;
-            const scorePercentage = totalNonEssay > 0 ? Math.round((correctAnswers / totalNonEssay) * 100) : 0;
-            
-            // إظهار النتائج إذا كان هناك أسئلة غير مقالية
-            if (totalNonEssay > 0) {
-                const resultsSummary = document.getElementById('results-summary');
-                const scoreFill = document.getElementById('score-fill');
-                const scorePercentageElem = document.getElementById('score-percentage');
-                const scoreDetails = document.getElementById('score-details');
-                const encouragementMessage = document.getElementById('encouragement-message');
-                
-                // تحديث الدائرة
-                const rotation = (scorePercentage / 100) * 360;
-                scoreFill.style.background = `conic-gradient(var(--success-color) 0deg, var(--success-color) ${rotation}deg, transparent ${rotation}deg)`;
-                
-                scorePercentageElem.textContent = scorePercentage + '%';
-                scoreDetails.textContent = `${correctAnswers} من ${totalNonEssay}`;
-                
-                // رسالة تشجيعية
-                if (scorePercentage >= 90) {
-                    encouragementMessage.textContent = '🌟 أداء استثنائي! لقد أظهرت فهماً ممتازاً للمادة';
-                } else if (scorePercentage >= 70) {
-                    encouragementMessage.textContent = '💪 عمل ممتاز! استمر في التقدم بهذا المستوى';
-                } else if (scorePercentage >= 50) {
-                    encouragementMessage.textContent = '📚 عمل جيد! يمكنك التحسن بالممارسة والمراجعة';
                 } else {
-                    encouragementMessage.textContent = '🌱 لا تستسلم! التعلم رحلة تحتاج صبراً ومثابرة';
+                    // لم يجب
+                    resultDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> لم تقم باختيار إجابة';
+                    resultDiv.className = 'result-indicator incorrect';
+                    resultDiv.style.display = 'flex';
+                    questionCard.classList.add('incorrect');
+                    
+                    // عرض الإجابة الصحيحة
+                    options.forEach((opt, idx) => {
+                        if (questionsData[i].options[idx] === q.answer) {
+                            opt.classList.add('correct-answer');
+                        }
+                    });
+                    
+                    // إظهار الشرح
+                    explanation.style.display = 'block';
                 }
                 
-                resultsSummary.style.display = 'block';
-            }
+                // تعطيل الخيارات
+                options.forEach(opt => opt.style.pointerEvents = 'none');
+            });
             
-            // إظهار نتائج المقالي بشكل منفصل
-            const essayQuestions = questionsData.filter(q => q.type === 'مقالي');
-            if (essayQuestions.length > 0) {
-                const essayResults = document.getElementById('essay-results');
-                const essayContainer = document.getElementById('essay-answers-container');
-                
-                let essayHtml = '';
-                
-                essayQuestions.forEach((q, idx) => {
-                    const originalIndex = questionsData.findIndex(question => question === q);
-                    const userAnswer = userAnswers[originalIndex];
-                    
-                    essayHtml += `
-                        <div class="essay-answer-box">
-                            <div class="essay-answer-header">
-                                <div class="essay-answer-number">سؤال ${idx + 1}</div>
-                            </div>
-                            <div class="essay-question-text">${q.question}</div>
-                            <div class="essay-user-answer">
-                                <div class="essay-user-answer-title">
-                                    <i class="fas fa-pen"></i>
-                                    إجابتك:
-                                </div>
-                                <div>${userAnswer ? userAnswer.essay || 'لم تكتب إجابة' : 'لم تكتب إجابة'}</div>
-                            </div>
-                            <div class="essay-model-answer">
-                                <div class="essay-model-answer-title">
-                                    <i class="fas fa-check-circle"></i>
-                                    الإجابة النموذجية:
-                                </div>
-                                <div>${q.correct}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                essayContainer.innerHTML = essayHtml;
-                essayResults.style.display = 'block';
-            }
+            // عرض النتائج
+            const total = questionsData.length;
+            const percentage = Math.round((correctCount / total) * 100);
             
-            // تعطيل زر التسليم نهائياً
-            const submitBtn = document.getElementById('submit-answers-btn');
-            submitBtn.disabled = true;
-            submitBtn.style.opacity = '0.6';
+            const scoreFill = document.getElementById('score-fill');
+            const rotation = (percentage / 100) * 360;
+            scoreFill.style.background = `conic-gradient(var(--success-color) 0deg, var(--success-color) ${rotation}deg, transparent ${rotation}deg)`;
             
-            // حفظ النتائج في Firebase
-            saveAnswersToDatabase();
+            document.getElementById('score-percentage').textContent = percentage + '%';
+            document.getElementById('score-details').textContent = `${correctCount} من ${total}`;
             
-            showNotification('تم تصحيح الإجابات بنجاح', 'success');
+            let message = '';
+            if (percentage >= 90) message = '🌟 أداء استثنائي! أحسنت';
+            else if (percentage >= 70) message = '💪 عمل ممتاز! استمر';
+            else if (percentage >= 50) message = '📚 عمل جيد! يمكنك التحسن';
+            else message = '🌱 لا تستسلم! استمر في التعلم';
+            document.getElementById('encouragement-message').textContent = message;
+            
+            document.getElementById('results-summary').style.display = 'block';
+            
+            // حفظ النتائج
+            saveAnswersToDatabase(correctCount, percentage);
         }
         
-        async function saveAnswersToDatabase() {
-            try {
-                const resultId = 'answers_' + Date.now();
-                const resultData = {
-                    userId: currentUser.id,
-                    fileName: fileInfo.name,
-                    questionType: currentSettings.questionType,
-                    questionsCount: currentSettings.questionsCount,
-                    difficulty: currentSettings.difficulty,
-                    timestamp: Date.now(),
-                    questions: questionsData,
-                    userAnswers: userAnswers
-                };
-                
-                await database.ref(`answers_results/${resultId}`).set(resultData);
-                
-            } catch (error) {
-                console.error('Error saving answers to database:', error);
-            }
+        async function saveAnswersToDatabase(correctCount, percentage) {
+            await database.ref(`answers_results/answers_${Date.now()}`).set({
+                userId: currentUser.id,
+                fileName: fileInfo.name,
+                settings: currentSettings,
+                correctCount,
+                percentage,
+                userAnswers,
+                timestamp: Date.now()
+            });
         }
         
-        // ========== تهيئة التطبيق ==========
-        
+        // ========== التهيئة ==========
         async function initApp() {
-            showLoading('جاري تحميل البيانات...');
+            showLoading('جاري التحميل...');
             
-            const unsubscribe = auth.onAuthStateChanged(async (user) => {
+            auth.onAuthStateChanged(async (user) => {
                 if (!user) {
                     hideLoading();
                     window.location.replace('login.html');
                     return;
                 }
                 
-                try {
-                    await setupUser();
-                    setupFileUpload();
-                    setupQuestionsEvents();
-                    
-                    const logo = document.getElementById('home-logo');
-                    if (logo) {
-                        logo.addEventListener('click', reloadPage);
-                    }
-                    
-                    hideLoading();
-                    
-                } catch (error) {
-                    console.error('Error initializing app:', error);
-                    hideLoading();
-                    showNotification('حدث خطأ في تحميل التطبيق', 'error');
-                } finally {
-                    setTimeout(() => {
-                        unsubscribe();
-                    }, 100);
-                }
+                await setupUser();
+                setupFileUpload();
+                setupQuestionsEvents();
+                
+                document.getElementById('home-logo').addEventListener('click', () => location.reload());
+                hideLoading();
             });
         }
         
         // منع العودة للخلف
-        history.pushState(null, null, window.location.href);
-        window.addEventListener('popstate', function(event) {
-            history.pushState(null, null, window.location.href);
-        });
+        history.pushState(null, null, location.href);
+        window.addEventListener('popstate', () => history.pushState(null, null, location.href));
         
         document.addEventListener('DOMContentLoaded', initApp);
-        
-        // إيقاف أي أصوات عند مغادرة الصفحة
-        window.addEventListener('beforeunload', function() {
-            if (window.speechSynthesis) {
-                window.speechSynthesis.cancel();
-            }
-        });
     </script>
 </body>
 </html>
