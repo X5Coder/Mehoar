@@ -1,1 +1,607 @@
 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عَون - حسابي</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Tajawal', sans-serif;
+        }
+
+        /* Loading Screen */
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #1e293b;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Main Container */
+        .glass-container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 28px;
+            padding: 40px 35px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: containerAppear 0.6s ease-out;
+            opacity: 0;
+            transform: translateY(20px);
+            animation-fill-mode: forwards;
+        }
+        
+        @keyframes containerAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Logo */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo-image {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .logo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        .page-header h1 {
+            font-size: 2rem;
+            color: #1e293b;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .page-header p {
+            color: #64748b;
+            font-size: 1rem;
+        }
+        
+        /* Alert Message */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            display: none;
+            animation: slideDown 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 0.95rem;
+            text-align: center;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .alert-error {
+            background: rgba(239, 68, 68, 0.08);
+            color: #dc2626;
+            border-color: rgba(220, 38, 38, 0.1);
+        }
+        
+        .alert-success {
+            background: rgba(34, 197, 94, 0.08);
+            color: #16a34a;
+            border-color: rgba(22, 163, 74, 0.1);
+        }
+        
+        /* Profile Card */
+        .profile-card {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 30px 25px;
+            margin-bottom: 30px;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+        }
+        
+        /* Avatar */
+        .avatar-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        
+        .avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.8rem;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(30, 41, 59, 0.3);
+            border: 4px solid white;
+        }
+        
+        /* Info Items */
+        .info-item {
+            background: white;
+            border-radius: 18px;
+            padding: 18px 20px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .info-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .info-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .info-label i {
+            color: #1e293b;
+            font-size: 0.9rem;
+        }
+        
+        .info-value {
+            color: #1e293b;
+            font-size: 1.15rem;
+            font-weight: 700;
+            word-break: break-all;
+            padding-right: 20px;
+            line-height: 1.5;
+        }
+        
+        .info-value.small {
+            font-size: 1rem;
+            font-family: monospace;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        /* User ID Badge */
+        .id-badge {
+            background: #1e293b;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 18px 24px;
+            border: none;
+            border-radius: 18px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-bottom: 15px;
+            gap: 12px;
+        }
+        
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+        
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: buttonSpin 0.8s linear infinite;
+        }
+        
+        @keyframes buttonSpin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Logout Button */
+        .btn-logout {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.2);
+        }
+        
+        .btn-logout:hover:not(:disabled) {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-logout:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        
+        /* Back Button */
+        .btn-back {
+            background: transparent;
+            color: #64748b;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .btn-back:hover:not(:disabled) {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: #1e293b;
+            transform: translateY(-2px);
+        }
+        
+        .btn-back:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        
+        /* Button Icon */
+        .btn-icon {
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover .btn-icon {
+            transform: scale(1.1);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 500px) {
+            .glass-container {
+                padding: 30px 25px;
+            }
+            
+            .avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2.2rem;
+            }
+            
+            .info-value {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <p style="color: #64748b; font-size: 0.95rem; margin-top: 15px; font-weight: 500;">جاري تحميل بيانات الحساب...</p>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="glass-container" id="mainContainer" style="display: none;">
+        
+        <!-- Logo -->
+        <div class="logo-section">
+            <div class="logo-image">
+                <img src="https://i.ibb.co/rGpgBFBW/1000183766.png" alt="عَون" 
+                     onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%231e293b%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22sans-serif%22 font-size=%2240%22 fill=%22white%22>عَون</text></svg>';">
+            </div>
+        </div>
+        
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>حسابي</h1>
+            <p>معلومات الحساب الشخصي</p>
+        </div>
+        
+        <!-- Alert Container -->
+        <div class="alert" id="alertMessage"></div>
+        
+        <!-- Profile Content -->
+        <div id="profileContent">
+            
+            <!-- Profile Card -->
+            <div class="profile-card">
+                
+                <!-- Avatar with first letter of name -->
+                <div class="avatar-container">
+                    <div class="avatar" id="userAvatar">?</div>
+                </div>
+                
+                <!-- User Info -->
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-user"></i>
+                        <span>اسم المستخدم</span>
+                    </div>
+                    <div class="info-value" id="userNameDisplay">-</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-envelope"></i>
+                        <span>البريد الإلكتروني</span>
+                    </div>
+                    <div class="info-value small" id="userEmailDisplay" dir="ltr">-</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-id-card"></i>
+                        <span>معرّف المستخدم</span>
+                    </div>
+                    <div class="info-value small" id="userIdDisplay" dir="ltr">-</div>
+                    <div class="id-badge" id="userIdBadge"></div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <button class="btn btn-logout" id="logoutBtn">
+                <i class="btn-icon fas fa-sign-out-alt"></i>
+                <span>تسجيل الخروج</span>
+            </button>
+            
+            <button class="btn btn-back" id="backBtn">
+                <i class="btn-icon fas fa-arrow-right"></i>
+                <span>العودة إلى الرئيسية</span>
+            </button>
+            
+            <div class="footer">
+                <p>عَون - المنصة التعليمية</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        firebase.initializeApp({
+            apiKey: "AIzaSyBmPMRk4pvowUnqQb3fCSTZqLRNiU6-ouo",
+            authDomain: "marvel1-654dd.firebaseapp.com",
+            databaseURL: "https://marvel1-654dd-default-rtdb.firebaseio.com",
+            projectId: "marvel1-654dd",
+            storageBucket: "marvel1-654dd.appspot.com",
+            messagingSenderId: "189921979866",
+            appId: "1:189921979866:android:95f48de58a69756be924e3"
+        });
+
+        const auth = firebase.auth();
+        const db = firebase.database();
+        let currentUser = null;
+        let userData = null;
+
+        // Helper Functions
+        function showAlert(message, type = "error") {
+            const alertEl = document.getElementById("alertMessage");
+            alertEl.textContent = message;
+            alertEl.className = `alert alert-${type}`;
+            alertEl.style.display = "block";
+            
+            setTimeout(() => {
+                alertEl.style.display = "none";
+            }, 4000);
+        }
+
+        function setButtonLoading(buttonId, isLoading) {
+            const button = document.getElementById(buttonId);
+            if (isLoading) {
+                button.classList.add('btn-loading');
+                button.disabled = true;
+            } else {
+                button.classList.remove('btn-loading');
+                button.disabled = false;
+            }
+        }
+
+        // Get first letter of name for avatar
+        function getInitial(name) {
+            if (!name) return '?';
+            return name.charAt(0).toUpperCase();
+        }
+
+        // Format ID to show only last 4 digits with mask
+        function formatUserId(id) {
+            if (!id) return '-';
+            if (id.length <= 4) return id;
+            const lastFour = id.slice(-4);
+            return '••••' + lastFour;
+        }
+
+        // Load user data from database
+        async function loadUserData(user) {
+            try {
+                const snapshot = await db.ref("users_Awn")
+                    .orderByChild("email")
+                    .equalTo(user.email)
+                    .once("value");
+
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const userId = Object.keys(data)[0];
+                    userData = data[userId];
+                    
+                    // Update UI with user data
+                    document.getElementById("userNameDisplay").textContent = userData.name || '-';
+                    document.getElementById("userEmailDisplay").textContent = user.email || '-';
+                    document.getElementById("userIdDisplay").textContent = userData.id || '-';
+                    document.getElementById("userIdBadge").textContent = `ID: ${formatUserId(userData.id)}`;
+                    
+                    // Update avatar with first letter of name
+                    document.getElementById("userAvatar").textContent = getInitial(userData.name);
+                    
+                    return true;
+                } else {
+                    // User data not found in database
+                    document.getElementById("userNameDisplay").textContent = '-';
+                    document.getElementById("userEmailDisplay").textContent = user.email || '-';
+                    document.getElementById("userIdDisplay").textContent = '-';
+                    document.getElementById("userIdBadge").textContent = 'ID: غير متوفر';
+                    document.getElementById("userAvatar").textContent = '?';
+                    
+                    showAlert("لم يتم العثور على بيانات المستخدم في قاعدة البيانات", "error");
+                    return false;
+                }
+            } catch (error) {
+                console.error("Error loading user data:", error);
+                showAlert("حدث خطأ أثناء تحميل بيانات المستخدم", "error");
+                return false;
+            }
+        }
+
+        // Check authentication and load data
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // User is signed in
+                currentUser = user;
+                
+                // Load user data from database
+                await loadUserData(user);
+                
+                // Hide loading and show main container
+                setTimeout(() => {
+                    document.getElementById("loadingScreen").style.opacity = "0";
+                    document.getElementById("loadingScreen").style.visibility = "hidden";
+                    document.getElementById("mainContainer").style.display = "block";
+                }, 1000);
+            } else {
+                // No user is signed in, redirect to login page
+                window.location.href = "vvv.html";
+            }
+        });
+
+        // Logout function
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            try {
+                setButtonLoading('logoutBtn', true);
+                
+                await auth.signOut();
+                
+                showAlert("تم تسجيل الخروج بنجاح", "success");
+                
+                setTimeout(() => {
+                    window.location.href = "vvv.html";
+                }, 1500);
+                
+            } catch (error) {
+                console.error("Logout error:", error);
+                setButtonLoading('logoutBtn', false);
+                showAlert("حدث خطأ أثناء تسجيل الخروج", "error");
+            }
+        });
+
+        // Back to home button
+        document.getElementById("backBtn").addEventListener("click", () => {
+            window.location.href = "home.html";
+        });
+
+        // Fallback in case auth state doesn't change
+        setTimeout(() => {
+            if (document.getElementById("loadingScreen").style.visibility !== "hidden") {
+                if (!auth.currentUser) {
+                    window.location.href = "vvv.html";
+                } else {
+                    document.getElementById("loadingScreen").style.opacity = "0";
+                    document.getElementById("loadingScreen").style.visibility = "hidden";
+                    document.getElementById("mainContainer").style.display = "block";
+                }
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
