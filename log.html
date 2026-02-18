@@ -10,6 +10,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
+    <!-- PDF.js (للتلخيص) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -50,6 +53,8 @@
             --shadow-medium: 0 8px 24px rgba(139, 115, 85, 0.15);
             --shadow-heavy: 0 12px 36px rgba(139, 115, 85, 0.2);
             --record-summary-bg: #f8f6f2;
+            --highlight-color: #FF6B6B;
+            --highlight-bg: #FFF5F5;
         }
         
         body {
@@ -532,8 +537,8 @@
         .modal-content {
             background: white;
             border-radius: var(--border-radius-xl);
-            width: min(800px, 90vw);
-            max-height: 80vh;
+            width: min(900px, 95vw);
+            max-height: 85vh;
             overflow-y: auto;
             position: relative;
             animation: modalAppear 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -551,7 +556,7 @@
         }
         
         .modal-header {
-            padding: 25px 30px;
+            padding: 20px 25px;
             border-bottom: 1px solid rgba(139, 115, 85, 0.12);
             display: flex;
             justify-content: space-between;
@@ -564,7 +569,7 @@
         
         .modal-header h3 {
             font-family: 'Almarai', sans-serif;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: var(--accent-primary);
         }
@@ -590,54 +595,123 @@
         }
         
         .modal-body {
-            padding: 30px;
+            padding: 25px;
         }
         
-        /* Summary Display */
-        .modal-summary-content {
-            background: var(--record-summary-bg);
-            border-radius: var(--border-radius-xl);
-            padding: 25px;
-            font-family: 'Tajawal', sans-serif;
-            line-height: 1.8;
-            color: var(--text-primary);
-            border: 1px solid rgba(139, 115, 85, 0.1);
-            max-height: 400px;
-            overflow-y: auto;
+        /* ========== أنماط التلخيص من vvv.html ========== */
+        .summary-container {
+            width: 100%;
         }
         
         .summary-head {
             background: var(--accent-primary);
             color: white;
-            padding: 15px 20px;
+            padding: 20px;
             border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            font-weight: 700;
+            margin-bottom: 25px;
             text-align: center;
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+        
+        .raw-summary {
+            background: rgba(139, 115, 85, 0.05);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(139, 115, 85, 0.1);
+        }
+        
+        .raw-title {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .raw-points {
             list-style: none;
             padding: 0;
-            margin: 20px 0;
         }
         
         .raw-points li {
-            background: white;
-            border-radius: var(--border-radius);
             padding: 15px 20px;
-            margin-bottom: 10px;
-            border-right: 4px solid var(--accent-primary);
+            margin-bottom: 12px;
+            background: white;
+            border-radius: 12px;
+            border-right: 5px solid var(--accent-primary);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
             display: flex;
+            align-items: flex-start;
             gap: 12px;
             box-shadow: var(--shadow-light);
         }
         
         .raw-points li i {
             color: var(--accent-primary);
+            margin-top: 3px;
         }
         
-        /* Questions Display */
+        .result-content {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+            width: 100%;
+            padding: 30px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(139, 115, 85, 0.1);
+            border-radius: var(--border-radius);
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .section-title-star {
+            color: var(--accent-primary);
+            font-weight: 800;
+            font-size: 1.2em;
+            margin: 25px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(139, 115, 85, 0.2);
+            display: block;
+        }
+        
+        .structured-item {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: rgba(139, 115, 85, 0.03);
+            border-radius: 8px;
+            border-right: 3px solid var(--accent-secondary);
+        }
+        
+        .highlighted-word {
+            background-color: var(--highlight-bg);
+            color: var(--highlight-color);
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+            display: inline-block;
+            border: 1px solid rgba(255, 107, 107, 0.2);
+        }
+        
+        .quote-item {
+            font-style: italic;
+            color: var(--accent-dark);
+            background: rgba(139, 115, 85, 0.05);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-right: 2px solid var(--accent-dark);
+            margin: 8px 0;
+        }
+        
+        /* ========== أنماط الأسئلة من ccc.html ========== */
         .questions-container {
             display: flex;
             flex-direction: column;
@@ -647,8 +721,8 @@
         .question-card {
             background: white;
             border-radius: var(--border-radius-xl);
-            padding: 20px;
-            border: 1px solid rgba(139, 115, 85, 0.12);
+            padding: 25px;
+            border: 1px solid rgba(139, 115, 85, 0.15);
             box-shadow: var(--shadow-light);
         }
         
@@ -656,29 +730,29 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
         
         .question-number-badge {
             background: var(--accent-primary);
             color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            width: 45px;
+            height: 45px;
+            border-radius: var(--border-radius);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
         }
         
         .question-type-badge {
             background: rgba(139, 115, 85, 0.15);
             color: var(--accent-primary);
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
+            padding: 8px 18px;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
             font-weight: 600;
         }
         
@@ -694,76 +768,65 @@
             border: 1px solid rgba(139, 115, 85, 0.1);
         }
         
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+        .options-container {
+            display: flex;
+            flex-direction: column;
             gap: 12px;
             margin-bottom: 20px;
         }
         
         .option-item {
-            padding: 12px 15px;
-            background: white;
-            border: 2px solid rgba(139, 115, 85, 0.2);
-            border-radius: var(--border-radius);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: var(--border-radius);
+            border: 2px solid rgba(139, 115, 85, 0.2);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
         }
         
-        .option-item.correct {
+        .option-item.correct-answer {
             border-color: var(--success-color);
             background: rgba(76, 175, 80, 0.1);
         }
         
         .option-marker {
-            width: 30px;
-            height: 30px;
-            border-radius: 8px;
+            width: 35px;
+            height: 35px;
+            border-radius: var(--border-radius);
             background: rgba(139, 115, 85, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
+            color: var(--accent-primary);
         }
         
-        .option-item.correct .option-marker {
+        .option-item.correct-answer .option-marker {
             background: var(--success-color);
             color: white;
         }
         
         .explanation-box {
             margin-top: 15px;
-            padding: 15px;
+            padding: 20px;
             background: rgba(33, 150, 243, 0.1);
             border-radius: var(--border-radius);
             border-right: 4px solid var(--info-color);
         }
         
         .explanation-title {
-            color: var(--info-color);
             font-weight: 700;
-            margin-bottom: 8px;
+            color: var(--info-color);
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         
-        /* Raw Text Display */
-        .raw-text {
-            background: #f5f5f5;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            white-space: pre-wrap;
-            font-family: monospace;
-            font-size: 0.9rem;
-            direction: ltr;
-            text-align: left;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-        
-        /* Flashcards Display */
+        /* ========== أنماط الفلاش كارد من mmm.html ========== */
         .flashcards-container {
             display: flex;
             flex-direction: column;
@@ -775,36 +838,90 @@
             border-radius: var(--border-radius-xl);
             overflow: hidden;
             border: 1px solid rgba(139, 115, 85, 0.12);
+            box-shadow: var(--shadow-light);
         }
         
         .flashcard-question {
-            padding: 20px;
+            padding: 25px;
             background: linear-gradient(145deg, white, rgba(139, 115, 85, 0.05));
             border-bottom: 1px solid rgba(139, 115, 85, 0.1);
-        }
-        
-        .flashcard-answer {
-            padding: 20px;
-            background: white;
-        }
-        
-        .flashcard-advice {
-            padding: 15px 20px;
-            background: rgba(255, 152, 0, 0.1);
-            border-top: 1px solid rgba(139, 115, 85, 0.1);
         }
         
         .flashcard-number {
             background: var(--accent-primary);
             color: white;
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .flashcard-question h4 {
+            color: var(--accent-primary);
             margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .flashcard-question p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+        
+        .flashcard-answer {
+            padding: 25px;
+            background: white;
+        }
+        
+        .flashcard-answer h4 {
+            color: var(--success-color);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .flashcard-answer p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+        
+        .flashcard-advice {
+            padding: 20px 25px;
+            background: rgba(255, 152, 0, 0.1);
+            border-top: 1px solid rgba(139, 115, 85, 0.1);
+        }
+        
+        .flashcard-advice h4 {
+            color: var(--warning-color);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .flashcard-advice p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        /* Raw Data Display */
+        .raw-data {
+            background: #f5f5f5;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 0.9rem;
+            direction: ltr;
+            text-align: left;
+            max-height: 500px;
+            overflow-y: auto;
         }
         
         /* Responsive */
@@ -822,10 +939,6 @@
                 justify-content: center;
             }
             
-            .options-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .back-btn span {
                 display: none;
             }
@@ -834,8 +947,8 @@
                 padding: 10px;
             }
             
-            .back-btn i {
-                margin: 0;
+            .result-content {
+                padding: 15px;
             }
         }
     </style>
@@ -1034,9 +1147,7 @@
                 if (snapshot.exists()) {
                     const records = snapshot.val();
                     
-                    // تحويل الكائن إلى مصفوفة
                     for (const [recordId, recordData] of Object.entries(records)) {
-                        // التحقق من أن هذا السجل يخص المستخدم الحالي
                         if (recordData.id === currentUser.id) {
                             allRecords.push({
                                 id: recordId,
@@ -1045,11 +1156,9 @@
                         }
                     }
                     
-                    // ترتيب السجلات من الأحدث إلى الأقدم
                     allRecords.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 }
                 
-                // تطبيق الفلتر
                 filterRecords(currentFilter);
                 
             } catch (error) {
@@ -1104,7 +1213,6 @@
                     minute: '2-digit'
                 });
                 
-                // تحديد الأيقونة واللون حسب نوع العملية
                 let typeIcon = '';
                 let badgeClass = '';
                 let typeName = '';
@@ -1136,13 +1244,8 @@
                         icon = 'summary';
                 }
                 
-                // عدد الصفحات
                 const pages = record.pages || record.data?.pages || '?';
-                
-                // عدد الأسئلة
                 const questionsCount = record.questionsCount || record.data?.questionsCount || record.settings?.questionsCount || '';
-                
-                // درجة الصعوبة
                 const difficulty = record.difficulty || record.settings?.difficulty || '';
                 
                 html += `
@@ -1203,162 +1306,7 @@
             grid.innerHTML = html;
         }
         
-        // ========== دوال تحليل البيانات ==========
-        
-        function parseQuestionsFromData(data) {
-            const questions = [];
-            
-            // إذا كانت البيانات نصية (من السيرفر مباشرة)
-            if (typeof data === 'string') {
-                return parseQuestionsFromText(data);
-            }
-            
-            // إذا كانت البيانات كائن
-            if (typeof data === 'object' && data !== null) {
-                // التحقق من وجود questions array مباشرة
-                if (data.questions && Array.isArray(data.questions)) {
-                    return data.questions;
-                }
-                
-                // التحقق من وجود data داخل data (تداخل)
-                if (data.data && typeof data.data === 'object') {
-                    return parseQuestionsFromData(data.data);
-                }
-                
-                // البحث عن أي keys تبدأ بـ Q (للأسئلة)
-                const qKeys = Object.keys(data).filter(key => key.startsWith('Q') && !isNaN(key.substring(1)));
-                
-                if (qKeys.length > 0) {
-                    qKeys.sort((a, b) => parseInt(a.substring(1)) - parseInt(b.substring(1)));
-                    
-                    qKeys.forEach(qKey => {
-                        const index = qKey.substring(1);
-                        const rKey = `R${index}`;
-                        const aKey = `A${index}`;
-                        
-                        questions.push({
-                            question: data[qKey] || '',
-                            answer: data[rKey] || '',
-                            advice: data[aKey] || '',
-                            type: 'فلاش كارد'
-                        });
-                    });
-                }
-                
-                // البحث عن تنسيق آخر للأسئلة (مثل Q1, Q2 مع Correct, Explanation)
-                if (questions.length === 0) {
-                    for (let i = 1; i <= 100; i++) {
-                        if (data[`Q${i}`]) {
-                            questions.push({
-                                question: data[`Q${i}`],
-                                options: [
-                                    data[`A${i}`],
-                                    data[`B${i}`],
-                                    data[`C${i}`],
-                                    data[`D${i}`]
-                                ].filter(opt => opt),
-                                correct: data[`Correct${i}`] || data.correct,
-                                explanation: data[`Explanation${i}`] || data.explanation,
-                                type: 'اختياري'
-                            });
-                        } else {
-                            break;
-                        }
-                    }
-                }
-            }
-            
-            return questions;
-        }
-        
-        function parseQuestionsFromText(text) {
-            const questions = [];
-            const lines = text.split('\n').filter(l => l.trim());
-            
-            let currentQuestion = null;
-            let options = [];
-            
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i].trim();
-                
-                if (line.startsWith('Q') && line.includes(':')) {
-                    // حفظ السؤال السابق
-                    if (currentQuestion) {
-                        if (options.length > 0) {
-                            currentQuestion.options = options;
-                        }
-                        questions.push(currentQuestion);
-                    }
-                    
-                    // بدء سؤال جديد
-                    currentQuestion = {
-                        question: line.substring(line.indexOf(':') + 1).trim(),
-                        options: [],
-                        type: 'اختياري'
-                    };
-                    options = [];
-                }
-                else if (line.match(/^[ABCD] :/)) {
-                    options.push(line.substring(line.indexOf(':') + 1).trim());
-                }
-                else if (line.startsWith('Correct :')) {
-                    if (currentQuestion) {
-                        currentQuestion.correct = line.replace('Correct :', '').trim();
-                    }
-                }
-                else if (line.startsWith('Explanation :')) {
-                    if (currentQuestion) {
-                        currentQuestion.explanation = line.replace('Explanation :', '').trim();
-                    }
-                }
-                else if (line.startsWith('Q') && line.includes('?')) {
-                    // تنسيق آخر
-                    if (currentQuestion) {
-                        if (options.length > 0) {
-                            currentQuestion.options = options;
-                        }
-                        questions.push(currentQuestion);
-                    }
-                    
-                    currentQuestion = {
-                        question: line,
-                        options: [],
-                        type: 'اختياري'
-                    };
-                    options = [];
-                }
-            }
-            
-            // إضافة آخر سؤال
-            if (currentQuestion) {
-                if (options.length > 0) {
-                    currentQuestion.options = options;
-                }
-                questions.push(currentQuestion);
-            }
-            
-            return questions;
-        }
-        
-        function parseFlashcardsFromData(data) {
-            const flashcards = [];
-            
-            if (typeof data === 'object' && data !== null) {
-                const num = data.num || 0;
-                
-                for (let i = 1; i <= num; i++) {
-                    flashcards.push({
-                        question: data[`Q${i}`] || '',
-                        answer: data[`R${i}`] || data[`A${i}`] || '',
-                        advice: data[`Advice${i}`] || data[`Tip${i}`] || ''
-                    });
-                }
-            }
-            
-            return flashcards;
-        }
-        
-        // ========== عرض تفاصيل السجل ==========
+        // ========== عرض تفاصيل السجل حسب نوعه ==========
         
         function showRecordDetails(recordId) {
             const record = filteredRecords.find(r => r.id === recordId);
@@ -1375,20 +1323,16 @@
             try {
                 switch(record.process) {
                     case 'ملخص':
-                        content = generateSummaryDetails(record);
+                        content = generateSummaryView(record);
                         break;
                     case 'أسئلة':
-                        content = generateQuestionsDetails(record);
+                        content = generateQuestionsView(record);
                         break;
                     case 'فلاش كارد':
-                        content = generateFlashcardsDetails(record);
+                        content = generateFlashcardsView(record);
                         break;
                     default:
-                        content = `
-                            <div class="raw-text">
-                                ${JSON.stringify(record.data || record, null, 2)}
-                            </div>
-                        `;
+                        content = `<pre class="raw-data">${JSON.stringify(record.data || record, null, 2)}</pre>`;
                 }
             } catch (error) {
                 console.error('Error generating details:', error);
@@ -1396,8 +1340,7 @@
                     <div style="text-align: center; padding: 40px;">
                         <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: var(--error-color); margin-bottom: 20px;"></i>
                         <h3 style="color: var(--error-color);">حدث خطأ أثناء عرض التفاصيل</h3>
-                        <p style="color: var(--text-secondary); margin-top: 10px;">${error.message}</p>
-                        <pre style="text-align: left; background: #f5f5f5; padding: 15px; border-radius: var(--border-radius); margin-top: 20px; direction: ltr;">${JSON.stringify(record, null, 2)}</pre>
+                        <pre class="raw-data" style="margin-top: 20px;">${JSON.stringify(record, null, 2)}</pre>
                     </div>
                 `;
             }
@@ -1406,33 +1349,41 @@
             modal.classList.add('show');
         }
         
-        function generateSummaryDetails(record) {
+        // ========== عرض التلخيص بنفس تصميم vvv.html ==========
+        function generateSummaryView(record) {
             const data = record.data || {};
-            
             const head = data.head || 'ملخص الملف';
             const raw = Array.isArray(data.raw) ? data.raw : [];
             const page = data.page || '';
             
+            // تنسيق المحتوى بنفس طريقة vvv.html
+            const formattedContent = formatSummaryContent(page);
+            
             return `
-                <div>
-                    <div style="background: var(--accent-primary); color: white; padding: 20px; border-radius: var(--border-radius); margin-bottom: 20px;">
-                        <h4 style="font-size: 1.3rem; margin-bottom: 5px;">${head}</h4>
-                        <p style="font-size: 0.9rem; opacity: 0.9;">${record.fileName || ''}</p>
-                    </div>
+                <div class="summary-container">
+                    <div class="summary-head">${head}</div>
                     
                     ${raw.length > 0 ? `
-                        <h5 style="font-size: 1.1rem; color: var(--accent-primary); margin: 20px 0 15px;">النقاط الرئيسية</h5>
-                        <ul class="raw-points">
-                            ${raw.map(point => `
-                                <li><i class="fas fa-check-circle" style="color: var(--success-color);"></i> ${point}</li>
-                            `).join('')}
-                        </ul>
+                        <div class="raw-summary">
+                            <h3 class="raw-title">
+                                <i class="fas fa-bullseye"></i>
+                                النقاط الرئيسية
+                            </h3>
+                            <ul class="raw-points">
+                                ${raw.map(point => `
+                                    <li><i class="fas fa-check-circle"></i> ${point}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
                     ` : ''}
                     
                     ${page ? `
-                        <h5 style="font-size: 1.1rem; color: var(--accent-primary); margin: 20px 0 15px;">الملخص الكامل</h5>
-                        <div class="modal-summary-content">
-                            ${page.replace(/\n/g, '<br>')}
+                        <h3 class="raw-title" style="margin-top: 20px;">
+                            <i class="fas fa-file-alt"></i>
+                            الملخص الكامل
+                        </h3>
+                        <div class="result-content">
+                            ${formattedContent}
                         </div>
                     ` : ''}
                     
@@ -1446,91 +1397,126 @@
             `;
         }
         
-        function generateQuestionsDetails(record) {
+        // دالة تنسيق محتوى التلخيص (من vvv.html)
+        function formatSummaryContent(text) {
+            if (!text) return '';
+            
+            const paragraphs = text.split('\n').filter(p => p.trim());
+            let formattedHTML = '';
+            
+            paragraphs.forEach(paragraph => {
+                if (paragraph.trim().startsWith('**') && paragraph.trim().endsWith('**')) {
+                    const title = paragraph.trim().replace(/\*\*/g, '');
+                    formattedHTML += `<div class="section-title-star">${title}</div>`;
+                }
+                else if (/^\d+\)/.test(paragraph.trim())) {
+                    const number = paragraph.trim().match(/^(\d+)\)/)[1];
+                    const content = paragraph.trim().replace(/^\d+\)\s*/, '');
+                    formattedHTML += `
+                        <div class="structured-item" style="display: flex; align-items: flex-start; gap: 10px;">
+                            <span style="font-weight: 700; color: var(--accent-primary);">${number})</span>
+                            <span>${content}</span>
+                        </div>
+                    `;
+                }
+                else if (paragraph.trim().startsWith('•')) {
+                    const content = paragraph.trim().substring(1).trim();
+                    formattedHTML += `
+                        <div class="structured-item" style="display: flex; align-items: flex-start; gap: 10px;">
+                            <span style="font-weight: 700; color: var(--accent-secondary);">•</span>
+                            <span>${content}</span>
+                        </div>
+                    `;
+                }
+                else if (paragraph.includes('«') && paragraph.includes('»')) {
+                    formattedHTML += `<div class="quote-item">${paragraph}</div>`;
+                }
+                else if (paragraph.includes('**')) {
+                    const highlighted = paragraph.replace(/\*\*([^*]+)\*\*/g, '<span class="highlighted-word">$1</span>');
+                    formattedHTML += `<p>${highlighted}</p>`;
+                }
+                else {
+                    formattedHTML += `<p>${paragraph}</p>`;
+                }
+            });
+            
+            return formattedHTML;
+        }
+        
+        // ========== عرض الأسئلة بنفس تصميم ccc.html ==========
+        function generateQuestionsView(record) {
             const data = record.data || record;
-            const questions = parseQuestionsFromData(data);
+            const questions = extractQuestions(data);
             
             if (questions.length === 0) {
-                // عرض البيانات الخام إذا لم نتمكن من تحليلها
-                return `
-                    <div>
-                        <h5 style="font-size: 1.1rem; color: var(--accent-primary); margin-bottom: 15px;">البيانات الخام</h5>
-                        <div class="raw-text">
-                            ${JSON.stringify(data, null, 2)}
-                        </div>
-                        <p style="color: var(--text-secondary); margin-top: 15px; text-align: center;">
-                            <i class="fas fa-info-circle"></i> 
-                            لم نتمكن من تحليل الأسئلة تلقائياً. هذه هي البيانات الخام من السيرفر.
-                        </p>
-                    </div>
-                `;
+                return `<pre class="raw-data">${JSON.stringify(data, null, 2)}</pre>`;
             }
             
             return `
                 <div class="questions-container">
-                    ${questions.map((q, index) => `
-                        <div class="question-card">
-                            <div class="question-header">
-                                <div class="question-number-badge">${index + 1}</div>
-                                <span class="question-type-badge">${q.type || record.settings?.questionType || 'اختياري'}</span>
-                            </div>
-                            
-                            <div class="question-text">${q.question || ''}</div>
-                            
-                            ${q.options && q.options.length > 0 ? `
-                                <div class="options-grid">
-                                    ${q.options.map((opt, optIndex) => {
-                                        const letter = String.fromCharCode(65 + optIndex);
-                                        const isCorrect = q.correct && (
-                                            opt === q.correct || 
-                                            (typeof q.correct === 'string' && opt.includes(q.correct)) ||
-                                            q.correct.includes(opt)
-                                        );
-                                        return `
-                                            <div class="option-item ${isCorrect ? 'correct' : ''}">
-                                                <div class="option-marker">${letter}</div>
-                                                <div>${opt}</div>
-                                            </div>
-                                        `;
-                                    }).join('')}
+                    ${questions.map((q, index) => {
+                        // تحديد الإجابة الصحيحة
+                        let correctAnswer = q.correct || '';
+                        if (correctAnswer && correctAnswer.includes(':')) {
+                            correctAnswer = correctAnswer.substring(correctAnswer.indexOf(':') + 1).trim();
+                        }
+                        
+                        return `
+                            <div class="question-card">
+                                <div class="question-header">
+                                    <div class="question-number-badge">${index + 1}</div>
+                                    <span class="question-type-badge">${q.type || 'اختياري'}</span>
                                 </div>
-                            ` : ''}
-                            
-                            ${q.explanation ? `
-                                <div class="explanation-box">
-                                    <div class="explanation-title">
-                                        <i class="fas fa-info-circle"></i>
-                                        شرح الإجابة
+                                
+                                <div class="question-text">${q.question || ''}</div>
+                                
+                                ${q.options && q.options.length > 0 ? `
+                                    <div class="options-container">
+                                        ${q.options.map((opt, optIndex) => {
+                                            const letter = String.fromCharCode(65 + optIndex);
+                                            const isCorrect = opt === correctAnswer || 
+                                                             (correctAnswer && opt.includes(correctAnswer)) ||
+                                                             (correctAnswer && correctAnswer.includes(opt));
+                                            return `
+                                                <div class="option-item ${isCorrect ? 'correct-answer' : ''}">
+                                                    <div class="option-marker">${letter}</div>
+                                                    <div>${opt}</div>
+                                                </div>
+                                            `;
+                                        }).join('')}
                                     </div>
-                                    <div>${q.explanation}</div>
-                                </div>
-                            ` : ''}
-                            
-                            ${q.answer ? `
-                                <div style="margin-top: 15px; padding: 15px; background: rgba(76, 175, 80, 0.1); border-radius: var(--border-radius);">
-                                    <strong style="color: var(--success-color);">الإجابة: </strong>
-                                    ${q.answer}
-                                </div>
-                            ` : ''}
-                        </div>
-                    `).join('')}
+                                ` : ''}
+                                
+                                ${q.explanation ? `
+                                    <div class="explanation-box">
+                                        <div class="explanation-title">
+                                            <i class="fas fa-info-circle"></i>
+                                            شرح الإجابة
+                                        </div>
+                                        <div>${q.explanation}</div>
+                                    </div>
+                                ` : ''}
+                                
+                                ${q.answer ? `
+                                    <div style="margin-top: 15px; padding: 15px; background: rgba(76, 175, 80, 0.1); border-radius: var(--border-radius);">
+                                        <strong style="color: var(--success-color);">الإجابة: </strong>
+                                        ${q.answer}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }).join('')}
                 </div>
             `;
         }
         
-        function generateFlashcardsDetails(record) {
+        // ========== عرض الفلاش كارد بنفس تصميم mmm.html ==========
+        function generateFlashcardsView(record) {
             const data = record.data || record;
-            const flashcards = parseFlashcardsFromData(data);
+            const flashcards = extractFlashcards(data);
             
             if (flashcards.length === 0) {
-                return `
-                    <div>
-                        <h5 style="font-size: 1.1rem; color: var(--accent-primary); margin-bottom: 15px;">البيانات الخام</h5>
-                        <div class="raw-text">
-                            ${JSON.stringify(data, null, 2)}
-                        </div>
-                    </div>
-                `;
+                return `<pre class="raw-data">${JSON.stringify(data, null, 2)}</pre>`;
             }
             
             return `
@@ -1539,31 +1525,111 @@
                         <div class="flashcard-item">
                             <div class="flashcard-question">
                                 <div class="flashcard-number">${index + 1}</div>
-                                <div style="font-weight: 700; color: var(--accent-primary); margin-bottom: 8px;">السؤال</div>
-                                <div style="font-size: 1.1rem; line-height: 1.8;">${card.question}</div>
+                                <h4><i class="fas fa-question-circle"></i> السؤال</h4>
+                                <p>${card.question}</p>
                             </div>
                             
                             <div class="flashcard-answer">
-                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                                    <i class="fas fa-check-circle" style="color: var(--success-color);"></i>
-                                    <span style="font-weight: 700; color: var(--success-color);">الإجابة</span>
-                                </div>
-                                <div style="font-size: 1.1rem; line-height: 1.8;">${card.answer}</div>
+                                <h4><i class="fas fa-check-circle"></i> الإجابة</h4>
+                                <p>${card.answer}</p>
                             </div>
                             
                             ${card.advice ? `
                                 <div class="flashcard-advice">
-                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                                        <i class="fas fa-lightbulb" style="color: var(--warning-color);"></i>
-                                        <span style="font-weight: 700; color: var(--warning-color);">نصيحة</span>
-                                    </div>
-                                    <div>${card.advice}</div>
+                                    <h4><i class="fas fa-lightbulb"></i> نصيحة للدراسة</h4>
+                                    <p>${card.advice}</p>
                                 </div>
                             ` : ''}
                         </div>
                     `).join('')}
                 </div>
             `;
+        }
+        
+        // ========== دوال استخراج البيانات ==========
+        
+        function extractQuestions(data) {
+            const questions = [];
+            
+            if (typeof data === 'string') {
+                return extractQuestionsFromText(data);
+            }
+            
+            if (typeof data === 'object' && data !== null) {
+                if (data.questions && Array.isArray(data.questions)) {
+                    return data.questions;
+                }
+                
+                if (data.data && typeof data.data === 'object') {
+                    return extractQuestions(data.data);
+                }
+                
+                for (let i = 1; i <= 100; i++) {
+                    if (data[`Q${i}`]) {
+                        questions.push({
+                            question: data[`Q${i}`],
+                            options: [
+                                data[`A${i}`],
+                                data[`B${i}`],
+                                data[`C${i}`],
+                                data[`D${i}`]
+                            ].filter(opt => opt),
+                            correct: data[`Correct${i}`] || data.correct,
+                            explanation: data[`Explanation${i}`] || data.explanation,
+                            type: 'اختياري'
+                        });
+                    } else {
+                        break;
+                    }
+                }
+            }
+            
+            return questions;
+        }
+        
+        function extractQuestionsFromText(text) {
+            const questions = [];
+            const lines = text.split('\n').filter(l => l.trim());
+            let current = {};
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                if (line.startsWith('Q') && line.includes(':')) {
+                    if (current.question) questions.push(current);
+                    current = { question: line.substring(line.indexOf(':') + 1).trim(), options: [] };
+                }
+                else if (line.match(/^[ABCD] :/)) {
+                    current.options.push(line.substring(line.indexOf(':') + 1).trim());
+                }
+                else if (line.startsWith('Correct :')) {
+                    current.correct = line.replace('Correct :', '').trim();
+                }
+                else if (line.startsWith('Explanation :')) {
+                    current.explanation = line.replace('Explanation :', '').trim();
+                }
+            }
+            
+            if (current.question) questions.push(current);
+            return questions;
+        }
+        
+        function extractFlashcards(data) {
+            const flashcards = [];
+            
+            if (typeof data === 'object' && data !== null) {
+                const num = data.num || 0;
+                
+                for (let i = 1; i <= num; i++) {
+                    flashcards.push({
+                        question: data[`Q${i}`] || '',
+                        answer: data[`R${i}`] || data[`A${i}`] || '',
+                        advice: data[`Advice${i}`] || data[`Tip${i}`] || data[`A${i}`] || ''
+                    });
+                }
+            }
+            
+            return flashcards;
         }
         
         // ========== إغلاق المودال ==========
@@ -1598,7 +1664,6 @@
                 await loadUserData();
                 await loadRecords();
                 
-                // إعداد أحداث الفلترة
                 document.querySelectorAll('.filter-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -1607,19 +1672,15 @@
                     });
                 });
                 
-                // زر العودة
                 document.getElementById('back-btn').addEventListener('click', () => {
                     window.history.back();
                 });
                 
-                // زر الشعار
                 document.getElementById('home-logo').addEventListener('click', () => {
                     window.location.href = 'index.html';
                 });
                 
-                // إعداد المودال
                 setupModal();
-                
                 hideLoading();
             });
         }
