@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -31,182 +30,69 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Tajawal', sans-serif;
         }
 
-        /* Loading Screen */
-        #loadingScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #ffffff;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top-color: #1e293b;
-            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-            margin-bottom: 20px;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
         /* Main Container */
-        .glass-container {
+        .container {
             width: 100%;
-            max-width: 500px;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-radius: 28px;
-            padding: 40px 35px;
-            box-shadow: 
-                0 20px 60px rgba(0, 0, 0, 0.1),
-                0 0 0 1px rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            animation: containerAppear 0.6s ease-out;
-            opacity: 0;
-            transform: translateY(20px);
-            animation-fill-mode: forwards;
+            max-width: 480px;
+            background: white;
+            border-radius: 24px;
+            padding: 30px 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: appear 0.5s ease-out;
         }
         
-        @keyframes containerAppear {
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
         
-        /* Logo */
-        .logo-section {
-            text-align: center;
+        /* Header */
+        .header {
             margin-bottom: 30px;
         }
         
-        .logo-image {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        }
-        
-        .logo-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        /* Header */
-        .page-header {
-            text-align: center;
-            margin-bottom: 35px;
-        }
-        
-        .page-header h1 {
-            font-size: 2rem;
+        .header h1 {
+            font-size: 1.8rem;
             color: #1e293b;
             font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
+            text-align: center;
         }
         
-        .page-header p {
-            color: #64748b;
-            font-size: 1rem;
-        }
-        
-        /* Alert Message */
+        /* Alert */
         .alert {
-            padding: 16px 20px;
-            border-radius: 16px;
-            margin-bottom: 25px;
+            padding: 14px 18px;
+            border-radius: 14px;
+            margin-bottom: 20px;
             display: none;
-            animation: slideDown 0.3s ease;
-            border: 1px solid rgba(0, 0, 0, 0.05);
             font-size: 0.95rem;
             text-align: center;
         }
         
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
         .alert-error {
-            background: rgba(239, 68, 68, 0.08);
+            background: #fee2e2;
             color: #dc2626;
-            border-color: rgba(220, 38, 38, 0.1);
+            border: 1px solid #fecaca;
         }
         
         .alert-success {
-            background: rgba(34, 197, 94, 0.08);
+            background: #dcfce7;
             color: #16a34a;
-            border-color: rgba(22, 163, 74, 0.1);
+            border: 1px solid #bbf7d0;
         }
         
-        /* Profile Card */
-        .profile-card {
+        /* Info Cards */
+        .info-card {
             background: #f8fafc;
-            border-radius: 24px;
-            padding: 30px 25px;
-            margin-bottom: 30px;
-            border: 2px solid #e2e8f0;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-        }
-        
-        /* Avatar */
-        .avatar-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
-        
-        .avatar {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2.8rem;
-            font-weight: 700;
-            box-shadow: 0 10px 25px rgba(30, 41, 59, 0.3);
-            border: 4px solid white;
-        }
-        
-        /* Info Items */
-        .info-item {
-            background: white;
             border-radius: 18px;
-            padding: 18px 20px;
+            padding: 20px;
             margin-bottom: 15px;
             border: 1px solid #e2e8f0;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .info-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
         
         .info-label {
@@ -216,236 +102,176 @@
             color: #64748b;
             font-size: 0.85rem;
             font-weight: 600;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
+            margin-bottom: 10px;
         }
         
         .info-label i {
             color: #1e293b;
-            font-size: 0.9rem;
+            width: 18px;
         }
         
-        .info-value {
+        .info-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .info-text {
             color: #1e293b;
-            font-size: 1.15rem;
-            font-weight: 700;
+            font-size: 1.1rem;
+            font-weight: 600;
             word-break: break-all;
-            padding-right: 20px;
-            line-height: 1.5;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            flex: 1;
         }
         
-        .info-value.small {
-            font-size: 1rem;
+        .info-text.small {
+            font-size: 0.95rem;
             font-family: monospace;
             direction: ltr;
-            text-align: left;
         }
         
-        /* User ID Badge */
-        .id-badge {
+        /* Copy Button */
+        .copy-btn {
             background: #1e293b;
             color: white;
-            padding: 6px 12px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            display: inline-block;
-            margin-top: 5px;
-        }
-        
-        /* Buttons */
-        .btn {
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            padding: 18px 24px;
-            border: none;
-            border-radius: 18px;
-            font-size: 1.05rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            margin-bottom: 15px;
-            gap: 12px;
+            font-size: 1.2rem;
+            flex-shrink: 0;
         }
         
-        .btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none !important;
+        .copy-btn:hover {
+            background: #0f172a;
+            transform: scale(1.05);
         }
         
-        .btn-loading {
-            position: relative;
-            color: transparent !important;
+        .copy-btn:active {
+            transform: scale(0.95);
         }
         
-        .btn-loading::after {
-            content: '';
-            position: absolute;
-            width: 22px;
-            height: 22px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: buttonSpin 0.8s linear infinite;
-        }
-        
-        @keyframes buttonSpin {
-            to { transform: rotate(360deg); }
+        .copy-btn.copied {
+            background: #10b981;
         }
         
         /* Logout Button */
-        .btn-logout {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        .logout-btn {
+            width: 100%;
+            padding: 16px;
+            background: #ef4444;
             color: white;
-            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.2);
-        }
-        
-        .btn-logout:hover:not(:disabled) {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(239, 68, 68, 0.3);
-        }
-        
-        .btn-logout:active:not(:disabled) {
-            transform: translateY(0);
-        }
-        
-        /* Back Button */
-        .btn-back {
-            background: transparent;
-            color: #64748b;
-            border: 2px solid #e2e8f0;
-        }
-        
-        .btn-back:hover:not(:disabled) {
-            background: #f8fafc;
-            border-color: #cbd5e1;
-            color: #1e293b;
-            transform: translateY(-2px);
-        }
-        
-        .btn-back:active:not(:disabled) {
-            transform: translateY(0);
-        }
-        
-        /* Button Icon */
-        .btn-icon {
+            border: none;
+            border-radius: 14px;
             font-size: 1.1rem;
-            transition: transform 0.3s ease;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 25px;
         }
         
-        .btn:hover .btn-icon {
-            transform: scale(1.1);
+        .logout-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);
+        }
+        
+        .logout-btn:active {
+            transform: translateY(0);
+        }
+        
+        .logout-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
         }
         
         /* Footer */
         .footer {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
             color: #94a3b8;
             font-size: 0.85rem;
-        }
-        
-        /* Responsive */
-        @media (max-width: 500px) {
-            .glass-container {
-                padding: 30px 25px;
-            }
-            
-            .avatar {
-                width: 80px;
-                height: 80px;
-                font-size: 2.2rem;
-            }
-            
-            .info-value {
-                font-size: 1rem;
-            }
         }
     </style>
 </head>
 <body>
     
-    <!-- Loading Screen -->
-    <div id="loadingScreen">
-        <div class="loading-spinner"></div>
-        <p style="color: #64748b; font-size: 0.95rem; margin-top: 15px; font-weight: 500;">جاري تحميل بيانات الحساب...</p>
-    </div>
-    
-    <!-- Main Container -->
-    <div class="glass-container" id="mainContainer" style="display: none;">
+    <div class="container" id="mainContainer">
         
-        <!-- Logo -->
-        <div class="logo-section">
-            <div class="logo-image">
-                <img src="https://i.ibb.co/rGpgBFBW/1000183766.png" alt="عَون" 
-                     onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%231e293b%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22sans-serif%22 font-size=%2240%22 fill=%22white%22>عَون</text></svg>';">
-            </div>
+        <!-- Header -->
+        <div class="header">
+            <h1>معلومات الحساب</h1>
         </div>
         
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1>حسابي</h1>
-            <p>معلومات الحساب الشخصي</p>
-        </div>
-        
-        <!-- Alert Container -->
+        <!-- Alert Message -->
         <div class="alert" id="alertMessage"></div>
         
-        <!-- Profile Content -->
-        <div id="profileContent">
-            
-            <!-- Profile Card -->
-            <div class="profile-card">
-                
-                <!-- Avatar with first letter of name -->
-                <div class="avatar-container">
-                    <div class="avatar" id="userAvatar">?</div>
-                </div>
-                
-                <!-- User Info -->
-                <div class="info-item">
-                    <div class="info-label">
-                        <i class="fas fa-user"></i>
-                        <span>اسم المستخدم</span>
-                    </div>
-                    <div class="info-value" id="userNameDisplay">-</div>
-                </div>
-                
-                <div class="info-item">
-                    <div class="info-label">
-                        <i class="fas fa-envelope"></i>
-                        <span>البريد الإلكتروني</span>
-                    </div>
-                    <div class="info-value small" id="userEmailDisplay" dir="ltr">-</div>
-                </div>
-                
-                <div class="info-item">
-                    <div class="info-label">
-                        <i class="fas fa-id-card"></i>
-                        <span>معرّف المستخدم</span>
-                    </div>
-                    <div class="info-value small" id="userIdDisplay" dir="ltr">-</div>
-                    <div class="id-badge" id="userIdBadge"></div>
-                </div>
+        <!-- Email Field -->
+        <div class="info-card">
+            <div class="info-label">
+                <i class="fas fa-envelope"></i>
+                <span>البريد الإلكتروني</span>
             </div>
-            
-            <!-- Action Buttons -->
-            <button class="btn btn-logout" id="logoutBtn">
-                <i class="btn-icon fas fa-sign-out-alt"></i>
-                <span>تسجيل الخروج</span>
-            </button>
-            
-            <button class="btn btn-back" id="backBtn">
-                <i class="btn-icon fas fa-arrow-right"></i>
-                <span>العودة إلى الرئيسية</span>
-            </button>
-            
-            <div class="footer">
-                <p>عَون - المنصة التعليمية</p>
+            <div class="info-content">
+                <div class="info-text small" id="emailDisplay" dir="ltr">جاري التحميل...</div>
+                <button class="copy-btn" id="copyEmailBtn" title="نسخ البريد الإلكتروني">
+                    <i class="far fa-copy"></i>
+                </button>
             </div>
+        </div>
+        
+        <!-- Username Field -->
+        <div class="info-card">
+            <div class="info-label">
+                <i class="fas fa-user"></i>
+                <span>اسم المستخدم</span>
+            </div>
+            <div class="info-content">
+                <div class="info-text" id="nameDisplay">جاري التحميل...</div>
+                <button class="copy-btn" id="copyNameBtn" title="نسخ اسم المستخدم">
+                    <i class="far fa-copy"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- User ID Field -->
+        <div class="info-card">
+            <div class="info-label">
+                <i class="fas fa-id-card"></i>
+                <span>معرّف المستخدم</span>
+            </div>
+            <div class="info-content">
+                <div class="info-text small" id="idDisplay" dir="ltr">جاري التحميل...</div>
+                <button class="copy-btn" id="copyIdBtn" title="نسخ المعرف">
+                    <i class="far fa-copy"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Logout Button -->
+        <button class="logout-btn" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>تسجيل الخروج</span>
+        </button>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>عَون - المنصة التعليمية</p>
         </div>
     </div>
 
@@ -463,10 +289,8 @@
 
         const auth = firebase.auth();
         const db = firebase.database();
-        let currentUser = null;
-        let userData = null;
 
-        // Helper Functions
+        // Show alert function
         function showAlert(message, type = "error") {
             const alertEl = document.getElementById("alertMessage");
             alertEl.textContent = message;
@@ -475,35 +299,30 @@
             
             setTimeout(() => {
                 alertEl.style.display = "none";
-            }, 4000);
+            }, 3000);
         }
 
-        function setButtonLoading(buttonId, isLoading) {
-            const button = document.getElementById(buttonId);
-            if (isLoading) {
-                button.classList.add('btn-loading');
-                button.disabled = true;
-            } else {
-                button.classList.remove('btn-loading');
-                button.disabled = false;
+        // Copy to clipboard function
+        async function copyToClipboard(text, button) {
+            try {
+                await navigator.clipboard.writeText(text);
+                
+                // Show success state
+                const originalHtml = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHtml;
+                    button.classList.remove('copied');
+                }, 1500);
+                
+            } catch (err) {
+                showAlert("فشل النسخ إلى الحافظة");
             }
         }
 
-        // Get first letter of name for avatar
-        function getInitial(name) {
-            if (!name) return '?';
-            return name.charAt(0).toUpperCase();
-        }
-
-        // Format ID to show only last 4 digits with mask
-        function formatUserId(id) {
-            if (!id) return '-';
-            if (id.length <= 4) return id;
-            const lastFour = id.slice(-4);
-            return '••••' + lastFour;
-        }
-
-        // Load user data from database
+        // Load user data
         async function loadUserData(user) {
             try {
                 const snapshot = await db.ref("users_Awn")
@@ -514,94 +333,98 @@
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     const userId = Object.keys(data)[0];
-                    userData = data[userId];
+                    const userData = data[userId];
                     
-                    // Update UI with user data
-                    document.getElementById("userNameDisplay").textContent = userData.name || '-';
-                    document.getElementById("userEmailDisplay").textContent = user.email || '-';
-                    document.getElementById("userIdDisplay").textContent = userData.id || '-';
-                    document.getElementById("userIdBadge").textContent = `ID: ${formatUserId(userData.id)}`;
-                    
-                    // Update avatar with first letter of name
-                    document.getElementById("userAvatar").textContent = getInitial(userData.name);
+                    // Update displays
+                    document.getElementById("emailDisplay").textContent = user.email || 'غير متوفر';
+                    document.getElementById("nameDisplay").textContent = userData.name || 'غير متوفر';
+                    document.getElementById("idDisplay").textContent = userData.id || 'غير متوفر';
                     
                     return true;
                 } else {
-                    // User data not found in database
-                    document.getElementById("userNameDisplay").textContent = '-';
-                    document.getElementById("userEmailDisplay").textContent = user.email || '-';
-                    document.getElementById("userIdDisplay").textContent = '-';
-                    document.getElementById("userIdBadge").textContent = 'ID: غير متوفر';
-                    document.getElementById("userAvatar").textContent = '?';
-                    
-                    showAlert("لم يتم العثور على بيانات المستخدم في قاعدة البيانات", "error");
+                    document.getElementById("emailDisplay").textContent = user.email || 'غير متوفر';
+                    document.getElementById("nameDisplay").textContent = 'غير متوفر';
+                    document.getElementById("idDisplay").textContent = 'غير متوفر';
+                    showAlert("لم يتم العثور على بيانات المستخدم", "error");
                     return false;
                 }
             } catch (error) {
                 console.error("Error loading user data:", error);
-                showAlert("حدث خطأ أثناء تحميل بيانات المستخدم", "error");
+                showAlert("حدث خطأ في تحميل البيانات", "error");
                 return false;
             }
         }
 
-        // Check authentication and load data
+        // Check authentication
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 // User is signed in
-                currentUser = user;
-                
-                // Load user data from database
                 await loadUserData(user);
                 
-                // Hide loading and show main container
-                setTimeout(() => {
-                    document.getElementById("loadingScreen").style.opacity = "0";
-                    document.getElementById("loadingScreen").style.visibility = "hidden";
-                    document.getElementById("mainContainer").style.display = "block";
-                }, 1000);
+                // Setup copy buttons
+                document.getElementById("copyEmailBtn").addEventListener("click", function() {
+                    const email = document.getElementById("emailDisplay").textContent;
+                    if (email && email !== 'جاري التحميل...' && email !== 'غير متوفر') {
+                        copyToClipboard(email, this);
+                    } else {
+                        showAlert("لا يوجد بريد إلكتروني للنسخ");
+                    }
+                });
+                
+                document.getElementById("copyNameBtn").addEventListener("click", function() {
+                    const name = document.getElementById("nameDisplay").textContent;
+                    if (name && name !== 'جاري التحميل...' && name !== 'غير متوفر') {
+                        copyToClipboard(name, this);
+                    } else {
+                        showAlert("لا يوجد اسم مستخدم للنسخ");
+                    }
+                });
+                
+                document.getElementById("copyIdBtn").addEventListener("click", function() {
+                    const id = document.getElementById("idDisplay").textContent;
+                    if (id && id !== 'جاري التحميل...' && id !== 'غير متوفر') {
+                        copyToClipboard(id, this);
+                    } else {
+                        showAlert("لا يوجد معرف للنسخ");
+                    }
+                });
+                
             } else {
-                // No user is signed in, redirect to login page
-                window.location.href = "vvv.html";
+                // No user, redirect to login
+                window.location.href = "login.html";
             }
         });
 
         // Logout function
         document.getElementById("logoutBtn").addEventListener("click", async () => {
+            const logoutBtn = document.getElementById("logoutBtn");
+            
             try {
-                setButtonLoading('logoutBtn', true);
+                // Disable button
+                logoutBtn.disabled = true;
+                logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>جاري تسجيل الخروج...</span>';
                 
                 await auth.signOut();
                 
-                showAlert("تم تسجيل الخروج بنجاح", "success");
-                
-                setTimeout(() => {
-                    window.location.href = "vvv.html";
-                }, 1500);
+                // Redirect to login page
+                window.location.href = "login.html";
                 
             } catch (error) {
                 console.error("Logout error:", error);
-                setButtonLoading('logoutBtn', false);
                 showAlert("حدث خطأ أثناء تسجيل الخروج", "error");
+                
+                // Re-enable button
+                logoutBtn.disabled = false;
+                logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i><span>تسجيل الخروج</span>';
             }
         });
 
-        // Back to home button
-        document.getElementById("backBtn").addEventListener("click", () => {
-            window.location.href = "home.html";
-        });
-
-        // Fallback in case auth state doesn't change
+        // Fallback redirect if no user after 2 seconds
         setTimeout(() => {
-            if (document.getElementById("loadingScreen").style.visibility !== "hidden") {
-                if (!auth.currentUser) {
-                    window.location.href = "vvv.html";
-                } else {
-                    document.getElementById("loadingScreen").style.opacity = "0";
-                    document.getElementById("loadingScreen").style.visibility = "hidden";
-                    document.getElementById("mainContainer").style.display = "block";
-                }
+            if (!auth.currentUser) {
+                window.location.href = "login.html";
             }
-        }, 3000);
+        }, 2000);
     </script>
 </body>
 </html>
