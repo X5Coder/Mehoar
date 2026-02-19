@@ -773,6 +773,37 @@
             font-size: 1rem;
         }
         
+        .record-progress {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(139, 115, 85, 0.2);
+        }
+        
+        .progress-bar-container {
+            flex: 1;
+            height: 8px;
+            background: rgba(139, 115, 85, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--gradient-success);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.9rem;
+            color: var(--accent-primary);
+            font-weight: 700;
+        }
+        
         /* Flash Cards Section - FULL SCREEN MODE */
         .flashcards-section {
             background: white;
@@ -826,7 +857,26 @@
             border-radius: var(--border-radius);
         }
         
-        /* Flash Cards Container - FULL SCREEN CENTERED */
+        /* Back Button */
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--accent-primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn:hover {
+            background: rgba(139, 115, 85, 0.1);
+        }
+        
+        /* Flash Cards Container */
         .flashcards-container {
             position: relative;
             padding: 20px;
@@ -840,7 +890,6 @@
             overflow: hidden;
         }
         
-        /* Flash Card Styling - FULL SCREEN RESPONSIVE */
         .flashcard-wrapper {
             width: 100%;
             height: 100%;
@@ -921,7 +970,6 @@
             gap: 10px;
         }
         
-        /* Card Tools Buttons - Rectangular */
         .card-tool-btn {
             min-width: 48px;
             height: 48px;
@@ -1099,6 +1147,13 @@
             opacity: 0.5;
             pointer-events: none;
             cursor: not-allowed;
+            filter: grayscale(0.5);
+        }
+        
+        .card-action-btn.answered {
+            opacity: 0.7;
+            pointer-events: none;
+            cursor: not-allowed;
         }
         
         .mastered-btn {
@@ -1111,9 +1166,36 @@
             color: white;
         }
         
-        .card-action-btn:hover:not(:disabled):not(.disabled) {
+        .mastered-btn.answered {
+            background: var(--gradient-success);
+            opacity: 0.7;
+        }
+        
+        .not-mastered-btn.answered {
+            background: var(--gradient-error);
+            opacity: 0.7;
+        }
+        
+        .card-action-btn:hover:not(:disabled):not(.disabled):not(.answered) {
             transform: translateY(-3px);
             box-shadow: var(--shadow-button-hover);
+        }
+        
+        /* Answer Status Indicator */
+        .answer-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+        
+        .status-mastered {
+            color: var(--success-color);
+        }
+        
+        .status-not-mastered {
+            color: var(--error-color);
         }
         
         /* Advice Modal */
@@ -1443,6 +1525,8 @@
             margin-top: 40px;
             display: flex;
             justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
         
         .exit-btn {
@@ -1466,6 +1550,10 @@
             box-shadow: var(--shadow-button);
             touch-action: manipulation;
             min-height: 60px;
+        }
+        
+        .exit-btn.secondary {
+            background: var(--gradient-info);
         }
         
         .exit-btn:active {
@@ -1830,6 +1918,15 @@
             .record-header {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+            
+            .exit-btn-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .exit-btn {
+                min-width: 100%;
             }
         }
         
@@ -2235,7 +2332,13 @@
         <!-- Flash Cards Section -->
         <section class="flashcards-section" id="flashcards-section">
             <div class="flashcards-header">
-                <h2 class="flashcards-title">الفلاش كارد</h2>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button class="back-btn" id="back-from-flashcards">
+                        <i class="fas fa-arrow-right"></i>
+                        رجوع
+                    </button>
+                    <h2 class="flashcards-title">الفلاش كارد</h2>
+                </div>
                 <div class="progress-indicator" id="progress-indicator">
                     سؤال <span id="current-question">1</span> من <span id="total-questions">10</span>
                 </div>
@@ -2367,7 +2470,11 @@
                 <div class="exit-btn-container">
                     <button class="exit-btn" id="exit-btn">
                         <i class="fas fa-home"></i>
-                        الخروج للصفحة الرئيسية
+                        الصفحة الرئيسية
+                    </button>
+                    <button class="exit-btn secondary" id="back-to-records-btn">
+                        <i class="fas fa-history"></i>
+                        العودة للسجلات
                     </button>
                 </div>
             </div>
@@ -2438,7 +2545,8 @@
         let userAnswers = [];
         let isSpeaking = false;
         let currentSpeech = null;
-        let isHistoricalMode = false; // للتمييز بين الوضع العادي وعرض السجلات
+        let isHistoricalMode = false;
+        let currentRecordId = null;
         
         // إعدادات السيرفر
         const SERVER = "https://wet-aidan-kimon-66eadaf6.koyeb.app";
@@ -2520,6 +2628,39 @@
             if (footer) {
                 footer.classList.remove('hidden');
             }
+        }
+        
+        function resetToMainScreen() {
+            // إخفاء جميع الأقسام
+            const uploadSection = document.getElementById('upload-section');
+            const questionsSection = document.getElementById('questions-section');
+            const flashcardsSection = document.getElementById('flashcards-section');
+            const resultsSection = document.getElementById('results-section');
+            
+            if (uploadSection) uploadSection.style.display = 'block';
+            if (questionsSection) questionsSection.classList.remove('show');
+            if (flashcardsSection) flashcardsSection.classList.remove('show');
+            if (resultsSection) resultsSection.classList.remove('show');
+            
+            // إعادة تعيين المتغيرات
+            selectedFile = null;
+            fileInfo = {
+                name: '',
+                size: 0,
+                pages: 0,
+                words: 0,
+                baseCost: 0
+            };
+            flashcardsData = null;
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            isHistoricalMode = false;
+            currentRecordId = null;
+            
+            // إعادة تعيين واجهة الرفع
+            resetFileInput();
+            
+            showFooter();
         }
         
         // ========== إدارة المستخدم ==========
@@ -3153,7 +3294,7 @@ ABSOLUTE CONSTRAINTS:
             try {
                 const recordId = 'flashcards_' + Date.now();
                 const recordData = {
-                    id: currentUser.id,
+                    userId: currentUser.id,
                     process: 'فلاش كارد',
                     data: result,
                     timestamp: Date.now(),
@@ -3164,10 +3305,11 @@ ABSOLUTE CONSTRAINTS:
                     pages: fileInfo.pages,
                     questionsCount: currentSettings.questionsCount,
                     difficulty: currentSettings.difficulty,
-                    answers: [] // سنضيف الإجابات لاحقاً
+                    answers: []
                 };
                 
                 await database.ref(`records/${recordId}`).set(recordData);
+                currentRecordId = recordId;
                 
             } catch (error) {
                 console.error('Error saving result to database:', error);
@@ -3180,6 +3322,8 @@ ABSOLUTE CONSTRAINTS:
             const recordsBtn = document.getElementById('records-btn');
             const closeRecordsBtn = document.getElementById('close-records-btn');
             const recordsModal = document.getElementById('records-modal');
+            const backFromFlashcards = document.getElementById('back-from-flashcards');
+            const backToRecordsBtn = document.getElementById('back-to-records-btn');
             
             if (recordsBtn) {
                 recordsBtn.addEventListener('click', showRecords);
@@ -3187,6 +3331,24 @@ ABSOLUTE CONSTRAINTS:
             
             if (closeRecordsBtn) {
                 closeRecordsBtn.addEventListener('click', hideRecords);
+            }
+            
+            if (backFromFlashcards) {
+                backFromFlashcards.addEventListener('click', function() {
+                    if (isHistoricalMode) {
+                        showRecords();
+                    } else {
+                        resetToMainScreen();
+                    }
+                });
+            }
+            
+            if (backToRecordsBtn) {
+                backToRecordsBtn.addEventListener('click', function() {
+                    const resultsSection = document.getElementById('results-section');
+                    if (resultsSection) resultsSection.classList.remove('show');
+                    showRecords();
+                });
             }
             
             if (recordsModal) {
@@ -3209,7 +3371,7 @@ ABSOLUTE CONSTRAINTS:
             
             try {
                 const recordsRef = database.ref('records');
-                const snapshot = await recordsRef.orderByChild('id').equalTo(currentUser.id).once('value');
+                const snapshot = await recordsRef.orderByChild('userId').equalTo(currentUser.id).once('value');
                 
                 recordsList.innerHTML = '';
                 
@@ -3222,7 +3384,6 @@ ABSOLUTE CONSTRAINTS:
                         });
                     });
                     
-                    // ترتيب من الأحدث إلى الأقدم
                     records.sort((a, b) => b.timestamp - a.timestamp);
                     
                     records.forEach(record => {
@@ -3253,6 +3414,12 @@ ABSOLUTE CONSTRAINTS:
             const date = new Date(record.timestamp);
             const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} - ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
             
+            // حساب نسبة التقدم
+            const answers = record.answers || [];
+            const answeredCount = answers.length;
+            const totalQuestions = record.questionsCount || record.data?.num || 0;
+            const progressPercentage = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
+            
             card.innerHTML = `
                 <div class="record-header">
                     <div class="record-file-name">
@@ -3267,7 +3434,7 @@ ABSOLUTE CONSTRAINTS:
                 <div class="record-details">
                     <div class="record-detail-item">
                         <i class="fas fa-question-circle"></i>
-                        ${record.questionsCount || record.data?.num || 0} سؤال
+                        ${totalQuestions} سؤال
                     </div>
                     <div class="record-detail-item">
                         <i class="fas fa-chart-line"></i>
@@ -3280,6 +3447,14 @@ ABSOLUTE CONSTRAINTS:
                     <div class="record-cost">
                         <i class="fas fa-coins"></i>
                         ${record.totalCost || record.baseCost || 0} عملة
+                    </div>
+                </div>
+                <div class="record-progress">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: ${progressPercentage}%"></div>
+                    </div>
+                    <div class="progress-text">
+                        ${answeredCount}/${totalQuestions} (${progressPercentage}%)
                     </div>
                 </div>
             `;
@@ -3307,7 +3482,7 @@ ABSOLUTE CONSTRAINTS:
                 if (snapshot.exists()) {
                     const record = snapshot.val();
                     
-                    // إعداد بيانات الملف (وهمية للسجلات)
+                    // تحميل البيانات الفعلية
                     fileInfo = {
                         name: record.fileName || 'سجل سابق',
                         pages: record.pages || 0,
@@ -3322,14 +3497,9 @@ ABSOLUTE CONSTRAINTS:
                     };
                     
                     flashcardsData = record.data;
-                    isHistoricalMode = true; // تفعيل الوضع التاريخي
-                    
-                    // تحميل الإجابات المحفوظة إن وجدت
-                    if (record.answers && Array.isArray(record.answers)) {
-                        userAnswers = record.answers;
-                    } else {
-                        userAnswers = [];
-                    }
+                    userAnswers = record.answers || [];
+                    isHistoricalMode = true;
+                    currentRecordId = recordId;
                     
                     // إخفاء أقسام الرفع والإعدادات
                     const uploadSection = document.getElementById('upload-section');
@@ -3401,18 +3571,13 @@ ABSOLUTE CONSTRAINTS:
             
             const exitBtn = document.getElementById('exit-btn');
             if (exitBtn) {
-                exitBtn.addEventListener('click', reloadPage);
+                exitBtn.addEventListener('click', resetToMainScreen);
             }
         }
         
         function initializeFlashcards() {
-            if (isHistoricalMode && userAnswers.length > 0) {
-                // في الوضع التاريخي، نبدأ من حيث توقف المستخدم
-                currentQuestionIndex = userAnswers.length;
-            } else {
-                userAnswers = [];
-                currentQuestionIndex = 0;
-            }
+            // في الوضع التاريخي، نبدأ من أول سؤال مع إظهار حالة الإجابات
+            currentQuestionIndex = 0;
             
             updateProgressIndicator();
             loadQuestion(currentQuestionIndex);
@@ -3430,15 +3595,28 @@ ABSOLUTE CONSTRAINTS:
             
             if (!masteredBtn || !notMasteredBtn) return;
             
-            // التحقق مما إذا كان السؤال الحالي قد تمت الإجابة عليه مسبقاً
-            const isAnswered = userAnswers.some(a => a.questionIndex === currentQuestionIndex);
+            // البحث عن إجابة للسؤال الحالي
+            const answer = userAnswers.find(a => a.questionIndex === currentQuestionIndex);
             
-            if (isAnswered && isHistoricalMode) {
-                masteredBtn.classList.add('disabled');
-                notMasteredBtn.classList.add('disabled');
+            if (answer) {
+                // تمت الإجابة على هذا السؤال مسبقاً
+                masteredBtn.classList.add('answered');
+                notMasteredBtn.classList.add('answered');
+                
+                // إضافة مؤشر للإجابة
+                if (answer.mastered) {
+                    masteredBtn.innerHTML = '<i class="fas fa-check-circle"></i> تم الإجابة (اتقنت) ✓';
+                    notMasteredBtn.innerHTML = '<i class="fas fa-times-circle"></i> لم أتقن';
+                } else {
+                    masteredBtn.innerHTML = '<i class="fas fa-check-circle"></i> اتقنت';
+                    notMasteredBtn.innerHTML = '<i class="fas fa-times-circle"></i> تم الإجابة (لم أتقن) ✗';
+                }
             } else {
-                masteredBtn.classList.remove('disabled');
-                notMasteredBtn.classList.remove('disabled');
+                // لم تتم الإجابة بعد
+                masteredBtn.classList.remove('answered');
+                notMasteredBtn.classList.remove('answered');
+                masteredBtn.innerHTML = '<i class="fas fa-check-circle"></i> اتقنت';
+                notMasteredBtn.innerHTML = '<i class="fas fa-times-circle"></i> لم أتقن';
             }
         }
         
@@ -3480,16 +3658,22 @@ ABSOLUTE CONSTRAINTS:
                 answerProgress.textContent = `الإجابة #${index + 1} من ${totalQuestions}`;
             }
             
+            // تحميل السؤال
             const questionKey = `Q${index + 1}`;
             if (questionContent && flashcardsData[questionKey]) {
                 questionContent.textContent = flashcardsData[questionKey];
                 questionContent.scrollTop = 0;
+            } else {
+                questionContent.textContent = 'السؤال غير متوفر';
             }
             
+            // تحميل الإجابة
             const answerKey = `R${index + 1}`;
             if (answerContent && flashcardsData[answerKey]) {
                 answerContent.textContent = flashcardsData[answerKey];
                 answerContent.scrollTop = 0;
+            } else {
+                answerContent.textContent = 'الإجابة غير متوفرة';
             }
             
             updateProgressIndicator();
@@ -3577,10 +3761,10 @@ ABSOLUTE CONSTRAINTS:
         }
         
         function markAsMastered() {
-            // التحقق مما إذا كان السؤال قد تمت الإجابة عليه مسبقاً في الوضع التاريخي
+            // التحقق مما إذا كان السؤال قد تمت الإجابة عليه مسبقاً
             const isAnswered = userAnswers.some(a => a.questionIndex === currentQuestionIndex);
-            if (isAnswered && isHistoricalMode) {
-                showNotification('لا يمكن حل هذا السؤال مرة أخرى', 'info');
+            if (isAnswered) {
+                showNotification('لقد أجبت على هذا السؤال مسبقاً', 'info');
                 return;
             }
             
@@ -3597,10 +3781,10 @@ ABSOLUTE CONSTRAINTS:
         }
         
         function markAsNotMastered() {
-            // التحقق مما إذا كان السؤال قد تمت الإجابة عليه مسبقاً في الوضع التاريخي
+            // التحقق مما إذا كان السؤال قد تمت الإجابة عليه مسبقاً
             const isAnswered = userAnswers.some(a => a.questionIndex === currentQuestionIndex);
-            if (isAnswered && isHistoricalMode) {
-                showNotification('لا يمكن حل هذا السؤال مرة أخرى', 'info');
+            if (isAnswered) {
+                showNotification('لقد أجبت على هذا السؤال مسبقاً', 'info');
                 return;
             }
             
@@ -3611,64 +3795,22 @@ ABSOLUTE CONSTRAINTS:
         
         function saveAnswerToFirebase(mastered) {
             try {
-                const answerIndex = userAnswers.findIndex(a => a.questionIndex === currentQuestionIndex);
+                const answer = {
+                    questionIndex: currentQuestionIndex,
+                    mastered: mastered,
+                    timestamp: Date.now()
+                };
                 
-                if (answerIndex >= 0) {
-                    userAnswers[answerIndex] = {
-                        questionIndex: currentQuestionIndex,
-                        mastered: mastered,
-                        timestamp: Date.now()
-                    };
-                } else {
-                    userAnswers.push({
-                        questionIndex: currentQuestionIndex,
-                        mastered: mastered,
-                        timestamp: Date.now()
-                    });
-                }
-                
-                // تحديث حالة الأزرار
+                userAnswers.push(answer);
                 updateAnswerButtonsState();
                 
-                // حفظ الإجابة في Firebase إذا لم يكن في الوضع التاريخي
-                if (!isHistoricalMode) {
-                    const answerId = `answer_${currentUser.id}_${Date.now()}`;
-                    const answerData = {
-                        userId: currentUser.id,
-                        fileName: fileInfo.name,
-                        questionIndex: currentQuestionIndex,
-                        questionNumber: currentQuestionIndex + 1,
-                        mastered: mastered,
-                        timestamp: Date.now(),
-                        totalQuestions: flashcardsData.num || currentSettings.questionsCount,
-                        difficulty: currentSettings.difficulty
-                    };
-                    
-                    database.ref(`flashcard_answers/${answerId}`).set(answerData);
-                    
-                    // تحديث السجل الأصلي بالإجابات
-                    updateRecordWithAnswers();
+                // حفظ الإجابة في Firebase إذا كان لدينا معرف سجل
+                if (currentRecordId) {
+                    database.ref(`records/${currentRecordId}/answers`).set(userAnswers);
                 }
                 
             } catch (error) {
-                console.error('Error saving answer to Firebase:', error);
-            }
-        }
-        
-        async function updateRecordWithAnswers() {
-            try {
-                // البحث عن السجل الحالي (آخر سجل للمستخدم)
-                const recordsRef = database.ref('records');
-                const snapshot = await recordsRef.orderByChild('id').equalTo(currentUser.id).limitToLast(1).once('value');
-                
-                if (snapshot.exists()) {
-                    snapshot.forEach(childSnapshot => {
-                        const recordKey = childSnapshot.key;
-                        database.ref(`records/${recordKey}/answers`).set(userAnswers);
-                    });
-                }
-            } catch (error) {
-                console.error('Error updating record with answers:', error);
+                console.error('Error saving answer:', error);
             }
         }
         
@@ -3736,7 +3878,7 @@ ABSOLUTE CONSTRAINTS:
                 const totalAnswered = userAnswers.length;
                 const totalQuestions = flashcardsData.num || currentSettings.questionsCount;
                 
-                const percentage = totalAnswered > 0 ? Math.round((masteredCount / totalAnswered) * 100) : 0;
+                const percentage = totalQuestions > 0 ? Math.round((masteredCount / totalQuestions) * 100) : 0;
                 
                 const masteredCountElem = document.getElementById('mastered-count');
                 const notMasteredCountElem = document.getElementById('not-mastered-count');
@@ -3785,41 +3927,7 @@ ABSOLUTE CONSTRAINTS:
                     }
                 }
                 
-                // حفظ النتائج في Firebase فقط إذا لم يكن في الوضع التاريخي
-                if (!isHistoricalMode) {
-                    saveResultsToDatabase({
-                        masteredCount: masteredCount,
-                        notMasteredCount: notMasteredCount,
-                        totalAnswered: totalAnswered,
-                        totalQuestions: totalQuestions,
-                        percentage: percentage,
-                        answers: userAnswers
-                    });
-                }
-                
-                // إعادة تعيين الوضع التاريخي بعد عرض النتائج
-                isHistoricalMode = false;
-                
             }, 3000);
-        }
-        
-        async function saveResultsToDatabase(results) {
-            try {
-                const resultId = 'results_' + Date.now();
-                const resultData = {
-                    userId: currentUser.id,
-                    fileName: fileInfo.name,
-                    questionsCount: currentSettings.questionsCount,
-                    difficulty: currentSettings.difficulty,
-                    timestamp: Date.now(),
-                    results: results
-                };
-                
-                await database.ref(`flashcard_results/${resultId}`).set(resultData);
-                
-            } catch (error) {
-                console.error('Error saving results to database:', error);
-            }
         }
         
         // ========== تهيئة التطبيق ==========
@@ -3839,10 +3947,11 @@ ABSOLUTE CONSTRAINTS:
                     setupFileUpload();
                     setupQuestionsEvents();
                     setupRecordsEvents();
+                    setupFlashcardsEvents();
                     
                     const logo = document.getElementById('home-logo');
                     if (logo) {
-                        logo.addEventListener('click', reloadPage);
+                        logo.addEventListener('click', resetToMainScreen);
                     }
                     
                     hideLoading();
