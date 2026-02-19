@@ -25,9 +25,6 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
         }
         
@@ -45,7 +42,6 @@
             --border-radius-xl: 24px;
             --navbar-height: 70px;
             --transition-smooth: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            --transition-card: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.1);
             --success-color: #4CAF50;
             --error-color: #F44336;
             --warning-color: #FF9800;
@@ -54,31 +50,23 @@
             --gradient-success: linear-gradient(145deg, #4CAF50 0%, #45a049 100%);
             --gradient-error: linear-gradient(145deg, #F44336 0%, #d32f2f 100%);
             --gradient-info: linear-gradient(145deg, #2196F3 0%, #1976D2 100%);
-            --gradient-warning: linear-gradient(145deg, #FF9800 0%, #F57C00 100%);
             --shadow-light: 0 4px 12px rgba(139, 115, 85, 0.1);
             --shadow-medium: 0 8px 24px rgba(139, 115, 85, 0.15);
             --shadow-heavy: 0 12px 36px rgba(139, 115, 85, 0.2);
-            --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.08);
             --shadow-button: 0 4px 15px rgba(139, 115, 85, 0.2);
             --shadow-button-hover: 0 8px 25px rgba(139, 115, 85, 0.3);
         }
         
         body {
-            font-family: 'Almarai', 'Tajawal', -apple-system, sans-serif;
+            font-family: 'Almarai', 'Tajawal', sans-serif;
             background: var(--bg-color);
             color: var(--text-primary);
             min-height: 100vh;
             direction: rtl;
-            -webkit-font-smoothing: antialiased;
             width: 100vw;
             overflow-x: hidden;
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
         
         /* Loading Screen */
@@ -98,12 +86,10 @@
         }
         
         .loading-logo {
-            font-family: 'Almarai', sans-serif;
             font-weight: 800;
             font-size: 56px;
             color: var(--accent-primary);
             margin-bottom: 25px;
-            letter-spacing: -1px;
         }
         
         .loading-spinner {
@@ -121,12 +107,9 @@
         }
         
         .loading-text {
-            font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
             font-size: 1.1rem;
             text-align: center;
-            max-width: 80%;
-            line-height: 1.6;
         }
         
         /* Navbar */
@@ -137,20 +120,17 @@
             right: 0;
             height: var(--navbar-height);
             background: var(--bg-color);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 max(25px, env(safe-area-inset-right));
+            padding: 0 25px;
             z-index: 10000;
             border-bottom: 1px solid rgba(139, 115, 85, 0.12);
             box-shadow: var(--shadow-light);
-            padding-top: env(safe-area-inset-top);
         }
         
         .logo {
-            font-family: 'Almarai', sans-serif;
             font-weight: 900;
             font-size: 42px;
             color: var(--accent-primary);
@@ -174,24 +154,17 @@
             padding: 10px 18px;
             border-radius: var(--border-radius-lg);
             font-weight: 700;
-            font-size: 15px;
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: var(--shadow-light);
-            transition: var(--transition-smooth);
             cursor: pointer;
             border: 1px solid rgba(139, 115, 85, 0.2);
+            transition: var(--transition-smooth);
         }
         
         .records-btn:hover {
             background: rgba(139, 115, 85, 0.25);
             transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
-        }
-        
-        .records-btn i {
-            font-size: 16px;
         }
         
         .coins-display {
@@ -200,37 +173,21 @@
             padding: 12px 25px;
             border-radius: var(--border-radius-lg);
             font-weight: 700;
-            font-size: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
             box-shadow: var(--shadow-light);
-            transition: var(--transition-smooth);
-        }
-        
-        .coins-display:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
-        }
-        
-        .coins-display i {
-            font-size: 18px;
         }
         
         /* Main Content */
         .main-content {
             padding-top: calc(var(--navbar-height) + 20px);
-            padding-left: max(20px, env(safe-area-inset-left));
-            padding-right: max(20px, env(safe-area-inset-right));
+            padding-left: 20px;
+            padding-right: 20px;
             padding-bottom: 50px;
             width: 100%;
             max-width: 1400px;
             margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: calc(100vh - var(--navbar-height) - 70px);
         }
         
         /* Upload Section */
@@ -241,73 +198,54 @@
             margin-bottom: 35px;
             box-shadow: var(--shadow-medium);
             text-align: center;
-            border: 1px solid rgba(139, 115, 85, 0.12);
-            width: 100%;
             max-width: 900px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .section-title {
-            font-family: 'Almarai', sans-serif;
             font-size: clamp(1.8rem, 4vw, 2.2rem);
             font-weight: 800;
             color: var(--accent-primary);
             margin-bottom: 15px;
-            text-align: center;
         }
         
         .section-subtitle {
-            font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
             font-size: clamp(1rem, 2vw, 1.1rem);
             margin-bottom: 30px;
-            font-weight: 400;
-            line-height: 1.6;
-            text-align: center;
         }
         
         .upload-area {
             border: 3px dashed var(--border-color);
             border-radius: var(--border-radius-xl);
-            padding: min(50px, 8vh) 25px;
+            padding: 50px 25px;
             margin-bottom: 30px;
             cursor: pointer;
             transition: var(--transition-smooth);
             background: rgba(212, 165, 116, 0.05);
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
         
         .upload-area:hover {
             border-color: var(--accent-primary);
             background: rgba(212, 165, 116, 0.1);
             transform: translateY(-2px);
-            box-shadow: var(--shadow-light);
         }
         
         .upload-icon {
-            font-size: clamp(48px, 8vw, 56px);
+            font-size: 56px;
             color: var(--accent-primary);
             margin-bottom: 20px;
         }
         
         .upload-text {
-            font-family: 'Tajawal', sans-serif;
-            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            font-size: 1.3rem;
             color: var(--text-primary);
             margin-bottom: 10px;
             font-weight: 500;
         }
         
         .upload-hint {
-            font-family: 'Tajawal', sans-serif;
-            font-size: clamp(0.9rem, 2vw, 0.95rem);
             color: var(--text-secondary);
             font-style: italic;
         }
@@ -321,7 +259,6 @@
             border: 1px solid rgba(139, 115, 85, 0.12);
             display: none;
             animation: slideUp 0.4s ease-out;
-            width: 100%;
         }
         
         .cost-preview.show {
@@ -329,7 +266,6 @@
         }
         
         .cost-title {
-            font-family: 'Almarai', sans-serif;
             font-size: 1.4rem;
             font-weight: 700;
             color: var(--accent-primary);
@@ -352,14 +288,11 @@
         }
         
         .cost-label {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
             color: var(--text-secondary);
             margin-bottom: 8px;
         }
         
         .cost-value {
-            font-family: 'Almarai', sans-serif;
             font-size: 1.5rem;
             font-weight: 800;
             color: var(--accent-primary);
@@ -372,7 +305,7 @@
             flex-wrap: wrap;
         }
         
-        /* Button Styles */
+        /* Buttons */
         .action-btn {
             padding: 16px 32px;
             border: none;
@@ -387,11 +320,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            position: relative;
-            overflow: hidden;
             box-shadow: var(--shadow-button);
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
         }
         
         .action-btn:active {
@@ -408,7 +337,7 @@
             color: white;
         }
         
-        /* Questions Settings Section */
+        /* Questions Settings */
         .questions-section {
             background: white;
             border-radius: var(--border-radius-xl);
@@ -418,8 +347,9 @@
             border: 1px solid rgba(139, 115, 85, 0.12);
             display: none;
             animation: slideUp 0.4s ease-out;
-            width: 100%;
             max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .questions-section.show {
@@ -428,7 +358,7 @@
         
         .questions-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
             margin-bottom: 35px;
         }
@@ -441,7 +371,6 @@
         }
         
         .question-title {
-            font-family: 'Almarai', sans-serif;
             font-size: 1.3rem;
             font-weight: 700;
             color: var(--accent-primary);
@@ -451,17 +380,12 @@
             gap: 10px;
         }
         
-        .question-title i {
-            color: var(--accent-secondary);
-        }
-        
-        /* Slider Styling */
+        /* Slider */
         .slider-container {
             padding: 25px 0;
         }
         
         .slider-value {
-            font-family: 'Almarai', sans-serif;
             font-size: 2.5rem;
             font-weight: 800;
             color: var(--accent-primary);
@@ -472,9 +396,7 @@
         .slider-labels {
             display: flex;
             justify-content: space-between;
-            font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
-            font-size: 1rem;
             margin-bottom: 8px;
         }
         
@@ -482,7 +404,6 @@
             width: 100%;
             height: 25px;
             -webkit-appearance: none;
-            appearance: none;
             background: linear-gradient(to right, var(--accent-secondary), var(--accent-primary));
             outline: none;
             border-radius: 12px;
@@ -490,7 +411,6 @@
         
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            appearance: none;
             width: 38px;
             height: 38px;
             border-radius: var(--border-radius);
@@ -503,14 +423,11 @@
         
         .slider::-webkit-slider-thumb:hover {
             transform: scale(1.1);
-            box-shadow: var(--shadow-heavy);
         }
         
         .additional-cost {
             text-align: center;
-            font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
-            font-size: 1rem;
             margin-top: 15px;
         }
         
@@ -527,7 +444,7 @@
         }
         
         .option-btn {
-            padding: 14px 16px;
+            padding: 14px;
             border: 2px solid rgba(139, 115, 85, 0.25);
             border-radius: var(--border-radius);
             background: white;
@@ -537,27 +454,17 @@
             cursor: pointer;
             transition: var(--transition-smooth);
             text-align: center;
-            position: relative;
-            overflow: hidden;
-            touch-action: manipulation;
-            min-height: 48px;
-        }
-        
-        .option-btn:active {
-            transform: scale(0.98);
         }
         
         .option-btn:hover {
             border-color: var(--accent-primary);
             transform: translateY(-3px);
-            box-shadow: var(--shadow-light);
         }
         
         .option-btn.selected {
             background: var(--gradient-primary);
             color: white;
             border-color: var(--accent-primary);
-            box-shadow: var(--shadow-medium);
         }
         
         .generate-btn {
@@ -573,19 +480,12 @@
             transition: var(--transition-smooth);
             display: block;
             margin: 0 auto;
-            min-width: min(280px, 100%);
+            min-width: 280px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
-            position: relative;
-            overflow: hidden;
             box-shadow: var(--shadow-button);
-            touch-action: manipulation;
-        }
-        
-        .generate-btn:active:not(:disabled) {
-            transform: scale(0.98);
         }
         
         .generate-btn:hover:not(:disabled) {
@@ -596,8 +496,6 @@
         .generate-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
         }
         
         /* Records Modal */
@@ -616,10 +514,7 @@
             visibility: hidden;
             transition: var(--transition-smooth);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             padding: 20px;
-            padding-top: calc(20px + env(safe-area-inset-top));
-            padding-bottom: calc(20px + env(safe-area-inset-bottom));
         }
         
         .records-modal.show {
@@ -630,14 +525,23 @@
         .records-content {
             background: white;
             border-radius: var(--border-radius-xl);
-            width: min(900px, 95vw);
-            max-height: min(85vh, 90vh);
-            overflow-y: auto;
-            position: relative;
+            width: min(1000px, 95vw);
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
             box-shadow: var(--shadow-heavy);
-            animation: modalAppear 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(139, 115, 85, 0.15);
-            -webkit-overflow-scrolling: touch;
+            animation: modalAppear 0.3s ease-out;
+        }
+        
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
         
         .records-header {
@@ -646,19 +550,15 @@
             align-items: center;
             padding: 20px 25px;
             border-bottom: 2px solid rgba(139, 115, 85, 0.15);
-            background: rgba(255, 255, 255, 0.98);
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            background: white;
             border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
+            flex-shrink: 0;
         }
         
         .records-header h2 {
-            font-family: 'Almarai', sans-serif;
             font-size: 1.6rem;
             font-weight: 800;
             color: var(--accent-primary);
-            margin: 0;
         }
         
         .close-records-btn {
@@ -667,13 +567,13 @@
             font-size: 1.8rem;
             color: var(--text-secondary);
             cursor: pointer;
-            transition: var(--transition-smooth);
             width: 48px;
             height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: var(--border-radius);
+            transition: var(--transition-smooth);
         }
         
         .close-records-btn:hover {
@@ -686,21 +586,6 @@
             padding: 25px;
             overflow-y: auto;
             flex: 1;
-        }
-        
-        .no-records {
-            text-align: center;
-            padding: 60px 20px;
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: 1.2rem;
-        }
-        
-        .no-records i {
-            font-size: 4rem;
-            color: var(--accent-secondary);
-            margin-bottom: 20px;
-            opacity: 0.5;
         }
         
         .record-card {
@@ -729,7 +614,6 @@
         }
         
         .record-file-name {
-            font-family: 'Almarai', sans-serif;
             font-weight: 700;
             font-size: 1.1rem;
             color: var(--accent-primary);
@@ -737,20 +621,9 @@
             align-items: center;
             gap: 8px;
             word-break: break-word;
-            max-width: 100%;
-        }
-        
-        .record-file-name i {
-            flex-shrink: 0;
-        }
-        
-        .record-file-name span {
-            word-break: break-word;
-            overflow-wrap: break-word;
         }
         
         .record-date {
-            font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
             font-size: 0.9rem;
             display: flex;
@@ -770,23 +643,7 @@
             background: rgba(139, 115, 85, 0.1);
             padding: 8px 15px;
             border-radius: var(--border-radius);
-            font-family: 'Tajawal', sans-serif;
             font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-        }
-        
-        .record-detail-item i {
-            color: var(--accent-primary);
-        }
-        
-        .record-cost {
-            font-family: 'Almarai', sans-serif;
-            font-weight: 700;
-            color: var(--success-color);
-            font-size: 1rem;
             display: flex;
             align-items: center;
             gap: 5px;
@@ -807,7 +664,6 @@
             background: rgba(139, 115, 85, 0.1);
             border-radius: 4px;
             overflow: hidden;
-            min-width: 100px;
         }
         
         .progress-bar-fill {
@@ -818,37 +674,43 @@
         }
         
         .progress-text {
-            font-family: 'Tajawal', sans-serif;
             font-size: 0.9rem;
             color: var(--accent-primary);
             font-weight: 700;
-            white-space: nowrap;
         }
         
-        /* Flash Cards Section - FULL SCREEN MODE */
+        .no-records {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+        
+        .no-records i {
+            font-size: 4rem;
+            color: var(--accent-secondary);
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        /* Flash Cards Section */
         .flashcards-section {
             background: white;
             border-radius: var(--border-radius-xl);
-            padding: 0;
-            margin-bottom: 35px;
             box-shadow: var(--shadow-heavy);
-            border: 1px solid rgba(139, 115, 85, 0.12);
             display: none;
-            animation: slideUp 0.4s ease-out;
             width: 100vw;
-            min-height: calc(100vh - var(--navbar-height) - 40px);
-            max-height: calc(100vh - var(--navbar-height) - 40px);
+            height: calc(100vh - var(--navbar-height) - 40px);
             position: fixed;
             top: calc(var(--navbar-height) + 20px);
             left: 0;
             right: 0;
             bottom: 0;
             overflow: hidden;
+            flex-direction: column;
         }
         
         .flashcards-section.show {
             display: flex;
-            flex-direction: column;
         }
         
         .flashcards-header {
@@ -858,7 +720,6 @@
             padding: 20px 30px;
             border-bottom: 1px solid rgba(139, 115, 85, 0.12);
             background: white;
-            border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
             flex-shrink: 0;
         }
         
@@ -872,14 +733,14 @@
             background: none;
             border: none;
             color: var(--accent-primary);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             padding: 10px 20px;
             border-radius: var(--border-radius);
-            transition: var(--transition-smooth);
             display: flex;
             align-items: center;
             gap: 8px;
+            transition: var(--transition-smooth);
         }
         
         .back-btn:hover {
@@ -887,66 +748,75 @@
         }
         
         .flashcards-title {
-            font-family: 'Almarai', sans-serif;
             font-size: 1.8rem;
             font-weight: 800;
             color: var(--accent-primary);
         }
         
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-right: 15px;
+        }
+        
+        .nav-btn {
+            background: rgba(139, 115, 85, 0.1);
+            border: none;
+            color: var(--accent-primary);
+            width: 48px;
+            height: 48px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            font-size: 1.2rem;
+        }
+        
+        .nav-btn:hover:not(:disabled) {
+            background: var(--accent-primary);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
         .progress-indicator {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
             font-size: 1rem;
             background: rgba(139, 115, 85, 0.06);
             padding: 10px 20px;
             border-radius: var(--border-radius);
         }
         
-        /* Flash Cards Container - FULL SCREEN CENTERED */
         .flashcards-container {
-            position: relative;
-            padding: 20px;
-            width: 100%;
             flex: 1;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 0;
+            padding: 20px;
             overflow: hidden;
         }
         
-        /* Flash Card Styling - FULL SCREEN RESPONSIVE */
         .flashcard-wrapper {
             width: 100%;
             height: 100%;
-            min-height: 70vh;
-            max-height: 80vh;
+            max-width: 1200px;
             perspective: 1200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
         }
         
         .flashcard {
-            width: 95vw;
-            max-width: 100%;
-            height: 85vh;
-            min-height: 80vh;
-            max-height: 85vh;
+            width: 100%;
+            height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transition: var(--transition-card);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
             border-radius: var(--border-radius-xl);
             box-shadow: var(--shadow-heavy);
-            border: 1px solid rgba(139, 115, 85, 0.15);
-            touch-action: manipulation;
-        }
-        
-        .flashcard:hover {
-            box-shadow: 0 20px 60px rgba(139, 115, 85, 0.25);
         }
         
         .flashcard.flipped {
@@ -963,7 +833,6 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            border: 1px solid rgba(139, 115, 85, 0.1);
         }
         
         .flashcard-back {
@@ -971,7 +840,6 @@
             background: linear-gradient(135deg, #FFFFFF 0%, #F5F1E8 100%);
         }
         
-        /* Card Header */
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -983,23 +851,15 @@
         }
         
         .question-number {
-            font-family: 'Almarai', sans-serif;
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
             font-weight: 800;
             color: var(--accent-primary);
             background: rgba(139, 115, 85, 0.1);
-            padding: clamp(8px, 1.5vw, 10px) clamp(14px, 2vw, 20px);
+            padding: 8px 20px;
             border-radius: var(--border-radius);
         }
         
-        .card-tools {
-            display: flex;
-            gap: 10px;
-        }
-        
-        /* Card Tools Buttons - Rectangular */
         .card-tool-btn {
-            min-width: 48px;
+            width: 48px;
             height: 48px;
             border-radius: var(--border-radius);
             background: rgba(139, 115, 85, 0.1);
@@ -1008,50 +868,34 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: var(--transition-smooth);
             color: var(--accent-primary);
             font-size: 1.2rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-light);
-            touch-action: manipulation;
-        }
-        
-        .card-tool-btn:active {
-            transform: scale(0.95);
+            transition: var(--transition-smooth);
         }
         
         .card-tool-btn:hover {
             background: var(--accent-primary);
             color: white;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
         }
         
         .card-tool-btn.active {
             background: var(--accent-primary);
             color: white;
-            box-shadow: var(--shadow-medium);
         }
         
-        /* Card Content Area */
         .card-content-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 15px 20px;
+            padding: 20px;
             overflow: hidden;
-            min-height: 0;
-            position: relative;
         }
         
         .question-progress {
-            font-family: 'Almarai', sans-serif;
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
             font-weight: 700;
             color: var(--accent-primary);
-            margin-bottom: 10px;
-            padding-bottom: 8px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
             border-bottom: 2px solid rgba(139, 115, 85, 0.1);
             text-align: center;
             flex-shrink: 0;
@@ -1059,62 +903,19 @@
         
         .card-content-wrapper {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            min-height: 0;
-            position: relative;
+            overflow-y: auto;
+            padding: 10px;
         }
         
         .card-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            text-align: center;
-            font-family: 'Tajawal', sans-serif;
-            font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+            font-size: clamp(1.2rem, 3vw, 1.6rem);
             line-height: 1.8;
             color: var(--text-primary);
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding: 15px 10px;
-            width: 100%;
+            text-align: center;
             word-wrap: break-word;
-            overflow-wrap: break-word;
-            white-space: normal;
-            font-weight: 400;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent-secondary) rgba(139, 115, 85, 0.1);
-            max-height: none;
-            height: auto;
-            box-sizing: border-box;
+            white-space: pre-wrap;
         }
         
-        .card-content p, .card-content div, .card-content span {
-            width: 100%;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            white-space: normal;
-        }
-        
-        .card-content::-webkit-scrollbar {
-            width: 5px;
-        }
-        
-        .card-content::-webkit-scrollbar-track {
-            background: rgba(139, 115, 85, 0.1);
-            border-radius: 3px;
-        }
-        
-        .card-content::-webkit-scrollbar-thumb {
-            background: var(--accent-secondary);
-            border-radius: 3px;
-        }
-        
-        /* Card Footer */
         .card-footer {
             padding: 15px 20px;
             border-top: 2px solid rgba(139, 115, 85, 0.15);
@@ -1123,65 +924,44 @@
         }
         
         .hint-text {
-            font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
-            font-size: clamp(0.85rem, 1.8vw, 1rem);
             font-style: italic;
             text-align: center;
             padding: 12px;
             background: rgba(139, 115, 85, 0.08);
             border-radius: var(--border-radius);
-            line-height: 1.5;
         }
         
-        /* Card Actions */
         .card-actions {
             display: flex;
             gap: 15px;
             justify-content: center;
-            width: 100%;
-            padding-top: 10px;
             flex-wrap: wrap;
         }
         
         .card-action-btn {
-            padding: clamp(12px, 2.5vw, 16px) clamp(20px, 3vw, 30px);
+            padding: 15px 30px;
             border: none;
             border-radius: var(--border-radius);
-            font-family: 'Almarai', sans-serif;
-            font-size: clamp(0.9rem, 1.8vw, 1rem);
             font-weight: 700;
             cursor: pointer;
             transition: var(--transition-smooth);
-            min-width: min(180px, 45vw);
+            min-width: 180px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            flex: 1;
-            max-width: 220px;
-            position: relative;
-            overflow: hidden;
             box-shadow: var(--shadow-button);
-            touch-action: manipulation;
-            min-height: 50px;
         }
         
         .card-action-btn:active {
             transform: scale(0.98);
         }
         
-        .card-action-btn.disabled {
-            opacity: 0.5;
-            pointer-events: none;
-            cursor: not-allowed;
-            filter: grayscale(0.5);
-        }
-        
         .card-action-btn.answered {
             opacity: 0.7;
             pointer-events: none;
-            cursor: not-allowed;
+            filter: grayscale(0.5);
         }
         
         .mastered-btn {
@@ -1192,38 +972,6 @@
         .not-mastered-btn {
             background: var(--gradient-error);
             color: white;
-        }
-        
-        .mastered-btn.answered {
-            background: var(--gradient-success);
-            opacity: 0.7;
-        }
-        
-        .not-mastered-btn.answered {
-            background: var(--gradient-error);
-            opacity: 0.7;
-        }
-        
-        .card-action-btn:hover:not(:disabled):not(.disabled):not(.answered) {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-button-hover);
-        }
-        
-        /* Answer Status Indicator */
-        .answer-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.9rem;
-            margin-right: 10px;
-        }
-        
-        .status-mastered {
-            color: var(--success-color);
-        }
-        
-        .status-not-mastered {
-            color: var(--error-color);
         }
         
         /* Advice Modal */
@@ -1242,10 +990,7 @@
             visibility: hidden;
             transition: var(--transition-smooth);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             padding: 20px;
-            padding-top: calc(20px + env(safe-area-inset-top));
-            padding-bottom: calc(20px + env(safe-area-inset-bottom));
         }
         
         .advice-modal.show {
@@ -1256,31 +1001,16 @@
         .advice-content {
             background: white;
             border-radius: var(--border-radius-xl);
-            padding: clamp(25px, 5vw, 40px);
+            padding: 40px;
             width: min(700px, 90vw);
-            max-height: min(80vh, 90vh);
+            max-height: 80vh;
             overflow-y: auto;
-            position: relative;
             box-shadow: var(--shadow-heavy);
-            animation: modalAppear 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(139, 115, 85, 0.15);
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        @keyframes modalAppear {
-            from {
-                opacity: 0;
-                transform: scale(0.9) translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
+            animation: modalAppear 0.3s ease-out;
         }
         
         .advice-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: clamp(1.4rem, 3vw, 1.6rem);
+            font-size: 1.6rem;
             font-weight: 700;
             color: var(--accent-primary);
             margin-bottom: 25px;
@@ -1288,8 +1018,7 @@
         }
         
         .advice-text {
-            font-family: 'Tajawal', sans-serif;
-            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            font-size: 1.3rem;
             line-height: 2;
             color: var(--text-primary);
             margin-bottom: 35px;
@@ -1297,14 +1026,11 @@
             background: rgba(139, 115, 85, 0.06);
             border-radius: var(--border-radius-xl);
             border-right: 5px solid var(--accent-primary);
-            overflow-wrap: break-word;
-            word-wrap: break-word;
         }
         
         .advice-actions {
             display: flex;
             justify-content: center;
-            margin-top: 25px;
         }
         
         .advice-understood-btn {
@@ -1312,46 +1038,25 @@
             color: white;
             border: none;
             border-radius: var(--border-radius);
-            padding: clamp(16px, 3vw, 18px) clamp(35px, 4vw, 45px);
-            font-family: 'Almarai', sans-serif;
-            font-size: clamp(1rem, 2vw, 1.1rem);
+            padding: 18px 45px;
             font-weight: 700;
             cursor: pointer;
-            transition: var(--transition-smooth);
             display: flex;
             align-items: center;
+            gap: 10px;
+            min-width: 220px;
             justify-content: center;
-            gap: 12px;
-            min-width: min(220px, 50vw);
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-button);
-            touch-action: manipulation;
-            min-height: 56px;
-        }
-        
-        .advice-understood-btn:active {
-            transform: scale(0.98);
-        }
-        
-        .advice-understood-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-button-hover);
         }
         
         /* Results Section */
         .results-section {
             background: white;
             border-radius: var(--border-radius-xl);
-            padding: clamp(25px, 5vw, 45px);
-            margin-bottom: 35px;
+            padding: 45px;
             box-shadow: var(--shadow-heavy);
-            border: 1px solid rgba(139, 115, 85, 0.12);
             display: none;
-            animation: slideUp 0.4s ease-out;
-            text-align: center;
-            width: 100%;
             max-width: 900px;
+            margin: 0 auto;
         }
         
         .results-section.show {
@@ -1382,36 +1087,11 @@
         }
         
         .review-text {
-            font-family: 'Tajawal', sans-serif;
             font-size: 1.4rem;
             color: var(--accent-primary);
             font-weight: 600;
-            margin-bottom: 15px;
         }
         
-        .review-subtext {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-        
-        .results-title {
-            font-family: 'Almarai', sans-serif;
-            font-size: clamp(1.8rem, 4vw, 2.2rem);
-            font-weight: 800;
-            color: var(--accent-primary);
-            margin-bottom: 15px;
-        }
-        
-        .results-subtitle {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: clamp(1rem, 2vw, 1.1rem);
-            margin-bottom: 45px;
-            line-height: 1.6;
-        }
-        
-        /* Circular Progress */
         .progress-circle-container {
             display: flex;
             justify-content: center;
@@ -1420,8 +1100,8 @@
         
         .progress-circle {
             position: relative;
-            width: min(250px, 60vw);
-            height: min(250px, 60vw);
+            width: 250px;
+            height: 250px;
         }
         
         .progress-circle-bg {
@@ -1439,16 +1119,15 @@
             height: 100%;
             border-radius: 50%;
             clip-path: polygon(50% 50%, 50% 0, 0 0, 0 100%, 100% 100%, 100% 0, 50% 0);
-            transform: rotate(0deg);
-            transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 1.2s ease;
         }
         
         .success-fill {
-            background: conic-gradient(var(--success-color) 0%, var(--success-color) var(--percentage), transparent var(--percentage), transparent 100%);
+            background: conic-gradient(var(--success-color) 0%, var(--success-color) var(--percentage), transparent var(--percentage));
         }
         
         .failure-fill {
-            background: conic-gradient(var(--error-color) 0%, var(--error-color) var(--percentage), transparent var(--percentage), transparent 100%);
+            background: conic-gradient(var(--error-color) 0%, var(--error-color) var(--percentage), transparent var(--percentage));
         }
         
         .progress-circle-inner {
@@ -1468,85 +1147,36 @@
         }
         
         .progress-percentage {
-            font-family: 'Almarai', sans-serif;
-            font-size: clamp(2.2rem, 5vw, 3rem);
+            font-size: 3rem;
             font-weight: 800;
             color: var(--accent-primary);
         }
         
         .progress-label {
-            font-family: 'Tajawal', sans-serif;
             color: var(--text-secondary);
-            font-size: clamp(0.9rem, 2vw, 1rem);
-            margin-top: 8px;
         }
         
         .results-stats {
             display: flex;
             justify-content: center;
-            gap: clamp(20px, 4vw, 45px);
+            gap: 30px;
             margin: 45px 0;
             flex-wrap: wrap;
         }
         
         .stat-item {
             text-align: center;
-            padding: clamp(20px, 3vw, 30px);
+            padding: 30px;
             background: rgba(139, 115, 85, 0.06);
             border-radius: var(--border-radius-xl);
-            min-width: min(180px, 40vw);
-            transition: var(--transition-smooth);
-            border: 1px solid rgba(139, 115, 85, 0.1);
-        }
-        
-        .stat-item:active {
-            transform: scale(0.98);
+            min-width: 180px;
         }
         
         .stat-value {
-            font-family: 'Almarai', sans-serif;
-            font-size: clamp(2.2rem, 5vw, 3rem);
+            font-size: 3rem;
             font-weight: 800;
             color: var(--accent-primary);
             margin-bottom: 8px;
-        }
-        
-        .stat-label {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: clamp(1rem, 2vw, 1.1rem);
-        }
-        
-        .results-message {
-            font-family: 'Almarai', sans-serif;
-            font-size: clamp(1.4rem, 3vw, 1.8rem);
-            font-weight: 700;
-            margin: 35px 0;
-            padding: 25px;
-            border-radius: var(--border-radius-xl);
-            background: rgba(139, 115, 85, 0.06);
-            border-right: 5px solid var(--accent-primary);
-            line-height: 1.6;
-        }
-        
-        .success-message {
-            color: var(--success-color);
-        }
-        
-        .failure-message {
-            color: var(--error-color);
-        }
-        
-        .encouragement-text {
-            font-family: 'Tajawal', sans-serif;
-            color: var(--text-secondary);
-            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
-            font-style: italic;
-            margin-top: 25px;
-            padding: 20px;
-            background: rgba(139, 115, 85, 0.06);
-            border-radius: var(--border-radius-xl);
-            line-height: 1.8;
         }
         
         .exit-btn-container {
@@ -1562,35 +1192,18 @@
             color: white;
             border: none;
             border-radius: var(--border-radius);
-            padding: clamp(18px, 3vw, 20px) clamp(40px, 4vw, 50px);
-            font-family: 'Almarai', sans-serif;
-            font-size: clamp(1.1rem, 2vw, 1.2rem);
+            padding: 18px 40px;
             font-weight: 700;
             cursor: pointer;
-            transition: var(--transition-smooth);
             display: flex;
             align-items: center;
+            gap: 10px;
+            min-width: 220px;
             justify-content: center;
-            gap: 12px;
-            min-width: min(240px, 50vw);
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-button);
-            touch-action: manipulation;
-            min-height: 60px;
         }
         
         .exit-btn.secondary {
             background: var(--gradient-info);
-        }
-        
-        .exit-btn:active {
-            transform: scale(0.98);
-        }
-        
-        .exit-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-button-hover);
         }
         
         /* Footer */
@@ -1600,11 +1213,9 @@
             color: var(--text-secondary);
             border-top: 1px solid rgba(139, 115, 85, 0.12);
             margin-top: 45px;
-            position: relative;
-            z-index: 1;
-            width: 100%;
             max-width: 900px;
-            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .footer.hidden {
@@ -1612,11 +1223,7 @@
         }
         
         .copyright {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1rem;
-            line-height: 1.6;
             margin-bottom: 35px;
-            font-weight: 400;
         }
         
         .support-section {
@@ -1628,17 +1235,14 @@
         }
         
         .support-title {
-            font-family: 'Almarai', sans-serif;
             font-size: 1.3rem;
             font-weight: 700;
             color: var(--accent-primary);
-            margin-bottom: 12px;
         }
         
         .support-links {
             display: flex;
             gap: 20px;
-            justify-content: center;
         }
         
         .support-link {
@@ -1646,25 +1250,15 @@
             height: 56px;
             border-radius: var(--border-radius);
             background: var(--gradient-primary);
-            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: var(--transition-smooth);
-            box-shadow: var(--shadow-button);
-            position: relative;
-            overflow: hidden;
-            touch-action: manipulation;
-        }
-        
-        .support-link:active {
-            transform: scale(0.95);
         }
         
         .support-link:hover {
             transform: translateY(-3px);
-            box-shadow: var(--shadow-button-hover);
         }
         
         .support-link i {
@@ -1672,35 +1266,20 @@
             color: white;
         }
         
-        .developer-credit {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
-            color: rgba(100, 116, 139, 0.6);
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px solid rgba(139, 115, 85, 0.06);
-            cursor: pointer;
-            transition: var(--transition-smooth);
-        }
-        
-        .developer-credit:hover {
-            color: var(--accent-primary);
-        }
-        
         /* Notification */
         .notification {
             position: fixed;
             top: calc(var(--navbar-height) + 20px);
-            right: max(20px, env(safe-area-inset-right));
+            right: 20px;
             background: white;
             border-radius: var(--border-radius);
             padding: 20px;
             box-shadow: var(--shadow-heavy);
-            border: 1px solid rgba(139, 115, 85, 0.12);
             z-index: 10001;
-            min-width: min(320px, 90vw);
+            min-width: 320px;
             transform: translateX(120%);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.4s ease;
+            border-right: 5px solid var(--info-color);
         }
         
         .notification.show {
@@ -1708,11 +1287,11 @@
         }
         
         .notification.success {
-            border-right: 5px solid var(--success-color);
+            border-right-color: var(--success-color);
         }
         
         .notification.error {
-            border-right: 5px solid var(--error-color);
+            border-right-color: var(--error-color);
         }
         
         .notification-content {
@@ -1733,11 +1312,6 @@
             color: var(--error-color);
         }
         
-        .notification-text {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 1.05rem;
-        }
-        
         /* Animations */
         @keyframes slideUp {
             from {
@@ -1750,102 +1324,33 @@
             }
         }
         
-        /* Responsive Design */
+        /* Responsive */
         @media (max-width: 768px) {
             .native-navbar {
                 padding: 0 15px;
-                padding-top: env(safe-area-inset-top);
-                height: calc(65px + env(safe-area-inset-top));
+                height: 65px;
             }
             
             .logo {
                 font-size: 32px;
             }
             
-            .nav-left {
-                gap: 8px;
-            }
-            
             .records-btn {
                 padding: 8px 14px;
-                font-size: 14px;
             }
             
-            .records-btn i {
-                font-size: 14px;
+            .records-btn span {
+                display: none;
             }
             
             .coins-display {
                 padding: 10px 18px;
-                font-size: 14px;
-            }
-            
-            .coins-display i {
-                font-size: 16px;
-            }
-            
-            .main-content {
-                padding-top: calc(65px + env(safe-area-inset-top) + 20px);
-                padding-left: 20px;
-                padding-right: 20px;
-                padding-bottom: 40px;
-                min-height: calc(100vh - 65px - env(safe-area-inset-top) - 60px);
-                justify-content: flex-start;
-            }
-            
-            .upload-section, .questions-section, .results-section {
-                padding: 25px 20px;
-            }
-            
-            .upload-area {
-                padding: 35px 20px;
-            }
-            
-            .cost-details {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .cost-item {
-                min-width: 100%;
-            }
-            
-            .cost-actions {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .action-btn {
-                min-width: 100%;
-                padding: 14px 20px;
-            }
-            
-            .questions-grid {
-                grid-template-columns: 1fr;
-                gap: 25px;
-            }
-            
-            .options-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .generate-btn {
-                min-width: 100%;
-                padding: 16px 30px;
-            }
-            
-            /* Flash Cards Mobile Adjustments */
-            .flashcards-section {
-                top: calc(65px + env(safe-area-inset-top) + 10px);
-                min-height: calc(100vh - 65px - env(safe-area-inset-top) - 20px);
-                max-height: calc(100vh - 65px - env(safe-area-inset-top) - 20px);
             }
             
             .flashcards-header {
                 flex-direction: column;
-                gap: 12px;
-                align-items: stretch;
-                padding: 12px 15px;
+                gap: 10px;
+                align-items: flex-start;
             }
             
             .header-right {
@@ -1853,356 +1358,41 @@
                 justify-content: space-between;
             }
             
-            .flashcards-title {
-                font-size: 1.3rem;
-            }
-            
-            .progress-indicator {
-                text-align: center;
-                padding: 8px 12px;
-                font-size: 0.85rem;
-            }
-            
-            .flashcards-container {
-                padding: 10px;
-            }
-            
-            .flashcard-wrapper {
-                min-height: 65vh;
-                max-height: 75vh;
-                padding: 5px;
-            }
-            
-            .flashcard {
-                width: 98vw;
-                height: 80vh;
-                min-height: 75vh;
-                max-height: 80vh;
-            }
-            
-            .card-header {
-                padding: 12px 15px;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-            
-            .card-content-container {
-                padding: 12px 15px;
-            }
-            
-            .question-progress {
-                font-size: 1rem;
-                margin-bottom: 10px;
-                padding-bottom: 8px;
-            }
-            
-            .card-content {
-                font-size: 1.3rem;
-                line-height: 1.8;
-                padding: 12px;
-                max-height: none;
-            }
-            
-            .card-tool-btn {
-                min-width: 44px;
-                height: 44px;
-                font-size: 1.1rem;
-            }
-            
-            .card-footer {
-                padding: 12px 15px;
-            }
-            
-            .hint-text {
-                font-size: 0.85rem;
-                padding: 10px;
+            .nav-buttons {
+                margin-right: 0;
             }
             
             .card-actions {
                 flex-direction: column;
-                gap: 8px;
             }
             
             .card-action-btn {
-                min-width: 100%;
-                max-width: 100%;
-                padding: 14px 16px;
-                min-height: 48px;
-                font-size: 0.95rem;
-            }
-            
-            .notification {
-                left: 20px;
-                right: 20px;
-                min-width: auto;
-                top: calc(65px + env(safe-area-inset-top) + 15px);
-            }
-            
-            .stat-item {
-                min-width: calc(50% - 15px);
-                max-width: 180px;
-            }
-            
-            .records-header h2 {
-                font-size: 1.3rem;
-            }
-            
-            .record-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .record-date {
-                align-self: flex-start;
-            }
-            
-            .record-details {
-                gap: 10px;
-            }
-            
-            .record-detail-item {
-                font-size: 0.85rem;
-                padding: 6px 12px;
-            }
-            
-            .record-progress {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            
-            .progress-bar-container {
                 width: 100%;
             }
             
             .exit-btn-container {
                 flex-direction: column;
-                align-items: stretch;
             }
             
             .exit-btn {
-                min-width: 100%;
+                width: 100%;
             }
         }
         
         @media (max-width: 480px) {
-            .logo {
-                font-size: 28px;
+            .nav-buttons {
+                gap: 5px;
             }
             
-            .records-btn span {
-                display: none;
-            }
-            
-            .records-btn {
-                padding: 12px;
-                border-radius: 50%;
-            }
-            
-            .records-btn i {
-                font-size: 18px;
-                margin: 0;
-            }
-            
-            .coins-display {
-                padding: 8px 16px;
-                font-size: 13px;
-            }
-            
-            .upload-icon {
-                font-size: 42px;
-            }
-            
-            .options-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .flashcards-section {
-                top: calc(65px + env(safe-area-inset-top) + 5px);
-                min-height: calc(100vh - 65px - env(safe-area-inset-top) - 10px);
-                max-height: calc(100vh - 65px - env(safe-area-inset-top) - 10px);
-                border-radius: var(--border-radius-lg);
-            }
-            
-            .flashcard-wrapper {
-                min-height: 60vh;
-                max-height: 70vh;
-            }
-            
-            .flashcard {
-                width: 99vw;
-                height: 75vh;
-                min-height: 70vh;
-                max-height: 75vh;
-                border-radius: var(--border-radius-lg);
-            }
-            
-            .card-header {
-                padding: 10px 12px;
-            }
-            
-            .question-number {
-                padding: 6px 12px;
-                font-size: 0.85rem;
-            }
-            
-            .card-content-container {
-                padding: 10px 12px;
-            }
-            
-            .question-progress {
-                font-size: 0.95rem;
-                margin-bottom: 8px;
-                padding-bottom: 6px;
-            }
-            
-            .card-content {
-                font-size: 1.2rem;
-                line-height: 1.7;
-                padding: 10px;
-                max-height: none;
-            }
-            
-            .card-tool-btn {
-                min-width: 40px;
+            .nav-btn {
+                width: 40px;
                 height: 40px;
                 font-size: 1rem;
             }
             
-            .card-footer {
-                padding: 10px 12px;
-            }
-            
-            .hint-text {
-                font-size: 0.8rem;
-                padding: 8px;
-            }
-            
-            .card-action-btn {
-                padding: 12px 14px;
-                min-height: 46px;
+            .progress-indicator {
                 font-size: 0.9rem;
-            }
-            
-            .stat-item {
-                min-width: 100%;
-                max-width: 100%;
-            }
-            
-            .record-file-name {
-                font-size: 1rem;
-            }
-            
-            .record-detail-item {
-                white-space: normal;
-                word-break: break-word;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .flashcards-section {
-                border-radius: var(--border-radius);
-            }
-            
-            .flashcard-wrapper {
-                min-height: 55vh;
-                max-height: 65vh;
-            }
-            
-            .flashcard {
-                height: 70vh;
-                min-height: 65vh;
-                max-height: 70vh;
-                border-radius: var(--border-radius);
-            }
-            
-            .card-content {
-                font-size: 1.1rem;
-                line-height: 1.6;
-                padding: 8px;
-                max-height: none;
-            }
-        }
-        
-        /* Landscape Mode */
-        @media (max-height: 600px) and (orientation: landscape) {
-            .flashcards-section {
-                min-height: calc(100vh - var(--navbar-height) - 20px);
-                max-height: calc(100vh - var(--navbar-height) - 20px);
-            }
-            
-            .flashcard-wrapper {
-                min-height: 75vh;
-                max-height: 85vh;
-            }
-            
-            .flashcard {
-                height: 80vh;
-                min-height: 75vh;
-                max-height: 80vh;
-            }
-            
-            .card-header {
-                padding: 10px 15px;
-            }
-            
-            .card-content-container {
-                padding: 10px 15px;
-            }
-            
-            .card-footer {
-                padding: 10px 15px;
-            }
-            
-            .card-content {
-                font-size: 1.2rem;
-                line-height: 1.6;
-                padding: 10px;
-                max-height: none;
-            }
-            
-            .card-action-btn {
-                min-height: 48px;
-                padding: 10px 16px;
-            }
-        }
-        
-        /* Prevent Copy */
-        .flashcard-content, .advice-text, .question-content, .answer-content {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        
-        /* Touch Device Optimizations */
-        @media (hover: none) and (pointer: coarse) {
-            .action-btn:hover,
-            .option-btn:hover,
-            .generate-btn:hover,
-            .card-tool-btn:hover,
-            .card-action-btn:hover,
-            .advice-understood-btn:hover,
-            .exit-btn:hover,
-            .support-link:hover,
-            .records-btn:hover,
-            .close-records-btn:hover,
-            .record-card:hover {
-                transform: none !important;
-            }
-            
-            .action-btn:active,
-            .option-btn:active,
-            .generate-btn:active,
-            .card-tool-btn:active,
-            .card-action-btn:active,
-            .advice-understood-btn:active,
-            .exit-btn:active,
-            .support-link:active,
-            .records-btn:active,
-            .close-records-btn:active,
-            .record-card:active {
-                transform: scale(0.98) !important;
+                padding: 8px 15px;
             }
         }
     </style>
@@ -2229,9 +1419,7 @@
     <div class="advice-modal" id="advice-modal">
         <div class="advice-content">
             <h3 class="advice-title">نصيحة للدراسة</h3>
-            <div class="advice-text" id="advice-text">
-                <!-- سيتم إضافة النصيحة هنا -->
-            </div>
+            <div class="advice-text" id="advice-text"></div>
             <div class="advice-actions">
                 <button class="advice-understood-btn" id="advice-understood-btn">
                     <i class="fas fa-check"></i>
@@ -2255,7 +1443,6 @@
                     <i class="fas fa-folder-open"></i>
                     <p>لا توجد سجلات حالياً</p>
                 </div>
-                <!-- سيتم إضافة السجلات هنا ديناميكياً -->
             </div>
         </div>
     </div>
@@ -2280,7 +1467,7 @@
         <!-- Upload Section -->
         <section class="upload-section" id="upload-section">
             <h1 class="section-title">خدمة فلاش كارد من PDF</h1>
-            <p class="section-subtitle">ارفع ملف PDF الخاص بك واحصل على فلاش كارد ذكية باستخدام الذكاء الاصطناعي المتقدم</p>
+            <p class="section-subtitle">ارفع ملف PDF الخاص بك واحصل على فلاش كارد ذكية</p>
             
             <div class="upload-area" id="upload-area">
                 <div class="upload-icon">
@@ -2320,10 +1507,9 @@
         <!-- Questions Settings Section -->
         <section class="questions-section" id="questions-section">
             <h2 class="section-title">إعدادات الفلاش كارد</h2>
-            <p class="section-subtitle">اختر عدد الأسئلة ومستوى الصعوبة للحصول على أفضل تجربة تعليمية</p>
+            <p class="section-subtitle">اختر عدد الأسئلة ومستوى الصعوبة</p>
             
             <div class="questions-grid">
-                <!-- عدد الأسئلة -->
                 <div class="question-group">
                     <h3 class="question-title">
                         <i class="fas fa-question-circle"></i>
@@ -2343,7 +1529,6 @@
                     </div>
                 </div>
                 
-                <!-- درجة الصعوبة -->
                 <div class="question-group">
                     <h3 class="question-title">
                         <i class="fas fa-chart-line"></i>
@@ -2356,33 +1541,20 @@
                     </div>
                 </div>
                 
-                <!-- التكلفة النهائية -->
                 <div class="question-group">
                     <h3 class="question-title">
                         <i class="fas fa-calculator"></i>
                         التكلفة النهائية
                     </h3>
                     <div style="text-align: center; padding: 20px 0;">
-                        <div style="font-family: 'Almarai', sans-serif; color: var(--text-secondary); font-size: 1rem; margin-bottom: 8px;">
-                            التكلفة الأساسية
-                        </div>
-                        <div style="font-family: 'Almarai', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--accent-primary); margin-bottom: 12px;" id="base-cost-display">
-                            0 عملة
-                        </div>
+                        <div style="color: var(--text-secondary); margin-bottom: 8px;">التكلفة الأساسية</div>
+                        <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-primary); margin-bottom: 12px;" id="base-cost-display">0 عملة</div>
                         <div style="height: 2px; background: rgba(139, 115, 85, 0.2); margin: 15px 0;"></div>
-                        <div style="font-family: 'Almarai', sans-serif; color: var(--text-secondary); font-size: 1rem; margin-bottom: 8px;">
-                            التكلفة الإضافية
-                        </div>
-                        <div style="font-family: 'Almarai', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--success-color); margin-bottom: 12px;" id="total-extra-cost">
-                            +0 عملة
-                        </div>
+                        <div style="color: var(--text-secondary); margin-bottom: 8px;">التكلفة الإضافية</div>
+                        <div style="font-size: 1.8rem; font-weight: 800; color: var(--success-color); margin-bottom: 12px;" id="total-extra-cost">+0 عملة</div>
                         <div style="height: 2px; background: rgba(139, 115, 85, 0.2); margin: 15px 0;"></div>
-                        <div style="font-family: 'Almarai', sans-serif; color: var(--accent-primary); font-size: 1rem; margin-bottom: 8px;">
-                            التكلفة الإجمالية
-                        </div>
-                        <div style="font-family: 'Almarai', sans-serif; font-size: 2.5rem; font-weight: 900; color: var(--accent-primary);" id="total-cost-display">
-                            0 عملة
-                        </div>
+                        <div style="color: var(--text-secondary); margin-bottom: 8px;">التكلفة الإجمالية</div>
+                        <div style="font-size: 2.5rem; font-weight: 900; color: var(--accent-primary);" id="total-cost-display">0 عملة</div>
                     </div>
                 </div>
             </div>
@@ -2402,6 +1574,14 @@
                         رجوع
                     </button>
                     <h2 class="flashcards-title">الفلاش كارد</h2>
+                    <div class="nav-buttons" id="nav-buttons" style="display: none;">
+                        <button class="nav-btn" id="prev-question-btn" disabled>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button class="nav-btn" id="next-question-btn" disabled>
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="progress-indicator" id="progress-indicator">
                     سؤال <span id="current-question">1</span> من <span id="total-questions">10</span>
@@ -2411,7 +1591,6 @@
             <div class="flashcards-container">
                 <div class="flashcard-wrapper">
                     <div class="flashcard" id="flashcard">
-                        <!-- Front of card -->
                         <div class="flashcard-front">
                             <div class="card-header">
                                 <div class="question-number" id="question-number">السؤال #1</div>
@@ -2423,24 +1602,17 @@
                             </div>
                             
                             <div class="card-content-container">
-                                <div class="question-progress" id="question-progress">
-                                    السؤال #1 من 10
-                                </div>
+                                <div class="question-progress" id="question-progress">السؤال #1 من 10</div>
                                 <div class="card-content-wrapper">
-                                    <div class="card-content" id="question-content">
-                                        <!-- سيتم إضافة السؤال هنا -->
-                                    </div>
+                                    <div class="card-content" id="question-content"></div>
                                 </div>
                             </div>
                             
                             <div class="card-footer">
-                                <div class="hint-text">
-                                    خمن الإجابة ثم اضغط على الفلاش كارد
-                                </div>
+                                <div class="hint-text">خمن الإجابة ثم اضغط على الفلاش كارد</div>
                             </div>
                         </div>
                         
-                        <!-- Back of card -->
                         <div class="flashcard-back">
                             <div class="card-header">
                                 <div class="question-number" id="answer-number">الإجابة #1</div>
@@ -2452,25 +1624,19 @@
                             </div>
                             
                             <div class="card-content-container">
-                                <div class="question-progress" id="answer-progress">
-                                    الإجابة #1 من 10
-                                </div>
+                                <div class="question-progress" id="answer-progress">الإجابة #1 من 10</div>
                                 <div class="card-content-wrapper">
-                                    <div class="card-content" id="answer-content">
-                                        <!-- سيتم إضافة الإجابة هنا -->
-                                    </div>
+                                    <div class="card-content" id="answer-content"></div>
                                 </div>
                             </div>
                             
                             <div class="card-footer">
                                 <div class="card-actions">
                                     <button class="card-action-btn mastered-btn" id="mastered-btn">
-                                        <i class="fas fa-check-circle"></i>
-                                        اتقنت
+                                        <i class="fas fa-check-circle"></i> اتقنت
                                     </button>
                                     <button class="card-action-btn not-mastered-btn" id="not-mastered-btn">
-                                        <i class="fas fa-times-circle"></i>
-                                        لم أتقن
+                                        <i class="fas fa-times-circle"></i> لم أتقن
                                     </button>
                                 </div>
                             </div>
@@ -2485,14 +1651,11 @@
             <div class="review-loading" id="review-loading">
                 <div class="review-spinner"></div>
                 <div class="review-text">عون يراجع إجاباتك...</div>
-                <div class="review-subtext">جاري التحليل وتجهيز النتائج</div>
             </div>
             
             <div class="results-content" id="results-content">
                 <h2 class="results-title">نتائج الاختبار</h2>
-                <p class="results-subtitle">إحصائيات أدائك في الفلاش كارد</p>
                 
-                <!-- Circular Progress -->
                 <div class="progress-circle-container">
                     <div class="progress-circle">
                         <div class="progress-circle-bg">
@@ -2508,46 +1671,27 @@
                 <div class="results-stats">
                     <div class="stat-item">
                         <div class="stat-value" id="mastered-count">0</div>
-                        <div class="stat-label">سؤال اتقنت</div>
+                        <div class="stat-label">اتقنت</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value" id="not-mastered-count">0</div>
-                        <div class="stat-label">سؤال لم أتقن</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="total-answered">0</div>
-                        <div class="stat-label">إجمالي الأسئلة</div>
+                        <div class="stat-label">لم أتقن</div>
                     </div>
                 </div>
-                
-                <div class="results-message success-message" id="success-message" style="display: none;">
-                    مبروك! لقد نجحت في الاختبار 🎉
-                </div>
-                <div class="results-message failure-message" id="failure-message" style="display: none;">
-                    تحتاج إلى المزيد من الممارسة 💪
-                </div>
-                
-                <p class="encouragement-text" id="encouragement-text">
-                    استمر في التعلم والتطوير، كل خطوة تقربك من إتقان المادة
-                </p>
                 
                 <div class="exit-btn-container">
                     <button class="exit-btn" id="exit-btn">
-                        <i class="fas fa-home"></i>
-                        الصفحة الرئيسية
+                        <i class="fas fa-home"></i> الرئيسية
                     </button>
                     <button class="exit-btn secondary" id="back-to-records-btn">
-                        <i class="fas fa-history"></i>
-                        العودة للسجلات
+                        <i class="fas fa-history"></i> السجلات
                     </button>
                 </div>
             </div>
         </section>
         
-        <!-- Footer -->
         <footer class="footer" id="footer">
-            <p class="copyright">جميع الحقوق محفوظة لمنصة عون© 2026</p>
-            
+            <p class="copyright">جميع الحقوق محفوظة لمنصة عون © 2026</p>
             <div class="support-section">
                 <div class="support-title">تواصل مع الدعم الفني</div>
                 <div class="support-links">
@@ -2559,7 +1703,6 @@
                     </a>
                 </div>
             </div>
-            
             <div class="developer-credit">
                 برمجة وتصميم المطور 𝐊𝐈𝐌𝐎
             </div>
@@ -2568,8 +1711,7 @@
     
     <script>
         // تهيئة PDF.js
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         
         // تهيئة Firebase
         firebase.initializeApp({
@@ -2589,21 +1731,8 @@
         let currentUser = null;
         let userCoins = 0;
         let selectedFile = null;
-        let fileInfo = {
-            name: '',
-            size: 0,
-            pages: 0,
-            words: 0,
-            baseCost: 0
-        };
-        
-        let currentSettings = {
-            questionsCount: 10,
-            difficulty: 'سهل',
-            totalCost: 0,
-            extraCost: 0
-        };
-        
+        let fileInfo = { name: '', size: 0, pages: 0, words: 0, baseCost: 0 };
+        let currentSettings = { questionsCount: 10, difficulty: 'سهل', totalCost: 0, extraCost: 0 };
         let flashcardsData = null;
         let currentQuestionIndex = 0;
         let userAnswers = [];
@@ -2619,111 +1748,55 @@
         
         // ========== الوظائف الأساسية ==========
         
-        function reloadPage() {
-            location.reload();
-        }
-        
         function showNotification(message, type = 'info') {
-            try {
-                const notification = document.getElementById('notification');
-                const notificationIcon = document.getElementById('notification-icon');
-                const notificationText = document.getElementById('notification-text');
-                
-                if (!notification || !notificationIcon || !notificationText) {
-                    console.error('Notification elements not found');
-                    return;
-                }
-                
-                notificationText.textContent = message;
-                notification.className = 'notification';
-                
-                if (type === 'success') {
-                    notification.classList.add('success');
-                    notificationIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
-                } else if (type === 'error') {
-                    notification.classList.add('error');
-                    notificationIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
-                } else {
-                    notificationIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
-                }
-                
-                notification.classList.add('show');
-                
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 3000);
-            } catch (error) {
-                console.error('Error in showNotification:', error);
-            }
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notification-icon');
+            const text = document.getElementById('notification-text');
+            
+            text.textContent = message;
+            notification.className = 'notification';
+            notification.classList.add(type);
+            
+            if (type === 'success') icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            else if (type === 'error') icon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+            else icon.innerHTML = '<i class="fas fa-info-circle"></i>';
+            
+            notification.classList.add('show');
+            setTimeout(() => notification.classList.remove('show'), 3000);
         }
         
         function showLoading(text = 'جاري التحميل...') {
-            const loadingScreen = document.getElementById('loading-screen');
-            const loadingText = document.getElementById('loading-text');
-            
-            if (loadingScreen && loadingText) {
-                loadingText.textContent = text;
-                loadingScreen.style.display = 'flex';
-                setTimeout(() => {
-                    loadingScreen.style.opacity = '1';
-                }, 10);
-            }
+            document.getElementById('loading-text').textContent = text;
+            document.getElementById('loading-screen').style.display = 'flex';
         }
         
         function hideLoading() {
-            const loadingScreen = document.getElementById('loading-screen');
-            if (loadingScreen) {
-                loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                }, 300);
-            }
+            document.getElementById('loading-screen').style.display = 'none';
         }
         
         function hideFooter() {
-            const footer = document.getElementById('footer');
-            if (footer) {
-                footer.classList.add('hidden');
-            }
+            document.getElementById('footer').classList.add('hidden');
         }
         
         function showFooter() {
-            const footer = document.getElementById('footer');
-            if (footer) {
-                footer.classList.remove('hidden');
-            }
+            document.getElementById('footer').classList.remove('hidden');
         }
         
         function resetToMainScreen() {
-            // إخفاء جميع الأقسام
-            const uploadSection = document.getElementById('upload-section');
-            const questionsSection = document.getElementById('questions-section');
-            const flashcardsSection = document.getElementById('flashcards-section');
-            const resultsSection = document.getElementById('results-section');
+            document.getElementById('upload-section').style.display = 'block';
+            document.getElementById('questions-section').classList.remove('show');
+            document.getElementById('flashcards-section').classList.remove('show');
+            document.getElementById('results-section').classList.remove('show');
             
-            if (uploadSection) uploadSection.style.display = 'block';
-            if (questionsSection) questionsSection.classList.remove('show');
-            if (flashcardsSection) flashcardsSection.classList.remove('show');
-            if (resultsSection) resultsSection.classList.remove('show');
-            
-            // إعادة تعيين المتغيرات
             selectedFile = null;
-            fileInfo = {
-                name: '',
-                size: 0,
-                pages: 0,
-                words: 0,
-                baseCost: 0
-            };
+            fileInfo = { name: '', size: 0, pages: 0, words: 0, baseCost: 0 };
             flashcardsData = null;
             currentQuestionIndex = 0;
             userAnswers = [];
             isHistoricalMode = false;
             currentRecordId = null;
             
-            // إعادة تعيين واجهة الرفع
             resetFileInput();
-            
             showFooter();
         }
         
@@ -2732,70 +1805,22 @@
         async function loadUserData() {
             try {
                 const user = auth.currentUser;
-                if (!user) {
-                    window.location.replace('login.html');
-                    return;
-                }
+                if (!user) { window.location.replace('login.html'); return; }
                 
-                const usersRef = database.ref('users_Awn');
-                const snapshot = await usersRef.once('value');
-                
+                const snapshot = await database.ref('users_Awn').once('value');
                 if (snapshot.exists()) {
                     const users = snapshot.val();
-                    let userFound = false;
-                    
                     for (const [userId, userData] of Object.entries(users)) {
                         if (userId !== 'noty_publick' && userData.email === user.email) {
-                            currentUser = {
-                                id: userId,
-                                email: userData.email,
-                                name: userData.name || '',
-                                coin: userData.coin || 0,
-                                admin: userData.admin === true || false,
-                                banned: userData.banned === true || false
-                            };
-                            
+                            currentUser = { id: userId, email: userData.email, coin: userData.coin || 0 };
                             userCoins = userData.coin || 0;
-                            const coinsCount = document.getElementById('coins-count');
-                            if (coinsCount) {
-                                coinsCount.textContent = userCoins;
-                            }
-                            userFound = true;
+                            document.getElementById('coins-count').textContent = userCoins;
                             break;
                         }
                     }
-                    
-                    if (!userFound) {
-                        await auth.signOut();
-                        window.location.replace('login.html');
-                    }
-                } else {
-                    await auth.signOut();
-                    window.location.replace('login.html');
                 }
             } catch (error) {
-                console.error('Error loading user data:', error);
-                window.location.replace('login.html');
-            }
-        }
-        
-        async function setupUser() {
-            try {
-                await loadUserData();
-                
-                if (currentUser && currentUser.banned !== true) {
-                    const navbar = document.getElementById('navbar');
-                    const mainContent = document.getElementById('main-content');
-                    
-                    if (navbar) navbar.style.display = 'flex';
-                    if (mainContent) mainContent.style.display = 'block';
-                    
-                    showFooter();
-                } else {
-                    window.location.replace('login.html');
-                }
-            } catch (error) {
-                console.error('Error setting up user:', error);
+                console.error('Error loading user:', error);
                 window.location.replace('login.html');
             }
         }
@@ -2805,52 +1830,27 @@
         function setupFileUpload() {
             const pdfFile = document.getElementById('pdfFile');
             const uploadArea = document.getElementById('upload-area');
-            const confirmBtn = document.getElementById('confirm-btn');
-            const cancelBtn = document.getElementById('cancel-btn');
             
-            if (pdfFile) {
-                pdfFile.addEventListener('change', handleFileSelect);
-            }
-            
-            if (uploadArea) {
-                uploadArea.addEventListener('click', () => pdfFile.click());
-                uploadArea.addEventListener('dragover', handleDragOver);
-                uploadArea.addEventListener('drop', handleDrop);
-            }
-            
-            if (confirmBtn) {
-                confirmBtn.addEventListener('click', confirmProcess);
-            }
-            
-            if (cancelBtn) {
-                cancelBtn.addEventListener('click', cancelProcess);
-            }
-        }
-        
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const uploadArea = document.getElementById('upload-area');
-            if (uploadArea) {
+            pdfFile.addEventListener('change', handleFileSelect);
+            uploadArea.addEventListener('click', () => pdfFile.click());
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
                 uploadArea.style.borderColor = 'var(--accent-primary)';
-                uploadArea.style.backgroundColor = 'rgba(212, 165, 116, 0.1)';
-            }
+            });
+            uploadArea.addEventListener('drop', handleDrop);
+            document.getElementById('confirm-btn').addEventListener('click', confirmProcess);
+            document.getElementById('cancel-btn').addEventListener('click', cancelProcess);
         }
         
         async function handleDrop(e) {
             e.preventDefault();
-            e.stopPropagation();
-            
             const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                await handleFile(files[0]);
-            }
+            if (files.length > 0) await handleFile(files[0]);
         }
         
-        async function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            await handleFile(file);
+        async function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) await handleFile(file);
         }
         
         async function handleFile(file) {
@@ -2861,612 +1861,263 @@
             }
             
             selectedFile = file;
-            const uploadText = document.getElementById('upload-text');
-            const uploadArea = document.getElementById('upload-area');
-            
-            if (uploadText) uploadText.textContent = file.name;
-            if (uploadArea) {
-                uploadArea.style.borderColor = 'var(--accent-primary)';
-                uploadArea.style.backgroundColor = 'rgba(212, 165, 116, 0.1)';
-            }
+            document.getElementById('upload-text').textContent = file.name;
+            document.getElementById('upload-area').style.borderColor = 'var(--accent-primary)';
             
             await analyzePDF(file);
         }
         
         async function analyzePDF(file) {
             try {
-                const loadingMessages = [
-                    'عون يحلل الملف...',
-                    'عون يستخرج النص...',
-                    'عون يعد الصفحات...',
-                    'عون يحسب التكلفة...'
-                ];
-                
-                let messageIndex = 0;
-                const loadingInterval = setInterval(() => {
-                    showLoading(loadingMessages[messageIndex]);
-                    messageIndex = (messageIndex + 1) % loadingMessages.length;
-                }, 1500);
+                showLoading('عون يحلل الملف...');
                 
                 const buffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument(buffer).promise;
                 
                 let totalWords = 0;
-                
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const content = await page.getTextContent();
-                    
                     if (content.items.length > 0) {
                         let text = '';
                         content.items.forEach(t => text += t.str + ' ');
                         totalWords += text.trim().split(/\s+/).filter(w => w.length >= 2).length;
-                    } else {
-                        totalWords += 250;
-                    }
+                    } else totalWords += 250;
                 }
-                
-                clearInterval(loadingInterval);
                 
                 let coins = Math.ceil((totalWords / 1000) * 2) / 2;
                 if (coins < 1) coins = 1;
                 coins = Math.round(coins * 10) / 10;
                 
-                fileInfo = {
-                    name: file.name,
-                    size: file.size,
-                    pages: pdf.numPages,
-                    words: totalWords,
-                    baseCost: coins
-                };
+                fileInfo = { name: file.name, size: file.size, pages: pdf.numPages, words: totalWords, baseCost: coins };
                 
                 hideLoading();
                 
-                const pageCount = document.getElementById('page-count');
-                const costAmount = document.getElementById('cost-amount');
-                const costPreview = document.getElementById('cost-preview');
-                const baseCostDisplay = document.getElementById('base-cost-display');
-                
-                if (pageCount) pageCount.textContent = fileInfo.pages;
-                if (costAmount) costAmount.textContent = fileInfo.baseCost + ' عملة';
-                if (baseCostDisplay) baseCostDisplay.textContent = fileInfo.baseCost + ' عملة';
-                if (costPreview) costPreview.classList.add('show');
+                document.getElementById('page-count').textContent = fileInfo.pages;
+                document.getElementById('cost-amount').textContent = fileInfo.baseCost + ' عملة';
+                document.getElementById('base-cost-display').textContent = fileInfo.baseCost + ' عملة';
+                document.getElementById('cost-preview').classList.add('show');
                 
                 updateTotalCost();
-                
                 showNotification('تم تحليل الملف بنجاح', 'success');
                 
             } catch (error) {
-                console.error('Error analyzing PDF:', error);
+                console.error(error);
                 hideLoading();
-                showNotification('حدث خطأ أثناء تحليل الملف. الرجاء المحاولة مرة أخرى.', 'error');
+                showNotification('حدث خطأ أثناء تحليل الملف', 'error');
                 resetFileInput();
             }
         }
         
         function resetFileInput() {
-            const pdfFile = document.getElementById('pdfFile');
-            const uploadText = document.getElementById('upload-text');
-            const uploadArea = document.getElementById('upload-area');
-            const costPreview = document.getElementById('cost-preview');
-            
-            if (pdfFile) pdfFile.value = '';
+            document.getElementById('pdfFile').value = '';
             selectedFile = null;
-            if (uploadText) uploadText.textContent = 'انقر لرفع ملف PDF';
-            if (uploadArea) {
-                uploadArea.style.borderColor = '';
-                uploadArea.style.backgroundColor = '';
-            }
-            if (costPreview) costPreview.classList.remove('show');
+            document.getElementById('upload-text').textContent = 'انقر لرفع ملف PDF';
+            document.getElementById('upload-area').style.borderColor = '';
+            document.getElementById('cost-preview').classList.remove('show');
         }
         
         function cancelProcess() {
             resetFileInput();
-            const costPreview = document.getElementById('cost-preview');
-            if (costPreview) costPreview.classList.remove('show');
             showNotification('تم إلغاء العملية', 'info');
         }
         
         function confirmProcess() {
-            const uploadSection = document.getElementById('upload-section');
-            const questionsSection = document.getElementById('questions-section');
-            const costPreview = document.getElementById('cost-preview');
-            
-            if (!uploadSection || !questionsSection || !costPreview) {
-                showNotification('حدث خطأ في تحميل العناصر', 'error');
-                return;
-            }
-            
-            if (!fileInfo || !fileInfo.baseCost || fileInfo.baseCost === 0) {
+            if (!fileInfo?.baseCost) {
                 showNotification('الرجاء تحليل الملف أولاً', 'error');
                 return;
             }
-            
             if (userCoins < fileInfo.baseCost) {
-                showNotification(`رصيدك غير كافي. تحتاج ${fileInfo.baseCost} عملة بينما رصيدك ${userCoins}`, 'error');
+                showNotification(`رصيدك غير كافي. تحتاج ${fileInfo.baseCost} عملة`, 'error');
                 return;
             }
             
-            uploadSection.style.display = 'none';
-            questionsSection.classList.add('show');
-            costPreview.classList.remove('show');
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            showNotification('الرجاء تحديد عدد الأسئلة ودرجة الصعوبة', 'success');
+            document.getElementById('upload-section').style.display = 'none';
+            document.getElementById('questions-section').classList.add('show');
+            document.getElementById('cost-preview').classList.remove('show');
         }
         
         // ========== إعدادات الأسئلة ==========
         
         function setupQuestionsEvents() {
-            const questionsSlider = document.getElementById('questions-slider');
-            if (questionsSlider) {
-                questionsSlider.addEventListener('input', function() {
-                    updateQuestionsCount();
-                });
-            }
+            document.getElementById('questions-slider').addEventListener('input', updateQuestionsCount);
             
-            const difficultyBtns = document.querySelectorAll('#difficulty-level .option-btn');
-            difficultyBtns.forEach(btn => {
+            document.querySelectorAll('#difficulty-level .option-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    difficultyBtns.forEach(b => b.classList.remove('selected'));
+                    document.querySelectorAll('#difficulty-level .option-btn').forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
-                    currentSettings.difficulty = this.getAttribute('data-value');
+                    currentSettings.difficulty = this.dataset.value;
                 });
             });
             
-            const generateBtn = document.getElementById('generate-btn');
-            if (generateBtn) {
-                generateBtn.addEventListener('click', generateFlashcards);
-            }
-            
+            document.getElementById('generate-btn').addEventListener('click', generateFlashcards);
             updateQuestionsCount();
         }
         
         function updateQuestionsCount() {
-            const slider = document.getElementById('questions-slider');
-            const countDisplay = document.getElementById('questions-count');
-            const extraCostDisplay = document.getElementById('extra-cost');
-            
-            if (!slider || !countDisplay) return;
-            
-            const count = parseInt(slider.value);
-            countDisplay.textContent = count;
+            const count = parseInt(document.getElementById('questions-slider').value);
+            document.getElementById('questions-count').textContent = count;
             currentSettings.questionsCount = count;
             
             let extraCost = 0;
-            
-            if (count >= 1 && count <= 10) {
-                extraCost = 0;
-            } else if (count >= 11 && count <= 20) {
-                extraCost = 3;
-            } else if (count >= 21 && count <= 40) {
-                extraCost = 7;
-            } else if (count >= 41 && count <= 50) {
-                extraCost = 9;
-            }
+            if (count >= 11 && count <= 20) extraCost = 3;
+            else if (count >= 21 && count <= 40) extraCost = 7;
+            else if (count >= 41 && count <= 50) extraCost = 9;
             
             currentSettings.extraCost = extraCost;
-            
-            if (extraCostDisplay) {
-                extraCostDisplay.textContent = extraCost;
-            }
-            
+            document.getElementById('extra-cost').textContent = extraCost;
             updateTotalCost();
         }
         
         function updateTotalCost() {
-            const totalExtraCostDisplay = document.getElementById('total-extra-cost');
-            const totalCostDisplay = document.getElementById('total-cost-display');
-            
-            if (totalExtraCostDisplay && totalCostDisplay) {
-                const baseCost = fileInfo.baseCost || 0;
-                const extraCost = currentSettings.extraCost || 0;
-                const totalCost = baseCost + extraCost;
-                
-                currentSettings.totalCost = totalCost;
-                
-                totalExtraCostDisplay.textContent = `+${extraCost} عملة`;
-                totalCostDisplay.textContent = `${totalCost} عملة`;
-            }
+            const total = (fileInfo.baseCost || 0) + (currentSettings.extraCost || 0);
+            currentSettings.totalCost = total;
+            document.getElementById('total-extra-cost').textContent = `+${currentSettings.extraCost} عملة`;
+            document.getElementById('total-cost-display').textContent = `${total} عملة`;
         }
         
         function createPrompt() {
-            return `ROLE:
-You are an AI specialized in **strict PDF-based Flash Card and Question Generation**.
-You must follow ALL instructions below with ZERO deviation.
+            return `ROLE: You are an AI specialized in PDF-based Flash Card Generation.
+عدد_الأسئلة = ${currentSettings.questionsCount}
+درجة_الصعوبة = ${currentSettings.difficulty}
 
-========================
-INPUT VARIABLES (IN ARABIC):
-========================
-عدد_الأسئلة        = ${currentSettings.questionsCount}
-درجة_الصعوبة       = ${currentSettings.difficulty}
-
-========================
-CORE PROCESSING RULES (STRICT & MANDATORY):
-========================
-0. BEFORE generating ANY output you MUST:
-   - Fully ingest, parse, and internally reconstruct the ENTIRE PDF.
-   - Analyze the document FROM THE FIRST WORD TO THE LAST WORD without exception.
-   - Treat the PDF as ONE atomic document even if divided into units, modules, lessons, or chapters.
-   - You are STRICTLY FORBIDDEN from generating questions, answers, or tips before full analysis is complete.
-   - Build a COMPLETE internal representation of the document first.
-
-1. Source restriction:
-   - ALL questions, answers, explanations, and tips MUST come ONLY from the PDF.
-   - Do NOT use external knowledge.
-   - Do NOT hallucinate, guess, or invent content.
-   - ALL inference MUST be logically derivable from the PDF text only.
-
-2. Difficulty behavior (MANDATORY):
-   - If درجة_الصعوبة = سهل:
-     * Generate DIRECT questions.
-     * Answers must be explicitly stated word-for-word or clearly present in the PDF.
-   - If درجة_الصعوبة = متوسط:
-     * Generate questions that require understanding and linking ideas within the PDF.
-     * No external inference allowed.
-   - If درجة_الصعوبة = صعب:
-     * Generate inferred, analytical, or comparative questions.
-     * ALL inference MUST remain strictly inside the logical boundaries of the PDF content.
-
-3. Coverage enforcement:
-   - Questions MUST span the ENTIRE document.
-   - Use content from early, middle, and late sections.
-   - NEVER focus questions only on the first unit.
-   - If the PDF has multiple units → questions MUST be distributed across them.
-
-4. Question integrity:
-   - EACH question MUST end with a question mark (? or ؟).
-   - EACH question MUST have exactly ONE logical correct answer.
-   - EACH question MUST include:
-     * A clear answer.
-     * A sufficient explanation.
-     * A guidance tip pointing to the source location in the PDF.
-
-========================
-DYNAMIC QUESTION COUNT ENFORCEMENT:
-========================
-- عدد_الأسئلة can be ANY positive integer with NO upper limit.
-- You MUST dynamically generate Q, R, and A keys from 1 up to عدد_الأسئلة.
-- Output size MUST scale dynamically to match عدد_الأسئلة exactly.
-- You are STRICTLY FORBIDDEN from limiting, truncating, or reducing the number of questions.
-
-========================
-FLASH CARD GENERATION RULES:
-========================
-- Generate EXACTLY عدد_الأسئلة questions.
-- Maintain strict sequential numbering:
-  Q1 → R1 → A1
-  Q2 → R2 → A2
+Generate EXACTLY ${currentSettings.questionsCount} questions in JSON format:
+{
+  "num": ${currentSettings.questionsCount},
+  "Q1": "question 1",
+  "R1": "answer 1 with explanation",
+  "A1": "advice 1",
   ...
-  Qn → Rn → An
-
-========================
-ANSWER & EXPLANATION RULES:
-========================
-Rn (Answer):
-- Must directly answer Qn.
-- Must be logically correct based on the PDF.
-- Must include a clear explanation.
-- Explanation length: minimum 3–4 lines (or more if needed).
-- Must remain strictly within the PDF content.
-
-An (Advice / Tip):
-- MUST be a guidance instruction, NOT an explanation.
-- Purpose: guide the learner WHERE to review in the PDF.
-- Examples of intent (not literal text):
-  * Focus on unit X
-  * Review section X
-  * Revisit concept X in chapter X
-  * Go back to topic X in lesson X
-- MUST reference a specific unit, section, topic, or concept from the PDF.
-- MUST NOT introduce new information.
-
-========================
-INTERNAL SELF-AUDIT (HIDDEN – MANDATORY):
-========================
-Before producing output you MUST internally verify:
-- The ENTIRE PDF has been processed.
-- No question depends on external knowledge.
-- Difficulty behavior matches درجة_الصعوبة.
-- Questions are distributed across the document.
-- All indices from 1 to عدد_الأسئلة are present with NO gaps.
-
-========================
-OUTPUT FORMAT (STRICT):
-========================
-- Output MUST be VALID JSON ONLY
-- No Markdown
-- No extra text
-- No comments
-- Keys MUST follow the exact structure and order
-
-========================
-JSON SCHEMA (DYNAMIC – MANDATORY):
-========================
-{
-  "num": 0,
-  "Q1": "",
-  "R1": "",
-  "A1": "",
-  "...": "...",
-  "Qn": "",
-  "Rn": "",
-  "An": ""
-}
-
-========================
-OUTPUT RULES:
-========================
-- "num" MUST equal عدد_الأسئلة.
-- Keys MUST be generated dynamically from 1 → عدد_الأسئلة.
-- Do NOT skip, merge, rename, or reorder keys.
-- The LAST generated keys MUST be Qn, Rn, An where n = عدد_الأسئلة.
-
-========================
-FAILURE / INVALID PDF RESPONSE (MANDATORY):
-========================
-If the PDF is empty, unreadable, corrupted, truncated, or partially loaded, RETURN EXACTLY:
-{
-  "num": "Not Output",
-  "Q1": "Not Output",
-  "R1": "Not Output",
-  "A1": "Not Output"
-}
-
-========================
-ABSOLUTE CONSTRAINTS:
-========================
-- Output ONLY the final JSON
-- NEVER explain your steps
-- NEVER mention instructions
-- NEVER generate partial output
-- NEVER stop before reaching عدد_الأسئلة
-- Be strict, literal, and deterministic`;
+}`;
         }
         
         async function generateFlashcards() {
-            if (!selectedFile) {
-                showNotification('الرجاء اختيار ملف PDF أولاً', 'error');
-                return;
-            }
-            
+            if (!selectedFile) { showNotification('الرجاء اختيار ملف PDF أولاً', 'error'); return; }
             if (userCoins < currentSettings.totalCost) {
-                showNotification(`رصيدك غير كافي. تحتاج ${currentSettings.totalCost} عملة بينما رصيدك ${userCoins}`, 'error');
+                showNotification(`رصيدك غير كافي. تحتاج ${currentSettings.totalCost} عملة`, 'error');
                 return;
             }
             
             const generateBtn = document.getElementById('generate-btn');
-            if (generateBtn) {
-                generateBtn.disabled = true;
-                generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإنشاء...';
-            }
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإنشاء...';
             
             try {
-                const loadingMessages = [
-                    'عون يحلل المحتوى...',
-                    'عون يجهز الأسئلة...',
-                    'عون ينسق الفلاش كارد...',
-                    'عون يكمل العملية...'
-                ];
-                
-                let messageIndex = 0;
-                const loadingInterval = setInterval(() => {
-                    showLoading(loadingMessages[messageIndex]);
-                    messageIndex = (messageIndex + 1) % loadingMessages.length;
-                }, 2000);
+                showLoading('عون يجهز الأسئلة...');
                 
                 const base64 = await new Promise((resolve, reject) => {
                     const reader = new FileReader();
-                    reader.onload = () => {
-                        const result = reader.result;
-                        const base64Data = result.split(',')[1];
-                        resolve(base64Data);
-                    };
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
                     reader.onerror = reject;
                     reader.readAsDataURL(selectedFile);
                 });
                 
-                const prompt = createPrompt();
-                
                 const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
-                    headers: { 
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
-                    body: JSON.stringify({
-                        id: ID,
-                        pass: PASS,
-                        data: prompt,
-                        PDF_BASE64: base64
-                    })
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: ID, pass: PASS, data: createPrompt(), PDF_BASE64: base64 })
                 });
                 
-                clearInterval(loadingInterval);
-                
-                if (!response.ok) {
-                    throw new Error(`خطأ في السيرفر: ${response.status}`);
-                }
+                if (!response.ok) throw new Error('خطأ في السيرفر');
                 
                 const text = await response.text();
-                let result;
+                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                const result = JSON.parse(jsonMatch ? jsonMatch[0] : text);
                 
-                try {
-                    const jsonMatch = text.match(/\{[\s\S]*\}/);
-                    if (jsonMatch) {
-                        result = JSON.parse(jsonMatch[0]);
-                    } else {
-                        result = JSON.parse(text);
-                    }
-                } catch (e) {
-                    console.error('Error parsing JSON:', e, 'Response:', text);
-                    throw new Error('رد غير صالح من السيرفر');
-                }
-                
-                if (result.num === "Not Output" && result.Q1 === "Not Output" && result.R1 === "Not Output" && result.A1 === "Not Output") {
-                    throw new Error('الملف فارغ أو غير قابل للقراءة');
-                }
+                if (result.num === "Not Output") throw new Error('الملف غير قابل للقراءة');
                 
                 flashcardsData = result;
                 await deductCoins(currentSettings.totalCost);
                 await saveResultToDatabase(result);
                 
-                const questionsSection = document.getElementById('questions-section');
-                const flashcardsSection = document.getElementById('flashcards-section');
-                
-                if (questionsSection) questionsSection.classList.remove('show');
-                if (flashcardsSection) flashcardsSection.classList.add('show');
+                document.getElementById('questions-section').classList.remove('show');
+                document.getElementById('flashcards-section').classList.add('show');
                 
                 hideFooter();
-                
                 initializeFlashcards();
                 
                 showNotification('تم إنشاء الفلاش كارد بنجاح', 'success');
                 
             } catch (error) {
-                console.error('Error generating flashcards:', error);
-                showNotification('حدث خطأ أثناء إنشاء الفلاش كارد: ' + error.message, 'error');
+                console.error(error);
+                showNotification('حدث خطأ: ' + error.message, 'error');
             } finally {
                 hideLoading();
-                const generateBtn = document.getElementById('generate-btn');
-                if (generateBtn) {
-                    generateBtn.disabled = false;
-                    generateBtn.innerHTML = '<i class="fas fa-robot"></i> إنشاء الفلاش كارد';
-                }
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fas fa-robot"></i> إنشاء الفلاش كارد';
             }
         }
         
         async function deductCoins(amount) {
-            try {
-                const newCoins = userCoins - amount;
-                userCoins = newCoins;
-                
-                await database.ref(`users_Awn/${currentUser.id}/coin`).set(newCoins);
-                const coinsCount = document.getElementById('coins-count');
-                if (coinsCount) {
-                    coinsCount.textContent = newCoins;
-                }
-                
-            } catch (error) {
-                console.error('Error deducting coins:', error);
-                throw error;
-            }
+            userCoins -= amount;
+            await database.ref(`users_Awn/${currentUser.id}/coin`).set(userCoins);
+            document.getElementById('coins-count').textContent = userCoins;
         }
         
         async function saveResultToDatabase(result) {
-            try {
-                const recordId = 'flashcards_' + Date.now();
-                const recordData = {
-                    id: currentUser.id,
-                    process: 'فلاش كارد',
-                    data: result,  // هنا بنخزن الـ result كامل
-                    timestamp: Date.now(),
-                    fileName: fileInfo.name,
-                    baseCost: fileInfo.baseCost,
-                    extraCost: currentSettings.extraCost,
-                    totalCost: currentSettings.totalCost,
-                    pages: fileInfo.pages,
-                    questionsCount: currentSettings.questionsCount,
-                    difficulty: currentSettings.difficulty,
-                    answers: [] // هنا هنخزن الإجابات
-                };
-                
-                await database.ref(`records/${recordId}`).set(recordData);
-                currentRecordId = recordId;
-                
-            } catch (error) {
-                console.error('Error saving result to database:', error);
-            }
+            const recordId = 'flashcards_' + Date.now();
+            await database.ref(`records/${recordId}`).set({
+                id: currentUser.id,
+                data: result,
+                timestamp: Date.now(),
+                fileName: fileInfo.name,
+                baseCost: fileInfo.baseCost,
+                extraCost: currentSettings.extraCost,
+                totalCost: currentSettings.totalCost,
+                pages: fileInfo.pages,
+                questionsCount: currentSettings.questionsCount,
+                difficulty: currentSettings.difficulty,
+                answers: []
+            });
+            currentRecordId = recordId;
         }
         
         // ========== إدارة السجلات ==========
         
         function setupRecordsEvents() {
-            const recordsBtn = document.getElementById('records-btn');
-            const closeRecordsBtn = document.getElementById('close-records-btn');
-            const recordsModal = document.getElementById('records-modal');
-            const backFromFlashcards = document.getElementById('back-from-flashcards');
-            const backToRecordsBtn = document.getElementById('back-to-records-btn');
+            document.getElementById('records-btn').addEventListener('click', showRecords);
+            document.getElementById('close-records-btn').addEventListener('click', hideRecords);
+            document.getElementById('back-from-flashcards').addEventListener('click', handleBack);
+            document.getElementById('back-to-records-btn').addEventListener('click', () => {
+                document.getElementById('results-section').classList.remove('show');
+                showRecords();
+            });
+            document.getElementById('exit-btn').addEventListener('click', resetToMainScreen);
+            document.getElementById('records-modal').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) hideRecords();
+            });
             
-            if (recordsBtn) {
-                recordsBtn.addEventListener('click', showRecords);
-            }
-            
-            if (closeRecordsBtn) {
-                closeRecordsBtn.addEventListener('click', hideRecords);
-            }
-            
-            if (backFromFlashcards) {
-                backFromFlashcards.addEventListener('click', function() {
-                    if (isHistoricalMode) {
-                        showRecords();
-                    } else {
-                        resetToMainScreen();
-                    }
-                });
-            }
-            
-            if (backToRecordsBtn) {
-                backToRecordsBtn.addEventListener('click', function() {
-                    const resultsSection = document.getElementById('results-section');
-                    if (resultsSection) resultsSection.classList.remove('show');
-                    showRecords();
-                });
-            }
-            
-            if (recordsModal) {
-                recordsModal.addEventListener('click', function(e) {
-                    if (e.target === recordsModal) {
-                        hideRecords();
-                    }
-                });
-            }
+            document.getElementById('prev-question-btn').addEventListener('click', goToPreviousQuestion);
+            document.getElementById('next-question-btn').addEventListener('click', goToNextQuestion);
+        }
+        
+        function handleBack() {
+            if (isHistoricalMode) showRecords();
+            else resetToMainScreen();
         }
         
         async function showRecords() {
-            const recordsModal = document.getElementById('records-modal');
-            const recordsList = document.getElementById('records-list');
-            const noRecords = document.getElementById('no-records');
-            
-            if (!recordsModal || !recordsList || !noRecords) return;
-            
             showLoading('جاري تحميل السجلات...');
             
             try {
-                // جلب السجلات من المسار الصحيح في Firebase
-                const recordsRef = database.ref('records');
-                const snapshot = await recordsRef.orderByChild('id').equalTo(currentUser.id).once('value');
-                
+                const snapshot = await database.ref('records').orderByChild('id').equalTo(currentUser.id).once('value');
+                const recordsList = document.getElementById('records-list');
                 recordsList.innerHTML = '';
                 
                 if (snapshot.exists()) {
                     const records = [];
-                    snapshot.forEach(childSnapshot => {
-                        records.push({
-                            key: childSnapshot.key,
-                            ...childSnapshot.val()
-                        });
-                    });
-                    
-                    // ترتيب من الأحدث إلى الأقدم
+                    snapshot.forEach(child => records.push({ key: child.key, ...child.val() }));
                     records.sort((a, b) => b.timestamp - a.timestamp);
-                    
-                    records.forEach(record => {
-                        const recordCard = createRecordCard(record);
-                        recordsList.appendChild(recordCard);
-                    });
-                    
-                    noRecords.style.display = 'none';
+                    records.forEach(r => recordsList.appendChild(createRecordCard(r)));
+                    document.getElementById('no-records').style.display = 'none';
                 } else {
-                    noRecords.style.display = 'block';
+                    document.getElementById('no-records').style.display = 'block';
                 }
                 
-                recordsModal.classList.add('show');
-                
+                document.getElementById('records-modal').classList.add('show');
             } catch (error) {
-                console.error('Error loading records:', error);
-                showNotification('حدث خطأ أثناء تحميل السجلات', 'error');
+                console.error(error);
+                showNotification('حدث خطأ في تحميل السجلات', 'error');
             } finally {
                 hideLoading();
             }
@@ -3475,67 +2126,36 @@ ABSOLUTE CONSTRAINTS:
         function createRecordCard(record) {
             const card = document.createElement('div');
             card.className = 'record-card';
-            card.setAttribute('data-record-id', record.key);
             
             const date = new Date(record.timestamp);
-            const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} - ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
-            
-            // ✅ استخراج البيانات من المسار الصحيح - البيانات في record.data
+            const formattedDate = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
             const data = record.data || {};
             const num = data.num || record.questionsCount || 0;
             const answers = record.answers || [];
-            const answeredCount = answers.length;
-            const progressPercentage = num > 0 ? Math.round((answeredCount / num) * 100) : 0;
+            const progress = num > 0 ? Math.round((answers.length / num) * 100) : 0;
             
             card.innerHTML = `
                 <div class="record-header">
-                    <div class="record-file-name">
-                        <i class="fas fa-file-pdf"></i>
-                        <span>${record.fileName || 'ملف غير معروف'}</span>
-                    </div>
-                    <div class="record-date">
-                        <i class="far fa-clock"></i>
-                        ${formattedDate}
-                    </div>
+                    <div class="record-file-name"><i class="fas fa-file-pdf"></i><span>${record.fileName || 'ملف غير معروف'}</span></div>
+                    <div class="record-date"><i class="far fa-clock"></i>${formattedDate}</div>
                 </div>
                 <div class="record-details">
-                    <div class="record-detail-item">
-                        <i class="fas fa-question-circle"></i>
-                        ${num} سؤال
-                    </div>
-                    <div class="record-detail-item">
-                        <i class="fas fa-chart-line"></i>
-                        ${record.difficulty || 'غير محدد'}
-                    </div>
-                    <div class="record-detail-item">
-                        <i class="fas fa-file-alt"></i>
-                        ${record.pages || 0} صفحة
-                    </div>
-                    <div class="record-cost">
-                        <i class="fas fa-coins"></i>
-                        ${record.totalCost || record.baseCost || 0} عملة
-                    </div>
+                    <div class="record-detail-item"><i class="fas fa-question-circle"></i>${num} سؤال</div>
+                    <div class="record-detail-item"><i class="fas fa-chart-line"></i>${record.difficulty || 'متوسط'}</div>
+                    <div class="record-detail-item"><i class="fas fa-file-alt"></i>${record.pages || 0} صفحة</div>
                 </div>
                 <div class="record-progress">
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: ${progressPercentage}%"></div>
-                    </div>
-                    <div class="progress-text">
-                        ${answeredCount}/${num} (${progressPercentage}%)
-                    </div>
+                    <div class="progress-bar-container"><div class="progress-bar-fill" style="width: ${progress}%"></div></div>
+                    <div class="progress-text">${answers.length}/${num} (${progress}%)</div>
                 </div>
             `;
             
             card.addEventListener('click', () => loadRecord(record.key));
-            
             return card;
         }
         
         function hideRecords() {
-            const recordsModal = document.getElementById('records-modal');
-            if (recordsModal) {
-                recordsModal.classList.remove('show');
-            }
+            document.getElementById('records-modal').classList.remove('show');
         }
         
         async function loadRecord(recordId) {
@@ -3543,46 +2163,33 @@ ABSOLUTE CONSTRAINTS:
             showLoading('جاري تحميل السجل...');
             
             try {
-                const recordRef = database.ref(`records/${recordId}`);
-                const snapshot = await recordRef.once('value');
-                
+                const snapshot = await database.ref(`records/${recordId}`).once('value');
                 if (snapshot.exists()) {
                     const record = snapshot.val();
                     
-                    // ✅ المسار الصحيح: البيانات في record.data
-                    // ✅ الأسئلة في record.data.Q1, record.data.R1, record.data.A1
+                    // البيانات في record.data
                     flashcardsData = record.data || {};
-                    
-                    // ✅ التحقق من البيانات
-                    console.log('بيانات السجل:', {
-                        num: flashcardsData.num,
-                        Q1: flashcardsData.Q1,
-                        R1: flashcardsData.R1,
-                        A1: flashcardsData.A1
-                    });
-                    
                     userAnswers = record.answers || [];
                     isHistoricalMode = true;
                     currentRecordId = recordId;
                     
-                    // إخفاء أقسام الرفع والإعدادات
-                    const uploadSection = document.getElementById('upload-section');
-                    const questionsSection = document.getElementById('questions-section');
-                    const flashcardsSection = document.getElementById('flashcards-section');
+                    console.log('تم تحميل السجل:', flashcardsData);
                     
-                    if (uploadSection) uploadSection.style.display = 'none';
-                    if (questionsSection) questionsSection.classList.remove('show');
-                    if (flashcardsSection) flashcardsSection.classList.add('show');
+                    document.getElementById('upload-section').style.display = 'none';
+                    document.getElementById('questions-section').classList.remove('show');
+                    document.getElementById('flashcards-section').classList.add('show');
                     
                     hideFooter();
                     
-                    initializeFlashcards();
+                    // إظهار أزرار التنقل في الوضع التاريخي
+                    document.getElementById('nav-buttons').style.display = 'flex';
                     
+                    initializeFlashcards();
                     showNotification('تم تحميل السجل بنجاح', 'success');
                 }
             } catch (error) {
-                console.error('Error loading record:', error);
-                showNotification('حدث خطأ أثناء تحميل السجل', 'error');
+                console.error(error);
+                showNotification('حدث خطأ في تحميل السجل', 'error');
             } finally {
                 hideLoading();
             }
@@ -3591,471 +2198,216 @@ ABSOLUTE CONSTRAINTS:
         // ========== إدارة الفلاش كارد ==========
         
         function setupFlashcardsEvents() {
-            const flashcard = document.getElementById('flashcard');
-            if (flashcard) {
-                flashcard.addEventListener('click', flipCard);
-            }
-            
-            const soundBtn = document.getElementById('sound-btn');
-            if (soundBtn) {
-                soundBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    toggleSound();
-                });
-            }
-            
-            const answerSoundBtn = document.getElementById('answer-sound-btn');
-            if (answerSoundBtn) {
-                answerSoundBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    toggleAnswerSound();
-                });
-            }
-            
-            const masteredBtn = document.getElementById('mastered-btn');
-            if (masteredBtn) {
-                masteredBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    markAsMastered();
-                });
-            }
-            
-            const notMasteredBtn = document.getElementById('not-mastered-btn');
-            if (notMasteredBtn) {
-                notMasteredBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    markAsNotMastered();
-                });
-            }
-            
-            const adviceUnderstoodBtn = document.getElementById('advice-understood-btn');
-            if (adviceUnderstoodBtn) {
-                adviceUnderstoodBtn.addEventListener('click', nextQuestionFromAdvice);
-            }
-            
-            const exitBtn = document.getElementById('exit-btn');
-            if (exitBtn) {
-                exitBtn.addEventListener('click', resetToMainScreen);
-            }
+            document.getElementById('flashcard').addEventListener('click', flipCard);
+            document.getElementById('sound-btn').addEventListener('click', (e) => { e.stopPropagation(); toggleSound('question'); });
+            document.getElementById('answer-sound-btn').addEventListener('click', (e) => { e.stopPropagation(); toggleSound('answer'); });
+            document.getElementById('mastered-btn').addEventListener('click', (e) => { e.stopPropagation(); markAsMastered(); });
+            document.getElementById('not-mastered-btn').addEventListener('click', (e) => { e.stopPropagation(); markAsNotMastered(); });
+            document.getElementById('advice-understood-btn').addEventListener('click', nextQuestionFromAdvice);
         }
         
         function initializeFlashcards() {
-            // في الوضع التاريخي، نبدأ من أول سؤال
             currentQuestionIndex = 0;
-            
-            updateProgressIndicator();
-            loadQuestion(currentQuestionIndex);
-            updateAnswerButtonsState();
-            
-            const flashcard = document.getElementById('flashcard');
-            if (flashcard && flashcard.classList.contains('flipped')) {
-                flashcard.classList.remove('flipped');
-            }
+            if (!isHistoricalMode) document.getElementById('nav-buttons').style.display = 'none';
+            updateDisplay();
+            updateNavigationButtons();
         }
         
-        function updateAnswerButtonsState() {
+        function updateDisplay() {
+            if (!flashcardsData) return;
+            
+            const num = flashcardsData.num || 10;
+            
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            document.getElementById('total-questions').textContent = num;
+            document.getElementById('question-number').textContent = `السؤال #${currentQuestionIndex + 1}`;
+            document.getElementById('answer-number').textContent = `الإجابة #${currentQuestionIndex + 1}`;
+            document.getElementById('question-progress').textContent = `السؤال #${currentQuestionIndex + 1} من ${num}`;
+            document.getElementById('answer-progress').textContent = `الإجابة #${currentQuestionIndex + 1} من ${num}`;
+            
+            // تحميل السؤال والإجابة
+            document.getElementById('question-content').textContent = flashcardsData[`Q${currentQuestionIndex + 1}`] || 'السؤال غير متوفر';
+            document.getElementById('answer-content').textContent = flashcardsData[`R${currentQuestionIndex + 1}`] || 'الإجابة غير متوفرة';
+            
+            updateButtonsState();
+        }
+        
+        function updateButtonsState() {
             const masteredBtn = document.getElementById('mastered-btn');
             const notMasteredBtn = document.getElementById('not-mastered-btn');
-            
-            if (!masteredBtn || !notMasteredBtn) return;
-            
-            // البحث عن إجابة للسؤال الحالي
             const answer = userAnswers.find(a => a.questionIndex === currentQuestionIndex);
             
             if (answer) {
-                // تمت الإجابة على هذا السؤال مسبقاً
                 masteredBtn.classList.add('answered');
                 notMasteredBtn.classList.add('answered');
                 
                 if (answer.mastered) {
-                    masteredBtn.innerHTML = '<i class="fas fa-check-circle"></i> تمت الإجابة (اتقنت) ✓';
+                    masteredBtn.innerHTML = '<i class="fas fa-check-circle"></i> تمت الإجابة ✓';
                     notMasteredBtn.innerHTML = '<i class="fas fa-times-circle"></i> لم أتقن';
                 } else {
                     masteredBtn.innerHTML = '<i class="fas fa-check-circle"></i> اتقنت';
-                    notMasteredBtn.innerHTML = '<i class="fas fa-times-circle"></i> تمت الإجابة (لم أتقن) ✗';
+                    notMasteredBtn.innerHTML = '<i class="fas fa-times-circle"></i> تمت الإجابة ✗';
                 }
+                
+                if (isHistoricalMode) document.getElementById('nav-buttons').style.display = 'flex';
             } else {
-                // لم تتم الإجابة بعد
                 masteredBtn.classList.remove('answered');
                 notMasteredBtn.classList.remove('answered');
                 masteredBtn.innerHTML = '<i class="fas fa-check-circle"></i> اتقنت';
                 notMasteredBtn.innerHTML = '<i class="fas fa-times-circle"></i> لم أتقن';
+                
+                if (isHistoricalMode) document.getElementById('nav-buttons').style.display = 'none';
             }
         }
         
-        function updateProgressIndicator() {
-            const currentQuestion = document.getElementById('current-question');
-            const totalQuestions = document.getElementById('total-questions');
-            
-            if (currentQuestion && totalQuestions) {
-                currentQuestion.textContent = currentQuestionIndex + 1;
-                totalQuestions.textContent = flashcardsData.num || 10;
-            }
-        }
-        
-        function loadQuestion(index) {
-            if (!flashcardsData) {
-                console.error('لا توجد بيانات');
-                return;
-            }
-            
+        function updateNavigationButtons() {
+            if (!isHistoricalMode) return;
             const num = flashcardsData.num || 10;
-            
-            if (index < 0 || index >= num) return;
-            
-            const questionNumber = document.getElementById('question-number');
-            const answerNumber = document.getElementById('answer-number');
-            const questionContent = document.getElementById('question-content');
-            const answerContent = document.getElementById('answer-content');
-            const questionProgress = document.getElementById('question-progress');
-            const answerProgress = document.getElementById('answer-progress');
-            
-            if (questionNumber) {
-                questionNumber.textContent = `السؤال #${index + 1}`;
+            document.getElementById('prev-question-btn').disabled = currentQuestionIndex === 0;
+            document.getElementById('next-question-btn').disabled = currentQuestionIndex === num - 1;
+        }
+        
+        function goToPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                updateDisplay();
+                document.getElementById('flashcard').classList.remove('flipped');
             }
-            
-            if (answerNumber) {
-                answerNumber.textContent = `الإجابة #${index + 1}`;
-            }
-            
-            if (questionProgress) {
-                questionProgress.textContent = `السؤال #${index + 1} من ${num}`;
-            }
-            if (answerProgress) {
-                answerProgress.textContent = `الإجابة #${index + 1} من ${num}`;
-            }
-            
-            // ✅ تحميل السؤال من المسار الصحيح Q1, Q2, Q3...
-            const questionKey = `Q${index + 1}`;
-            if (questionContent) {
-                questionContent.textContent = flashcardsData[questionKey] || 'السؤال غير متوفر';
-                console.log(`تحميل سؤال ${questionKey}:`, flashcardsData[questionKey]);
-                questionContent.scrollTop = 0;
-            }
-            
-            // ✅ تحميل الإجابة من المسار الصحيح R1, R2, R3...
-            const answerKey = `R${index + 1}`;
-            if (answerContent) {
-                answerContent.textContent = flashcardsData[answerKey] || 'الإجابة غير متوفرة';
-                console.log(`تحميل إجابة ${answerKey}:`, flashcardsData[answerKey]);
-                answerContent.scrollTop = 0;
-            }
-            
-            updateProgressIndicator();
-            updateAnswerButtonsState();
-            
-            if (isSpeaking) {
-                window.speechSynthesis.cancel();
-                isSpeaking = false;
-                const soundBtn = document.getElementById('sound-btn');
-                const answerSoundBtn = document.getElementById('answer-sound-btn');
-                if (soundBtn) {
-                    soundBtn.classList.remove('active');
-                    soundBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-                }
-                if (answerSoundBtn) {
-                    answerSoundBtn.classList.remove('active');
-                    answerSoundBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-                }
+        }
+        
+        function goToNextQuestion() {
+            const num = flashcardsData.num || 10;
+            if (currentQuestionIndex < num - 1) {
+                currentQuestionIndex++;
+                updateDisplay();
+                document.getElementById('flashcard').classList.remove('flipped');
             }
         }
         
         function flipCard() {
-            const flashcard = document.getElementById('flashcard');
-            if (flashcard) {
-                flashcard.classList.toggle('flipped');
-            }
+            document.getElementById('flashcard').classList.toggle('flipped');
         }
         
-        function toggleSound() {
-            const soundBtn = document.getElementById('sound-btn');
-            const questionContent = document.getElementById('question-content');
+        function toggleSound(type) {
+            const text = document.getElementById(type === 'question' ? 'question-content' : 'answer-content').textContent;
             
-            if (!questionContent || !soundBtn) return;
-            
-            if (isSpeaking && currentSpeech) {
+            if (isSpeaking) {
                 window.speechSynthesis.cancel();
                 isSpeaking = false;
-                soundBtn.classList.remove('active');
-                soundBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                document.getElementById('sound-btn').classList.remove('active');
+                document.getElementById('answer-sound-btn').classList.remove('active');
             } else {
-                const speech = new SpeechSynthesisUtterance(questionContent.textContent);
+                const speech = new SpeechSynthesisUtterance(text);
                 speech.lang = 'ar-SA';
-                speech.rate = 0.9;
-                speech.onend = function() {
+                speech.onend = () => {
                     isSpeaking = false;
-                    soundBtn.classList.remove('active');
-                    soundBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    document.getElementById('sound-btn').classList.remove('active');
+                    document.getElementById('answer-sound-btn').classList.remove('active');
                 };
-                
                 window.speechSynthesis.speak(speech);
-                currentSpeech = speech;
                 isSpeaking = true;
-                soundBtn.classList.add('active');
-                soundBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-            }
-        }
-        
-        function toggleAnswerSound() {
-            const answerSoundBtn = document.getElementById('answer-sound-btn');
-            const answerContent = document.getElementById('answer-content');
-            
-            if (!answerContent || !answerSoundBtn) return;
-            
-            if (isSpeaking && currentSpeech) {
-                window.speechSynthesis.cancel();
-                isSpeaking = false;
-                answerSoundBtn.classList.remove('active');
-                answerSoundBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-            } else {
-                const speech = new SpeechSynthesisUtterance(answerContent.textContent);
-                speech.lang = 'ar-SA';
-                speech.rate = 0.9;
-                speech.onend = function() {
-                    isSpeaking = false;
-                    answerSoundBtn.classList.remove('active');
-                    answerSoundBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-                };
-                
-                window.speechSynthesis.speak(speech);
-                currentSpeech = speech;
-                isSpeaking = true;
-                answerSoundBtn.classList.add('active');
-                answerSoundBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                document.getElementById(type === 'question' ? 'sound-btn' : 'answer-sound-btn').classList.add('active');
             }
         }
         
         function markAsMastered() {
-            // التحقق مما إذا كان السؤال قد تمت الإجابة عليه مسبقاً
-            const isAnswered = userAnswers.some(a => a.questionIndex === currentQuestionIndex);
-            if (isAnswered) {
+            if (userAnswers.some(a => a.questionIndex === currentQuestionIndex)) {
                 showNotification('لقد أجبت على هذا السؤال مسبقاً', 'info');
                 return;
             }
             
-            const flashcard = document.getElementById('flashcard');
-            if (flashcard && flashcard.classList.contains('flipped')) {
-                flashcard.classList.remove('flipped');
-            }
-            
             saveAnswer(true);
             
-            setTimeout(() => {
-                goToNextQuestion();
-            }, 300);
+            if (isHistoricalMode) document.getElementById('nav-buttons').style.display = 'flex';
+            
+            setTimeout(goToNextQuestion, 300);
         }
         
         function markAsNotMastered() {
-            // التحقق مما إذا كان السؤال قد تمت الإجابة عليه مسبقاً
-            const isAnswered = userAnswers.some(a => a.questionIndex === currentQuestionIndex);
-            if (isAnswered) {
+            if (userAnswers.some(a => a.questionIndex === currentQuestionIndex)) {
                 showNotification('لقد أجبت على هذا السؤال مسبقاً', 'info');
                 return;
             }
             
             saveAnswer(false);
             
-            // إظهار النصيحة
+            if (isHistoricalMode) document.getElementById('nav-buttons').style.display = 'flex';
+            
             showAdvice();
         }
         
         function saveAnswer(mastered) {
-            try {
-                const answer = {
-                    questionIndex: currentQuestionIndex,
-                    mastered: mastered,
-                    timestamp: Date.now()
-                };
-                
-                userAnswers.push(answer);
-                updateAnswerButtonsState();
-                
-                // ✅ حفظ الإجابة في Firebase في المسار الصحيح
-                if (currentRecordId) {
-                    database.ref(`records/${currentRecordId}/answers`).set(userAnswers);
-                }
-                
-            } catch (error) {
-                console.error('Error saving answer:', error);
-            }
+            const answer = { questionIndex: currentQuestionIndex, mastered, timestamp: Date.now() };
+            userAnswers.push(answer);
+            if (currentRecordId) database.ref(`records/${currentRecordId}/answers`).set(userAnswers);
+            updateButtonsState();
         }
         
         function showAdvice() {
-            const adviceModal = document.getElementById('advice-modal');
-            const adviceText = document.getElementById('advice-text');
-            
-            if (!adviceModal || !adviceText) return;
-            
-            // ✅ تحميل النصيحة من المسار الصحيح A1, A2, A3...
-            const adviceKey = `A${currentQuestionIndex + 1}`;
-            if (flashcardsData && flashcardsData[adviceKey]) {
-                adviceText.textContent = flashcardsData[adviceKey];
-            } else {
-                adviceText.textContent = 'راجع المادة في القسم المتعلق بهذا السؤال للتعلم بشكل أفضل.';
-            }
-            
-            adviceModal.classList.add('show');
+            document.getElementById('advice-text').textContent = 
+                flashcardsData[`A${currentQuestionIndex + 1}`] || 'راجع المادة في القسم المتعلق بهذا السؤال';
+            document.getElementById('advice-modal').classList.add('show');
         }
         
         function nextQuestionFromAdvice() {
-            const adviceModal = document.getElementById('advice-modal');
-            if (adviceModal) {
-                adviceModal.classList.remove('show');
-            }
-            
+            document.getElementById('advice-modal').classList.remove('show');
             goToNextQuestion();
         }
         
-        function goToNextQuestion() {
-            const num = flashcardsData.num || 10;
-            
-            if (currentQuestionIndex < num - 1) {
-                currentQuestionIndex++;
-                loadQuestion(currentQuestionIndex);
-                
-                const flashcard = document.getElementById('flashcard');
-                if (flashcard && flashcard.classList.contains('flipped')) {
-                    flashcard.classList.remove('flipped');
-                }
-            } else {
-                showResults();
-            }
-        }
-        
         function showResults() {
-            const flashcardsSection = document.getElementById('flashcards-section');
-            const resultsSection = document.getElementById('results-section');
-            const resultsContent = document.getElementById('results-content');
-            const reviewLoading = document.getElementById('review-loading');
-            
-            if (flashcardsSection) flashcardsSection.classList.remove('show');
-            if (resultsSection) resultsSection.classList.add('show');
-            
+            document.getElementById('flashcards-section').classList.remove('show');
+            document.getElementById('results-section').classList.add('show');
             showFooter();
             
-            if (reviewLoading) reviewLoading.style.display = 'block';
-            if (resultsContent) resultsContent.classList.remove('show');
+            const masteredCount = userAnswers.filter(a => a.mastered).length;
+            const num = flashcardsData.num || 10;
+            const percentage = Math.round((masteredCount / num) * 100);
+            
+            document.getElementById('mastered-count').textContent = masteredCount;
+            document.getElementById('not-mastered-count').textContent = userAnswers.filter(a => !a.mastered).length;
+            document.getElementById('progress-percentage').textContent = percentage + '%';
+            
+            const progressFill = document.getElementById('progress-fill');
+            progressFill.style.transform = `rotate(${percentage * 3.6}deg)`;
+            progressFill.className = `progress-circle-fill ${percentage >= 50 ? 'success-fill' : 'failure-fill'}`;
+            progressFill.style.setProperty('--percentage', `${percentage}%`);
             
             setTimeout(() => {
-                if (reviewLoading) reviewLoading.style.display = 'none';
-                if (resultsContent) resultsContent.classList.add('show');
-                
-                const masteredCount = userAnswers.filter(answer => answer.mastered).length;
-                const notMasteredCount = userAnswers.filter(answer => !answer.mastered).length;
-                const totalAnswered = userAnswers.length;
-                const num = flashcardsData.num || 10;
-                
-                const percentage = num > 0 ? Math.round((masteredCount / num) * 100) : 0;
-                
-                const masteredCountElem = document.getElementById('mastered-count');
-                const notMasteredCountElem = document.getElementById('not-mastered-count');
-                const totalAnsweredElem = document.getElementById('total-answered');
-                const progressPercentage = document.getElementById('progress-percentage');
-                const progressFill = document.getElementById('progress-fill');
-                const successMessage = document.getElementById('success-message');
-                const failureMessage = document.getElementById('failure-message');
-                const encouragementText = document.getElementById('encouragement-text');
-                
-                if (masteredCountElem) masteredCountElem.textContent = masteredCount;
-                if (notMasteredCountElem) notMasteredCountElem.textContent = notMasteredCount;
-                if (totalAnsweredElem) totalAnsweredElem.textContent = totalAnswered;
-                if (progressPercentage) {
-                    progressPercentage.textContent = `${percentage}%`;
-                }
-                
-                if (progressFill) {
-                    const rotation = (percentage / 100) * 360;
-                    progressFill.style.transform = `rotate(${rotation}deg)`;
-                    progressFill.className = `progress-circle-fill ${percentage >= 50 ? 'success-fill' : 'failure-fill'}`;
-                    progressFill.style.setProperty('--percentage', `${percentage}%`);
-                }
-                
-                if (successMessage && failureMessage) {
-                    if (percentage >= 50) {
-                        successMessage.style.display = 'block';
-                        failureMessage.style.display = 'none';
-                    } else {
-                        successMessage.style.display = 'none';
-                        failureMessage.style.display = 'block';
-                    }
-                }
-                
-                if (encouragementText) {
-                    if (percentage >= 90) {
-                        encouragementText.textContent = 'أداء استثنائي! لقد أظهرت فهماً ممتازاً للمادة 📚 مبروك على هذا الإنجاز!';
-                    } else if (percentage >= 70) {
-                        encouragementText.textContent = 'عمل ممتاز! لقد أظهرت فهماً جيداً للمادة، استمر في التقدم 💪';
-                    } else if (percentage >= 50) {
-                        encouragementText.textContent = 'عمل جيد! لقد فهمت معظم المحتوى، يمكنك التحسن بالممارسة 📖';
-                    } else if (percentage >= 30) {
-                        encouragementText.textContent = 'لا بأس! كلنا نتعلم من أخطائنا، استمر في المراجعة والتعلم 📝';
-                    } else {
-                        encouragementText.textContent = 'لا تستسلم! التعلم رحلة تحتاج صبراً، استمر في المحاولة 🌟';
-                    }
-                }
-                
-            }, 3000);
+                document.getElementById('review-loading').style.display = 'none';
+                document.getElementById('results-content').classList.add('show');
+            }, 2000);
         }
         
         // ========== تهيئة التطبيق ==========
         
         async function initApp() {
-            showLoading('جاري تحميل البيانات...');
+            showLoading('جاري تحميل التطبيق...');
             
-            const unsubscribe = auth.onAuthStateChanged(async (user) => {
-                if (!user) {
-                    hideLoading();
-                    window.location.replace('login.html');
-                    return;
-                }
+            auth.onAuthStateChanged(async (user) => {
+                if (!user) { window.location.replace('login.html'); return; }
                 
-                try {
-                    await setupUser();
-                    setupFileUpload();
-                    setupQuestionsEvents();
-                    setupRecordsEvents();
-                    setupFlashcardsEvents();
-                    
-                    const logo = document.getElementById('home-logo');
-                    if (logo) {
-                        logo.addEventListener('click', resetToMainScreen);
-                    }
-                    
-                    hideLoading();
-                    
-                } catch (error) {
-                    console.error('Error initializing app:', error);
-                    hideLoading();
-                    showNotification('حدث خطأ في تحميل التطبيق', 'error');
-                } finally {
-                    setTimeout(() => {
-                        unsubscribe();
-                    }, 100);
-                }
+                await loadUserData();
+                setupFileUpload();
+                setupQuestionsEvents();
+                setupRecordsEvents();
+                setupFlashcardsEvents();
+                
+                document.getElementById('home-logo').addEventListener('click', resetToMainScreen);
+                hideLoading();
             });
         }
         
-        history.pushState(null, null, window.location.href);
-        window.addEventListener('popstate', function(event) {
-            history.pushState(null, null, window.location.href);
-        });
-        
         document.addEventListener('DOMContentLoaded', initApp);
         
-        document.addEventListener('click', function(event) {
-            const adviceModal = document.getElementById('advice-modal');
-            const adviceContent = document.querySelector('.advice-content');
-            
-            if (adviceModal && adviceModal.classList.contains('show') && 
-                adviceContent && !adviceContent.contains(event.target)) {
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('advice-modal');
+            if (modal.classList.contains('show') && !e.target.closest('.advice-content')) {
                 nextQuestionFromAdvice();
             }
         });
         
-        window.addEventListener('beforeunload', function() {
-            if (isSpeaking && currentSpeech) {
-                window.speechSynthesis.cancel();
-            }
+        window.addEventListener('beforeunload', () => {
+            if (isSpeaking) window.speechSynthesis.cancel();
         });
     </script>
 </body>
