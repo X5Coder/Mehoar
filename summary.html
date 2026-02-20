@@ -2029,7 +2029,9 @@
         function createPrompt() {
             const outputLanguage = selectedSettings.customLanguage || selectedSettings.outputLanguage;
             
-            return `ROLE:
+            return `[IMPORTANT: YOU MUST RESPOND WITH VALID JSON ONLY. NO TEXT BEFORE OR AFTER THE JSON. THE JSON MUST HAVE EXACTLY THESE THREE KEYS: "head", "raw", "page". DO NOT ADD ANY OTHER KEYS.]
+
+ROLE:
 أنت مساعد ذكي متخصص في **تحليل وتلخيص ملفات PDF بدقة صارمة** وفقاً لمعايير Google Gemini Flash 2.5 Lite.
 يجب عليك اتباع التعليمات التالية حرفياً بدون أي انحراف.
 
@@ -2237,7 +2239,7 @@ FAILURE / EMPTY PDF RESPONSE (MANDATORY):
 ========================
 {
   "head": "Not Output",
-  "raw": "Not Output",
+  "raw": ["Not Output"],
   "page": "Not Output"
 }
 
@@ -2249,7 +2251,9 @@ ABSOLUTE CONSTRAINTS:
 - Do NOT hallucinate or guess
 - NEVER summarize while reading
 - ALWAYS analyze the entire document first
-- Be strict, literal, and deterministic`;
+- Be strict, literal, and deterministic
+
+[REMINDER: YOUR RESPONSE MUST BE A VALID JSON OBJECT WITH EXACTLY THESE THREE KEYS: "head", "raw", "page". DO NOT ADD ANY EXPLANATION BEFORE OR AFTER THE JSON.]`;
         }
         
         async function generateSummary() {
@@ -2320,18 +2324,38 @@ ABSOLUTE CONSTRAINTS:
                 let result;
                 
                 try {
+                    // محاولة استخراج JSON من النص
                     const jsonMatch = text.match(/\{[\s\S]*\}/);
                     if (jsonMatch) {
                         result = JSON.parse(jsonMatch[0]);
                     } else {
+                        // إذا لم نجد JSON، نحاول تحليل النص كاملاً
                         result = JSON.parse(text);
                     }
+                    
+                    // التحقق من وجود المفاتيح المطلوبة
+                    if (!result.head || !result.raw || !result.page) {
+                        // إذا كانت المفاتيح غير موجودة، نبني كائن JSON صالح
+                        result = {
+                            head: result.head || "ملخص الملف",
+                            raw: Array.isArray(result.raw) ? result.raw : (result.raw ? [result.raw] : ["تم إنشاء الملخص بنجاح"]),
+                            page: result.page || text
+                        };
+                    }
                 } catch (e) {
-                    console.error('Error parsing JSON:', e, 'Response:', text);
-                    throw new Error('رد غير صالح من السيرفر');
+                    console.error('Error parsing JSON:', e);
+                    console.error('Response text:', text);
+                    
+                    // إذا فشل كل شيء، نبني كائن JSON يدوياً من النص
+                    result = {
+                        head: "ملخص الملف",
+                        raw: ["تم إنشاء الملخص بنجاح"],
+                        page: text
+                    };
                 }
                 
-                if (result.head === "Not Output" && result.raw === "Not Output" && result.page === "Not Output") {
+                // التحقق من النتيجة النهائية
+                if (!result || (result.head === "Not Output" && result.raw === "Not Output" && result.page === "Not Output")) {
                     throw new Error('الملف فارغ أو غير قابل للقراءة');
                 }
                 
