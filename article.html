@@ -691,7 +691,7 @@
         .submit-final-btn:active:not(:disabled) { transform: scale(0.98); }
         .submit-final-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Evaluation Cards - محسنة لعرض كل المعلومات */
+        /* Evaluation Cards */
         .evaluation-card {
             background: white;
             border-radius: var(--border-radius-xl);
@@ -879,7 +879,7 @@
             cursor: pointer;
         }
 
-        /* Records Modal - محسن للكثير من النصوص */
+        /* Records Modal */
         .records-modal {
             position: fixed;
             top: 0;
@@ -995,7 +995,11 @@
             font-size: 0.9rem;
         }
 
-        /* Notification - متحرك من اليمين */
+        .record-status.pending {
+            color: var(--warning-color);
+        }
+
+        /* Notification */
         .notification {
             position: fixed;
             top: calc(var(--navbar-height) + 10px);
@@ -1039,7 +1043,7 @@
         <div class="loading-text" id="loading-text">جاري التحميل...</div>
     </div>
 
-    <!-- Notification - متحرك من اليمين -->
+    <!-- Notification -->
     <div class="notification" id="notification">
         <div class="notification-content">
             <div class="notification-icon" id="notification-icon"><i class="fas fa-info-circle"></i></div>
@@ -1198,6 +1202,7 @@
         let currentQuestionIndex = 0;
         let currentRecordId = null;
         let evaluationData = null;
+        let currentRecord = null;
 
         const SERVER = "https://wet-aidan-kimon-66eadaf6.koyeb.app";
         const ID = "12345";
@@ -1355,7 +1360,6 @@
                 }
                 document.getElementById('upload-section').style.display = 'none';
                 document.getElementById('settings-section').style.display = 'block';
-                document.getElementById('settings-section').classList.add('show');
             });
         }
 
@@ -1415,11 +1419,11 @@
         function createPrompt1() {
             let difficultyDesc = '';
             if (currentSettings.difficulty === 'سهل') {
-                difficultyDesc = 'Direct questions, clearly stated facts found explicitly in the PDF. Questions must be simple and answers can be found directly in the text.';
+                difficultyDesc = 'Direct questions based on clearly stated facts in the PDF. Questions should be simple and answers must be explicitly found in the text.';
             } else if (currentSettings.difficulty === 'متوسط') {
-                difficultyDesc = 'Questions require understanding relationships between concepts in the PDF. They are directly based on the text but require connecting ideas.';
+                difficultyDesc = 'Questions require understanding relationships between concepts in the PDF. They are directly based on the text but require connecting ideas from different sections.';
             } else {
-                difficultyDesc = 'Inference-based questions. Require synthesis between multiple sections of the PDF. Questions must be derived logically from the document but not directly quoted. Require analytical reasoning.';
+                difficultyDesc = 'Inference-based questions that require deep understanding and synthesis between multiple sections of the PDF. Questions must be derived logically from the document and require analytical reasoning.';
             }
 
             return `SYSTEM ROLE: STRICT PDF ESSAY QUESTION GENERATOR ENGINE
@@ -1536,7 +1540,6 @@ Keys must increment sequentially. No extra fields.`;
                 // عرض قسم الأسئلة
                 document.getElementById('settings-section').style.display = 'none';
                 document.getElementById('essay-section').style.display = 'block';
-                document.getElementById('essay-section').classList.add('show');
                 hideFooter();
 
                 await saveRecord('generated');
@@ -1553,6 +1556,8 @@ Keys must increment sequentially. No extra fields.`;
         }
 
         function renderQuestion() {
+            if (!essayQuestions) return;
+            
             const qKey = `Q${currentQuestionIndex + 1}`;
             document.getElementById('question-text').textContent = essayQuestions[qKey] || 'السؤال غير متوفر';
             document.getElementById('answer-textarea').value = userAnswers[currentQuestionIndex] || '';
@@ -1570,6 +1575,7 @@ Keys must increment sequentially. No extra fields.`;
         }
 
         function checkAllAnswered() {
+            if (!userAnswers) return;
             const allAnswered = userAnswers.every(ans => ans && ans.trim().length > 0);
             document.getElementById('submit-final-btn').disabled = !allAnswered;
         }
@@ -1582,7 +1588,6 @@ Keys must increment sequentially. No extra fields.`;
                 userAnswers[currentQuestionIndex] = this.value;
                 if (currentRecordId) {
                     database.ref(`records/${currentRecordId}/userAnswers`).set(userAnswers);
-                    database.ref(`records/${currentRecordId}/lastUpdate`).set(Date.now());
                 }
                 checkAllAnswered();
             });
@@ -1605,7 +1610,7 @@ Keys must increment sequentially. No extra fields.`;
 
         // ===== تسليم الإجابات (البرومبت الثاني) =====
         document.getElementById('submit-final-btn').addEventListener('click', async function() {
-            if (userAnswers.some(ans => !ans || !ans.trim())) {
+            if (!userAnswers || userAnswers.some(ans => !ans || !ans.trim())) {
                 showNotification('أكمل جميع الإجابات أولاً', 'error');
                 return;
             }
@@ -1614,7 +1619,7 @@ Keys must increment sequentially. No extra fields.`;
             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التقييم...';
 
             try {
-                showLoading('عون يصحح الإجابات...');
+                showLoading('عون يقيم إجاباتك...');
 
                 let qaText = '';
                 for (let i = 0; i < currentSettings.questionsCount; i++) {
@@ -1648,12 +1653,12 @@ CORE DIRECTIVE
 2) For EACH question:
    • Extract the IDEAL MODEL ANSWER strictly from the PDF.
    • Compare the user's answer to the model answer.
-   • Compute SEMANTIC SIMILARITY PERCENTAGE (0–100) based on:
-     - Concept accuracy
-     - Coverage completeness
-     - Logical correctness
-     - Terminology precision
-   • Provide personalized advice for improvement.
+   • Calculate PRECISE SIMILARITY PERCENTAGE (0–100) based on:
+     - Concept accuracy (how many key points are covered)
+     - Coverage completeness (did they miss important parts)
+     - Logical correctness (is the reasoning correct)
+     - Terminology precision (did they use correct terms)
+   • Provide personalized advice SPECIFIC to their answer, explaining what they missed and how to improve.
 
 ----------------------------------
 OUTPUT FORMAT (STRICT JSON ONLY)
@@ -1663,10 +1668,10 @@ Return ONLY this structure for ${currentSettings.questionsCount} questions:
 {
   "C1": "الإجابة النموذجية الدقيقة من الملف",
   "X1": "نسبة الدقة %",
-  "B1": "نصيحة مخصصة للتحسين",
-  "C2": "الإجابة النموذجية",
-  "X2": "النسبة %",
-  "B2": "النصيحة"
+  "B1": "نصيحة مخصصة للتحسين بناءً على إجابة المستخدم",
+  "C2": "...",
+  "X2": "...",
+  "B2": "..."
 }
 
 Continue sequentially. No extra keys.`;
@@ -1704,7 +1709,6 @@ Continue sequentially. No extra keys.`;
                 displayEvaluation();
                 document.getElementById('essay-section').style.display = 'none';
                 document.getElementById('evaluation-section').style.display = 'block';
-                document.getElementById('evaluation-section').classList.add('show');
                 showNotification('تم التقييم بنجاح', 'success');
 
             } catch (error) {
@@ -1754,13 +1758,13 @@ Continue sequentially. No extra keys.`;
                         
                         <div class="similarity-box">
                             <div class="similarity-percentage">${percentage}%</div>
-                            <div class="similarity-label">نسبة التطابق</div>
+                            <div class="similarity-label">نسبة التطابق المحسوبة من الذكاء الاصطناعي</div>
                         </div>
                         
                         <div class="advice-box">
                             <div class="advice-title">
                                 <i class="fas fa-lightbulb" style="color: #FFC107;"></i>
-                                نصيحة للتحسين:
+                                نصيحة مخصصة لإجابتك:
                             </div>
                             <div class="advice-text">${advice}</div>
                         </div>
@@ -1783,7 +1787,8 @@ Continue sequentially. No extra keys.`;
                 questions: essayQuestions,
                 userAnswers: userAnswers,
                 timestamp: Date.now(),
-                evaluation: evaluationData || null
+                evaluation: evaluationData || null,
+                submitted: !!evaluationData
             };
             await database.ref(`records/${recordId}`).set(recordData);
         }
@@ -1813,6 +1818,7 @@ Continue sequentially. No extra keys.`;
             modal.classList.add('show');
 
             try {
+                // جلب جميع السجلات من Firebase مباشرة
                 const snapshot = await database.ref('records')
                     .orderByChild('id')
                     .equalTo(currentUser.id)
@@ -1822,7 +1828,15 @@ Continue sequentially. No extra keys.`;
 
                 if (snapshot.exists()) {
                     const records = [];
-                    snapshot.forEach(child => records.push({ key: child.key, ...child.val() }));
+                    snapshot.forEach(child => {
+                        const record = child.val();
+                        records.push({
+                            key: child.key,
+                            ...record
+                        });
+                    });
+                    
+                    // ترتيب من الأحدث إلى الأقدم
                     records.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
                     records.forEach(rec => {
@@ -1830,7 +1844,8 @@ Continue sequentially. No extra keys.`;
                         card.className = 'record-card';
                         
                         const date = new Date(rec.timestamp || Date.now()).toLocaleString('ar-EG');
-                        const status = rec.evaluation ? '✅ تم التقييم' : '⏳ لم يقيم بعد';
+                        const status = rec.evaluation ? '✅ تم التقييم' : '⏳ في انتظار الإجابة';
+                        const statusClass = rec.evaluation ? 'record-status' : 'record-status pending';
                         const settings = rec.settings || {};
                         
                         card.innerHTML = `
@@ -1843,7 +1858,7 @@ Continue sequentially. No extra keys.`;
                                 <span><i class="fas fa-coins"></i> ${settings.totalCost || 0} عملة</span>
                             </div>
                             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                                <span class="record-status">${status}</span>
+                                <span class="${statusClass}">${status}</span>
                                 <span style="color:var(--text-secondary); font-size:0.85rem;">${date}</span>
                             </div>
                         `;
@@ -1866,30 +1881,34 @@ Continue sequentially. No extra keys.`;
         function loadEssayRecord(rec) {
             document.getElementById('records-modal').classList.remove('show');
 
+            // تحميل البيانات من السجل
             fileInfo = { name: rec.fileName, baseCost: 5 };
             currentSettings = rec.settings || { questionsCount: 8, difficulty: 'سهل', extraCost: 0, totalCost: 5 };
             essayQuestions = rec.questions || {};
             userAnswers = rec.userAnswers || [];
             evaluationData = rec.evaluation || null;
             currentRecordId = rec.key;
+            currentRecord = rec;
 
+            // إخفاء كل الأقسام
             document.getElementById('upload-section').style.display = 'none';
             document.getElementById('settings-section').style.display = 'none';
             document.getElementById('essay-section').style.display = 'none';
             document.getElementById('evaluation-section').style.display = 'none';
 
             if (evaluationData) {
+                // إذا كان السجل مقيم، اعرض النتائج
                 displayEvaluation();
                 document.getElementById('evaluation-section').style.display = 'block';
-                document.getElementById('evaluation-section').classList.add('show');
+                hideFooter();
             } else {
+                // إذا لم يكن مقيم، اعرض الأسئلة للإجابة
                 document.getElementById('essay-section').style.display = 'block';
-                document.getElementById('essay-section').classList.add('show');
                 currentQuestionIndex = 0;
+                selectedFile = null; // لا يمكن استرجاع الملف
                 renderQuestion();
+                hideFooter();
             }
-
-            hideFooter();
         }
 
         // ===== الصفحة الرئيسية =====
