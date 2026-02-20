@@ -884,25 +884,24 @@
 
         .record-card:active { transform: scale(0.98); background: rgba(139,115,85,0.08); }
 
-        /* Notification */
+        /* Notification - متحرك من اليمين */
         .notification {
             position: fixed;
             top: calc(var(--navbar-height) + 10px);
-            right: 16px;
-            left: 16px;
+            right: 20px;
             background: white;
             border-radius: var(--border-radius);
             padding: 16px;
             box-shadow: var(--shadow-medium);
             z-index: 20001;
-            max-width: 400px;
-            margin: 0 auto;
-            transform: translateY(-150%);
-            transition: transform 0.3s;
+            max-width: 350px;
+            width: calc(100% - 40px);
+            transform: translateX(150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border-right: 5px solid var(--info-color);
         }
 
-        .notification.show { transform: translateY(0); }
+        .notification.show { transform: translateX(0); }
         .notification.success { border-right-color: var(--success-color); }
         .notification.error { border-right-color: var(--error-color); }
 
@@ -929,7 +928,7 @@
         <div class="loading-text" id="loading-text">جاري التحميل...</div>
     </div>
 
-    <!-- Notification -->
+    <!-- Notification - متحرك من اليمين -->
     <div class="notification" id="notification">
         <div class="notification-content">
             <div class="notification-icon" id="notification-icon"><i class="fas fa-info-circle"></i></div>
@@ -1081,7 +1080,7 @@
         let currentUser = null;
         let userCoins = 0;
         let selectedFile = null;
-        let fileInfo = { name: '', pages: 0, baseCost: 5 }; // baseCost ثابت 5
+        let fileInfo = { name: '', pages: 0, baseCost: 5 };
         let currentSettings = { questionsCount: 8, difficulty: 'سهل', extraCost: 0, totalCost: 5 };
         let essayQuestions = {};
         let userAnswers = [];
@@ -1266,11 +1265,10 @@
                 const buffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument(buffer).promise;
                 
-                // حساب عدد الصفحات
                 fileInfo = {
                     name: file.name,
                     pages: pdf.numPages,
-                    baseCost: 5 // ثابت كما هو مطلوب
+                    baseCost: 5
                 };
 
                 document.getElementById('page-count').textContent = fileInfo.pages;
@@ -1344,9 +1342,7 @@ Keys must increment sequentially until ${currentSettings.questionsCount}. No ext
         }
 
         function cleanJSONResponse(text) {
-            // محاولة استخراج JSON من النص
             try {
-                // البحث عن أول { وآخر }
                 const start = text.indexOf('{');
                 const end = text.lastIndexOf('}');
                 if (start !== -1 && end !== -1) {
@@ -1401,25 +1397,12 @@ Keys must increment sequentially until ${currentSettings.questionsCount}. No ext
                     throw new Error('فشل في إنشاء الأسئلة');
                 }
 
-                // تنظيف وتحليل JSON
                 const questions = cleanJSONResponse(text);
                 if (!questions) {
                     throw new Error('تنسيق الرد غير صالح');
                 }
 
-                // التأكد من العدد الصحيح
-                const questionCount = Object.keys(questions).length;
-                if (questionCount !== currentSettings.questionsCount) {
-                    // نحاول إعادة بناء الأسئلة
-                    const adjustedQuestions = {};
-                    let index = 1;
-                    for (let i = 1; i <= currentSettings.questionsCount; i++) {
-                        adjustedQuestions[`Q${i}`] = questions[`Q${i}`] || `سؤال ${i}`;
-                    }
-                    essayQuestions = adjustedQuestions;
-                } else {
-                    essayQuestions = questions;
-                }
+                essayQuestions = questions;
 
                 // خصم العملات
                 userCoins -= currentSettings.totalCost;
@@ -1436,7 +1419,6 @@ Keys must increment sequentially until ${currentSettings.questionsCount}. No ext
                 document.getElementById('essay-section').classList.add('show');
                 hideFooter();
 
-                // حفظ السجل الأولي
                 await saveRecord('generated');
                 renderQuestion();
                 showNotification('تم إنشاء الأسئلة بنجاح', 'success');
@@ -1456,10 +1438,15 @@ Keys must increment sequentially until ${currentSettings.questionsCount}. No ext
             document.getElementById('answer-textarea').value = userAnswers[currentQuestionIndex] || '';
             document.getElementById('current-q-num').textContent = currentQuestionIndex + 1;
             document.getElementById('total-q-num').textContent = currentSettings.questionsCount;
-            document.getElementById('progress-fill').style.width = `${((currentQuestionIndex + 1) / currentSettings.questionsCount) * 100}%`;
+            
+            const progress = ((currentQuestionIndex + 1) / currentSettings.questionsCount) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+            
             document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
             document.getElementById('next-btn').disabled = currentQuestionIndex === currentSettings.questionsCount - 1;
             document.getElementById('display-difficulty').textContent = currentSettings.difficulty;
+            
+            // التحقق من جميع الإجابات وتمكين/تعطيل زر التسليم
             checkAllAnswered();
         }
 
@@ -1510,7 +1497,6 @@ Keys must increment sequentially until ${currentSettings.questionsCount}. No ext
             try {
                 showLoading('عون يصحح الإجابات...');
 
-                // بناء نص الأسئلة والإجابات
                 let qaText = '';
                 for (let i = 0; i < currentSettings.questionsCount; i++) {
                     qaText += `Q${i + 1} : ${essayQuestions[`Q${i + 1}`]}\nR${i + 1} : ${userAnswers[i]}\n`;
@@ -1585,13 +1571,11 @@ Continue sequentially. No extra keys.`;
 
                 evaluationData = evaluation;
 
-                // حفظ النتائج
                 if (currentRecordId) {
                     await database.ref(`records/${currentRecordId}/evaluation`).set(evaluationData);
                     await database.ref(`records/${currentRecordId}/submitted`).set(true);
                 }
 
-                // عرض التقييم
                 displayEvaluation();
                 document.getElementById('essay-section').style.display = 'none';
                 document.getElementById('evaluation-section').style.display = 'block';
@@ -1724,7 +1708,6 @@ Continue sequentially. No extra keys.`;
         function loadEssayRecord(rec) {
             document.getElementById('records-modal').classList.remove('show');
 
-            // تعيين البيانات
             fileInfo = { name: rec.fileName, baseCost: 5 };
             currentSettings = rec.settings || { questionsCount: 8, difficulty: 'سهل', extraCost: 0, totalCost: 5 };
             essayQuestions = rec.questions || {};
@@ -1732,7 +1715,6 @@ Continue sequentially. No extra keys.`;
             evaluationData = rec.evaluation || null;
             currentRecordId = rec.key;
 
-            // إخفاء كل الأقسام
             document.getElementById('upload-section').style.display = 'none';
             document.getElementById('settings-section').style.display = 'none';
             document.getElementById('essay-section').style.display = 'none';
@@ -1777,7 +1759,6 @@ Continue sequentially. No extra keys.`;
                 setupRecords();
                 setupAutoSave();
 
-                // إخفاء الأقسام غير الضرورية
                 document.getElementById('settings-section').style.display = 'none';
                 document.getElementById('essay-section').style.display = 'none';
                 document.getElementById('evaluation-section').style.display = 'none';
@@ -1786,7 +1767,6 @@ Continue sequentially. No extra keys.`;
             });
         }
 
-        // منع العودة للخلف
         history.pushState(null, null, location.href);
         window.addEventListener('popstate', () => history.pushState(null, null, location.href));
 
