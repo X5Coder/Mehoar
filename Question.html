@@ -164,6 +164,44 @@
             gap: 18px;
         }
         
+        .records-btn {
+            background: rgba(139, 115, 85, 0.15);
+            color: var(--accent-primary);
+            padding: 12px 22px;
+            border-radius: var(--border-radius-lg);
+            font-weight: 700;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-light);
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            border: 1px solid rgba(139, 115, 85, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .records-btn:hover {
+            background: rgba(139, 115, 85, 0.25);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .records-btn:active {
+            transform: scale(0.98);
+            background: rgba(139, 115, 85, 0.3);
+        }
+        
+        .records-btn i {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+        
+        .records-btn:hover i {
+            transform: rotate(15deg);
+        }
+        
         .coins-display {
             background: var(--gradient-primary);
             color: white;
@@ -180,6 +218,10 @@
         .coins-display:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-medium);
+        }
+        
+        .coins-display:active {
+            transform: scale(0.98);
         }
         
         /* Main Content */
@@ -253,6 +295,10 @@
             border-color: var(--accent-primary);
             background: rgba(212, 165, 116, 0.1);
             transform: translateY(-2px);
+        }
+        
+        .upload-area:active {
+            transform: scale(0.99);
         }
         
         .upload-icon {
@@ -444,6 +490,10 @@
             transform: translateY(-3px);
         }
         
+        .type-btn:active {
+            transform: scale(0.98);
+        }
+        
         .type-btn.selected {
             background: var(--gradient-primary);
             color: white;
@@ -498,6 +548,10 @@
             transform: scale(1.2);
         }
         
+        .slider::-webkit-slider-thumb:active {
+            transform: scale(1.1);
+        }
+        
         .max-questions {
             text-align: center;
             color: var(--text-secondary);
@@ -534,6 +588,10 @@
         .option-btn:hover {
             border-color: var(--accent-primary);
             transform: translateY(-3px);
+        }
+        
+        .option-btn:active {
+            transform: scale(0.98);
         }
         
         .option-btn.selected {
@@ -579,6 +637,10 @@
         .generate-btn:hover:not(:disabled) {
             transform: translateY(-5px);
             box-shadow: var(--shadow-button-hover);
+        }
+        
+        .generate-btn:active:not(:disabled) {
+            transform: scale(0.98);
         }
         
         .generate-btn:disabled {
@@ -753,6 +815,10 @@
             transform: translateX(-5px);
         }
         
+        .option-item:active {
+            transform: scale(0.99) translateX(-5px);
+        }
+        
         .option-item.selected {
             border-color: var(--accent-primary);
             background: rgba(139, 115, 85, 0.1);
@@ -880,6 +946,10 @@
             box-shadow: var(--shadow-button-hover);
         }
         
+        .submit-answers-btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+        
         .submit-answers-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -983,6 +1053,267 @@
             border-right: 5px solid var(--accent-primary);
         }
         
+        /* Records Modal */
+        .records-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10002;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-smooth);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 20px;
+            padding-top: calc(20px + env(safe-area-inset-top));
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+        }
+        
+        .records-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .records-content {
+            background: white;
+            border-radius: var(--border-radius-xl);
+            width: min(900px, 95vw);
+            max-height: min(85vh, 90vh);
+            overflow-y: auto;
+            position: relative;
+            box-shadow: var(--shadow-heavy);
+            animation: modalAppear 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(139, 115, 85, 0.15);
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .records-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 2px solid rgba(139, 115, 85, 0.15);
+            background: rgba(255, 255, 255, 0.98);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
+        }
+        
+        .records-header h2 {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .close-records-btn {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius);
+        }
+        
+        .close-records-btn:hover {
+            background: rgba(139, 115, 85, 0.1);
+            color: var(--accent-primary);
+            transform: rotate(90deg);
+        }
+        
+        .close-records-btn:active {
+            transform: scale(0.95) rotate(90deg);
+        }
+        
+        .records-list {
+            padding: 25px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .no-records {
+            text-align: center;
+            padding: 60px 20px;
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+        
+        .no-records i {
+            font-size: 4rem;
+            color: var(--accent-secondary);
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .record-card {
+            background: rgba(139, 115, 85, 0.04);
+            border-radius: var(--border-radius-xl);
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(139, 115, 85, 0.1);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+        
+        .record-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+            background: rgba(139, 115, 85, 0.08);
+        }
+        
+        .record-card:active {
+            transform: scale(0.99);
+        }
+        
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .record-file-name {
+            font-family: 'Almarai', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            word-break: break-word;
+            max-width: 100%;
+        }
+        
+        .record-file-name i {
+            flex-shrink: 0;
+        }
+        
+        .record-file-name span {
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .record-date {
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+        
+        .record-details {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .record-detail-item {
+            background: rgba(139, 115, 85, 0.1);
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+        
+        .record-detail-item i {
+            color: var(--accent-primary);
+        }
+        
+        .record-cost {
+            font-family: 'Almarai', sans-serif;
+            font-weight: 700;
+            color: var(--success-color);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .record-score {
+            font-family: 'Almarai', sans-serif;
+            font-weight: 700;
+            color: var(--accent-primary);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .record-score i {
+            color: var(--accent-primary);
+        }
+        
+        .record-progress {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(139, 115, 85, 0.2);
+        }
+        
+        .progress-bar-container {
+            flex: 1;
+            height: 8px;
+            background: rgba(139, 115, 85, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            min-width: 100px;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--gradient-success);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.9rem;
+            color: var(--accent-primary);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        
         /* Footer */
         .footer {
             text-align: center;
@@ -1043,6 +1374,10 @@
             box-shadow: var(--shadow-button-hover);
         }
         
+        .support-link:active {
+            transform: scale(0.95);
+        }
+        
         .support-link i {
             font-size: 28px;
             color: white;
@@ -1060,6 +1395,10 @@
         
         .developer-credit:hover {
             color: var(--accent-primary);
+        }
+        
+        .developer-credit:active {
+            transform: scale(0.98);
         }
         
         /* Notification */
@@ -1134,6 +1473,28 @@
                 font-size: 32px;
             }
             
+            .nav-left {
+                gap: 12px;
+            }
+            
+            .records-btn {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+            
+            .records-btn span {
+                display: none;
+            }
+            
+            .records-btn i {
+                font-size: 18px;
+            }
+            
+            .coins-display {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+            
             .main-content {
                 padding-top: calc(65px + env(safe-area-inset-top) + 20px);
             }
@@ -1149,6 +1510,54 @@
             .score-container {
                 flex-direction: column;
                 text-align: center;
+            }
+            
+            .record-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .record-date {
+                align-self: flex-start;
+            }
+            
+            .record-details {
+                gap: 10px;
+            }
+            
+            .record-detail-item {
+                font-size: 0.85rem;
+                padding: 6px 12px;
+            }
+            
+            .record-progress {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .progress-bar-container {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 28px;
+            }
+            
+            .records-btn {
+                padding: 12px;
+                border-radius: 50%;
+            }
+            
+            .coins-display {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            
+            .upload-icon {
+                font-size: 42px;
             }
         }
     </style>
@@ -1171,10 +1580,32 @@
         </div>
     </div>
     
+    <!-- Records Modal -->
+    <div class="records-modal" id="records-modal">
+        <div class="records-content">
+            <div class="records-header">
+                <h2><i class="fas fa-history"></i> سجل الأسئلة</h2>
+                <button class="close-records-btn" id="close-records-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="records-list" id="records-list">
+                <div class="no-records" id="no-records" style="display: none;">
+                    <i class="fas fa-folder-open"></i>
+                    <p>لا توجد سجلات حالياً</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Navbar -->
     <nav class="native-navbar" id="navbar">
         <div class="logo" id="home-logo">عون</div>
         <div class="nav-left">
+            <div class="records-btn" id="records-btn">
+                <i class="fas fa-history"></i>
+                <span>السجلات</span>
+            </div>
             <div class="coins-display">
                 <i class="fas fa-coins"></i>
                 <span id="coins-count">0</span>
@@ -1439,12 +1870,20 @@
             if (loadingScreen && loadingText) {
                 loadingText.textContent = text;
                 loadingScreen.style.display = 'flex';
+                setTimeout(() => {
+                    loadingScreen.style.opacity = '1';
+                }, 10);
             }
         }
         
         function hideLoading() {
             const loadingScreen = document.getElementById('loading-screen');
-            if (loadingScreen) loadingScreen.style.display = 'none';
+            if (loadingScreen) {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 300);
+            }
         }
         
         function hideFooter() {
@@ -1872,7 +2311,7 @@ INVALID_PDF`;
                 if (line.startsWith('Type :')) {
                     questionType = line.replace('Type :', '').trim();
                 }
-                else if (line.startsWith('Q')) {
+                else if (line.startsWith('Q') && line.includes(':')) {
                     if (current.question) {
                         questions.push(current);
                     }
@@ -1906,12 +2345,16 @@ INVALID_PDF`;
         }
         
         async function saveResultToDatabase(result) {
-            await database.ref(`records/questions_${Date.now()}`).set({
-                userId: currentUser.id,
+            const recordId = 'questions_' + Date.now();
+            await database.ref(`records/${recordId}`).set({
+                id: currentUser.id,
+                process: 'أسئلة ذكية',
                 data: result,
                 timestamp: Date.now(),
                 fileName: fileInfo.name,
-                settings: currentSettings
+                settings: currentSettings,
+                answers: [],
+                score: null
             });
         }
         
@@ -2102,20 +2545,274 @@ INVALID_PDF`;
             
             document.getElementById('results-summary').style.display = 'block';
             
-            // حفظ النتائج
+            // حفظ النتائج في السجل
             saveAnswersToDatabase(correctCount, percentage);
         }
         
         async function saveAnswersToDatabase(correctCount, percentage) {
-            await database.ref(`answers_results/answers_${Date.now()}`).set({
-                userId: currentUser.id,
-                fileName: fileInfo.name,
-                settings: currentSettings,
-                correctCount,
-                percentage,
-                userAnswers,
-                timestamp: Date.now()
-            });
+            if (currentUser?.id) {
+                await database.ref(`records/${currentRecordId}/answers`).set(userAnswers);
+                await database.ref(`records/${currentRecordId}/score`).set({
+                    correctCount,
+                    percentage,
+                    timestamp: Date.now()
+                });
+            }
+        }
+        
+        // ========== إدارة السجلات ==========
+        let currentRecordId = null;
+        
+        function setupRecordsEvents() {
+            const recordsBtn = document.getElementById('records-btn');
+            const closeRecordsBtn = document.getElementById('close-records-btn');
+            const recordsModal = document.getElementById('records-modal');
+            
+            if (recordsBtn) {
+                recordsBtn.addEventListener('click', showRecords);
+            }
+            
+            if (closeRecordsBtn) {
+                closeRecordsBtn.addEventListener('click', hideRecords);
+            }
+            
+            if (recordsModal) {
+                recordsModal.addEventListener('click', function(e) {
+                    if (e.target === recordsModal) {
+                        hideRecords();
+                    }
+                });
+            }
+        }
+        
+        async function showRecords() {
+            const recordsModal = document.getElementById('records-modal');
+            const recordsList = document.getElementById('records-list');
+            const noRecords = document.getElementById('no-records');
+            
+            if (!recordsModal || !recordsList || !noRecords) return;
+            
+            try {
+                showLoading('جاري تحميل السجلات...');
+                
+                const recordsRef = database.ref('records');
+                const snapshot = await recordsRef.orderByChild('id').equalTo(currentUser?.id).once('value');
+                
+                recordsList.innerHTML = '';
+                
+                if (snapshot.exists()) {
+                    const records = [];
+                    snapshot.forEach(childSnapshot => {
+                        records.push({
+                            key: childSnapshot.key,
+                            ...childSnapshot.val()
+                        });
+                    });
+                    
+                    // ترتيب من الأحدث إلى الأقدم
+                    records.sort((a, b) => b.timestamp - a.timestamp);
+                    
+                    records.forEach(record => {
+                        const recordCard = createRecordCard(record);
+                        recordsList.appendChild(recordCard);
+                    });
+                    
+                    noRecords.style.display = 'none';
+                } else {
+                    noRecords.style.display = 'block';
+                }
+                
+                recordsModal.classList.add('show');
+                
+            } catch (error) {
+                console.error('Error loading records:', error);
+                showNotification('حدث خطأ أثناء تحميل السجلات', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        function createRecordCard(record) {
+            const card = document.createElement('div');
+            card.className = 'record-card';
+            card.setAttribute('data-record-id', record.key);
+            
+            const date = new Date(record.timestamp);
+            const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} - ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+            
+            const settings = record.settings || {};
+            const score = record.score || {};
+            const scorePercentage = score.percentage || 0;
+            const answers = record.answers || [];
+            const answeredCount = answers.length;
+            const totalQuestions = settings.questionsCount || record.data?.split('\n').filter(l => l.startsWith('Q')).length || 0;
+            
+            card.innerHTML = `
+                <div class="record-header">
+                    <div class="record-file-name">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>${record.fileName || 'ملف غير معروف'}</span>
+                    </div>
+                    <div class="record-date">
+                        <i class="far fa-clock"></i>
+                        ${formattedDate}
+                    </div>
+                </div>
+                <div class="record-details">
+                    <div class="record-detail-item">
+                        <i class="fas fa-question-circle"></i>
+                        ${totalQuestions} سؤال
+                    </div>
+                    <div class="record-detail-item">
+                        <i class="fas fa-chart-line"></i>
+                        ${settings.difficulty || 'غير محدد'}
+                    </div>
+                    <div class="record-detail-item">
+                        <i class="fas fa-tag"></i>
+                        ${settings.questionType || 'غير محدد'}
+                    </div>
+                    <div class="record-cost">
+                        <i class="fas fa-coins"></i>
+                        ${settings.totalCost || 0} عملة
+                    </div>
+                    ${scorePercentage > 0 ? `
+                    <div class="record-score">
+                        <i class="fas fa-star"></i>
+                        ${scorePercentage}%
+                    </div>
+                    ` : ''}
+                </div>
+                <div class="record-progress">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: ${scorePercentage}%"></div>
+                    </div>
+                    <div class="progress-text">
+                        ${score.correctCount || 0}/${totalQuestions} (${scorePercentage}%)
+                    </div>
+                </div>
+            `;
+            
+            card.addEventListener('click', () => loadRecord(record));
+            
+            return card;
+        }
+        
+        function hideRecords() {
+            const recordsModal = document.getElementById('records-modal');
+            if (recordsModal) {
+                recordsModal.classList.remove('show');
+            }
+        }
+        
+        function loadRecord(record) {
+            hideRecords();
+            
+            try {
+                // تحميل البيانات من السجل
+                const data = record.data || '';
+                const settings = record.settings || {};
+                const answers = record.answers || [];
+                
+                // تحديث الإعدادات الحالية
+                currentSettings = { ...currentSettings, ...settings };
+                
+                // تحليل الأسئلة من النص المحفوظ
+                questionsData = parseQuestions(data);
+                
+                if (!questionsData.length) {
+                    showNotification('لا توجد أسئلة في هذا السجل', 'error');
+                    return;
+                }
+                
+                // تحميل الإجابات السابقة إن وجدت
+                userAnswers = answers;
+                answersSubmitted = answers.length > 0;
+                
+                // إخفاء أقسام الرفع والإعدادات
+                document.getElementById('upload-section').style.display = 'none';
+                document.getElementById('questions-section').classList.remove('show');
+                document.getElementById('questions-display-section').classList.add('show');
+                hideFooter();
+                
+                // عرض الأسئلة
+                displayQuestions();
+                
+                // إذا كانت هناك إجابات سابقة، عرض النتائج مباشرة
+                if (answersSubmitted) {
+                    setTimeout(() => {
+                        // إعادة عرض النتائج
+                        const correctCount = answers.filter(a => a?.isCorrect).length;
+                        const percentage = Math.round((correctCount / questionsData.length) * 100);
+                        
+                        // تطبيق تلوين الإجابات
+                        questionsData.forEach((q, i) => {
+                            const answer = answers[i];
+                            if (answer) {
+                                const options = document.querySelectorAll(`#options-${i} .option-item`);
+                                const correctText = q.correct.includes(':') 
+                                    ? q.correct.substring(q.correct.indexOf(':') + 1).trim()
+                                    : q.correct.substring(1).trim();
+                                
+                                // تلوين الخيارات
+                                options.forEach((opt, idx) => {
+                                    const optText = q.options[idx];
+                                    if (optText === correctText) {
+                                        opt.classList.add('correct-answer');
+                                    }
+                                    if (idx === answer.selected && !answer.isCorrect) {
+                                        opt.classList.add('wrong-answer');
+                                    }
+                                    opt.style.pointerEvents = 'none';
+                                });
+                                
+                                // إظهار النتيجة
+                                const resultDiv = document.getElementById(`result-${i}`);
+                                resultDiv.innerHTML = answer.isCorrect 
+                                    ? '<i class="fas fa-check-circle"></i> إجابة صحيحة ✓'
+                                    : '<i class="fas fa-times-circle"></i> إجابة خاطئة ✗';
+                                resultDiv.className = `result-indicator ${answer.isCorrect ? 'correct' : 'incorrect'}`;
+                                resultDiv.style.display = 'flex';
+                                
+                                // تلوين البطاقة
+                                const questionCard = document.getElementById(`question-${i}`);
+                                if (answer.isCorrect) {
+                                    questionCard.classList.add('correct');
+                                } else {
+                                    questionCard.classList.add('incorrect');
+                                    // إظهار الشرح للإجابات الخاطئة
+                                    document.getElementById(`explanation-${i}`).style.display = 'block';
+                                }
+                            }
+                        });
+                        
+                        // عرض النتائج
+                        const scoreFill = document.getElementById('score-fill');
+                        const rotation = (percentage / 100) * 360;
+                        scoreFill.style.background = `conic-gradient(var(--success-color) 0deg, var(--success-color) ${rotation}deg, transparent ${rotation}deg)`;
+                        
+                        document.getElementById('score-percentage').textContent = percentage + '%';
+                        document.getElementById('score-details').textContent = `${correctCount} من ${questionsData.length}`;
+                        
+                        let message = '';
+                        if (percentage >= 90) message = '🌟 أداء استثنائي! إتقان عالٍ جداً';
+                        else if (percentage >= 70) message = '💪 عمل ممتاز! مستوى متقدم';
+                        else if (percentage >= 50) message = '📚 عمل جيد! تحتاج لمراجعة بعض النقاط';
+                        else message = '🌱 تحتاج للمزيد من المذاكرة، استمر ولا تيأس';
+                        document.getElementById('encouragement-message').textContent = message;
+                        
+                        document.getElementById('results-summary').style.display = 'block';
+                        
+                        // تعطيل زر التسليم
+                        document.getElementById('submit-answers-btn').disabled = true;
+                    }, 100);
+                }
+                
+                showNotification('تم تحميل السجل بنجاح', 'success');
+                
+            } catch (error) {
+                console.error('Error loading record:', error);
+                showNotification('حدث خطأ أثناء تحميل السجل', 'error');
+            }
         }
         
         // ========== التهيئة ==========
@@ -2132,6 +2829,7 @@ INVALID_PDF`;
                 await setupUser();
                 setupFileUpload();
                 setupQuestionsEvents();
+                setupRecordsEvents(); // تفعيل أحداث السجلات
                 
                 document.getElementById('home-logo').addEventListener('click', () => location.reload());
                 hideLoading();
