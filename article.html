@@ -1417,15 +1417,6 @@
 
         // ===== إنشاء الأسئلة (البرومبت الأول) =====
         function createPrompt1() {
-            let difficultyDesc = '';
-            if (currentSettings.difficulty === 'سهل') {
-                difficultyDesc = 'Direct questions based on clearly stated facts in the PDF. Questions should be simple and answers must be explicitly found in the text.';
-            } else if (currentSettings.difficulty === 'متوسط') {
-                difficultyDesc = 'Questions require understanding relationships between concepts in the PDF. They are directly based on the text but require connecting ideas from different sections.';
-            } else {
-                difficultyDesc = 'Inference-based questions that require deep understanding and synthesis between multiple sections of the PDF. Questions must be derived logically from the document and require analytical reasoning.';
-            }
-
             return `SYSTEM ROLE: STRICT PDF ESSAY QUESTION GENERATOR ENGINE
 ZERO-DEVIATION MODE
 
@@ -1444,25 +1435,58 @@ CORE DIRECTIVE
 ----------------------------------
 1) Read the ENTIRE PDF from first word to last word.
 2) Treat the PDF as ONE unified knowledge source.
-3) Generate EXACTLY ${currentSettings.questionsCount} essay questions.
-4) Questions must collectively cover the FULL document.
-5) Do NOT repeat ideas.
-6) Each question must target a distinct concept.
+3) Analyze ALL sections equally.
+4) Generate essay questions that collectively cover the FULL document.
+5) Questions must not be concentrated in one section.
+6) Do NOT repeat ideas.
+7) Do NOT duplicate concepts in different wording.
+8) Each question must target a distinct concept or idea.
 
 ----------------------------------
 DIFFICULTY CONTROL (MANDATORY)
 ----------------------------------
-${difficultyDesc}
+You MUST strictly interpret ${currentSettings.difficulty} as follows:
+
+IF = "سهل":
+• Direct questions
+• Clearly stated facts
+• No inference
+• Answers explicitly present in text
+
+IF = "متوسط":
+• Direct but conceptually deeper
+• Require understanding relationships
+• Based directly on text but not copy-paste
+
+IF = "صعب":
+• Inference-based
+• Require synthesis between multiple sections
+• Derived logically from document
+• Not directly quoted
+• Require analytical reasoning
+
+----------------------------------
+QUESTION COUNT RULE
+----------------------------------
+• Generate EXACTLY ${currentSettings.questionsCount} questions
+• No more
+• No less
 
 ----------------------------------
 OUTPUT FORMAT (STRICT JSON ONLY)
 ----------------------------------
-Return ONLY this structure with EXACTLY ${currentSettings.questionsCount} questions:
+Return ONLY this structure:
+
 {
   "Q1": "السؤال الأول",
   "Q2": "السؤال الثاني"
 }
-Keys must increment sequentially. No extra fields.`;
+
+• Keys must increment sequentially until ${currentSettings.questionsCount}
+• No additional fields
+• No metadata
+• No explanation
+• No trailing commas`;
         }
 
         function cleanJSONResponse(text) {
@@ -1524,6 +1548,12 @@ Keys must increment sequentially. No extra fields.`;
                 const questions = cleanJSONResponse(text);
                 if (!questions) {
                     throw new Error('تنسيق الرد غير صالح');
+                }
+
+                // التحقق من عدد الأسئلة
+                const questionCount = Object.keys(questions).length;
+                if (questionCount !== currentSettings.questionsCount) {
+                    throw new Error(`عدد الأسئلة المستلمة (${questionCount}) لا يطابق المطلوب (${currentSettings.questionsCount})`);
                 }
 
                 essayQuestions = questions;
@@ -1636,45 +1666,70 @@ Keys must increment sequentially. No extra fields.`;
 ZERO-DEVIATION MODE
 
 You are a deterministic evaluation engine.
-No chat. No explanation. No comments. No extra keys. No markdown. No text outside JSON.
+No chat. No explanation. No comments. No markdown. No text outside JSON.
 Any deviation = INVALID OUTPUT.
 
 ----------------------------------
 ACTIVATION CONDITIONS
 ----------------------------------
-Questions & answers are provided exactly in this pattern:
+Execute ONLY if:
+• A readable PDF is provided
+• Questions & answers are provided exactly in this pattern:
+
 ${qaText}
-If format mismatch → RETURN EXACTLY: INVALID FORMAT
+
+If format mismatch → RETURN EXACTLY:
+INVALID FORMAT
 
 ----------------------------------
 CORE DIRECTIVE
 ----------------------------------
 1) Read the ENTIRE PDF from first word to last word.
-2) For EACH question:
-   • Extract the IDEAL MODEL ANSWER strictly from the PDF.
+2) Treat the document as ONE unified reference source.
+3) For EACH question:
+   • Extract the ideal model answer strictly from the PDF.
    • Compare the user's answer to the model answer.
-   • Calculate PRECISE SIMILARITY PERCENTAGE (0–100) based on:
-     - Concept accuracy (how many key points are covered)
-     - Coverage completeness (did they miss important parts)
-     - Logical correctness (is the reasoning correct)
-     - Terminology precision (did they use correct terms)
-   • Provide personalized advice SPECIFIC to their answer, explaining what they missed and how to improve.
+   • Compute semantic similarity percentage (0–100).
+   • Evaluate conceptual completeness.
+   • Detect missing critical points.
+   • Detect incorrect claims.
+
+4) Similarity percentage MUST reflect:
+   • Concept accuracy
+   • Coverage completeness
+   • Logical correctness
+   • Terminology precision
+
+----------------------------------
+EVALUATION RULES
+----------------------------------
+• Each question evaluated independently.
+• No mixing between answers.
+• No hallucinated info outside PDF.
+• Advice must reference conceptual gaps.
+• Advice must guide toward specific improvement area in document.
+• No repetition between advice entries.
+• No generic tips.
 
 ----------------------------------
 OUTPUT FORMAT (STRICT JSON ONLY)
 ----------------------------------
-Return ONLY this structure for ${currentSettings.questionsCount} questions:
+Return ONLY this structure:
 
 {
   "C1": "الإجابة النموذجية الدقيقة من الملف",
   "X1": "نسبة الدقة %",
-  "B1": "نصيحة مخصصة للتحسين بناءً على إجابة المستخدم",
-  "C2": "...",
-  "X2": "...",
-  "B2": "..."
+  "B1": "نصيحة مخصصة للتحسين",
+
+  "C2": "الإجابة النموذجية",
+  "X2": "النسبة %",
+  "B2": "النصيحة"
 }
 
-Continue sequentially. No extra keys.`;
+• Continue sequentially based on number of questions
+• No extra keys
+• No commentary
+• No trailing commas`;
 
                 const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
@@ -1691,12 +1746,20 @@ Continue sequentially. No extra keys.`;
                 hideLoading();
 
                 if (evalText.includes("INVALID")) {
-                    throw new Error('فشل التقييم');
+                    throw new Error('فشل التقييم - النص المرسل غير صالح');
                 }
 
                 const evaluation = cleanJSONResponse(evalText);
                 if (!evaluation) {
+                    console.error('Raw response:', evalText);
                     throw new Error('تنسيق التقييم غير صالح');
+                }
+
+                // التحقق من وجود جميع المفاتيح المطلوبة
+                for (let i = 1; i <= currentSettings.questionsCount; i++) {
+                    if (!evaluation[`C${i}`] || !evaluation[`X${i}`] || !evaluation[`B${i}`]) {
+                        throw new Error(`بيانات التقييم غير مكتملة للسؤال ${i}`);
+                    }
                 }
 
                 evaluationData = evaluation;
@@ -1750,7 +1813,7 @@ Continue sequentially. No extra keys.`;
                             <div class="model-answer-box">
                                 <div class="answer-title">
                                     <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
-                                    الإجابة النموذجية:
+                                    الإجابة النموذجية من الملف:
                                 </div>
                                 <div class="answer-content">${modelAnswer}</div>
                             </div>
@@ -1758,13 +1821,13 @@ Continue sequentially. No extra keys.`;
                         
                         <div class="similarity-box">
                             <div class="similarity-percentage">${percentage}%</div>
-                            <div class="similarity-label">نسبة التطابق المحسوبة من الذكاء الاصطناعي</div>
+                            <div class="similarity-label">نسبة التطابق المحسوبة بدقة</div>
                         </div>
                         
                         <div class="advice-box">
                             <div class="advice-title">
                                 <i class="fas fa-lightbulb" style="color: #FFC107;"></i>
-                                نصيحة مخصصة لإجابتك:
+                                نصيحة مخصصة بناءً على إجابتك:
                             </div>
                             <div class="advice-text">${advice}</div>
                         </div>
@@ -1905,7 +1968,8 @@ Continue sequentially. No extra keys.`;
                 // إذا لم يكن مقيم، اعرض الأسئلة للإجابة
                 document.getElementById('essay-section').style.display = 'block';
                 currentQuestionIndex = 0;
-                selectedFile = null; // لا يمكن استرجاع الملف
+                // لا يمكن استرجاع الملف، لذلك نعرض رسالة
+                showNotification('هذا السجل لم يتم تقييمه بعد. اكتب إجاباتك ثم سلم', 'info');
                 renderQuestion();
                 hideFooter();
             }
