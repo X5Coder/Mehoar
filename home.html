@@ -19,6 +19,12 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            /* منع النسخ على مستوى الصفحة */
+            user-select: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
         
         :root {
@@ -483,6 +489,8 @@
             font-family: 'Tajawal', sans-serif;
             font-size: 0.95rem;
             transition: var(--transition-quick);
+            user-select: text;
+            -webkit-user-select: text;
         }
         
         .search-input:focus {
@@ -555,6 +563,8 @@
             font-family: 'Tajawal', sans-serif;
             font-size: 1rem;
             transition: var(--transition-quick);
+            user-select: text;
+            -webkit-user-select: text;
         }
         
         .control-input:focus {
@@ -668,6 +678,8 @@
             font-size: 0.9rem;
             direction: ltr;
             text-align: left;
+            user-select: text;
+            -webkit-user-select: text;
         }
         
         .copy-btn {
@@ -723,6 +735,8 @@
             font-family: 'Tajawal', sans-serif;
             color: var(--text-primary);
             margin-bottom: 5px;
+            user-select: text;
+            -webkit-user-select: text;
         }
         
         .notification-date {
@@ -773,6 +787,8 @@
             color: var(--beige-darker);
             direction: ltr;
             text-align: left;
+            user-select: text;
+            -webkit-user-select: text;
         }
         
         .user-actions {
@@ -897,10 +913,26 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            /* أنميشن انبثاق عند الدخول */
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: scale(0.9);
         }
         
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            70% { transform: scale(1.02); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        /* تأخير متدرج للكروت */
+        .service-card:nth-child(1) { animation-delay: 0.1s; }
+        .service-card:nth-child(2) { animation-delay: 0.2s; }
+        .service-card:nth-child(3) { animation-delay: 0.3s; }
+        .service-card:nth-child(4) { animation-delay: 0.4s; }
+        
         .service-card:hover {
-            transform: translateY(-12px);
+            transform: translateY(-12px) scale(1.02);
             box-shadow: 0 32px 64px rgba(0, 0, 0, 0.15);
         }
         
@@ -1404,6 +1436,19 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- بطاقة الخدمة الجديدة: الأسئلة المقالي -->
+                <div class="service-card" data-service="article">
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-pen-fancy"></i>
+                        </div>
+                        <div class="service-details">
+                            <h3 class="service-name">مقالي</h3>
+                            <p class="service-description">توليد أسئلة مقالية مخصصة مع نماذج إجابة استرشادية لتعزيز الفهم العميق</p>
+                        </div>
+                    </div>
+                </div>
             </section>
         </div>
         
@@ -1649,7 +1694,8 @@
                     const pageMap = {
                         'summary': 'summary.html',
                         'flashcard': 'Flashcard.html',
-                        'question': 'Question.html'
+                        'question': 'Question.html',
+                        'article': 'article.html' // الخدمة الجديدة
                     };
                     
                     if (pageMap[service]) {
