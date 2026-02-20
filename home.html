@@ -1272,7 +1272,7 @@
     <div class="loading-screen" id="loading-screen">
         <div class="loading-logo">عَون</div>
         <div class="loading-spinner"></div>
-        <div class="loading-text">جاري التحقق من الصلاحيات...</div>
+        <div class="loading-text">جاري التحميل...</div>
     </div>
     
     <div class="notification-container" id="notification-container"></div>
@@ -1308,10 +1308,6 @@
                 <button class="menu-option current" id="home-btn">
                     الرئيسية
                     <i class="fas fa-home"></i>
-                </button>
-                <button class="menu-option" id="logs-btn">
-                    السجلات
-                    <i class="fas fa-history"></i>
                 </button>
                 <button class="menu-option" id="account-btn">
                     حسابي
@@ -1457,7 +1453,6 @@
             closeMenu: document.getElementById('close-menu'),
             coinsCount: document.getElementById('coins-count'),
             homeBtn: document.getElementById('home-btn'),
-            logsBtn: document.getElementById('logs-btn'),
             accountBtn: document.getElementById('account-btn'),
             storeBtn: document.getElementById('store-btn'),
             developerCredit: document.getElementById('developer-credit'),
@@ -1627,11 +1622,6 @@
                     option.classList.remove('current');
                 });
                 e.target.classList.add('current');
-            });
-
-            elements.logsBtn.addEventListener('click', () => {
-                elements.settingsMenu.classList.remove('active');
-                window.location.href = 'log.html';
             });
 
             elements.accountBtn.addEventListener('click', () => {
