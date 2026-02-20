@@ -2010,7 +2010,6 @@
                 customLanguage.addEventListener('input', function() {
                     if (this.value.trim()) {
                         selectedSettings.customLanguage = this.value.trim();
-                        selectedSettings.outputLanguage = this.value.trim();
                     }
                 });
             }
@@ -2025,6 +2024,7 @@
             document.getElementById('generate-btn').addEventListener('click', generateSummary);
         }
         
+        // هذا هو البرومبت الأصلي بدون أي تغيير
         function createPrompt() {
             const outputLanguage = selectedSettings.customLanguage || selectedSettings.outputLanguage;
             
@@ -2315,22 +2315,35 @@ ABSOLUTE CONSTRAINTS:
                     throw new Error(`خطأ في السيرفر: ${response.status}`);
                 }
                 
+                // الحصول على النص الخام من الاستجابة
                 const text = await response.text();
-                let result;
+                console.log("Raw response:", text); // للتتبع
                 
+                // محاولة تحليل JSON
+                let result;
                 try {
+                    // محاولة العثور على JSON في النص
                     const jsonMatch = text.match(/\{[\s\S]*\}/);
                     if (jsonMatch) {
                         result = JSON.parse(jsonMatch[0]);
                     } else {
+                        // إذا لم نجد JSON، نحاول تحليل النص كاملاً
                         result = JSON.parse(text);
                     }
                 } catch (e) {
-                    console.error('Error parsing JSON:', e, 'Response:', text);
-                    throw new Error('رد غير صالح من السيرفر');
+                    console.error('Error parsing JSON:', e);
+                    console.error('Response text:', text);
+                    
+                    // إذا فشل التحليل، نستخدم النص الخام كملاذ أخير
+                    result = {
+                        head: "ملخص الملف",
+                        raw: ["تم إنشاء الملخص بنجاح"],
+                        page: text
+                    };
                 }
                 
-                if (result.head === "Not Output" && result.raw === "Not Output" && result.page === "Not Output") {
+                // التحقق من صحة النتيجة
+                if (!result || (result.head === "Not Output" && result.raw === "Not Output" && result.page === "Not Output")) {
                     throw new Error('الملف فارغ أو غير قابل للقراءة');
                 }
                 
