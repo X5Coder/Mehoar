@@ -175,31 +175,20 @@
             align-items: center;
             gap: 10px;
             box-shadow: var(--shadow-light);
-            transition: var(--transition-smooth);
+            transition: all 0.2s ease;
             cursor: pointer;
             border: 1px solid rgba(139, 115, 85, 0.2);
             position: relative;
             overflow: hidden;
         }
         
-        .records-btn:hover {
-            background: rgba(139, 115, 85, 0.25);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
-        }
-        
         .records-btn:active {
-            transform: scale(0.98);
+            transform: scale(0.95);
             background: rgba(139, 115, 85, 0.3);
         }
         
         .records-btn i {
             font-size: 16px;
-            transition: transform 0.3s ease;
-        }
-        
-        .records-btn:hover i {
-            transform: rotate(15deg);
         }
         
         .coins-display {
@@ -212,16 +201,11 @@
             align-items: center;
             gap: 10px;
             box-shadow: var(--shadow-light);
-            transition: var(--transition-smooth);
-        }
-        
-        .coins-display:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
+            transition: all 0.2s ease;
         }
         
         .coins-display:active {
-            transform: scale(0.98);
+            transform: scale(0.95);
         }
         
         /* Main Content */
@@ -392,7 +376,7 @@
             font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: all 0.2s ease;
             min-width: 160px;
             display: flex;
             align-items: center;
@@ -402,7 +386,7 @@
         }
         
         .action-btn:active {
-            transform: scale(0.98);
+            transform: scale(0.95);
         }
         
         .confirm-btn {
@@ -481,17 +465,12 @@
             font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: all 0.2s ease;
             text-align: center;
         }
         
-        .type-btn:hover {
-            border-color: var(--accent-primary);
-            transform: translateY(-3px);
-        }
-        
         .type-btn:active {
-            transform: scale(0.98);
+            transform: scale(0.95);
         }
         
         .type-btn.selected {
@@ -544,10 +523,6 @@
             transition: var(--transition-smooth);
         }
         
-        .slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-        
         .slider::-webkit-slider-thumb:active {
             transform: scale(1.1);
         }
@@ -581,17 +556,12 @@
             background: white;
             font-family: 'Tajawal', sans-serif;
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: all 0.2s ease;
             text-align: center;
         }
         
-        .option-btn:hover {
-            border-color: var(--accent-primary);
-            transform: translateY(-3px);
-        }
-        
         .option-btn:active {
-            transform: scale(0.98);
+            transform: scale(0.95);
         }
         
         .option-btn.selected {
@@ -621,7 +591,7 @@
             font-size: 1.2rem;
             font-weight: 700;
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: all 0.2s ease;
             display: block;
             margin: 0 auto;
             min-width: min(280px, 100%);
@@ -634,13 +604,8 @@
             overflow: hidden;
         }
         
-        .generate-btn:hover:not(:disabled) {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-button-hover);
-        }
-        
         .generate-btn:active:not(:disabled) {
-            transform: scale(0.98);
+            transform: scale(0.95);
         }
         
         .generate-btn:disabled {
@@ -805,18 +770,13 @@
             border-radius: var(--border-radius);
             border: 2px solid rgba(139, 115, 85, 0.2);
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: all 0.2s ease;
             font-family: 'Tajawal', sans-serif;
             font-size: 1.1rem;
         }
         
-        .option-item:hover {
-            border-color: var(--accent-primary);
-            transform: translateX(-5px);
-        }
-        
         .option-item:active {
-            transform: scale(0.99) translateX(-5px);
+            transform: scale(0.98);
         }
         
         .option-item.selected {
@@ -930,7 +890,7 @@
             font-size: 1.3rem;
             font-weight: 700;
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: all 0.2s ease;
             display: block;
             margin: 40px auto 20px;
             min-width: min(320px, 100%);
@@ -941,13 +901,8 @@
             box-shadow: var(--shadow-button);
         }
         
-        .submit-answers-btn:hover:not(:disabled) {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-button-hover);
-        }
-        
         .submit-answers-btn:active:not(:disabled) {
-            transform: scale(0.98);
+            transform: scale(0.95);
         }
         
         .submit-answers-btn:disabled {
@@ -1067,7 +1022,7 @@
             z-index: 10002;
             opacity: 0;
             visibility: hidden;
-            transition: var(--transition-smooth);
+            transition: opacity 0.3s ease, visibility 0.3s ease;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             padding: 20px;
@@ -1088,7 +1043,7 @@
             overflow-y: auto;
             position: relative;
             box-shadow: var(--shadow-heavy);
-            animation: modalAppear 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: modalAppear 0.3s ease-out;
             border: 1px solid rgba(139, 115, 85, 0.15);
             -webkit-overflow-scrolling: touch;
         }
@@ -1134,7 +1089,7 @@
             font-size: 1.8rem;
             color: var(--text-secondary);
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: all 0.2s ease;
             width: 48px;
             height: 48px;
             display: flex;
@@ -1143,14 +1098,9 @@
             border-radius: var(--border-radius);
         }
         
-        .close-records-btn:hover {
-            background: rgba(139, 115, 85, 0.1);
-            color: var(--accent-primary);
-            transform: rotate(90deg);
-        }
-        
         .close-records-btn:active {
-            transform: scale(0.95) rotate(90deg);
+            transform: scale(0.9);
+            background: rgba(139, 115, 85, 0.1);
         }
         
         .records-list {
@@ -1181,17 +1131,12 @@
             margin-bottom: 15px;
             border: 1px solid rgba(139, 115, 85, 0.1);
             cursor: pointer;
-            transition: var(--transition-smooth);
-        }
-        
-        .record-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-medium);
-            background: rgba(139, 115, 85, 0.08);
+            transition: all 0.2s ease;
         }
         
         .record-card:active {
-            transform: scale(0.99);
+            transform: scale(0.98);
+            background: rgba(139, 115, 85, 0.08);
         }
         
         .record-header {
@@ -1365,13 +1310,8 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: all 0.2s ease;
             box-shadow: var(--shadow-button);
-        }
-        
-        .support-link:hover {
-            transform: translateY(-5px) rotate(5deg);
-            box-shadow: var(--shadow-button-hover);
         }
         
         .support-link:active {
@@ -1390,15 +1330,12 @@
             padding-top: 25px;
             border-top: 1px solid rgba(139, 115, 85, 0.06);
             cursor: pointer;
-            transition: var(--transition-smooth);
-        }
-        
-        .developer-credit:hover {
-            color: var(--accent-primary);
+            transition: all 0.2s ease;
         }
         
         .developer-credit:active {
             transform: scale(0.98);
+            color: var(--accent-primary);
         }
         
         /* Notification */
@@ -1827,6 +1764,7 @@
         let questionsData = null;
         let userAnswers = [];
         let answersSubmitted = false;
+        let currentRecordId = null;
         
         // إعدادات السيرفر
         const SERVER = "https://wet-aidan-kimon-66eadaf6.koyeb.app";
@@ -1858,6 +1796,8 @@
             } else if (type === 'error') {
                 notification.classList.add('error');
                 notificationIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+            } else {
+                notificationIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
             }
             
             notification.classList.add('show');
@@ -1908,36 +1848,50 @@
         
         // ========== إدارة المستخدم ==========
         async function loadUserData() {
-            const user = auth.currentUser;
-            if (!user) return window.location.replace('login.html');
-            
-            const usersRef = database.ref('users_Awn');
-            const snapshot = await usersRef.once('value');
-            
-            if (snapshot.exists()) {
-                const users = snapshot.val();
-                for (const [userId, userData] of Object.entries(users)) {
-                    if (userId !== 'noty_publick' && userData.email === user.email) {
-                        currentUser = {
-                            id: userId,
-                            email: userData.email,
-                            name: userData.name || '',
-                            coin: userData.coin || 0,
-                            banned: userData.banned || false
-                        };
-                        userCoins = userData.coin || 0;
-                        document.getElementById('coins-count').textContent = userCoins;
-                        return;
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    window.location.replace('login.html');
+                    return false;
+                }
+                
+                const usersRef = database.ref('users_Awn');
+                const snapshot = await usersRef.once('value');
+                
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    for (const [userId, userData] of Object.entries(users)) {
+                        if (userId !== 'noty_publick' && userData.email === user.email) {
+                            currentUser = {
+                                id: userId,
+                                email: userData.email,
+                                name: userData.name || '',
+                                coin: userData.coin || 0,
+                                banned: userData.banned || false
+                            };
+                            userCoins = userData.coin || 0;
+                            document.getElementById('coins-count').textContent = userCoins;
+                            return true;
+                        }
                     }
                 }
+                
+                await auth.signOut();
+                window.location.replace('login.html');
+                return false;
+                
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                showNotification('خطأ في تحميل بيانات المستخدم', 'error');
+                return false;
             }
-            await auth.signOut();
-            window.location.replace('login.html');
         }
         
         async function setupUser() {
-            await loadUserData();
-            if (currentUser?.banned) window.location.replace('login.html');
+            const success = await loadUserData();
+            if (success && currentUser?.banned) {
+                window.location.replace('login.html');
+            }
         }
         
         // ========== إدارة الملفات ==========
@@ -1977,33 +1931,42 @@
         async function analyzePDF(file) {
             showLoading('عون يحلل الملف...');
             
-            const buffer = await file.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument(buffer).promise;
-            
-            let totalWords = 0;
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const content = await page.getTextContent();
-                if (content.items.length) {
-                    let text = '';
-                    content.items.forEach(t => text += t.str + ' ');
-                    totalWords += text.trim().split(/\s+/).filter(w => w.length >= 2).length;
-                } else totalWords += 250;
+            try {
+                const buffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(buffer).promise;
+                
+                let totalWords = 0;
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    if (content.items.length) {
+                        let text = '';
+                        content.items.forEach(t => text += t.str + ' ');
+                        totalWords += text.trim().split(/\s+/).filter(w => w.length >= 2).length;
+                    } else {
+                        totalWords += 250;
+                    }
+                }
+                
+                let coins = Math.ceil((totalWords / 1000) * 2) / 2;
+                if (coins < 1) coins = 1;
+                coins = Math.round(coins * 10) / 10;
+                
+                fileInfo = { name: file.name, pages: pdf.numPages, baseCost: coins };
+                
+                hideLoading();
+                document.getElementById('page-count').textContent = fileInfo.pages;
+                document.getElementById('cost-amount').textContent = fileInfo.baseCost + ' عملة';
+                document.getElementById('base-cost-display').textContent = fileInfo.baseCost + ' عملة';
+                document.getElementById('cost-preview').classList.add('show');
+                updateTotalCost();
+                showNotification('تم تحليل الملف بنجاح', 'success');
+                
+            } catch (error) {
+                console.error('Error analyzing PDF:', error);
+                hideLoading();
+                showNotification('حدث خطأ أثناء تحليل الملف', 'error');
             }
-            
-            let coins = Math.ceil((totalWords / 1000) * 2) / 2;
-            if (coins < 1) coins = 1;
-            coins = Math.round(coins * 10) / 10;
-            
-            fileInfo = { name: file.name, pages: pdf.numPages, baseCost: coins };
-            
-            hideLoading();
-            document.getElementById('page-count').textContent = fileInfo.pages;
-            document.getElementById('cost-amount').textContent = fileInfo.baseCost + ' عملة';
-            document.getElementById('base-cost-display').textContent = fileInfo.baseCost + ' عملة';
-            document.getElementById('cost-preview').classList.add('show');
-            updateTotalCost();
-            showNotification('تم تحليل الملف بنجاح', 'success');
         }
         
         function resetFileInput() {
@@ -2095,7 +2058,7 @@
             document.getElementById('total-cost-display').textContent = `${total} عملة`;
         }
         
-        // ========== إنشاء البرومبت حسب الطلب الجديد ==========
+        // ========== إنشاء البرومبت ==========
         function createPrompt() {
             return `ROLE:
 You are an AI specialized in professional PDF-based exam generation.
@@ -2291,6 +2254,7 @@ INVALID_PDF`;
                 showNotification('تم إنشاء الأسئلة بنجاح', 'success');
                 
             } catch (error) {
+                console.error('Error generating questions:', error);
                 showNotification('خطأ: ' + error.message, 'error');
             } finally {
                 generateBtn.disabled = false;
@@ -2298,7 +2262,7 @@ INVALID_PDF`;
             }
         }
         
-        // ========== تحليل النتيجة حسب التنسيق الجديد ==========
+        // ========== تحليل النتيجة ==========
         function parseQuestions(text) {
             const lines = text.split('\n').filter(l => l.trim());
             const questions = [];
@@ -2345,17 +2309,25 @@ INVALID_PDF`;
         }
         
         async function saveResultToDatabase(result) {
-            const recordId = 'questions_' + Date.now();
-            await database.ref(`records/${recordId}`).set({
-                id: currentUser.id,
-                process: 'أسئلة ذكية',
-                data: result,
-                timestamp: Date.now(),
-                fileName: fileInfo.name,
-                settings: currentSettings,
-                answers: [],
-                score: null
-            });
+            try {
+                const recordId = 'questions_' + Date.now();
+                const recordData = {
+                    id: currentUser.id,
+                    process: 'أسئلة ذكية',
+                    data: result,
+                    timestamp: Date.now(),
+                    fileName: fileInfo.name,
+                    settings: currentSettings,
+                    answers: [],
+                    score: null
+                };
+                
+                await database.ref(`records/${recordId}`).set(recordData);
+                currentRecordId = recordId;
+                
+            } catch (error) {
+                console.error('Error saving to database:', error);
+            }
         }
         
         // ========== عرض الأسئلة ==========
@@ -2380,7 +2352,7 @@ INVALID_PDF`;
                 q.options.forEach((opt, optIndex) => {
                     const letter = String.fromCharCode(65 + optIndex);
                     html += `
-                        <div class="option-item" onclick="selectOption(${i}, ${optIndex})">
+                        <div class="option-item" onclick="window.selectOption(${i}, ${optIndex})">
                             <div class="option-marker">${letter}</div>
                             <div>${opt}</div>
                         </div>
@@ -2415,7 +2387,7 @@ INVALID_PDF`;
             const selectedText = questionsData[qIndex].options[optIndex];
             const correctText = questionsData[qIndex].correct;
             
-            // استخراج نص الإجابة الصحيحة (قد يكون مع حرف مثل "A : نص" أو بدون)
+            // استخراج نص الإجابة الصحيحة
             let correctAnswerText = correctText;
             if (correctText.includes(':')) {
                 correctAnswerText = correctText.substring(correctText.indexOf(':') + 1).trim();
@@ -2489,7 +2461,6 @@ INVALID_PDF`;
                         questionCard.classList.add('correct');
                     } else {
                         questionCard.classList.add('incorrect');
-                        // إظهار الشرح فقط للإجابات الخاطئة
                         explanation.style.display = 'block';
                     }
                     
@@ -2550,19 +2521,21 @@ INVALID_PDF`;
         }
         
         async function saveAnswersToDatabase(correctCount, percentage) {
-            if (currentUser?.id) {
-                await database.ref(`records/${currentRecordId}/answers`).set(userAnswers);
-                await database.ref(`records/${currentRecordId}/score`).set({
-                    correctCount,
-                    percentage,
-                    timestamp: Date.now()
-                });
+            try {
+                if (currentUser?.id && currentRecordId) {
+                    await database.ref(`records/${currentRecordId}/answers`).set(userAnswers);
+                    await database.ref(`records/${currentRecordId}/score`).set({
+                        correctCount,
+                        percentage,
+                        timestamp: Date.now()
+                    });
+                }
+            } catch (error) {
+                console.error('Error saving answers:', error);
             }
         }
         
         // ========== إدارة السجلات ==========
-        let currentRecordId = null;
-        
         function setupRecordsEvents() {
             const recordsBtn = document.getElementById('records-btn');
             const closeRecordsBtn = document.getElementById('close-records-btn');
@@ -2595,8 +2568,12 @@ INVALID_PDF`;
             try {
                 showLoading('جاري تحميل السجلات...');
                 
+                if (!currentUser?.id) {
+                    throw new Error('لم يتم تسجيل الدخول');
+                }
+                
                 const recordsRef = database.ref('records');
-                const snapshot = await recordsRef.orderByChild('id').equalTo(currentUser?.id).once('value');
+                const snapshot = await recordsRef.orderByChild('id').equalTo(currentUser.id).once('value');
                 
                 recordsList.innerHTML = '';
                 
@@ -2610,7 +2587,7 @@ INVALID_PDF`;
                     });
                     
                     // ترتيب من الأحدث إلى الأقدم
-                    records.sort((a, b) => b.timestamp - a.timestamp);
+                    records.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                     
                     records.forEach(record => {
                         const recordCard = createRecordCard(record);
@@ -2626,7 +2603,7 @@ INVALID_PDF`;
                 
             } catch (error) {
                 console.error('Error loading records:', error);
-                showNotification('حدث خطأ أثناء تحميل السجلات', 'error');
+                showNotification('حدث خطأ أثناء تحميل السجلات: ' + error.message, 'error');
             } finally {
                 hideLoading();
             }
@@ -2637,15 +2614,20 @@ INVALID_PDF`;
             card.className = 'record-card';
             card.setAttribute('data-record-id', record.key);
             
-            const date = new Date(record.timestamp);
+            const date = new Date(record.timestamp || Date.now());
             const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} - ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
             
             const settings = record.settings || {};
             const score = record.score || {};
             const scorePercentage = score.percentage || 0;
             const answers = record.answers || [];
-            const answeredCount = answers.length;
-            const totalQuestions = settings.questionsCount || record.data?.split('\n').filter(l => l.startsWith('Q')).length || 0;
+            
+            // حساب عدد الأسئلة من البيانات
+            let totalQuestions = settings.questionsCount || 0;
+            if (!totalQuestions && record.data) {
+                const lines = record.data.split('\n').filter(l => l.startsWith('Q'));
+                totalQuestions = lines.length;
+            }
             
             card.innerHTML = `
                 <div class="record-header">
@@ -2727,6 +2709,7 @@ INVALID_PDF`;
                 // تحميل الإجابات السابقة إن وجدت
                 userAnswers = answers;
                 answersSubmitted = answers.length > 0;
+                currentRecordId = record.key;
                 
                 // إخفاء أقسام الرفع والإعدادات
                 document.getElementById('upload-section').style.display = 'none';
@@ -2738,7 +2721,7 @@ INVALID_PDF`;
                 displayQuestions();
                 
                 // إذا كانت هناك إجابات سابقة، عرض النتائج مباشرة
-                if (answersSubmitted) {
+                if (answersSubmitted && answers.length > 0) {
                     setTimeout(() => {
                         // إعادة عرض النتائج
                         const correctCount = answers.filter(a => a?.isCorrect).length;
@@ -2749,14 +2732,28 @@ INVALID_PDF`;
                             const answer = answers[i];
                             if (answer) {
                                 const options = document.querySelectorAll(`#options-${i} .option-item`);
-                                const correctText = q.correct.includes(':') 
-                                    ? q.correct.substring(q.correct.indexOf(':') + 1).trim()
-                                    : q.correct.substring(1).trim();
+                                const resultDiv = document.getElementById(`result-${i}`);
+                                const questionCard = document.getElementById(`question-${i}`);
+                                const explanation = document.getElementById(`explanation-${i}`);
+                                
+                                // استخراج نص الإجابة الصحيحة
+                                let correctAnswerText = q.correct;
+                                if (correctAnswerText.includes(':')) {
+                                    correctAnswerText = correctAnswerText.substring(correctAnswerText.indexOf(':') + 1).trim();
+                                } else if (correctAnswerText.match(/^[ABCD]/)) {
+                                    correctAnswerText = correctAnswerText.substring(1).trim();
+                                }
+                                
+                                if (answer.isCorrect) {
+                                    questionCard.classList.add('correct');
+                                } else {
+                                    questionCard.classList.add('incorrect');
+                                }
                                 
                                 // تلوين الخيارات
                                 options.forEach((opt, idx) => {
                                     const optText = q.options[idx];
-                                    if (optText === correctText) {
+                                    if (optText === correctAnswerText) {
                                         opt.classList.add('correct-answer');
                                     }
                                     if (idx === answer.selected && !answer.isCorrect) {
@@ -2766,21 +2763,15 @@ INVALID_PDF`;
                                 });
                                 
                                 // إظهار النتيجة
-                                const resultDiv = document.getElementById(`result-${i}`);
                                 resultDiv.innerHTML = answer.isCorrect 
                                     ? '<i class="fas fa-check-circle"></i> إجابة صحيحة ✓'
                                     : '<i class="fas fa-times-circle"></i> إجابة خاطئة ✗';
                                 resultDiv.className = `result-indicator ${answer.isCorrect ? 'correct' : 'incorrect'}`;
                                 resultDiv.style.display = 'flex';
                                 
-                                // تلوين البطاقة
-                                const questionCard = document.getElementById(`question-${i}`);
-                                if (answer.isCorrect) {
-                                    questionCard.classList.add('correct');
-                                } else {
-                                    questionCard.classList.add('incorrect');
-                                    // إظهار الشرح للإجابات الخاطئة
-                                    document.getElementById(`explanation-${i}`).style.display = 'block';
+                                // إظهار الشرح للإجابات الخاطئة
+                                if (!answer.isCorrect) {
+                                    explanation.style.display = 'block';
                                 }
                             }
                         });
@@ -2804,6 +2795,9 @@ INVALID_PDF`;
                         
                         // تعطيل زر التسليم
                         document.getElementById('submit-answers-btn').disabled = true;
+                        
+                        // تحديث شريط التقدم
+                        updateProgressBar();
                     }, 100);
                 }
                 
@@ -2811,7 +2805,7 @@ INVALID_PDF`;
                 
             } catch (error) {
                 console.error('Error loading record:', error);
-                showNotification('حدث خطأ أثناء تحميل السجل', 'error');
+                showNotification('حدث خطأ أثناء تحميل السجل: ' + error.message, 'error');
             }
         }
         
@@ -2829,7 +2823,7 @@ INVALID_PDF`;
                 await setupUser();
                 setupFileUpload();
                 setupQuestionsEvents();
-                setupRecordsEvents(); // تفعيل أحداث السجلات
+                setupRecordsEvents();
                 
                 document.getElementById('home-logo').addEventListener('click', () => location.reload());
                 hideLoading();
