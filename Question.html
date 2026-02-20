@@ -151,7 +151,7 @@
             font-size: 42px;
             color: var(--accent-primary);
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: all 0.1s ease;
         }
         
         .logo:active {
@@ -759,13 +759,17 @@
             background: white;
             border-radius: var(--border-radius);
             border: 2px solid rgba(139, 115, 85, 0.2);
-            cursor: pointer;
-            transition: all 0.1s ease;
+            cursor: default;
             font-family: 'Tajawal', sans-serif;
             font-size: 1.1rem;
+            transition: all 0.1s ease;
         }
         
-        .option-item:active {
+        .option-item.clickable {
+            cursor: pointer;
+        }
+        
+        .option-item.clickable:active {
             transform: scale(0.98);
         }
         
@@ -839,7 +843,7 @@
             color: var(--error-color);
         }
         
-        /* Explanation box */
+        /* Explanation box - يظهر دائمًا في وضع العرض */
         .explanation-box {
             margin-top: 20px;
             padding: 20px;
@@ -1755,6 +1759,7 @@
         let userAnswers = [];
         let answersSubmitted = false;
         let currentRecordId = null;
+        let isViewMode = false; // متغير جديد لتحديد وضع العرض
         
         // إعدادات السيرفر
         const SERVER = "https://wet-aidan-kimon-66eadaf6.koyeb.app";
@@ -1833,7 +1838,12 @@
             
             const submitBtn = document.getElementById('submit-answers-btn');
             const allAnswered = userAnswers.every(a => a !== null);
-            submitBtn.disabled = !allAnswered || answersSubmitted;
+            // في وضع العرض، زر التسليم يكون معطلاً دائماً
+            if (isViewMode) {
+                submitBtn.disabled = true;
+            } else {
+                submitBtn.disabled = !allAnswered || answersSubmitted;
+            }
         }
         
         // ========== إدارة المستخدم ==========
@@ -2244,6 +2254,10 @@ INVALID_PDF`;
                 document.getElementById('questions-section').classList.remove('show');
                 document.getElementById('questions-display-section').classList.add('show');
                 hideFooter();
+                
+                // وضع الإجابة العادي (ليس عرض)
+                isViewMode = false;
+                answersSubmitted = false;
                 displayQuestions();
                 showNotification('تم إنشاء الأسئلة بنجاح', 'success');
                 
@@ -2333,6 +2347,9 @@ INVALID_PDF`;
             
             let html = '';
             questionsData.forEach((q, i) => {
+                const answer = userAnswers && userAnswers[i] ? userAnswers[i] : null;
+                const isAnswered = answer !== null;
+                
                 html += `
                     <div class="question-card" id="question-${i}">
                         <div class="question-header">
@@ -2345,49 +2362,79 @@ INVALID_PDF`;
                 
                 q.options.forEach((opt, optIndex) => {
                     const letter = String.fromCharCode(65 + optIndex);
+                    const isSelected = isAnswered && answer.selected === optIndex;
+                    const isCorrect = isAnswered && opt === getCorrectAnswerText(q.correct);
+                    
                     html += `
-                        <div class="option-item" onclick="window.selectOption(${i}, ${optIndex})">
+                        <div class="option-item ${!isViewMode ? 'clickable' : ''} ${isSelected ? 'selected' : ''} ${isCorrect ? 'correct-answer' : ''}" 
+                             ${!isViewMode ? `onclick="window.selectOption(${i}, ${optIndex})"` : ''}>
                             <div class="option-marker">${letter}</div>
                             <div>${opt}</div>
                         </div>
                     `;
                 });
                 
-                html += `</div>
-                        <div class="result-indicator" id="result-${i}" style="display: none;"></div>
-                        <div class="explanation-box" id="explanation-${i}" style="display: none;">
+                html += `</div>`;
+                
+                // إظهار نتيجة الإجابة إذا كانت موجودة
+                if (isAnswered) {
+                    const isCorrect = answer.isCorrect;
+                    html += `
+                        <div class="result-indicator ${isCorrect ? 'correct' : 'incorrect'}" id="result-${i}">
+                            <i class="fas fa-${isCorrect ? 'check-circle' : 'times-circle'}"></i>
+                            ${isCorrect ? 'إجابة صحيحة ✓' : 'إجابة خاطئة ✗'}
+                        </div>
+                    `;
+                } else {
+                    html += `<div class="result-indicator" id="result-${i}" style="display: none;"></div>`;
+                }
+                
+                // إظهار الشرح دائماً في وضع العرض
+                if (isViewMode || isAnswered) {
+                    html += `
+                        <div class="explanation-box" id="explanation-${i}">
                             <div class="explanation-title"><i class="fas fa-info-circle"></i> شرح الإجابة:</div>
                             <div class="explanation-text">${q.explanation}</div>
                         </div>
-                    </div>
-                `;
+                    `;
+                } else {
+                    html += `<div class="explanation-box" id="explanation-${i}" style="display: none;"></div>`;
+                }
+                
+                html += `</div>`;
             });
             
             container.innerHTML = html;
-            userAnswers = new Array(questionsData.length).fill(null);
-            answersSubmitted = false;
-            document.getElementById('results-summary').style.display = 'none';
+            
+            // تحديث شريط التقدم
             updateProgressBar();
+            
+            // إذا كنا في وضع العرض، نظهر النتائج فوراً
+            if (isViewMode && answersSubmitted) {
+                showResultsFromAnswers();
+            }
+        }
+        
+        // دالة مساعدة لاستخراج نص الإجابة الصحيحة
+        function getCorrectAnswerText(correctText) {
+            if (correctText.includes(':')) {
+                return correctText.substring(correctText.indexOf(':') + 1).trim();
+            } else if (correctText.match(/^[ABCD]/)) {
+                return correctText.substring(1).trim();
+            }
+            return correctText;
         }
         
         // ========== اختيار الإجابة ==========
         window.selectOption = function(qIndex, optIndex) {
-            if (answersSubmitted) return;
+            if (answersSubmitted || isViewMode) return;
             
             const options = document.querySelectorAll(`#options-${qIndex} .option-item`);
             options.forEach(opt => opt.classList.remove('selected'));
             options[optIndex].classList.add('selected');
             
             const selectedText = questionsData[qIndex].options[optIndex];
-            const correctText = questionsData[qIndex].correct;
-            
-            // استخراج نص الإجابة الصحيحة
-            let correctAnswerText = correctText;
-            if (correctText.includes(':')) {
-                correctAnswerText = correctText.substring(correctText.indexOf(':') + 1).trim();
-            } else if (correctText.match(/^[ABCD]/)) {
-                correctAnswerText = correctText.substring(1).trim();
-            }
+            const correctAnswerText = getCorrectAnswerText(questionsData[qIndex].correct);
             
             userAnswers[qIndex] = {
                 selected: optIndex,
@@ -2400,7 +2447,7 @@ INVALID_PDF`;
         
         // ========== تسليم الإجابات ==========
         document.getElementById('submit-answers-btn').addEventListener('click', function() {
-            if (answersSubmitted) return;
+            if (answersSubmitted || isViewMode) return;
             
             const btn = this;
             btn.disabled = true;
@@ -2428,69 +2475,19 @@ INVALID_PDF`;
             
             questionsData.forEach((q, i) => {
                 const answer = userAnswers[i];
-                const resultDiv = document.getElementById(`result-${i}`);
-                const questionCard = document.getElementById(`question-${i}`);
-                const options = document.querySelectorAll(`#options-${i} .option-item`);
-                const explanation = document.getElementById(`explanation-${i}`);
-                
-                // استخراج نص الإجابة الصحيحة
-                let correctAnswerText = q.correct;
-                if (correctAnswerText.includes(':')) {
-                    correctAnswerText = correctAnswerText.substring(correctAnswerText.indexOf(':') + 1).trim();
-                } else if (correctAnswerText.match(/^[ABCD]/)) {
-                    correctAnswerText = correctAnswerText.substring(1).trim();
+                if (answer && answer.isCorrect) {
+                    correctCount++;
                 }
-                
-                if (answer) {
-                    const isCorrect = answer.selectedText === correctAnswerText;
-                    if (isCorrect) correctCount++;
-                    
-                    resultDiv.innerHTML = isCorrect 
-                        ? '<i class="fas fa-check-circle"></i> إجابة صحيحة ✓'
-                        : '<i class="fas fa-times-circle"></i> إجابة خاطئة ✗';
-                    resultDiv.className = `result-indicator ${isCorrect ? 'correct' : 'incorrect'}`;
-                    resultDiv.style.display = 'flex';
-                    
-                    if (isCorrect) {
-                        questionCard.classList.add('correct');
-                    } else {
-                        questionCard.classList.add('incorrect');
-                        explanation.style.display = 'block';
-                    }
-                    
-                    // تلوين الخيارات
-                    options.forEach((opt, idx) => {
-                        const optText = q.options[idx];
-                        if (optText === correctAnswerText) {
-                            opt.classList.add('correct-answer');
-                        }
-                        if (idx === answer.selected && !isCorrect) {
-                            opt.classList.add('wrong-answer');
-                        }
-                    });
-                } else {
-                    // لم يجب
-                    resultDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> لم تقم باختيار إجابة';
-                    resultDiv.className = 'result-indicator incorrect';
-                    resultDiv.style.display = 'flex';
-                    questionCard.classList.add('incorrect');
-                    
-                    // عرض الإجابة الصحيحة
-                    options.forEach((opt, idx) => {
-                        if (q.options[idx] === correctAnswerText) {
-                            opt.classList.add('correct-answer');
-                        }
-                    });
-                    
-                    // إظهار الشرح
-                    explanation.style.display = 'block';
-                }
-                
-                // تعطيل الخيارات
-                options.forEach(opt => opt.style.pointerEvents = 'none');
             });
             
             // عرض النتائج
+            showResults(correctCount);
+            
+            // حفظ النتائج في السجل
+            saveAnswersToDatabase(correctCount);
+        }
+        
+        function showResults(correctCount) {
             const total = questionsData.length;
             const percentage = Math.round((correctCount / total) * 100);
             
@@ -2510,17 +2507,22 @@ INVALID_PDF`;
             
             document.getElementById('results-summary').style.display = 'block';
             
-            // حفظ النتائج في السجل
-            saveAnswersToDatabase(correctCount, percentage);
+            // إعادة عرض الأسئلة مع النتائج
+            displayQuestions();
         }
         
-        async function saveAnswersToDatabase(correctCount, percentage) {
+        function showResultsFromAnswers() {
+            const correctCount = userAnswers.filter(a => a && a.isCorrect).length;
+            showResults(correctCount);
+        }
+        
+        async function saveAnswersToDatabase(correctCount) {
             try {
                 if (currentUser?.id && currentRecordId) {
                     await database.ref(`records/${currentRecordId}/answers`).set(userAnswers);
                     await database.ref(`records/${currentRecordId}/score`).set({
                         correctCount,
-                        percentage,
+                        percentage: Math.round((correctCount / questionsData.length) * 100),
                         timestamp: Date.now()
                     });
                 }
@@ -2615,8 +2617,8 @@ INVALID_PDF`;
             const score = record.score || {};
             const scorePercentage = score.percentage || 0;
             
-            // حساب عدد الأسئلة من البيانات
-            let totalQuestions = settings.questionsCount || 0;
+            // عدد الأسئلة من الإعدادات
+            const totalQuestions = settings.questionsCount || 0;
             
             card.innerHTML = `
                 <div class="record-header">
@@ -2683,6 +2685,7 @@ INVALID_PDF`;
                 const data = record.data || '';
                 const settings = record.settings || {};
                 const answers = record.answers || [];
+                const score = record.score || {};
                 
                 // تحديث الإعدادات الحالية
                 currentSettings = { ...currentSettings, ...settings };
@@ -2695,10 +2698,13 @@ INVALID_PDF`;
                     return;
                 }
                 
-                // تحميل الإجابات السابقة إن وجدت
+                // تحميل الإجابات السابقة
                 userAnswers = answers;
                 answersSubmitted = answers.length > 0;
                 currentRecordId = record.key;
+                
+                // تفعيل وضع العرض
+                isViewMode = true;
                 
                 // إخفاء أقسام الرفع والإعدادات
                 document.getElementById('upload-section').style.display = 'none';
@@ -2706,88 +2712,12 @@ INVALID_PDF`;
                 document.getElementById('questions-display-section').classList.add('show');
                 hideFooter();
                 
-                // عرض الأسئلة
+                // عرض الأسئلة مع الإجابات والنتائج
                 displayQuestions();
                 
-                // إذا كانت هناك إجابات سابقة، عرض النتائج مباشرة
-                if (answersSubmitted && answers.length > 0) {
-                    setTimeout(() => {
-                        // إعادة عرض النتائج
-                        const correctCount = answers.filter(a => a?.isCorrect).length;
-                        const percentage = Math.round((correctCount / questionsData.length) * 100);
-                        
-                        // تطبيق تلوين الإجابات
-                        questionsData.forEach((q, i) => {
-                            const answer = answers[i];
-                            if (answer) {
-                                const options = document.querySelectorAll(`#options-${i} .option-item`);
-                                const resultDiv = document.getElementById(`result-${i}`);
-                                const questionCard = document.getElementById(`question-${i}`);
-                                const explanation = document.getElementById(`explanation-${i}`);
-                                
-                                // استخراج نص الإجابة الصحيحة
-                                let correctAnswerText = q.correct;
-                                if (correctAnswerText.includes(':')) {
-                                    correctAnswerText = correctAnswerText.substring(correctAnswerText.indexOf(':') + 1).trim();
-                                } else if (correctAnswerText.match(/^[ABCD]/)) {
-                                    correctAnswerText = correctAnswerText.substring(1).trim();
-                                }
-                                
-                                if (answer.isCorrect) {
-                                    questionCard.classList.add('correct');
-                                } else {
-                                    questionCard.classList.add('incorrect');
-                                }
-                                
-                                // تلوين الخيارات
-                                options.forEach((opt, idx) => {
-                                    const optText = q.options[idx];
-                                    if (optText === correctAnswerText) {
-                                        opt.classList.add('correct-answer');
-                                    }
-                                    if (idx === answer.selected && !answer.isCorrect) {
-                                        opt.classList.add('wrong-answer');
-                                    }
-                                    opt.style.pointerEvents = 'none';
-                                });
-                                
-                                // إظهار النتيجة
-                                resultDiv.innerHTML = answer.isCorrect 
-                                    ? '<i class="fas fa-check-circle"></i> إجابة صحيحة ✓'
-                                    : '<i class="fas fa-times-circle"></i> إجابة خاطئة ✗';
-                                resultDiv.className = `result-indicator ${answer.isCorrect ? 'correct' : 'incorrect'}`;
-                                resultDiv.style.display = 'flex';
-                                
-                                // إظهار الشرح للإجابات الخاطئة
-                                if (!answer.isCorrect) {
-                                    explanation.style.display = 'block';
-                                }
-                            }
-                        });
-                        
-                        // عرض النتائج
-                        const scoreFill = document.getElementById('score-fill');
-                        const rotation = (percentage / 100) * 360;
-                        scoreFill.style.background = `conic-gradient(var(--success-color) 0deg, var(--success-color) ${rotation}deg, transparent ${rotation}deg)`;
-                        
-                        document.getElementById('score-percentage').textContent = percentage + '%';
-                        document.getElementById('score-details').textContent = `${correctCount} من ${questionsData.length}`;
-                        
-                        let message = '';
-                        if (percentage >= 90) message = '🌟 أداء استثنائي! إتقان عالٍ جداً';
-                        else if (percentage >= 70) message = '💪 عمل ممتاز! مستوى متقدم';
-                        else if (percentage >= 50) message = '📚 عمل جيد! تحتاج لمراجعة بعض النقاط';
-                        else message = '🌱 تحتاج للمزيد من المذاكرة، استمر ولا تيأس';
-                        document.getElementById('encouragement-message').textContent = message;
-                        
-                        document.getElementById('results-summary').style.display = 'block';
-                        
-                        // تعطيل زر التسليم
-                        document.getElementById('submit-answers-btn').disabled = true;
-                        
-                        // تحديث شريط التقدم
-                        updateProgressBar();
-                    }, 100);
+                // عرض النتائج المحفوظة
+                if (score && score.percentage) {
+                    showResults(score.correctCount || 0);
                 }
                 
                 showNotification('تم تحميل السجل بنجاح', 'success');
@@ -2796,6 +2726,28 @@ INVALID_PDF`;
                 console.error('Error loading record:', error);
                 showNotification('حدث خطأ أثناء تحميل السجل: ' + error.message, 'error');
             }
+        }
+        
+        // ========== إعادة تعيين الصفحة ==========
+        function resetToMainScreen() {
+            // إعادة ضبط المتغيرات
+            selectedFile = null;
+            fileInfo = { name: '', size: 0, pages: 0, words: 0, baseCost: 0 };
+            questionsData = null;
+            userAnswers = [];
+            answersSubmitted = false;
+            isViewMode = false;
+            currentRecordId = null;
+            
+            // إظهار أقسام الرفع
+            document.getElementById('upload-section').style.display = 'block';
+            document.getElementById('questions-section').classList.remove('show');
+            document.getElementById('questions-display-section').classList.remove('show');
+            
+            // إعادة تعيين واجهة الرفع
+            resetFileInput();
+            
+            showFooter();
         }
         
         // ========== التهيئة ==========
@@ -2814,7 +2766,7 @@ INVALID_PDF`;
                 setupQuestionsEvents();
                 setupRecordsEvents();
                 
-                document.getElementById('home-logo').addEventListener('click', () => location.reload());
+                document.getElementById('home-logo').addEventListener('click', resetToMainScreen);
                 hideLoading();
             });
         }
