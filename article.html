@@ -775,33 +775,14 @@
             border-radius: var(--border-radius);
         }
 
-        .similarity-box {
-            background: rgba(255,193,7,0.1);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin: 20px 0;
-            border-right: 6px solid var(--warning-color);
-        }
-
-        .similarity-percentage {
-            font-size: 2.2rem;
-            font-weight: 900;
-            color: var(--warning-color);
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .similarity-label {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
+        /* تم إزالة قسم similarity-box بالكامل */
 
         .advice-box {
             background: rgba(139,115,85,0.05);
             padding: 20px;
             border-radius: var(--border-radius);
             border-right: 6px solid var(--accent-primary);
+            margin-top: 20px;
         }
 
         .advice-title {
@@ -1689,16 +1670,9 @@ CORE DIRECTIVE
 3) For EACH question:
    • Extract the ideal model answer strictly from the PDF.
    • Compare the user's answer to the model answer.
-   • Compute semantic similarity percentage (0–100).
    • Evaluate conceptual completeness.
    • Detect missing critical points.
    • Detect incorrect claims.
-
-4) Similarity percentage MUST reflect:
-   • Concept accuracy
-   • Coverage completeness
-   • Logical correctness
-   • Terminology precision
 
 ----------------------------------
 EVALUATION RULES
@@ -1718,16 +1692,14 @@ Return ONLY this structure:
 
 {
   "C1": "الإجابة النموذجية الدقيقة من الملف",
-  "X1": "نسبة الدقة %",
   "B1": "نصيحة مخصصة للتحسين",
 
   "C2": "الإجابة النموذجية",
-  "X2": "النسبة %",
   "B2": "النصيحة"
 }
 
 • Continue sequentially based on number of questions
-• No extra keys
+• No extra keys (like X1, X2 for percentage)
 • No commentary
 • No trailing commas`;
 
@@ -1755,9 +1727,9 @@ Return ONLY this structure:
                     throw new Error('تنسيق التقييم غير صالح');
                 }
 
-                // التحقق من وجود جميع المفاتيح المطلوبة
+                // التحقق من وجود جميع المفاتيح المطلوبة (بدون نسبة مئوية)
                 for (let i = 1; i <= currentSettings.questionsCount; i++) {
-                    if (!evaluation[`C${i}`] || !evaluation[`X${i}`] || !evaluation[`B${i}`]) {
+                    if (!evaluation[`C${i}`] || !evaluation[`B${i}`]) {
                         throw new Error(`بيانات التقييم غير مكتملة للسؤال ${i}`);
                     }
                 }
@@ -1790,7 +1762,6 @@ Return ONLY this structure:
             let html = '';
             for (let i = 1; i <= currentSettings.questionsCount; i++) {
                 const modelAnswer = evaluationData[`C${i}`] || 'غير متوفر';
-                const percentage = evaluationData[`X${i}`] || '0';
                 const advice = evaluationData[`B${i}`] || 'لا توجد نصيحة';
                 const userAnswer = userAnswers[i-1] || 'لم يكتب المستخدم إجابة';
                 const question = essayQuestions[`Q${i}`] || '';
@@ -1819,10 +1790,7 @@ Return ONLY this structure:
                             </div>
                         </div>
                         
-                        <div class="similarity-box">
-                            <div class="similarity-percentage">${percentage}%</div>
-                            <div class="similarity-label">نسبة التطابق المحسوبة بدقة</div>
-                        </div>
+                        <!-- تم إزالة قسم similarity-box بالكامل -->
                         
                         <div class="advice-box">
                             <div class="advice-title">
