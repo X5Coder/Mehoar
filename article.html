@@ -1390,13 +1390,13 @@
                 });
             });
 
-            document.getElementById('generate-btn').addEventListener('click', generateAndEvaluate);
+            document.getElementById('generate-btn').addEventListener('click', generateEssayQuestions);
             updateCost();
         }
 
-        // ===== إنشاء البرومبت الموحد =====
-        function createUnifiedPrompt() {
-            return `========================================
+        // ===== البرومبت الموحد (بدون تعديل) =====
+        function getUnifiedPrompt(includeAnswers = false) {
+            let basePrompt = `========================================
 SYSTEM ROLE: STRICT PDF ESSAY QA ENGINE
 FULL-DOCUMENT ANALYSIS MODE
 ZERO-DEVIATION POLICY
@@ -1519,10 +1519,16 @@ Return EXACTLY this structure:
 • Valid strict JSON only
 
 عدد_الاسئلة = ${currentSettings.questionsCount}
-مستوى_الصعوبة = ${currentSettings.difficulty}
+مستوى_الصعوبة = ${currentSettings.difficulty}`;
 
-إجابات المستخدم:
-${userAnswers.map((ans, index) => `السؤال ${index + 1}: ${essayQuestions[index] || 'لم يتم إنشاء السؤال بعد'}\nإجابة المستخدم ${index + 1}: ${ans || 'لم يكتب المستخدم إجابة'}`).join('\n\n')}`;
+            if (includeAnswers && essayQuestions.length > 0 && userAnswers.length > 0) {
+                basePrompt += `\n\nإجابات المستخدم:\n`;
+                for (let i = 0; i < currentSettings.questionsCount; i++) {
+                    basePrompt += `السؤال ${i + 1}: ${essayQuestions[i] || 'لم يتم إنشاء السؤال بعد'}\nإجابة المستخدم ${i + 1}: ${userAnswers[i] || 'لم يكتب المستخدم إجابة'}\n\n`;
+                }
+            }
+
+            return basePrompt;
         }
 
         function cleanJSONResponse(text) {
@@ -1540,8 +1546,8 @@ ${userAnswers.map((ans, index) => `السؤال ${index + 1}: ${essayQuestions[i
             return null;
         }
 
-        // ===== إنشاء وتقييم الأسئلة (برومبت موحد) =====
-        async function generateAndEvaluate() {
+        // ===== إنشاء الأسئلة فقط =====
+        async function generateEssayQuestions() {
             if (!selectedFile) {
                 showNotification('الملف غير موجود', 'error');
                 return;
@@ -1565,28 +1571,32 @@ ${userAnswers.map((ans, index) => `السؤال ${index + 1}: ${essayQuestions[i
                     reader.readAsDataURL(selectedFile);
                 });
 
-                // أول استدعاء: إنشاء الأسئلة فقط
-                const prompt1 = createUnifiedPrompt().replace(/إجابات المستخدم:[\s\S]*$/, '');
-                
-                const response1 = await fetch(SERVER + "/api/KIMO_DEV", {
+                // إرسال البرومبت بدون إجابات المستخدم
+                const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         id: ID,
                         pass: PASS,
-                        data: prompt1,
+                        data: getUnifiedPrompt(false),
                         PDF_BASE64: base64
                     })
                 });
 
-                const text1 = await response1.text();
-                
-                if (text1.includes("INVALID") || text1.includes("INSUFFICIENT")) {
+                if (!response.ok) {
+                    throw new Error(`خطأ في الاتصال: ${response.status}`);
+                }
+
+                const text = await response.text();
+                hideLoading();
+
+                if (text.includes("INVALID") || text.includes("INSUFFICIENT")) {
                     throw new Error('فشل في إنشاء الأسئلة');
                 }
 
-                const questionsData = cleanJSONResponse(text1);
+                const questionsData = cleanJSONResponse(text);
                 if (!questionsData) {
+                    console.error('الرد الخام:', text);
                     throw new Error('تنسيق الرد غير صالح');
                 }
 
@@ -1699,17 +1709,21 @@ ${userAnswers.map((ans, index) => `السؤال ${index + 1}: ${essayQuestions[i
                     reader.readAsDataURL(selectedFile);
                 });
 
-                // الاستدعاء الثاني: التقييم مع إجابات المستخدم
+                // إرسال البرومبت مع إجابات المستخدم
                 const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         id: ID,
                         pass: PASS,
-                        data: createUnifiedPrompt(),
+                        data: getUnifiedPrompt(true),
                         PDF_BASE64: base64
                     })
                 });
+
+                if (!response.ok) {
+                    throw new Error(`خطأ في الاتصال: ${response.status}`);
+                }
 
                 const evalText = await response.text();
                 hideLoading();
