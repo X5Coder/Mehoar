@@ -775,8 +775,6 @@
             border-radius: var(--border-radius);
         }
 
-        /* تم إزالة قسم similarity-box بالكامل */
-
         .advice-box {
             background: rgba(139,115,85,0.05);
             padding: 20px;
@@ -1107,7 +1105,7 @@
                 <div class="total-cost-number" id="total-cost-display">0</div>
                 <div style="font-size:0.9rem;">عملة</div>
             </div>
-            <button class="generate-btn" id="generate-btn"><i class="fas fa-robot"></i> إنشاء الأسئلة</button>
+            <button class="generate-btn" id="generate-btn"><i class="fas fa-robot"></i> بدء التقييم</button>
         </section>
 
         <!-- Essay Section -->
@@ -1178,7 +1176,7 @@
         let selectedFile = null;
         let fileInfo = { name: '', pages: 0, baseCost: 5 };
         let currentSettings = { questionsCount: 8, difficulty: 'سهل', extraCost: 0, totalCost: 5 };
-        let essayQuestions = {};
+        let essayQuestions = [];
         let userAnswers = [];
         let currentQuestionIndex = 0;
         let currentRecordId = null;
@@ -1392,86 +1390,144 @@
                 });
             });
 
-            document.getElementById('generate-btn').addEventListener('click', generateEssayQuestions);
+            document.getElementById('generate-btn').addEventListener('click', generateAndEvaluate);
             updateCost();
         }
 
-        // ===== إنشاء الأسئلة (البرومبت الأول) =====
-        function createPrompt1() {
-            return `SYSTEM ROLE: STRICT PDF ESSAY QUESTION GENERATOR ENGINE
-ZERO-DEVIATION MODE
+        // ===== إنشاء البرومبت الموحد =====
+        function createUnifiedPrompt() {
+            return `========================================
+SYSTEM ROLE: STRICT PDF ESSAY QA ENGINE
+FULL-DOCUMENT ANALYSIS MODE
+ZERO-DEVIATION POLICY
+========================================
 
 You are a deterministic execution engine.
-No chat. No explanation. No comments. No extra keys. No markdown. No text outside JSON.
+No chat.
+No explanation.
+No markdown.
+No comments.
+No extra text.
+Return JSON ONLY.
 Any deviation = INVALID OUTPUT.
 
 ----------------------------------
 ACTIVATION CONDITIONS
 ----------------------------------
-عدد_الاسئلة = ${currentSettings.questionsCount}
-مستوى_الصعوبة = ${currentSettings.difficulty}
+
+Execute ONLY if:
+• A readable PDF is provided
+• {{عدد_الاسئلة}} is provided
+• {{مستوى_الصعوبة}} is provided
+
+If any missing → RETURN EXACTLY:
+INSUFFICIENT INPUT
 
 ----------------------------------
-CORE DIRECTIVE
+CORE EXECUTION FLOW
 ----------------------------------
+
 1) Read the ENTIRE PDF from first word to last word.
-2) Treat the PDF as ONE unified knowledge source.
+2) Treat the document as ONE unified structured source.
 3) Analyze ALL sections equally.
-4) Generate essay questions that collectively cover the FULL document.
-5) Questions must not be concentrated in one section.
-6) Do NOT repeat ideas.
-7) Do NOT duplicate concepts in different wording.
-8) Each question must target a distinct concept or idea.
+4) Ensure coverage spans the FULL document.
+5) Do NOT focus on a single section.
+6) Do NOT repeat ideas or concepts.
+7) Each question must target a distinct concept.
 
 ----------------------------------
 DIFFICULTY CONTROL (MANDATORY)
 ----------------------------------
-You MUST strictly interpret ${currentSettings.difficulty} as follows:
+
+Interpret {{مستوى_الصعوبة}} strictly:
 
 IF = "سهل":
-• Direct questions
-• Clearly stated facts
-• No inference
-• Answers explicitly present in text
+• Questions must be directly stated in the PDF
+• Answers explicitly present
+• Clear factual recall
+• Cover entire file
 
 IF = "متوسط":
-• Direct but conceptually deeper
-• Require understanding relationships
-• Based directly on text but not copy-paste
+• Questions directly based on text
+• Require deeper understanding
+• Hard but still text-based
+• No inference outside document
+• Cover entire file
 
 IF = "صعب":
-• Inference-based
+• Questions must be logically inferred from PDF
 • Require synthesis between multiple sections
-• Derived logically from document
-• Not directly quoted
-• Require analytical reasoning
+• Analytical and conceptual
+• No external knowledge
+• Still derived strictly from document
 
 ----------------------------------
 QUESTION COUNT RULE
 ----------------------------------
-• Generate EXACTLY ${currentSettings.questionsCount} questions
+
+• Generate EXACTLY {{عدد_الاسئلة}} questions
 • No more
 • No less
 
 ----------------------------------
-OUTPUT FORMAT (STRICT JSON ONLY)
+EVALUATION REQUIREMENT
 ----------------------------------
-Return ONLY this structure:
+
+For EACH question:
+
+1) Generate the question.
+2) Generate the precise model answer strictly from the PDF.
+3) Compare with the user's answer.
+4) Write a tailored improvement advice based on:
+   • Missing points
+   • Conceptual weakness
+   • Incomplete reasoning
+   • Structural clarity
+
+Advice must:
+• Be specific
+• Reference conceptual gap
+• Not generic
+• Not repeated between evaluations
+
+----------------------------------
+STRICT OUTPUT FORMAT (JSON ONLY)
+----------------------------------
+
+Return EXACTLY this structure:
 
 {
-  "Q1": "السؤال الأول",
-  "Q2": "السؤال الثاني"
+  "تقييم_1": {
+    "السؤال": "...",
+    "إجابة_المستخدم": "...",
+    "الإجابة_النموذجية": "...",
+    "نصيحة": "..."
+  },
+  "تقييم_2": {
+    "السؤال": "...",
+    "إجابة_المستخدم": "...",
+    "الإجابة_النموذجية": "...",
+    "نصيحة": "..."
+  }
 }
 
-• Keys must increment sequentially until ${currentSettings.questionsCount}
+• Continue sequentially until {{عدد_الاسئلة}}
+• Keys must be تقييم_1, تقييم_2, تقييم_3 ...
+• No extra keys
 • No additional fields
-• No metadata
-• No explanation
-• No trailing commas`;
+• No trailing commas
+• Valid strict JSON only
+
+عدد_الاسئلة = ${currentSettings.questionsCount}
+مستوى_الصعوبة = ${currentSettings.difficulty}
+
+إجابات المستخدم:
+${userAnswers.map((ans, index) => `السؤال ${index + 1}: ${essayQuestions[index] || 'لم يتم إنشاء السؤال بعد'}\nإجابة المستخدم ${index + 1}: ${ans || 'لم يكتب المستخدم إجابة'}`).join('\n\n')}`;
         }
 
         function cleanJSONResponse(text) {
             try {
+                // محاولة العثور على JSON في النص
                 const start = text.indexOf('{');
                 const end = text.lastIndexOf('}');
                 if (start !== -1 && end !== -1) {
@@ -1484,7 +1540,8 @@ Return ONLY this structure:
             return null;
         }
 
-        async function generateEssayQuestions() {
+        // ===== إنشاء وتقييم الأسئلة (برومبت موحد) =====
+        async function generateAndEvaluate() {
             if (!selectedFile) {
                 showNotification('الملف غير موجود', 'error');
                 return;
@@ -1497,10 +1554,10 @@ Return ONLY this structure:
 
             const generateBtn = document.getElementById('generate-btn');
             generateBtn.disabled = true;
-            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإنشاء...';
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إنشاء الأسئلة...';
 
             try {
-                showLoading('عون يقرأ ملفك...');
+                showLoading('عون يقرأ ملفك وينشئ الأسئلة...');
                 
                 const base64 = await new Promise(resolve => {
                     const reader = new FileReader();
@@ -1508,36 +1565,41 @@ Return ONLY this structure:
                     reader.readAsDataURL(selectedFile);
                 });
 
-                const response = await fetch(SERVER + "/api/KIMO_DEV", {
+                // أول استدعاء: إنشاء الأسئلة فقط
+                const prompt1 = createUnifiedPrompt().replace(/إجابات المستخدم:[\s\S]*$/, '');
+                
+                const response1 = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         id: ID,
                         pass: PASS,
-                        data: createPrompt1(),
+                        data: prompt1,
                         PDF_BASE64: base64
                     })
                 });
 
-                const text = await response.text();
-                hideLoading();
-
-                if (text.includes("INVALID") || text.includes("INSUFFICIENT")) {
+                const text1 = await response1.text();
+                
+                if (text1.includes("INVALID") || text1.includes("INSUFFICIENT")) {
                     throw new Error('فشل في إنشاء الأسئلة');
                 }
 
-                const questions = cleanJSONResponse(text);
-                if (!questions) {
+                const questionsData = cleanJSONResponse(text1);
+                if (!questionsData) {
                     throw new Error('تنسيق الرد غير صالح');
                 }
 
-                // التحقق من عدد الأسئلة
-                const questionCount = Object.keys(questions).length;
-                if (questionCount !== currentSettings.questionsCount) {
-                    throw new Error(`عدد الأسئلة المستلمة (${questionCount}) لا يطابق المطلوب (${currentSettings.questionsCount})`);
+                // استخراج الأسئلة من البيانات
+                essayQuestions = [];
+                for (let i = 1; i <= currentSettings.questionsCount; i++) {
+                    const evalItem = questionsData[`تقييم_${i}`];
+                    if (evalItem && evalItem["السؤال"]) {
+                        essayQuestions.push(evalItem["السؤال"]);
+                    } else {
+                        throw new Error(`السؤال ${i} غير موجود في البيانات`);
+                    }
                 }
-
-                essayQuestions = questions;
 
                 // خصم العملات
                 userCoins -= currentSettings.totalCost;
@@ -1562,15 +1624,14 @@ Return ONLY this structure:
                 showNotification('خطأ: ' + error.message, 'error');
             } finally {
                 generateBtn.disabled = false;
-                generateBtn.innerHTML = '<i class="fas fa-robot"></i> إنشاء الأسئلة';
+                generateBtn.innerHTML = '<i class="fas fa-robot"></i> بدء التقييم';
             }
         }
 
         function renderQuestion() {
-            if (!essayQuestions) return;
+            if (!essayQuestions || essayQuestions.length === 0) return;
             
-            const qKey = `Q${currentQuestionIndex + 1}`;
-            document.getElementById('question-text').textContent = essayQuestions[qKey] || 'السؤال غير متوفر';
+            document.getElementById('question-text').textContent = essayQuestions[currentQuestionIndex] || 'السؤال غير متوفر';
             document.getElementById('answer-textarea').value = userAnswers[currentQuestionIndex] || '';
             document.getElementById('current-q-num').textContent = currentQuestionIndex + 1;
             document.getElementById('total-q-num').textContent = currentSettings.questionsCount;
@@ -1595,7 +1656,7 @@ Return ONLY this structure:
         function setupAutoSave() {
             const textarea = document.getElementById('answer-textarea');
             textarea.addEventListener('input', function() {
-                if (!essayQuestions) return;
+                if (!essayQuestions || essayQuestions.length === 0) return;
                 userAnswers[currentQuestionIndex] = this.value;
                 if (currentRecordId) {
                     database.ref(`records/${currentRecordId}/userAnswers`).set(userAnswers);
@@ -1619,7 +1680,7 @@ Return ONLY this structure:
             }
         });
 
-        // ===== تسليم الإجابات (البرومبت الثاني) =====
+        // ===== تسليم الإجابات والتقييم النهائي =====
         document.getElementById('submit-final-btn').addEventListener('click', async function() {
             if (!userAnswers || userAnswers.some(ans => !ans || !ans.trim())) {
                 showNotification('أكمل جميع الإجابات أولاً', 'error');
@@ -1632,84 +1693,20 @@ Return ONLY this structure:
             try {
                 showLoading('عون يقيم إجاباتك...');
 
-                let qaText = '';
-                for (let i = 0; i < currentSettings.questionsCount; i++) {
-                    qaText += `Q${i + 1} : ${essayQuestions[`Q${i + 1}`]}\nR${i + 1} : ${userAnswers[i]}\n`;
-                }
-
                 const base64 = await new Promise(resolve => {
                     const reader = new FileReader();
                     reader.onload = () => resolve(reader.result.split(',')[1]);
                     reader.readAsDataURL(selectedFile);
                 });
 
-                const evalPrompt = `SYSTEM ROLE: STRICT PDF ESSAY EVALUATION ENGINE
-ZERO-DEVIATION MODE
-
-You are a deterministic evaluation engine.
-No chat. No explanation. No comments. No markdown. No text outside JSON.
-Any deviation = INVALID OUTPUT.
-
-----------------------------------
-ACTIVATION CONDITIONS
-----------------------------------
-Execute ONLY if:
-• A readable PDF is provided
-• Questions & answers are provided exactly in this pattern:
-
-${qaText}
-
-If format mismatch → RETURN EXACTLY:
-INVALID FORMAT
-
-----------------------------------
-CORE DIRECTIVE
-----------------------------------
-1) Read the ENTIRE PDF from first word to last word.
-2) Treat the document as ONE unified reference source.
-3) For EACH question:
-   • Extract the ideal model answer strictly from the PDF.
-   • Compare the user's answer to the model answer.
-   • Evaluate conceptual completeness.
-   • Detect missing critical points.
-   • Detect incorrect claims.
-
-----------------------------------
-EVALUATION RULES
-----------------------------------
-• Each question evaluated independently.
-• No mixing between answers.
-• No hallucinated info outside PDF.
-• Advice must reference conceptual gaps.
-• Advice must guide toward specific improvement area in document.
-• No repetition between advice entries.
-• No generic tips.
-
-----------------------------------
-OUTPUT FORMAT (STRICT JSON ONLY)
-----------------------------------
-Return ONLY this structure:
-
-{
-  "C1": "الإجابة النموذجية الدقيقة من الملف",
-  "B1": "نصيحة مخصصة للتحسين",
-
-  "C2": "الإجابة النموذجية",
-  "B2": "النصيحة"
-}
-
-• Continue sequentially based on number of questions
-• No extra keys (like X1, X2 for percentage)
-• No commentary
-• No trailing commas`;
-
+                // الاستدعاء الثاني: التقييم مع إجابات المستخدم
                 const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         id: ID,
                         pass: PASS,
-                        data: evalPrompt,
+                        data: createUnifiedPrompt(),
                         PDF_BASE64: base64
                     })
                 });
@@ -1717,37 +1714,49 @@ Return ONLY this structure:
                 const evalText = await response.text();
                 hideLoading();
 
-                if (evalText.includes("INVALID")) {
+                if (evalText.includes("INVALID") || evalText.includes("INSUFFICIENT")) {
                     throw new Error('فشل التقييم - النص المرسل غير صالح');
                 }
 
                 const evaluation = cleanJSONResponse(evalText);
                 if (!evaluation) {
-                    console.error('Raw response:', evalText);
+                    console.error('الرد الخام:', evalText);
                     throw new Error('تنسيق التقييم غير صالح');
                 }
 
-                // التحقق من وجود جميع المفاتيح المطلوبة (بدون نسبة مئوية)
+                // التحقق من اكتمال البيانات
+                const evaluationCount = Object.keys(evaluation).length;
+                if (evaluationCount !== currentSettings.questionsCount) {
+                    throw new Error(`عدد عناصر التقييم (${evaluationCount}) لا يطابق عدد الأسئلة (${currentSettings.questionsCount})`);
+                }
+
+                // التحقق من وجود جميع الحقول المطلوبة لكل سؤال
                 for (let i = 1; i <= currentSettings.questionsCount; i++) {
-                    if (!evaluation[`C${i}`] || !evaluation[`B${i}`]) {
+                    const evalItem = evaluation[`تقييم_${i}`];
+                    if (!evalItem) {
+                        throw new Error(`بيانات التقييم غير مكتملة - السؤال ${i} غير موجود`);
+                    }
+                    if (!evalItem["السؤال"] || !evalItem["إجابة_المستخدم"] || !evalItem["الإجابة_النموذجية"] || !evalItem["نصيحة"]) {
                         throw new Error(`بيانات التقييم غير مكتملة للسؤال ${i}`);
                     }
                 }
 
                 evaluationData = evaluation;
 
+                // حفظ التقييم في قاعدة البيانات
                 if (currentRecordId) {
                     await database.ref(`records/${currentRecordId}/evaluation`).set(evaluationData);
                     await database.ref(`records/${currentRecordId}/submitted`).set(true);
                 }
 
+                // عرض التقييم
                 displayEvaluation();
                 document.getElementById('essay-section').style.display = 'none';
                 document.getElementById('evaluation-section').style.display = 'block';
                 showNotification('تم التقييم بنجاح', 'success');
 
             } catch (error) {
-                console.error('Evaluation error:', error);
+                console.error('خطأ في التقييم:', error);
                 showNotification('خطأ في التقييم: ' + error.message, 'error');
             } finally {
                 this.disabled = false;
@@ -1760,11 +1769,16 @@ Return ONLY this structure:
             if (!evaluationData) return;
 
             let html = '';
+            
+            // المرور على جميع عناصر التقييم
             for (let i = 1; i <= currentSettings.questionsCount; i++) {
-                const modelAnswer = evaluationData[`C${i}`] || 'غير متوفر';
-                const advice = evaluationData[`B${i}`] || 'لا توجد نصيحة';
-                const userAnswer = userAnswers[i-1] || 'لم يكتب المستخدم إجابة';
-                const question = essayQuestions[`Q${i}`] || '';
+                const evalItem = evaluationData[`تقييم_${i}`];
+                if (!evalItem) continue;
+
+                const question = evalItem["السؤال"] || '';
+                const userAnswer = evalItem["إجابة_المستخدم"] || '';
+                const modelAnswer = evalItem["الإجابة_النموذجية"] || 'غير متوفر';
+                const advice = evalItem["نصيحة"] || 'لا توجد نصيحة';
 
                 html += `
                     <div class="evaluation-card">
@@ -1790,8 +1804,6 @@ Return ONLY this structure:
                             </div>
                         </div>
                         
-                        <!-- تم إزالة قسم similarity-box بالكامل -->
-                        
                         <div class="advice-box">
                             <div class="advice-title">
                                 <i class="fas fa-lightbulb" style="color: #FFC107;"></i>
@@ -1802,6 +1814,7 @@ Return ONLY this structure:
                     </div>
                 `;
             }
+            
             container.innerHTML = html;
         }
 
@@ -1849,7 +1862,6 @@ Return ONLY this structure:
             modal.classList.add('show');
 
             try {
-                // جلب جميع السجلات من Firebase مباشرة
                 const snapshot = await database.ref('records')
                     .orderByChild('id')
                     .equalTo(currentUser.id)
@@ -1867,7 +1879,6 @@ Return ONLY this structure:
                         });
                     });
                     
-                    // ترتيب من الأحدث إلى الأقدم
                     records.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
                     records.forEach(rec => {
@@ -1912,31 +1923,26 @@ Return ONLY this structure:
         function loadEssayRecord(rec) {
             document.getElementById('records-modal').classList.remove('show');
 
-            // تحميل البيانات من السجل
             fileInfo = { name: rec.fileName, baseCost: 5 };
             currentSettings = rec.settings || { questionsCount: 8, difficulty: 'سهل', extraCost: 0, totalCost: 5 };
-            essayQuestions = rec.questions || {};
+            essayQuestions = rec.questions || [];
             userAnswers = rec.userAnswers || [];
             evaluationData = rec.evaluation || null;
             currentRecordId = rec.key;
             currentRecord = rec;
 
-            // إخفاء كل الأقسام
             document.getElementById('upload-section').style.display = 'none';
             document.getElementById('settings-section').style.display = 'none';
             document.getElementById('essay-section').style.display = 'none';
             document.getElementById('evaluation-section').style.display = 'none';
 
             if (evaluationData) {
-                // إذا كان السجل مقيم، اعرض النتائج
                 displayEvaluation();
                 document.getElementById('evaluation-section').style.display = 'block';
                 hideFooter();
             } else {
-                // إذا لم يكن مقيم، اعرض الأسئلة للإجابة
                 document.getElementById('essay-section').style.display = 'block';
                 currentQuestionIndex = 0;
-                // لا يمكن استرجاع الملف، لذلك نعرض رسالة
                 showNotification('هذا السجل لم يتم تقييمه بعد. اكتب إجاباتك ثم سلم', 'info');
                 renderQuestion();
                 hideFooter();
