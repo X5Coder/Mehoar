@@ -435,7 +435,7 @@
             color: var(--accent-primary);
         }
         
-        /* Summary Content */
+        /* Summary Content Styles */
         .summary-content {
             line-height: 1.8;
         }
@@ -446,9 +446,13 @@
             color: var(--accent-primary);
             margin-bottom: 30px;
             text-align: center;
+            padding: 20px;
+            background: linear-gradient(145deg, white, rgba(139, 115, 85, 0.05));
+            border-radius: var(--border-radius-xl);
+            border: 1px solid rgba(139, 115, 85, 0.15);
         }
         
-        .summary-text {
+        .summary-page {
             background: rgba(139, 115, 85, 0.04);
             border-radius: var(--border-radius-xl);
             padding: 30px;
@@ -457,26 +461,168 @@
             white-space: pre-wrap;
         }
         
-        .summary-item {
+        .summary-page h1, .summary-page h2, .summary-page h3 {
+            color: var(--accent-primary);
+            margin: 20px 0 10px;
+        }
+        
+        .summary-page .quote {
+            color: var(--accent-secondary);
+            font-style: italic;
+            padding: 10px 20px;
             background: white;
             border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(139, 115, 85, 0.1);
-            box-shadow: 0 2px 8px rgba(139, 115, 85, 0.05);
+            margin: 15px 0;
+            border-right: 5px solid var(--accent-primary);
         }
         
-        .summary-item .question {
+        .raw-list {
+            background: white;
+            border-radius: var(--border-radius-xl);
+            padding: 25px;
+            border: 1px solid rgba(139, 115, 85, 0.15);
+        }
+        
+        .raw-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(139, 115, 85, 0.04);
+            border-radius: var(--border-radius);
+            border-right: 4px solid var(--accent-primary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .raw-item i {
+            color: var(--accent-primary);
+            font-size: 1.2rem;
+            margin-top: 5px;
+        }
+        
+        /* Q&A Style */
+        .qa-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .qa-item {
+            background: white;
+            border-radius: var(--border-radius-xl);
+            padding: 25px;
+            border: 1px solid rgba(139, 115, 85, 0.15);
+            transition: all 0.1s ease;
+        }
+        
+        .qa-item:hover {
+            transform: translateX(-5px);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .qa-question {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .qa-number {
+            width: 45px;
+            height: 45px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+        
+        .qa-question-text {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.3rem;
             font-weight: 700;
             color: var(--accent-primary);
-            margin-bottom: 10px;
-            font-size: 1.2rem;
         }
         
-        .summary-item .answer {
+        .qa-answer {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            padding-right: 60px;
+        }
+        
+        .qa-answer-icon {
+            width: 35px;
+            height: 35px;
+            background: var(--success-color);
+            color: white;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .qa-answer-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
             color: var(--text-primary);
-            padding-right: 20px;
-            border-right: 3px solid var(--accent-secondary);
+            background: rgba(139, 115, 85, 0.04);
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            flex: 1;
+        }
+        
+        .qa-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(139, 115, 85, 0.3), transparent);
+            margin: 20px 0;
+        }
+        
+        /* Comparison Table */
+        .comparison-container {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: var(--border-radius-xl);
+            border: 1px solid var(--border-color);
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        
+        .comparison-table th {
+            background: var(--accent-primary);
+            color: white;
+            padding: 20px;
+            font-weight: 700;
+            border: 1px solid var(--border-color);
+        }
+        
+        .comparison-table td {
+            padding: 18px 20px;
+            border: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background: rgba(139, 115, 85, 0.04);
+        }
+        
+        .element-label {
+            font-weight: 700;
+            color: var(--accent-primary);
+            background: rgba(139, 115, 85, 0.1);
+            width: 150px;
         }
         
         .action-buttons {
@@ -624,7 +770,7 @@
         @media (max-width: 768px) {
             .logo { font-size: 32px; }
             .records-btn span { display: none; }
-            .file-details { gap: 20px; }
+            .qa-answer { padding-right: 0; flex-direction: column; }
             .action-buttons { flex-direction: column; align-items: center; }
             .secondary-btn { width: 100%; justify-content: center; }
         }
@@ -907,7 +1053,7 @@
             document.getElementById('loading-screen').style.display = 'none';
         }
         
-        // ========== حساب الكلمات بدقة (نفس طريقة الملف القديم) ==========
+        // ========== حساب الكلمات بدقة ==========
         async function analyzePDF(file) {
             showLoading('جاري تحليل الملف...');
             
@@ -924,16 +1070,15 @@
                     if (content.items.length) {
                         let text = '';
                         content.items.forEach(t => text += t.str + ' ');
-                        // نفس طريقة حساب الكلمات في الملف القديم
+                        // حساب الكلمات بدقة
                         const words = text.trim().split(/\s+/).filter(w => w.length >= 2);
                         totalWords += words.length;
                     } else {
-                        // إذا مافيش نص، نضيف قيمة تقريبية
                         totalWords += 250;
                     }
                 }
                 
-                // حساب العملات: كل 1000 كلمة = 2 عملة (نفس المعادلة القديمة)
+                // حساب العملات: كل 1000 كلمة = 2 عملة
                 let coins = Math.ceil((totalWords / 1000) * 2) / 2;
                 if (coins < 1) coins = 1;
                 coins = Math.round(coins * 10) / 10;
@@ -1090,7 +1235,7 @@
             document.getElementById('summarize-btn').addEventListener('click', generateSummary);
         }
         
-        // ========== إنشاء البرومبت (بنفس تنسيق الملف القديم) ==========
+        // ========== إنشاء البرومبت ==========
         function createPrompt() {
             const { language, length, type } = currentSettings;
             
@@ -1113,14 +1258,6 @@ ROLE:
 طول_التلخيص = ${length}
 
 ==================================================
-قواعد التحليل الصارمة
-==================================================
-
-1) قراءة كاملة للملف.
-2) منع المعرفة الخارجية.
-3) التغطية الكاملة للملف.
-
-==================================================
 تنسيق page
 ==================================================
 
@@ -1131,16 +1268,6 @@ S :
 
 Ru :
 - خمس نقاط أو أكثر تمثل أهم ما ورد في الملف بالكامل
-
-==================================================
-قواعد head
-==================================================
-خمس كلمات بالضبط تمثل الملف بالكامل بنفس اللغة المختارة
-
-==================================================
-قواعد raw
-==================================================
-3 إلى 5 جمل مستقلة تمثل جوهر الملف بالكامل
 
 ==================================================
 شكل JSON النهائي الإجباري
@@ -1154,8 +1281,6 @@ Ru :
             else if (type === 'سؤال وجواب') {
                 return `[IMPORTANT: YOU MUST ALWAYS RESPOND WITH VALID JSON ONLY.
 NO TEXT BEFORE OR AFTER THE JSON.
-DO NOT USE MARKDOWN.
-DO NOT ADD ANY EXTRA KEYS.
 RETURN ONLY A FLAT JSON OBJECT WITH THIS STRUCTURE:]
 
 {
@@ -1165,9 +1290,6 @@ RETURN ONLY A FLAT JSON OBJECT WITH THIS STRUCTURE:]
   "Q2": "",
   "R2": ""
 }
-
-(Continue numbering sequentially: Q3, R3, Q4, R4 ... as needed.
-No nested objects. No arrays. No additional fields.)
 
 ==================================================
 ROLE
@@ -1182,31 +1304,11 @@ ROLE
 ==================================================
 
 اللغة = ${language}
-طول_التلخيص = ${length}
-
-==================================================
-قواعد التحليل
-==================================================
-
-1) اقرأ الملف كاملاً.
-2) يجب أن تغطي الأسئلة كامل الملف.
-3) إذا طول_التلخيص = طويل: عدد أكبر من الأسئلة.
-4) إذا طول_التلخيص = قصير: عدد أقل من الأسئلة.
-
-==================================================
-قواعد بناء JSON
-==================================================
-
-- H : عنوان الملف
-- Q1 : السؤال الأول
-- R1 : الإجابة الأولى
-- وهكذا...
-- الترقيم تسلسلي`;
+طول_التلخيص = ${length}`;
             }
             else {
                 return `[IMPORTANT: YOU MUST ALWAYS RESPOND WITH VALID JSON ONLY.
 NO TEXT BEFORE OR AFTER THE JSON.
-DO NOT USE MARKDOWN.
 DO NOT ADD ANY EXTRA KEYS OUTSIDE THE STRUCTURE BELOW.]
 
 ==================================================
@@ -1309,6 +1411,7 @@ ROLE
                 
                 try {
                     summaryData = JSON.parse(jsonStr);
+                    console.log('Parsed data:', summaryData);
                 } catch (e) {
                     console.error('JSON parse error:', e);
                     // إذا فشل، ننشئ كائن بسيط من النص
@@ -1347,38 +1450,46 @@ ROLE
             }
         }
         
-        // ========== عرض التلخيص (نفس طريقة الملف القديم) ==========
+        // ========== عرض التلخيص بشكل صحيح ==========
         function displaySummary() {
             const container = document.getElementById('summary-content');
             const type = currentSettings.type;
             
             if (!summaryData) {
-                container.innerHTML = '<div class="error">حدث خطأ</div>';
+                container.innerHTML = '<div class="error">حدث خطأ في عرض التلخيص</div>';
                 return;
             }
             
             let html = '';
             
             if (type === 'عادي') {
-                // عنوان
+                // عرض العنوان
                 if (summaryData.head) {
                     html += `<div class="summary-head">${summaryData.head}</div>`;
                 }
                 
-                // المحتوى الرئيسي
+                // عرض المحتوى الرئيسي مع تنسيق العناوين
                 if (summaryData.page) {
-                    html += `<div class="summary-text">${summaryData.page}</div>`;
+                    let pageContent = summaryData.page;
+                    // تحويل العناوين بين علامتي اقتباس إلى عناصر مميزة
+                    pageContent = pageContent.replace(/"([^"]+)"/g, '<div class="quote">$1</div>');
+                    // تحويل الأسطر الجديدة إلى <br>
+                    pageContent = pageContent.replace(/\n/g, '<br>');
+                    html += `<div class="summary-page">${pageContent}</div>`;
                 }
                 
-                // النقاط
+                // عرض النقاط المهمة
                 if (summaryData.raw && Array.isArray(summaryData.raw)) {
+                    html += '<div class="raw-list">';
                     summaryData.raw.forEach(item => {
                         html += `
-                            <div class="summary-item">
-                                <div>${item}</div>
+                            <div class="raw-item">
+                                <i class="fas fa-circle"></i>
+                                <span>${item}</span>
                             </div>
                         `;
                     });
+                    html += '</div>';
                 }
             }
             else if (type === 'سؤال وجواب') {
@@ -1386,28 +1497,65 @@ ROLE
                     html += `<div class="summary-head">${summaryData.H}</div>`;
                 }
                 
+                html += '<div class="qa-container">';
                 let i = 1;
                 while (summaryData[`Q${i}`] && summaryData[`R${i}`]) {
                     html += `
-                        <div class="summary-item">
-                            <div class="question">س${i}: ${summaryData[`Q${i}`]}</div>
-                            <div class="answer">${summaryData[`R${i}`]}</div>
+                        <div class="qa-item">
+                            <div class="qa-question">
+                                <div class="qa-number">${i}</div>
+                                <div class="qa-question-text">${summaryData[`Q${i}`]}</div>
+                            </div>
+                            <div class="qa-answer">
+                                <div class="qa-answer-icon"><i class="fas fa-check"></i></div>
+                                <div class="qa-answer-text">${summaryData[`R${i}`]}</div>
+                            </div>
                         </div>
                     `;
+                    if (summaryData[`Q${i+1}`]) {
+                        html += '<div class="qa-divider"></div>';
+                    }
                     i++;
                 }
+                html += '</div>';
             }
             else if (type === 'مقارنة') {
-                if (summaryData.H) {
-                    html += `<div class="summary-head">${summaryData.H}</div>`;
+                if (!summaryData.Definition || !summaryData.Comparison) {
+                    html = '<div class="error">بيانات المقارنة غير مكتملة</div>';
+                } else {
+                    const elements = summaryData.Definition.Elements || {};
+                    const aspects = summaryData.Definition.Aspects || {};
+                    
+                    html += `<div class="summary-head">${summaryData.H || 'جدول المقارنة'}</div>`;
+                    html += '<div class="comparison-container"><table class="comparison-table">';
+                    
+                    // رأس الجدول
+                    html += '<tr><th>العناصر</th>';
+                    for (let aspect in aspects) {
+                        html += `<th>${aspects[aspect]}</th>`;
+                    }
+                    html += '</tr>';
+                    
+                    // صفوف العناصر
+                    for (let elem in elements) {
+                        html += '<tr>';
+                        html += `<td class="element-label">${elements[elem]}</td>`;
+                        
+                        for (let aspect in aspects) {
+                            const value = summaryData.Comparison[aspect]?.[elem] || '';
+                            html += `<td>${value}</td>`;
+                        }
+                        
+                        html += '</tr>';
+                    }
+                    
+                    html += '</table></div>';
                 }
-                
-                html += '<pre style="direction: ltr; text-align: left;">' + JSON.stringify(summaryData, null, 2) + '</pre>';
             }
             
-            // إذا مافيش بيانات، نعرض النص الخام
+            // إذا مافيش بيانات، نعرض رسالة
             if (!html) {
-                html = `<div class="summary-text">${JSON.stringify(summaryData)}</div>`;
+                html = '<div class="error">لا توجد بيانات للعرض</div>';
             }
             
             container.innerHTML = html;
