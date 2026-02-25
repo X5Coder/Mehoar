@@ -19,7 +19,6 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            /* منع النسخ على مستوى الصفحة */
             user-select: none;
             -webkit-user-select: none;
             -khtml-user-select: none;
@@ -913,7 +912,6 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-            /* أنميشن انبثاق عند الدخول */
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             opacity: 0;
             transform: scale(0.9);
@@ -925,7 +923,6 @@
             100% { opacity: 1; transform: scale(1); }
         }
         
-        /* تأخير متدرج للكروت */
         .service-card:nth-child(1) { animation-delay: 0.1s; }
         .service-card:nth-child(2) { animation-delay: 0.2s; }
         .service-card:nth-child(3) { animation-delay: 0.3s; }
@@ -1061,22 +1058,6 @@
             font-size: 26px;
             color: white;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-        }
-        
-        .developer-credit {
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
-            color: rgba(107, 98, 89, 0.7);
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid rgba(139, 115, 85, 0.05);
-            cursor: pointer;
-            transition: var(--transition-quick);
-        }
-        
-        .developer-credit:hover {
-            color: var(--beige-darker);
-            transform: scale(1.05);
         }
         
         @media (max-width: 1200px) {
@@ -1436,8 +1417,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- بطاقة الخدمة الجديدة: الأسئلة المقالي -->
                 <div class="service-card" data-service="article">
                     <div class="service-content">
                         <div class="service-icon">
@@ -1467,9 +1446,6 @@
                 </div>
             </div>
             
-            <div class="developer-credit" id="developer-credit">
-                برمجة وتصميم المطور 𝐊𝐈𝐌𝐎
-            </div>
         </footer>
     </div>
     
@@ -1500,7 +1476,6 @@
             homeBtn: document.getElementById('home-btn'),
             accountBtn: document.getElementById('account-btn'),
             storeBtn: document.getElementById('store-btn'),
-            developerCredit: document.getElementById('developer-credit'),
             adminPanel: document.getElementById('admin-panel'),
             userContent: document.getElementById('user-content'),
             mainContent: document.getElementById('main-content'),
@@ -1683,10 +1658,6 @@
                 window.location.reload();
             });
 
-            elements.developerCredit.addEventListener('click', () => {
-                window.open('https://t.me/X5Coder', '_blank');
-            });
-
             const serviceCards = document.querySelectorAll('.service-card');
             serviceCards.forEach(card => {
                 card.addEventListener('click', function() {
@@ -1695,7 +1666,7 @@
                         'summary': 'summary.html',
                         'flashcard': 'Flashcard.html',
                         'question': 'Question.html',
-                        'article': 'article.html' // الخدمة الجديدة
+                        'article': 'article.html'
                     };
                     
                     if (pageMap[service]) {
@@ -1744,10 +1715,6 @@
             
             elements.sendPublicNotificationBtn.addEventListener('click', sendPublicNotification);
             elements.loadAllUsersBtn.addEventListener('click', loadAllUsers);
-            
-            elements.developerCredit.addEventListener('click', () => {
-                window.open('https://t.me/X5Coder', '_blank');
-            });
         }
 
         async function loadAllUsers() {
