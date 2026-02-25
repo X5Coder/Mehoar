@@ -46,8 +46,6 @@
             --shadow-light: 0 4px 12px rgba(139, 115, 85, 0.1);
             --shadow-medium: 0 8px 24px rgba(139, 115, 85, 0.15);
             --shadow-heavy: 0 12px 36px rgba(139, 115, 85, 0.2);
-            --highlight-color: #FF6B6B;
-            --highlight-bg: #FFF5F5;
         }
         
         body {
@@ -979,6 +977,62 @@
             }
         }
         
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            direction: rtl;
+            overflow-x: auto;
+            display: block;
+        }
+        
+        .comparison-table th {
+            background: var(--accent-primary);
+            color: white;
+            padding: 15px;
+            font-weight: 700;
+            border: 1px solid var(--accent-secondary);
+            text-align: center;
+        }
+        
+        .comparison-table td {
+            padding: 12px;
+            border: 1px solid var(--accent-secondary);
+            text-align: center;
+            background: white;
+        }
+        
+        .comparison-table td:first-child {
+            background: rgba(139, 115, 85, 0.1);
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+        
+        .qa-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-light);
+            border: 1px solid rgba(139, 115, 85, 0.1);
+        }
+        
+        .qa-question {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(139, 115, 85, 0.1);
+        }
+        
+        .qa-answer {
+            font-size: 1rem;
+            color: var(--text-primary);
+            line-height: 1.8;
+            padding-right: 20px;
+        }
+        
         @media (max-width: 1200px) {
             .main-content {
                 max-width: 100%;
@@ -1322,60 +1376,24 @@
             <div class="settings-grid">
                 <div class="setting-group">
                     <h3 class="setting-title">
-                        <i class="fas fa-comment-alt"></i>
-                        طريقة الشرح التي تفضل؟
-                    </h3>
-                    <div class="options-grid" id="explanation-level">
-                        <button class="option-btn" data-value="طفولي">طفولي</button>
-                        <button class="option-btn" data-value="معقد">معقد</button>
-                        <button class="option-btn selected" data-value="بسيط">بسيط</button>
-                    </div>
-                </div>
-                
-                <div class="setting-group">
-                    <h3 class="setting-title">
                         <i class="fas fa-language"></i>
                         اللهجة التي تفضل؟
                     </h3>
                     <div class="options-grid" id="dialect">
-                        <button class="option-btn selected" data-value="مصري">مصري</button>
-                        <button class="option-btn" data-value="سعودي">سعودي</button>
-                        <button class="option-btn" data-value="جزائري">جزائري</button>
+                        <button class="option-btn selected" data-value="سعودي">سعودي</button>
                         <button class="option-btn" data-value="عربيه فصحى">عربيه فصحى</button>
                     </div>
                 </div>
                 
                 <div class="setting-group">
                     <h3 class="setting-title">
-                        <i class="fas fa-user-tie"></i>
-                        من هو الشخص الذي تفضل ان يشرح لك؟
-                    </h3>
-                    <div class="options-grid" id="explainer-persona">
-                        <button class="option-btn" data-value="طالب">طالب</button>
-                        <button class="option-btn selected" data-value="مدرس">مدرس</button>
-                        <button class="option-btn" data-value="دكتور جامعة">دكتور جامعة</button>
-                        <button class="option-btn" data-value="عالم">عالم</button>
-                    </div>
-                </div>
-                
-                <div class="setting-group">
-                    <h3 class="setting-title">
                         <i class="fas fa-globe"></i>
-                        ما هي لغة الإخراج التي تفضل؟
+                        لغة الإخراج
                     </h3>
                     <div class="options-grid" id="output-language">
                         <button class="option-btn selected" data-value="عربي">عربي</button>
                         <button class="option-btn" data-value="انجليزي">انجليزي</button>
                     </div>
-                    <input type="text" class="text-input" id="custom-language" placeholder="أو اكتب اسم لغة أخرى" style="margin-top: 15px;">
-                </div>
-                
-                <div class="setting-group">
-                    <h3 class="setting-title">
-                        <i class="fas fa-edit"></i>
-                        تعليق اختياري (تركيز خاص)
-                    </h3>
-                    <textarea class="text-input" id="optional-comment" rows="4" placeholder="اكتب تعليقاً لتوجيه عون للتركيز على شيء معين في المحتوى (اختياري)"></textarea>
                 </div>
                 
                 <div class="setting-group">
@@ -1480,12 +1498,8 @@
         };
         
         let selectedSettings = {
-            explanationLevel: 'بسيط',
-            dialect: 'مصري',
-            explainerPersona: 'مدرس',
+            dialect: 'سعودي',
             outputLanguage: 'عربي',
-            customLanguage: '',
-            optionalComment: '',
             summaryLength: 'طويل',
             summaryFormat: 'تلخيص'
         };
@@ -1814,30 +1828,12 @@
         }
         
         function setupSettingsEvents() {
-            const explanationLevelBtns = document.querySelectorAll('#explanation-level .option-btn');
-            explanationLevelBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    explanationLevelBtns.forEach(b => b.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedSettings.explanationLevel = this.getAttribute('data-value');
-                });
-            });
-            
             const dialectBtns = document.querySelectorAll('#dialect .option-btn');
             dialectBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     dialectBtns.forEach(b => b.classList.remove('selected'));
                     this.classList.add('selected');
                     selectedSettings.dialect = this.getAttribute('data-value');
-                });
-            });
-            
-            const explainerPersonaBtns = document.querySelectorAll('#explainer-persona .option-btn');
-            explainerPersonaBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    explainerPersonaBtns.forEach(b => b.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedSettings.explainerPersona = this.getAttribute('data-value');
                 });
             });
             
@@ -1868,29 +1864,13 @@
                 });
             });
             
-            const customLanguage = document.getElementById('custom-language');
-            if (customLanguage) {
-                customLanguage.addEventListener('input', function() {
-                    if (this.value.trim()) {
-                        selectedSettings.customLanguage = this.value.trim();
-                    }
-                });
-            }
-            
-            const optionalComment = document.getElementById('optional-comment');
-            if (optionalComment) {
-                optionalComment.addEventListener('input', function() {
-                    selectedSettings.optionalComment = this.value.trim();
-                });
-            }
-            
             document.getElementById('generate-btn').addEventListener('click', generateSummary);
         }
         
         function createPrompt() {
-            const outputLanguage = selectedSettings.customLanguage || selectedSettings.outputLanguage;
+            const outputLanguage = selectedSettings.outputLanguage;
             
-            return `[IMPORTANT: YOU MUST ALWAYS RESPOND WITH VALID JSON ONLY.
+            return `[IMPORTANT: YOU MUST RESPOND WITH VALID JSON ONLY.
 NO TEXT BEFORE OR AFTER THE JSON.
 THE JSON MUST CONTAIN EXACTLY THREE KEYS IN THIS ORDER:
 "head", "raw", "page"
@@ -1907,8 +1887,7 @@ ROLE:
 لغة_الإخراج = ${outputLanguage}
 نوع_التلخيص = ${selectedSettings.summaryLength}   // طويل | قصير
 شكل_التلخيص = ${selectedSettings.summaryFormat}  // تلخيص | سؤال وجواب | مقارنة
-
-إذا لم يتم تمرير أي من هذه المدخلات → أرجع JSON Error فقط.
+اللهجة = ${selectedSettings.dialect}  // سعودي | عربيه فصحى
 
 ==================================================
 قواعد التحليل الصارمة
@@ -1929,21 +1908,9 @@ ROLE:
 - إذا نوع_التلخيص = طويل → تلخيص تفصيلي شامل كامل.
 - إذا نوع_التلخيص = قصير → تلخيص مكثف لكن يغطي كل الأقسام بدون إسقاط فكرة أساسية.
 
-4) اللغة:
+4) اللغة واللهجة:
 - كامل JSON يكون بلغة_الإخراج.
-
-==================================================
-قواعد التنسيق داخل page
-==================================================
-
-- أي عنوان يكتب هكذا:
-"عنوان"
-
-- أي كلمة كانت تحتها خط:
-*كلمة*
-
-- أي كود برمجي:
-°code°
+- النص داخل page يكون باللهجة المحددة (سعودي أو عربيه فصحى).
 
 ==================================================
 طريقة البناء حسب شكل_التلخيص
@@ -1951,49 +1918,35 @@ ROLE:
 
 إذا شكل_التلخيص = "تلخيص":
 
-"عنوان"
-الشرح
+كل قسم له عنوان واضح مكتوب على سطر منفصل بدون علامات خاصة، ثم تحته الشرح.
+يتم تقسيم المحتوى حسب الأقسام الموجودة في الملف.
 
-"عنوان"
-الشرح
-
-وفي النهاية:
-
-S الملخص
-R : خمس نقاط مهمة من كامل الملف
-(لو في قوانين رياضية أو فيزيائية أو برمجية تكتب ضمن الخمس نقاط)
-
---------------------------------------------------
+-----------------------------------------------
 
 إذا شكل_التلخيص = "سؤال وجواب":
 
-1) Q
-R
+يتم كتابة الأسئلة والأجوبة بالشكل التالي:
+1)
+السؤال: ...
+الجواب: ...
 
-2) Q
-R
-
-3) Q
-R
+2)
+السؤال: ...
+الجواب: ...
 
 - مرقم
 - يغطي كامل الملف
 - الأسئلة من داخل النص فقط
 
---------------------------------------------------
+-----------------------------------------------
 
 إذا شكل_التلخيص = "مقارنة":
 
-K1 : العنصر الأول - العنصر الثاني - العنصر الثالث (حسب الموجود بالملف)
+يتم إنشاء جدول مقارنة بالمعلومات التالية:
+العناصر التي ستتم المقارنة بينها (مثل نظرية 1، نظرية 2، نظرية 3)
+أوجه المقارنة (مثل التعريف، المزايا، العيوب، الخصائص)
 
-F1 : وجه المقارنة الأول
-K1 : شرح لكل عنصر
-
-F2 : وجه المقارنة الثاني
-K1 : شرح لكل عنصر
-
-- أقل شيء وجهين مقارنة.
-- جميع العناصر من داخل الملف فقط.
+يتم تنظيم المعلومات بشكل جدولي مناسب.
 
 ==================================================
 قواعد raw
@@ -2003,6 +1956,7 @@ K1 : شرح لكل عنصر
 - الأولوية للقوانين (رياضيات / فيزياء / برمجة).
 - لو لا يوجد قوانين → استخرج أهم النقاط الجوهرية.
 - كل جملة تكون مستقلة وواضحة.
+- هذه الجمل ستظهر في قسم "النقاط الرئيسية".
 
 ==================================================
 قواعد head
@@ -2136,7 +2090,7 @@ K1 : شرح لكل عنصر
                     result = {
                         head: "ملخص الملف",
                         raw: ["تم إنشاء الملخص بنجاح"],
-                        page: text
+                        page: text.replace(/[\\n]/g, ' ').replace(/\\/g, '')
                     };
                 }
                 
@@ -2213,48 +2167,6 @@ K1 : شرح لكل عنصر
             }
         }
         
-        function formatExplanation(text) {
-            if (!text) return '';
-            
-            const lines = text.split('\n').filter(p => p.trim());
-            let formattedHTML = '';
-            
-            lines.forEach(line => {
-                if (line.trim().startsWith('"') && line.trim().endsWith('"')) {
-                    const title = line.trim().replace(/^"+|"+$/g, '');
-                    formattedHTML += `<h3 class="section-title-star">${title}</h3>`;
-                }
-                else if (line.includes('*') && !line.includes('"')) {
-                    const highlighted = line.replace(/\*([^*]+)\*/g, '<span class="highlighted-word">$1</span>');
-                    formattedHTML += `<p>${highlighted}</p>`;
-                }
-                else if (line.includes('°') && line.includes('°')) {
-                    const code = line.replace(/°/g, '');
-                    formattedHTML += `<pre style="background: #f4f4f4; padding: 10px; border-radius: 5px; direction: ltr; text-align: left;">${code}</pre>`;
-                }
-                else if (line.trim().match(/^\d+\)/)) {
-                    formattedHTML += `<p style="margin-right: 20px;">${line}</p>`;
-                }
-                else if (line.includes('K1 :')) {
-                    const elements = line.split('K1 :')[1].split('-').map(el => el.trim());
-                    const elementsHTML = elements.map(el => `<span style="background: var(--accent-primary); color: white; padding: 5px 10px; border-radius: 8px; margin: 0 5px;">${el}</span>`).join('');
-                    formattedHTML += `<div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0;">${elementsHTML}</div>`;
-                }
-                else if (line.includes('F1 :') || line.includes('F2 :')) {
-                    formattedHTML += `<h4 style="color: var(--accent-secondary); margin: 10px 0 5px;">${line}</h4>`;
-                }
-                else if (line.includes('S الملخص')) {
-                    formattedHTML += `<hr style="margin: 20px 0; border: 1px dashed var(--accent-primary);">`;
-                    formattedHTML += `<h3 style="color: var(--accent-primary);">${line}</h3>`;
-                }
-                else {
-                    formattedHTML += `<p>${line}</p>`;
-                }
-            });
-            
-            return formattedHTML;
-        }
-        
         function displayResult(result) {
             const resultTitle = document.getElementById('result-title');
             const resultContent = document.getElementById('result-content');
@@ -2269,8 +2181,17 @@ K1 : شرح لكل عنصر
                 resultContent.innerHTML = '';
                 
                 if (result.page) {
-                    const formattedContent = formatExplanation(result.page);
-                    resultContent.innerHTML = formattedContent;
+                    let cleanPage = result.page.replace(/[\\n]/g, ' ').replace(/\\/g, '');
+                    
+                    if (selectedSettings.summaryFormat === 'مقارنة') {
+                        cleanPage = formatAsComparison(cleanPage);
+                    } else if (selectedSettings.summaryFormat === 'سؤال وجواب') {
+                        cleanPage = formatAsQA(cleanPage);
+                    } else {
+                        cleanPage = formatAsSummary(cleanPage);
+                    }
+                    
+                    resultContent.innerHTML = cleanPage;
                 } else {
                     resultContent.textContent = 'لا يوجد محتوى للعرض';
                 }
@@ -2289,7 +2210,7 @@ K1 : شرح لكل عنصر
                 if (result.raw && Array.isArray(result.raw) && result.raw.length > 0) {
                     result.raw.forEach(point => {
                         const li = document.createElement('li');
-                        li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
+                        li.innerHTML = `<i class="fas fa-check-circle"></i> ${point.replace(/[\\n]/g, ' ')}`;
                         rawPoints.appendChild(li);
                     });
                 } else {
@@ -2298,6 +2219,147 @@ K1 : شرح لكل عنصر
                     rawPoints.appendChild(li);
                 }
             }
+        }
+        
+        function formatAsSummary(text) {
+            const lines = text.split('\n').filter(line => line.trim());
+            let formatted = '';
+            
+            lines.forEach(line => {
+                if (line.trim().startsWith('"') && line.trim().endsWith('"')) {
+                    const title = line.trim().replace(/^"+|"+$/g, '');
+                    formatted += `<h3 style="color: var(--accent-primary); font-size: 1.4rem; margin: 20px 0 10px;">${title}</h3>`;
+                } else if (line.includes('S الملخص')) {
+                    formatted += `<hr style="margin: 30px 0 20px; border: 1px dashed var(--accent-primary);">`;
+                    formatted += `<h3 style="color: var(--accent-primary); font-size: 1.4rem; margin: 0 0 15px;">الملخص</h3>`;
+                } else if (line.includes('R :')) {
+                    // تجاهل سطر النقاط الرئيسية لأنه سيظهر في raw
+                } else if (line.trim()) {
+                    formatted += `<p style="margin-bottom: 15px; line-height: 1.8;">${line}</p>`;
+                }
+            });
+            
+            return formatted;
+        }
+        
+        function formatAsQA(text) {
+            const lines = text.split('\n').filter(line => line.trim());
+            let formatted = '';
+            let currentQuestion = '';
+            let currentAnswer = '';
+            let isAnswer = false;
+            
+            lines.forEach(line => {
+                if (line.includes('Q')) {
+                    if (currentQuestion && currentAnswer) {
+                        formatted += `
+                            <div class="qa-item">
+                                <div class="qa-question">${currentQuestion}</div>
+                                <div class="qa-answer">${currentAnswer}</div>
+                            </div>
+                        `;
+                        currentQuestion = '';
+                        currentAnswer = '';
+                        isAnswer = false;
+                    }
+                    const match = line.match(/Q(.*)/);
+                    if (match) {
+                        currentQuestion = match[1].trim();
+                        isAnswer = true;
+                    }
+                } else if (line.includes('R') && isAnswer) {
+                    const match = line.match(/R(.*)/);
+                    if (match) {
+                        currentAnswer = match[1].trim();
+                    }
+                } else if (line.match(/^\d+\)/)) {
+                    if (currentQuestion && currentAnswer) {
+                        formatted += `
+                            <div class="qa-item">
+                                <div class="qa-question">${currentQuestion}</div>
+                                <div class="qa-answer">${currentAnswer}</div>
+                            </div>
+                        `;
+                        currentQuestion = '';
+                        currentAnswer = '';
+                    }
+                    const parts = line.split('Q');
+                    if (parts.length > 1) {
+                        currentQuestion = parts[1].trim();
+                    }
+                } else if (line.includes('الجواب:') || line.includes('الجواب')) {
+                    isAnswer = true;
+                } else if (isAnswer) {
+                    currentAnswer += ' ' + line.trim();
+                }
+            });
+            
+            if (currentQuestion && currentAnswer) {
+                formatted += `
+                    <div class="qa-item">
+                        <div class="qa-question">${currentQuestion}</div>
+                        <div class="qa-answer">${currentAnswer}</div>
+                    </div>
+                `;
+            }
+            
+            return formatted || '<p>لا توجد أسئلة وأجوبة</p>';
+        }
+        
+        function formatAsComparison(text) {
+            const lines = text.split('\n').filter(line => line.trim());
+            
+            let elements = [];
+            let aspects = [];
+            let tableData = [];
+            
+            lines.forEach(line => {
+                if (line.includes('K1 :')) {
+                    const elementsLine = line.split('K1 :')[1];
+                    if (elementsLine) {
+                        elements = elementsLine.split('-').map(el => el.trim());
+                    }
+                } else if (line.includes('F1 :')) {
+                    const aspect = line.split('F1 :')[1].trim();
+                    aspects.push(aspect);
+                } else if (line.includes('F2 :')) {
+                    const aspect = line.split('F2 :')[1].trim();
+                    aspects.push(aspect);
+                } else if (line.includes('شرح')) {
+                    const parts = line.split(':');
+                    if (parts.length > 1) {
+                        tableData.push(parts[1].trim());
+                    }
+                }
+            });
+            
+            let table = '<table class="comparison-table" style="width:100%; border-collapse:collapse; margin:20px 0; direction:rtl;">';
+            
+            table += '<thead><tr>';
+            table += '<th style="background:var(--accent-primary); color:white; padding:15px; border:1px solid var(--accent-secondary);">وجه المقارنة</th>';
+            elements.forEach(element => {
+                table += `<th style="background:var(--accent-primary); color:white; padding:15px; border:1px solid var(--accent-secondary);">${element}</th>`;
+            });
+            table += '</tr></thead><tbody>';
+            
+            if (aspects.length > 0) {
+                aspects.forEach((aspect, index) => {
+                    table += '<tr>';
+                    table += `<td style="padding:12px; border:1px solid var(--accent-secondary); background:rgba(139,115,85,0.1); font-weight:700;">${aspect}</td>`;
+                    elements.forEach((element, elIndex) => {
+                        const dataIndex = index * elements.length + elIndex;
+                        const cellData = tableData[dataIndex] || '—';
+                        table += `<td style="padding:12px; border:1px solid var(--accent-secondary);">${cellData}</td>`;
+                    });
+                    table += '</tr>';
+                });
+            } else {
+                table += '<tr><td colspan="4" style="padding:20px; text-align:center;">لا توجد بيانات مقارنة كافية</td></tr>';
+            }
+            
+            table += '</tbody></table>';
+            
+            return table;
         }
         
         function showLoading(text = 'جاري التحميل...') {
