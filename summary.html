@@ -40,14 +40,12 @@
             --border-radius-lg: 20px;
             --border-radius-xl: 24px;
             --navbar-height: 70px;
-            --transition-smooth: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             --success-color: #4CAF50;
             --error-color: #F44336;
             --info-color: #2196F3;
             --gradient-primary: linear-gradient(145deg, #8B7355 0%, #A9927D 100%);
             --gradient-success: linear-gradient(145deg, #4CAF50 0%, #45a049 100%);
             --gradient-error: linear-gradient(145deg, #F44336 0%, #d32f2f 100%);
-            --gradient-info: linear-gradient(145deg, #2196F3 0%, #1976D2 100%);
             --shadow-light: 0 4px 12px rgba(139, 115, 85, 0.1);
             --shadow-medium: 0 8px 24px rgba(139, 115, 85, 0.15);
             --shadow-heavy: 0 12px 36px rgba(139, 115, 85, 0.2);
@@ -71,7 +69,6 @@
             align-items: center;
         }
         
-        /* Loading Screen */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -129,7 +126,6 @@
             border: 1px solid rgba(139, 115, 85, 0.2);
         }
         
-        /* Navbar */
         .native-navbar {
             position: fixed;
             top: 0;
@@ -188,10 +184,6 @@
             background: rgba(139, 115, 85, 0.3);
         }
         
-        .records-btn i {
-            font-size: 16px;
-        }
-        
         .coins-display {
             background: var(--gradient-primary);
             color: white;
@@ -209,7 +201,6 @@
             transform: scale(0.95);
         }
         
-        /* Main Content */
         .main-content {
             padding-top: calc(var(--navbar-height) + 20px);
             padding-left: max(20px, env(safe-area-inset-left));
@@ -223,7 +214,6 @@
             align-items: center;
         }
         
-        /* Upload Section */
         .upload-section {
             background: white;
             border-radius: var(--border-radius-xl);
@@ -305,7 +295,6 @@
             font-style: italic;
         }
         
-        /* Summary Options */
         .summary-options {
             background: white;
             border-radius: var(--border-radius-xl);
@@ -431,7 +420,6 @@
             cursor: not-allowed;
         }
         
-        /* Cost Preview */
         .cost-preview {
             background: rgba(139, 115, 85, 0.06);
             border-radius: var(--border-radius-xl);
@@ -488,7 +476,6 @@
             flex-wrap: wrap;
         }
         
-        /* Buttons */
         .action-btn {
             padding: 16px 32px;
             border: none;
@@ -503,7 +490,6 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            box-shadow: var(--shadow-button);
         }
         
         .action-btn:active {
@@ -520,7 +506,6 @@
             color: white;
         }
         
-        /* Summary Display Section - التلخيص العادي */
         .summary-display-section {
             background: white;
             border-radius: var(--border-radius-xl);
@@ -563,6 +548,9 @@
             color: var(--accent-primary);
             margin-bottom: 20px;
             text-align: center;
+            padding: 20px;
+            background: rgba(139, 115, 85, 0.04);
+            border-radius: var(--border-radius-xl);
         }
         
         .summary-raw {
@@ -602,16 +590,6 @@
             white-space: pre-wrap;
         }
         
-        .summary-page h2, .summary-page h3 {
-            color: var(--accent-primary);
-            margin: 20px 0 10px;
-        }
-        
-        .summary-page h2:first-child, .summary-page h3:first-child {
-            margin-top: 0;
-        }
-        
-        /* Q&A Display Section */
         .qa-display-section {
             background: white;
             border-radius: var(--border-radius-xl);
@@ -650,7 +628,7 @@
         .qa-container {
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 20px;
         }
         
         .qa-item {
@@ -658,12 +636,6 @@
             border-radius: var(--border-radius-xl);
             border: 1px solid rgba(139, 115, 85, 0.15);
             overflow: hidden;
-            transition: all 0.1s ease;
-        }
-        
-        .qa-item:active {
-            transform: translateX(-5px);
-            box-shadow: var(--shadow-medium);
         }
         
         .qa-question {
@@ -676,7 +648,6 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            border-bottom: 1px dashed rgba(139, 115, 85, 0.2);
         }
         
         .qa-question-number {
@@ -699,15 +670,9 @@
             line-height: 1.8;
             color: var(--text-primary);
             background: white;
+            border-top: 1px dashed rgba(139, 115, 85, 0.2);
         }
         
-        .qa-separator {
-            height: 1px;
-            background: linear-gradient(to left, transparent, rgba(139, 115, 85, 0.3), transparent);
-            margin: 0;
-        }
-        
-        /* Comparison Display Section */
         .comparison-display-section {
             background: white;
             border-radius: var(--border-radius-xl);
@@ -744,9 +709,21 @@
             color: var(--accent-primary);
         }
         
+        .comparison-head {
+            font-family: 'Almarai', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 30px;
+            text-align: center;
+            padding: 20px;
+            background: rgba(139, 115, 85, 0.04);
+            border-radius: var(--border-radius-xl);
+        }
+        
         .comparison-table-wrapper {
             overflow-x: auto;
-            margin-top: 30px;
+            margin-top: 20px;
             border-radius: var(--border-radius-xl);
             border: 1px solid var(--table-border);
         }
@@ -776,27 +753,13 @@
             vertical-align: top;
         }
         
-        .comparison-table tr:first-child th:first-child {
-            border-top-right-radius: var(--border-radius);
-        }
-        
-        .comparison-table tr:first-child th:last-child {
-            border-top-left-radius: var(--border-radius);
-        }
-        
         .element-cell {
             background: rgba(139, 115, 85, 0.08);
             font-weight: 700;
             color: var(--accent-primary);
-            width: 180px;
+            width: 200px;
         }
         
-        .aspect-header {
-            background: var(--accent-secondary);
-            color: white;
-        }
-        
-        /* Records Modal */
         .records-modal {
             position: fixed;
             top: 0;
@@ -1010,11 +973,6 @@
             gap: 5px;
         }
         
-        .record-type i {
-            color: var(--accent-primary);
-        }
-        
-        /* Footer */
         .footer {
             text-align: center;
             padding: 45px 20px;
@@ -1078,15 +1036,6 @@
             color: white;
         }
         
-        .developer-credit {
-            font-size: 0.95rem;
-            color: rgba(100, 116, 139, 0.6);
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px solid rgba(139, 115, 85, 0.06);
-        }
-        
-        /* Notification */
         .notification {
             position: fixed;
             top: calc(var(--navbar-height) + 20px);
@@ -1197,47 +1146,21 @@
                 align-items: flex-start;
             }
             
-            .record-date {
-                align-self: flex-start;
-            }
-            
             .comparison-table th,
             .comparison-table td {
                 padding: 12px;
                 font-size: 1rem;
             }
         }
-        
-        @media (max-width: 480px) {
-            .logo {
-                font-size: 28px;
-            }
-            
-            .records-btn {
-                padding: 12px;
-                border-radius: 50%;
-            }
-            
-            .coins-display {
-                padding: 8px 16px;
-                font-size: 13px;
-            }
-            
-            .upload-icon {
-                font-size: 42px;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
     <div class="loading-screen" id="loading-screen" style="display: none;">
         <div class="loading-logo">تلخيص</div>
         <div class="loading-spinner"></div>
         <div class="loading-text" id="loading-text">جاري التحميل...</div>
     </div>
     
-    <!-- Notification -->
     <div class="notification" id="notification">
         <div class="notification-content">
             <div class="notification-icon" id="notification-icon">
@@ -1247,7 +1170,6 @@
         </div>
     </div>
     
-    <!-- Records Modal -->
     <div class="records-modal" id="records-modal">
         <div class="records-content">
             <div class="records-header">
@@ -1265,7 +1187,6 @@
         </div>
     </div>
     
-    <!-- Navbar -->
     <nav class="native-navbar" id="navbar">
         <div class="logo" id="home-logo">تلخيص</div>
         <div class="nav-left">
@@ -1280,9 +1201,7 @@
         </div>
     </nav>
     
-    <!-- Main Content -->
     <div class="main-content" id="main-content">
-        <!-- Upload Section -->
         <section class="upload-section" id="upload-section">
             <h1 class="section-title">نظام التلخيص الذكي</h1>
             <p class="section-subtitle">ارفع ملف PDF الخاص بك واحصل على تلخيص احترافي</p>
@@ -1322,13 +1241,11 @@
             </div>
         </section>
         
-        <!-- Summary Options Section -->
         <section class="summary-options" id="summary-options">
             <h2 class="section-title">إعدادات التلخيص</h2>
             <p class="section-subtitle">اختر اللغة وطول التلخيص والنوع</p>
             
             <div class="options-grid">
-                <!-- اختيار اللغة -->
                 <div class="option-group">
                     <h3 class="option-title">
                         <i class="fas fa-globe"></i>
@@ -1352,7 +1269,6 @@
                     </select>
                 </div>
                 
-                <!-- طول التلخيص -->
                 <div class="option-group">
                     <h3 class="option-title">
                         <i class="fas fa-arrows-alt-v"></i>
@@ -1364,7 +1280,6 @@
                     </div>
                 </div>
                 
-                <!-- نوع التلخيص -->
                 <div class="option-group">
                     <h3 class="option-title">
                         <i class="fas fa-list-alt"></i>
@@ -1377,7 +1292,6 @@
                     </div>
                 </div>
                 
-                <!-- التكلفة النهائية -->
                 <div class="option-group">
                     <h3 class="option-title">
                         <i class="fas fa-calculator"></i>
@@ -1396,7 +1310,6 @@
             </button>
         </section>
         
-        <!-- Summary Display Section (عادي) -->
         <section class="summary-display-section" id="summary-display-section">
             <div class="summary-header">
                 <h2 class="summary-title">التلخيص</h2>
@@ -1409,7 +1322,6 @@
             <div class="summary-page" id="summary-page"></div>
         </section>
         
-        <!-- Q&A Display Section -->
         <section class="qa-display-section" id="qa-display-section">
             <div class="qa-header">
                 <h2 class="qa-title">أسئلة وأجوبة</h2>
@@ -1418,18 +1330,16 @@
             <div class="qa-container" id="qa-container"></div>
         </section>
         
-        <!-- Comparison Display Section -->
         <section class="comparison-display-section" id="comparison-display-section">
             <div class="comparison-header">
                 <h2 class="comparison-title">جدول المقارنة</h2>
             </div>
             
-            <div class="summary-head" id="comparison-head"></div>
+            <div class="comparison-head" id="comparison-head"></div>
             
             <div class="comparison-table-wrapper" id="comparison-table-wrapper"></div>
         </section>
         
-        <!-- Footer -->
         <footer class="footer" id="footer">
             <p class="copyright">جميع الحقوق محفوظة © 2026</p>
             <div class="support-section">
@@ -1710,13 +1620,8 @@
             document.getElementById('generate-summary-btn').addEventListener('click', generateSummary);
         }
         
-        function createPrompt() {
-            const language = currentSettings.language;
-            const length = currentSettings.length;
-            const type = currentSettings.type;
-            
-            if (type === 'عادي') {
-                return `[IMPORTANT: YOU MUST ALWAYS RESPOND WITH VALID JSON ONLY.
+        function createNormalSummaryPrompt() {
+            return `[IMPORTANT: YOU MUST ALWAYS RESPOND WITH VALID JSON ONLY.
 NO TEXT BEFORE OR AFTER THE JSON.
 THE JSON MUST CONTAIN EXACTLY THREE KEYS IN THIS ORDER:
 "head", "raw", "page"
@@ -1728,37 +1633,37 @@ ROLE:
 ممنوع استخدام أي معرفة خارج محتوى الملف.
 
 ==================================================
-المدخلات الإلزامية (لهذا الجزء فقط)
+المدخلات الإلزامية
 ==================================================
-اللغة = ${language}
-طول_التلخيص = ${length}
+اللغة = ${currentSettings.language}
+طول_التلخيص = ${currentSettings.length}
 
-إذا لم يتم تمرير أي من المدخلين → أرجع JSON Error فقط.
+==================================================
+مثال على شكل JSON المطلوب (مثال توضيحي فقط - لا تستخدم هذا المحتوى)
+==================================================
+{
+  "head": "نظرية التطور أهميتها وتطبيقاتها",
+  "raw": [
+    "تشرح النظرية كيف تتطور الكائنات الحية عبر الزمن من خلال الانتقاء الطبيعي.",
+    "الطفرات الجينية تلعب دوراً أساسياً في ظهور صفات جديدة.",
+    "الأدلة على النظرية تشمل السجل الأحفوري والتشابه الجيني بين الأنواع."
+  ],
+  "page": "S :\n\"مقدمة عن نظرية التطور\"\nتعتبر نظرية التطور إحدى أهم النظريات العلمية التي تفسر تنوع الحياة على الأرض. وضع تشارلز داروين أسس هذه النظرية في القرن التاسع عشر بعد ملاحظاته على الكائنات الحية في جزر غالاباغوس.\n\n\"آلية الانتقاء الطبيعي\"\nتعتمد آلية الانتقاء الطبيعي على فكرة أن الكائنات الحية ذات الصفات الأكثر تكيفاً مع بيئتها تكون أكثر قدرة على البقاء والتكاثر، وبالتالي تنقل هذه الصفات إلى أجيالها القادمة.\n\nRu :\n- الطفرات العشوائية هي المصدر الأساسي للتنوع الجيني.\n- الانتقاء الطبيعي يعمل على الطفرات المفيدة فقط.\n- الأدلة الأحفورية تظهر تغير الكائنات عبر ملايين السنين.\n- التشابه في الحمض النووي يؤكد العلاقات التطورية بين الأنواع.\n- التطور لا يحدث بين عشية وضحاها بل عبر أجيال متعاقبة."
+}
 
 ==================================================
 قواعد التحليل الصارمة
 ==================================================
 
-1) قراءة كاملة:
-- اقرأ الملف كاملاً قبل التلخيص.
-- لا تبدأ التلخيص أثناء القراءة.
-- إذا كان هناك أي نقص أو بتر → أرجع Error.
-
-2) منع المعرفة الخارجية:
-- لا تضف أي معلومة غير موجودة بالنص.
-- لا تفسر خارج ما هو مكتوب.
-- لا تستنتج معلومات غير مصرح بها.
-
-3) التغطية:
-- يجب أن يغطي التلخيص كامل الملف بدون حذف فكرة أساسية.
-- إذا طول_التلخيص = طويل → تلخيص تفصيلي شامل لكل الأقسام.
-- إذا طول_التلخيص = قصير → تلخيص مكثف لكنه لا يسقط أي قسم كامل.
-
-4) اللغة:
-- كامل JSON يكون باللغة المختارة.
+1) اقرأ الملف كاملاً قبل التلخيص.
+2) لا تضف أي معلومة غير موجودة بالنص.
+3) يجب أن يغطي التلخيص كامل الملف:
+   - إذا طول_التلخيص = طويل → تلخيص تفصيلي شامل لكل الأقسام
+   - إذا طول_التلخيص = قصير → تلخيص مكثف لكنه لا يسقط أي قسم كامل
+4) كامل JSON يكون باللغة المختارة.
 
 ==================================================
-تنسيق page (إجباري لهذا الجزء)
+تنسيق page (إجباري)
 ==================================================
 
 يجب أن يكون محتوى page بهذا الشكل فقط:
@@ -1772,7 +1677,6 @@ Ru :
 - خمس نقاط أو أكثر تمثل أهم ما ورد في الملف بالكامل
 - إذا وُجدت قوانين (رياضية / فيزيائية / برمجية) تُدرج ضمن النقاط
 - كل نقطة واضحة ومستقلة
-- النقاط تمثل الملف كاملاً وليس جزءاً واحداً
 
 ==================================================
 قواعد head
@@ -1794,37 +1698,17 @@ Ru :
 حالات الفشل
 ==================================================
 
-إذا:
-- الملف فارغ
-- الملف تالف
-- الملف ناقص
-- المدخلات غير موجودة
-
-أرجع EXACTLY:
+إذا الملف فارغ أو تالف أو ناقص:
 
 {
   "head": "Error",
   "raw": ["Error"],
   "page": "Error"
-}
-
-==================================================
-شكل JSON النهائي الإجباري
-==================================================
-
-{
-  "head": "",
-  "raw": [],
-  "page": ""
-}
-
-ممنوع:
-- أي نص خارج JSON
-- أي مفاتيح إضافية
-- أي إخراج غير JSON`;
-            }
-            else if (type === 'سؤال وجواب') {
-                return `[IMPORTANT: YOU MUST ALWAYS RESPOND WITH VALID JSON ONLY.
+}`;
+        }
+        
+        function createQAPrompt() {
+            return `[IMPORTANT: YOU MUST ALWAYS RESPOND WITH VALID JSON ONLY.
 NO TEXT BEFORE OR AFTER THE JSON.
 DO NOT USE MARKDOWN.
 DO NOT ADD ANY EXTRA KEYS.
@@ -1853,15 +1737,20 @@ ROLE
 المدخلات الإلزامية
 ==================================================
 
-اللغة = ${language}
-طول_التلخيص = ${length}
+اللغة = ${currentSettings.language}
+طول_التلخيص = ${currentSettings.length}
 
-إذا لم يتم تمرير أي مدخل → أرجع EXACTLY:
-
+==================================================
+مثال على شكل JSON المطلوب (مثال توضيحي فقط)
+==================================================
 {
-  "H": "Error",
-  "Q1": "Error",
-  "R1": "Error"
+  "H": "النظام الشمسي: الكواكب والخصائص",
+  "Q1": "كم عدد الكواكب في المجموعة الشمسية؟",
+  "R1": "يبلغ عدد الكواكب في المجموعة الشمسية 8 كواكب وهي: عطارد، الزهرة، الأرض، المريخ، المشتري، زحل، أورانوس، نبتون.",
+  "Q2": "ما هو أكبر كوكب في المجموعة الشمسية؟",
+  "R2": "كوكب المشتري هو أكبر كوكب في المجموعة الشمسية، ويتميز بوجود بقعة حمراء كبيرة وهي عاصفة عملاقة.",
+  "Q3": "ما هو الكوكب الأقرب إلى الشمس؟",
+  "R3": "كوكب عطارد هو الأقرب إلى الشمس، ويتميز بدرجات حرارة شديدة الارتفاع نهاراً وانخفاض كبير ليلاً."
 }
 
 ==================================================
@@ -1873,10 +1762,10 @@ ROLE
 3) يجب أن تغطي الأسئلة كامل الملف من البداية للنهاية.
 4) لا تترك أي قسم رئيسي بدون تمثيل.
 5) إذا طول_التلخيص = طويل:
-   - عدد أكبر من الأسئلة
+   - عدد أكبر من الأسئلة (7-10 أسئلة)
    - تغطية تفصيلية لكل جزء
 6) إذا طول_التلخيص = قصير:
-   - عدد أقل من الأسئلة
+   - عدد أقل من الأسئلة (3-6 أسئلة)
    - لكن مازال يغطي جميع الأقسام الأساسية
 
 ==================================================
@@ -1891,39 +1780,32 @@ ROLE
 - وهكذا…
 
 القواعد:
-- الترقيم تسلسلي بدون فجوات.
-- لا تستخدم Arrays.
-- لا تستخدم مفاتيح إضافية.
-- لا تضف أي نص خارج JSON.
-- الإجابات يجب أن تكون مستخرجة من الملف فقط.
-- كل سؤال يجب أن يكون مبني على محتوى حقيقي داخل النص.
+- الترقيم تسلسلي بدون فجوات (Q1,R1 ثم Q2,R2 ثم Q3,R3)
+- لا تستخدم Arrays أو مفاتيح إضافية
+- الإجابات مستخرجة من الملف فقط
+- كل سؤال مبني على محتوى حقيقي داخل النص
 
 ==================================================
-مثال تطبيقي يجب أن تلتزم به في البنية فقط
+حالات الفشل
 ==================================================
 
-إذا كان الملف يتحدث عن الطاقة الشمسية، يجب أن يكون الشكل هكذا:
+إذا الملف فارغ أو تالف أو المدخلات غير موجودة:
 
 {
-  "H": "الطاقة الشمسية ومصادرها",
-  "Q1": "ما هي الطاقة الشمسية؟",
-  "R1": "هي طاقة ناتجة عن أشعة الشمس ويتم تحويلها إلى كهرباء أو حرارة.",
-  "Q2": "ما مميزات الطاقة الشمسية؟",
-  "R2": "تعد مصدراً متجدداً ونظيفاً ولا تسبب تلوثاً بيئياً."
-}
-
-التزم بنفس الهيكل تماماً.
-غير المحتوى حسب الملف فقط.
-ممنوع أي شرح خارج JSON.`;
-            }
-            else if (type === 'مقارنة') {
-                return `[IMPORTANT: YOU MUST ALWAYS RESPOND WITH VALID JSON ONLY.
+  "H": "Error",
+  "Q1": "Error",
+  "R1": "Error"
+}`;
+        }
+        
+        function createComparisonPrompt() {
+            return `[IMPORTANT: YOU MUST ALWAYS RESPOND WITH VALID JSON ONLY.
 NO TEXT BEFORE OR AFTER THE JSON.
 DO NOT USE MARKDOWN.
 DO NOT ADD ANY EXTRA KEYS OUTSIDE THE STRUCTURE BELOW.]
 
 ==================================================
-REQUIRED JSON STRUCTURE (STRICT – TWO MAIN NODES)
+REQUIRED JSON STRUCTURE (STRICT)
 ==================================================
 
 {
@@ -1961,10 +1843,46 @@ Rules:
 - Do NOT add keys outside this structure.
 
 ==================================================
+مثال على شكل JSON المطلوب (مثال توضيحي فقط)
+==================================================
+{
+  "H": "مقارنة بين لغات البرمجة الشائعة",
+  "Definition": {
+    "Elements": {
+      "X1": "Python",
+      "X2": "Java",
+      "X3": "C++"
+    },
+    "Aspects": {
+      "F1": "سهولة التعلم",
+      "F2": "مجالات الاستخدام",
+      "F3": "الأداء"
+    }
+  },
+  "Comparison": {
+    "F1": {
+      "X1": "سهلة جداً ومناسبة للمبتدئين، بناء جملة بسيط",
+      "X2": "متوسطة الصعوبة، تحتاج لفهم البرمجة كائنية التوجه",
+      "X3": "صعبة نسبياً، تتطلب فهم إدارة الذاكرة والمؤشرات"
+    },
+    "F2": {
+      "X1": "علوم بيانات، ذكاء اصطناعي، تطبيقات ويب",
+      "X2": "تطبيقات أندرويد، أنظمة المؤسسات الكبيرة",
+      "X3": "ألعاب، أنظمة تشغيل، تطبيقات عالية الأداء"
+    },
+    "F3": {
+      "X1": "أداء متوسط بسبب كونها لغة مفسرة",
+      "X2": "أداء جيد بفضل الآلة الافتراضية JVM",
+      "X3": "أداء عالي جداً لأنها لغة مُجمعة وقريبة من العتاد"
+    }
+  }
+}
+
+==================================================
 ROLE
 ==================================================
 
-أنت نظام ذكاء اصطناعي متخصص في تحليل ملفات PDF وإنشاء مقارنة منظمة بصيغة JSON نظيفة قابلة للاستخدام البرمجي.
+أنت نظام ذكاء اصطناعي متخصص في تحليل ملفات PDF وإنشاء مقارنة منظمة بصيغة JSON.
 يجب قراءة الملف كاملاً من أول كلمة إلى آخر كلمة.
 ممنوع استخدام أي معرفة خارج النص.
 
@@ -1972,16 +1890,8 @@ ROLE
 المدخلات الإلزامية
 ==================================================
 
-اللغة = ${language}
-طول_المقارنة = ${length}
-
-إذا لم يتم تمرير أي مدخل → أرجع EXACTLY:
-
-{
-  "H": "Error",
-  "Definition": {},
-  "Comparison": {}
-}
+اللغة = ${currentSettings.language}
+طول_المقارنة = ${currentSettings.length}
 
 ==================================================
 قواعد التحليل
@@ -1991,52 +1901,36 @@ ROLE
 2) استخرج ثلاثة عناصر رئيسية على الأقل يمكن المقارنة بينهم.
 3) استخرج وجهين مقارنة على الأقل.
 4) إذا طول_المقارنة = طويل:
-   - أضف أوجه مقارنة إضافية إن وُجدت.
+   - أضف أوجه مقارنة إضافية إن وُجدت (F3, F4)
 5) إذا طول_المقارنة = قصير:
-   - التزم بوجهين مقارنة أساسيين يمثلان الفروق الجوهرية.
-6) جميع البيانات يجب أن تكون مستخرجة من داخل النص فقط.
-7) لا تضف أي تفسير خارجي.
+   - التزم بوجهين مقارنة أساسيين يمثلان الفروق الجوهرية
+6) جميع البيانات مستخرجة من داخل النص فقط
 
 ==================================================
 شرح الهيكل
 ==================================================
 
 H:
-عنوان الملف.
+عنوان الملف (بالمختارة اللغة)
 
 Definition:
-- يحتوي على تعريف العناصر وأوجه المقارنة فقط.
-Elements:
-  X1 → العنصر الأول
-  X2 → العنصر الثاني
-  X3 → العنصر الثالث
-Aspects:
-  F1 → اسم وجه المقارنة الأول
-  F2 → اسم وجه المقارنة الثاني
+- Elements: أسماء العناصر المراد المقارنة بينها (X1, X2, X3)
+- Aspects: أسماء أوجه المقارنة (F1, F2, F3...)
 
 Comparison:
-- يحتوي على كل وجه مقارنة وتحته العناصر الخاصة به.
-
-F1:
-  X1 → وصف العنصر الأول في هذا الوجه
-  X2 → وصف العنصر الثاني في هذا الوجه
-  X3 → وصف العنصر الثالث في هذا الوجه
-
-F2:
-  نفس البنية
+- لكل وجه مقارنة (F1, F2...)، قيم العناصر لهذا الوجه
 
 ==================================================
-قيود صارمة
+حالات الفشل
 ==================================================
 
-- لا تكتب أي نص خارج JSON.
-- لا تستخدم Markdown.
-- لا تستخدم Arrays.
-- لا تضف مفاتيح عشوائية.
-- لا يجوز وجود عنصرين فقط.
-- لا يجوز وجود وجه مقارنة واحد فقط.
-- جميع القيم مستخرجة من الملف فقط.`;
-            }
+إذا الملف فارغ أو تالف أو المدخلات غير موجودة:
+
+{
+  "H": "Error",
+  "Definition": {},
+  "Comparison": {}
+}`;
         }
         
         async function generateSummary() {
@@ -2062,13 +1956,22 @@ F2:
                     reader.readAsDataURL(selectedFile);
                 });
                 
+                let prompt = '';
+                if (currentSettings.type === 'عادي') {
+                    prompt = createNormalSummaryPrompt();
+                } else if (currentSettings.type === 'سؤال وجواب') {
+                    prompt = createQAPrompt();
+                } else {
+                    prompt = createComparisonPrompt();
+                }
+                
                 const response = await fetch(SERVER + "/api/KIMO_DEV", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         id: ID,
                         pass: PASS,
-                        data: createPrompt(),
+                        data: prompt,
                         PDF_BASE64: base64
                     })
                 });
@@ -2081,10 +1984,11 @@ F2:
                     jsonData = JSON.parse(text);
                 } catch (e) {
                     console.error('Invalid JSON response:', text);
-                    throw new Error('استجابة غير صالحة من الخادم');
+                    showNotification('استجابة غير صالحة من الخادم', 'error');
+                    return;
                 }
                 
-                if (jsonData.head === "Error" || jsonData.H === "Error") {
+                if (jsonData.head === "Error" || jsonData.H === "Error" || jsonData.H === "Error") {
                     throw new Error('فشل في إنشاء التلخيص');
                 }
                 
@@ -2139,7 +2043,9 @@ F2:
                 });
             }
             
-            document.getElementById('summary-page').innerHTML = (jsonData.page || '').replace(/\n/g, '<br>');
+            let pageContent = jsonData.page || '';
+            pageContent = pageContent.replace(/\n/g, '<br>');
+            document.getElementById('summary-page').innerHTML = pageContent;
         }
         
         function displayQASummary(jsonData) {
@@ -2152,15 +2058,22 @@ F2:
             for (let key in jsonData) {
                 if (key.startsWith('Q')) {
                     const num = key.substring(1);
-                    questions.push({
-                        number: num,
-                        question: jsonData[key],
-                        answer: jsonData[`R${num}`] || ''
-                    });
+                    if (!isNaN(parseInt(num))) {
+                        questions.push({
+                            number: num,
+                            question: jsonData[key],
+                            answer: jsonData[`R${num}`] || ''
+                        });
+                    }
                 }
             }
             
             questions.sort((a, b) => parseInt(a.number) - parseInt(b.number));
+            
+            if (questions.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--error-color);">لا توجد أسئلة في الاستجابة</p>';
+                return;
+            }
             
             questions.forEach((q, index) => {
                 const item = document.createElement('div');
@@ -2172,15 +2085,7 @@ F2:
                     </div>
                     <div class="qa-answer">${q.answer}</div>
                 `;
-                
-                if (index < questions.length - 1) {
-                    const separator = document.createElement('div');
-                    separator.className = 'qa-separator';
-                    container.appendChild(item);
-                    container.appendChild(separator);
-                } else {
-                    container.appendChild(item);
-                }
+                container.appendChild(item);
             });
         }
         
@@ -2202,6 +2107,11 @@ F2:
             
             const elementKeys = Object.keys(elements);
             const aspectKeys = Object.keys(aspects);
+            
+            if (elementKeys.length < 3 || aspectKeys.length < 2) {
+                wrapper.innerHTML = '<p style="text-align: center; color: var(--error-color);">بيانات المقارنة غير مكتملة</p>';
+                return;
+            }
             
             let tableHTML = '<table class="comparison-table"><thead><tr>';
             tableHTML += '<th>العناصر / أوجه المقارنة</th>';
@@ -2243,7 +2153,7 @@ F2:
                     data: result,
                     timestamp: Date.now(),
                     fileName: fileInfo.name,
-                    settings: currentSettings
+                    settings: { ...currentSettings }
                 };
                 
                 await database.ref(`records/${recordId}`).set(recordData);
@@ -2334,6 +2244,11 @@ F2:
             
             const settings = record.settings || {};
             
+            let typeDisplay = record.type || settings.type || 'عادي';
+            if (typeDisplay === 'عادي') typeDisplay = 'تلخيص عادي';
+            else if (typeDisplay === 'سؤال وجواب') typeDisplay = 'سؤال وجواب';
+            else if (typeDisplay === 'مقارنة') typeDisplay = 'مقارنة';
+            
             card.innerHTML = `
                 <div class="record-header">
                     <div class="record-file-name">
@@ -2356,7 +2271,7 @@ F2:
                     </div>
                     <div class="record-type">
                         <i class="fas fa-list-alt"></i>
-                        ${record.type || settings.type || 'عادي'}
+                        ${typeDisplay}
                     </div>
                     <div class="record-cost">
                         <i class="fas fa-coins"></i>
