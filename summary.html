@@ -173,7 +173,7 @@
             margin: 0 auto;
         }
         
-        /* Upload Section - التصميم الجديد */
+        /* Upload Section */
         .upload-section {
             background: white;
             border-radius: var(--border-radius-xl);
@@ -247,7 +247,7 @@
             color: var(--accent-primary);
         }
         
-        /* Settings Section - يظهر بعد رفع الملف */
+        /* Settings Section */
         .settings-section {
             background: white;
             border-radius: var(--border-radius-xl);
@@ -367,7 +367,7 @@
             color: white;
         }
         
-        /* Summary Button */
+        /* Buttons */
         .summarize-btn {
             background: var(--gradient-primary);
             color: white;
@@ -386,6 +386,21 @@
         .summarize-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+        }
+        
+        .secondary-btn {
+            background: white;
+            color: var(--accent-primary);
+            border: 2px solid var(--accent-primary);
+            border-radius: var(--border-radius);
+            padding: 15px 30px;
+            font-family: 'Almarai', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 10px;
         }
         
         /* Summary Display Section */
@@ -420,7 +435,11 @@
             color: var(--accent-primary);
         }
         
-        /* Normal Summary */
+        /* Summary Content */
+        .summary-content {
+            line-height: 1.8;
+        }
+        
         .summary-head {
             font-size: 2rem;
             font-weight: 800;
@@ -429,173 +448,43 @@
             text-align: center;
         }
         
-        .summary-page {
+        .summary-text {
             background: rgba(139, 115, 85, 0.04);
             border-radius: var(--border-radius-xl);
             padding: 30px;
             margin-bottom: 30px;
-            line-height: 2;
             border: 1px solid rgba(139, 115, 85, 0.15);
+            white-space: pre-wrap;
         }
         
-        .summary-page .quote {
-            color: var(--accent-secondary);
-            font-style: italic;
-            padding: 10px 20px;
+        .summary-item {
             background: white;
             border-radius: var(--border-radius);
-            margin: 15px 0;
-            border-right: 5px solid var(--accent-primary);
-        }
-        
-        .raw-list {
-            background: white;
-            border-radius: var(--border-radius-xl);
-            padding: 25px;
-        }
-        
-        .raw-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            padding: 15px;
-            margin-bottom: 10px;
-            background: rgba(139, 115, 85, 0.04);
-            border-radius: var(--border-radius);
-            border-right: 4px solid var(--accent-primary);
-        }
-        
-        /* Q&A Style */
-        .qa-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .qa-item {
-            background: white;
-            border-radius: var(--border-radius-xl);
-            padding: 25px;
-            border: 1px solid rgba(139, 115, 85, 0.15);
-        }
-        
-        .qa-question {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .qa-number {
-            width: 45px;
-            height: 45px;
-            background: var(--accent-primary);
-            color: white;
-            border-radius: var(--border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-        }
-        
-        .qa-question-text {
-            font-family: 'Almarai', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--accent-primary);
-        }
-        
-        .qa-answer {
-            display: flex;
-            gap: 15px;
-            padding-right: 60px;
-        }
-        
-        .qa-answer-icon {
-            width: 35px;
-            height: 35px;
-            background: var(--success-color);
-            color: white;
-            border-radius: var(--border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .qa-answer-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            background: rgba(139, 115, 85, 0.04);
-            padding: 15px 20px;
-            border-radius: var(--border-radius);
-            flex: 1;
-        }
-        
-        .qa-divider {
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(139, 115, 85, 0.3), transparent);
-            margin: 20px 0;
-        }
-        
-        /* Comparison Table */
-        .comparison-container {
-            overflow-x: auto;
-            margin: 20px 0;
-            border-radius: var(--border-radius-xl);
-            border: 1px solid var(--border-color);
-        }
-        
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
-        
-        .comparison-table th {
-            background: var(--accent-primary);
-            color: white;
             padding: 20px;
-            font-weight: 700;
-            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+            border: 1px solid rgba(139, 115, 85, 0.1);
+            box-shadow: 0 2px 8px rgba(139, 115, 85, 0.05);
         }
         
-        .comparison-table td {
-            padding: 18px 20px;
-            border: 1px solid var(--border-color);
-            vertical-align: top;
-        }
-        
-        .comparison-table tr:nth-child(even) {
-            background: rgba(139, 115, 85, 0.04);
-        }
-        
-        .element-label {
+        .summary-item .question {
             font-weight: 700;
             color: var(--accent-primary);
-            background: rgba(139, 115, 85, 0.1);
-            width: 150px;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
         }
         
-        /* Action Buttons */
+        .summary-item .answer {
+            color: var(--text-primary);
+            padding-right: 20px;
+            border-right: 3px solid var(--accent-secondary);
+        }
+        
         .action-buttons {
             display: flex;
             gap: 15px;
             justify-content: center;
-            margin-top: 30px;
-        }
-        
-        .secondary-btn {
-            background: white;
-            color: var(--accent-primary);
-            border: 2px solid var(--accent-primary);
-            border-radius: var(--border-radius);
-            padding: 15px 30px;
-            font-family: 'Almarai', sans-serif;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-top: 40px;
+            flex-wrap: wrap;
         }
         
         /* Notification */
@@ -735,7 +624,9 @@
         @media (max-width: 768px) {
             .logo { font-size: 32px; }
             .records-btn span { display: none; }
-            .qa-answer { padding-right: 0; flex-direction: column; }
+            .file-details { gap: 20px; }
+            .action-buttons { flex-direction: column; align-items: center; }
+            .secondary-btn { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -792,10 +683,10 @@
     
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Upload Section - أولاً رفع الملف -->
+        <!-- Upload Section -->
         <section class="upload-section" id="upload-section">
             <h1 class="section-title">نظام التلخيص الذكي</h1>
-            <p class="section-subtitle">ارفع ملف PDF لتبدأ</p>
+            <p class="section-subtitle">ارفع ملف PDF لتحصل على تلخيص ذكي</p>
             
             <div class="upload-area" id="upload-area">
                 <div class="upload-icon">
@@ -807,7 +698,7 @@
             
             <input type="file" id="pdfFile" accept=".pdf" style="display: none;">
             
-            <!-- معلومات الملف بعد الرفع -->
+            <!-- ملف المعلومات -->
             <div class="file-info" id="file-info">
                 <div class="file-details">
                     <div class="file-detail">
@@ -829,12 +720,12 @@
                 </div>
                 <button class="summarize-btn" id="proceed-btn">
                     <i class="fas fa-arrow-left"></i>
-                    متابعة للإعدادات
+                    متابعة
                 </button>
             </div>
         </section>
         
-        <!-- Settings Section - ثانياً الإعدادات -->
+        <!-- Settings Section -->
         <section class="settings-section" id="settings-section">
             <h2 class="section-title">إعدادات التلخيص</h2>
             
@@ -851,15 +742,6 @@
                         <option value="French">🇫🇷 Français</option>
                         <option value="Spanish">🇪🇸 Español</option>
                         <option value="German">🇩🇪 Deutsch</option>
-                        <option value="Italian">🇮🇹 Italiano</option>
-                        <option value="Portuguese">🇵🇹 Português</option>
-                        <option value="Russian">🇷🇺 Русский</option>
-                        <option value="Japanese">🇯🇵 日本語</option>
-                        <option value="Korean">🇰🇷 한국어</option>
-                        <option value="Chinese">🇨🇳 中文</option>
-                        <option value="Turkish">🇹🇷 Türkçe</option>
-                        <option value="Urdu">🇵🇰 اردو</option>
-                        <option value="Persian">🇮🇷 فارسی</option>
                     </select>
                 </div>
                 
@@ -900,7 +782,7 @@
             
             <button class="summarize-btn" id="summarize-btn">
                 <i class="fas fa-magic"></i>
-                تلخيص الآن
+                تلخيص
             </button>
             
             <div style="text-align: center; margin-top: 20px;">
@@ -911,14 +793,14 @@
             </div>
         </section>
         
-        <!-- Summary Display Section - ثالثاً عرض التلخيص -->
+        <!-- Summary Display Section -->
         <section class="summary-display-section" id="summary-display-section">
             <div class="display-header">
-                <h2 class="display-title" id="display-title">التلخيص</h2>
+                <h2 class="display-title">التلخيص</h2>
                 <div class="display-info" id="display-info"></div>
             </div>
             
-            <div id="summary-content"></div>
+            <div class="summary-content" id="summary-content"></div>
             
             <div class="action-buttons">
                 <button class="secondary-btn" id="new-summary-btn">
@@ -927,7 +809,7 @@
                 </button>
                 <button class="secondary-btn" id="save-summary-btn">
                     <i class="fas fa-save"></i>
-                    حفظ في السجلات
+                    حفظ
                 </button>
             </div>
         </section>
@@ -985,6 +867,14 @@
         const ID = "12345";
         const PASS = "12345abcde57";
         
+        // رسائل التحميل
+        const loadingMessages = [
+            'جاري تحليل الملف...',
+            'جاري حساب الكلمات...',
+            'جاري التلخيص...',
+            'جاري التنسيق...'
+        ];
+        
         // ========== الوظائف الأساسية ==========
         function showNotification(message, type = 'info') {
             const notification = document.getElementById('notification');
@@ -1017,34 +907,59 @@
             document.getElementById('loading-screen').style.display = 'none';
         }
         
-        // ========== حساب عدد الكلمات بدقة ==========
-        async function extractTextFromPDF(file) {
-            const arrayBuffer = await file.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-            let fullText = '';
+        // ========== حساب الكلمات بدقة (نفس طريقة الملف القديم) ==========
+        async function analyzePDF(file) {
+            showLoading('جاري تحليل الملف...');
             
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const content = await page.getTextContent();
-                const strings = content.items.map(item => item.str);
-                fullText += strings.join(' ') + ' ';
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                
+                let totalWords = 0;
+                
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    
+                    if (content.items.length) {
+                        let text = '';
+                        content.items.forEach(t => text += t.str + ' ');
+                        // نفس طريقة حساب الكلمات في الملف القديم
+                        const words = text.trim().split(/\s+/).filter(w => w.length >= 2);
+                        totalWords += words.length;
+                    } else {
+                        // إذا مافيش نص، نضيف قيمة تقريبية
+                        totalWords += 250;
+                    }
+                }
+                
+                // حساب العملات: كل 1000 كلمة = 2 عملة (نفس المعادلة القديمة)
+                let coins = Math.ceil((totalWords / 1000) * 2) / 2;
+                if (coins < 1) coins = 1;
+                coins = Math.round(coins * 10) / 10;
+                
+                fileInfo = {
+                    name: file.name,
+                    pages: pdf.numPages,
+                    words: totalWords,
+                    baseCost: coins
+                };
+                
+                // عرض المعلومات
+                document.getElementById('file-name').textContent = file.name;
+                document.getElementById('file-pages').textContent = pdf.numPages;
+                document.getElementById('file-words').textContent = totalWords.toLocaleString();
+                document.getElementById('file-cost').textContent = coins + ' عملة';
+                document.getElementById('file-info').classList.add('show');
+                
+                hideLoading();
+                showNotification('تم تحليل الملف بنجاح', 'success');
+                
+            } catch (error) {
+                console.error('Error analyzing PDF:', error);
+                hideLoading();
+                showNotification('حدث خطأ أثناء تحليل الملف', 'error');
             }
-            
-            return fullText;
-        }
-        
-        function countWords(text) {
-            // تنظيف النص وحساب الكلمات بدقة
-            const cleanText = text.replace(/[\r\n\t]+/g, ' ') // استبدال الأسطر بمسافات
-                                 .replace(/[^\w\s\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g, ' ') // إزالة الرموز مع الحفاظ على العربية
-                                 .replace(/\s+/g, ' ') // توحيد المسافات
-                                 .trim();
-            
-            if (cleanText.length === 0) return 0;
-            
-            // تقسيم على المسافات للغات التي تستخدمها
-            const words = cleanText.split(' ').filter(word => word.length > 0);
-            return words.length;
         }
         
         // ========== إدارة المستخدم ==========
@@ -1130,52 +1045,7 @@
             
             selectedFile = file;
             document.getElementById('upload-text').textContent = file.name;
-            
             await analyzePDF(file);
-        }
-        
-        async function analyzePDF(file) {
-            showLoading('جاري تحليل الملف وحساب الكلمات...');
-            
-            try {
-                // حساب عدد الصفحات والكلمات بدقة
-                const arrayBuffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                
-                let totalWords = 0;
-                
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    const pageText = content.items.map(item => item.str).join(' ');
-                    totalWords += countWords(pageText);
-                }
-                
-                // حساب التكلفة: 1 عملة لكل 100 كلمة
-                const coins = Math.max(1, Math.ceil(totalWords / 100));
-                
-                fileInfo = {
-                    name: file.name,
-                    pages: pdf.numPages,
-                    words: totalWords,
-                    baseCost: coins
-                };
-                
-                // عرض معلومات الملف
-                document.getElementById('file-name').textContent = file.name;
-                document.getElementById('file-pages').textContent = pdf.numPages;
-                document.getElementById('file-words').textContent = totalWords.toLocaleString();
-                document.getElementById('file-cost').textContent = coins + ' عملة';
-                document.getElementById('file-info').classList.add('show');
-                
-                hideLoading();
-                showNotification('تم تحليل الملف بنجاح', 'success');
-                
-            } catch (error) {
-                console.error('Error analyzing PDF:', error);
-                hideLoading();
-                showNotification('حدث خطأ أثناء تحليل الملف', 'error');
-            }
         }
         
         function resetToUpload() {
@@ -1220,42 +1090,170 @@
             document.getElementById('summarize-btn').addEventListener('click', generateSummary);
         }
         
-        // ========== إنشاء البرومبت ==========
+        // ========== إنشاء البرومبت (بنفس تنسيق الملف القديم) ==========
         function createPrompt() {
             const { language, length, type } = currentSettings;
             
             if (type === 'عادي') {
-                return `[IMPORTANT: YOU MUST RESPOND WITH VALID JSON ONLY. NO TEXT BEFORE OR AFTER.]
+                return `[IMPORTANT: YOU MUST ALWAYS RESPOND WITH VALID JSON ONLY.
+NO TEXT BEFORE OR AFTER THE JSON.
+THE JSON MUST CONTAIN EXACTLY THREE KEYS IN THIS ORDER:
+"head", "raw", "page"
+DO NOT ADD ANY OTHER KEYS.]
+
+ROLE:
+أنت نظام ذكاء اصطناعي متخصص في تحليل وتلخيص ملفات PDF بدقة كاملة.
+يجب تحليل الملف من أول كلمة إلى آخر كلمة قبل إنشاء أي مخرجات.
+ممنوع استخدام أي معرفة خارج محتوى الملف.
+
+==================================================
+المدخلات الإلزامية
+==================================================
+اللغة = ${language}
+طول_التلخيص = ${length}
+
+==================================================
+قواعد التحليل الصارمة
+==================================================
+
+1) قراءة كاملة للملف.
+2) منع المعرفة الخارجية.
+3) التغطية الكاملة للملف.
+
+==================================================
+تنسيق page
+==================================================
+
+S :
+التلخيص الكامل للملف
+مع وضع كل عنوان رئيسي كما ورد في النص بين علامتي اقتباس هكذا:
+"عنوان"
+
+Ru :
+- خمس نقاط أو أكثر تمثل أهم ما ورد في الملف بالكامل
+
+==================================================
+قواعد head
+==================================================
+خمس كلمات بالضبط تمثل الملف بالكامل بنفس اللغة المختارة
+
+==================================================
+قواعد raw
+==================================================
+3 إلى 5 جمل مستقلة تمثل جوهر الملف بالكامل
+
+==================================================
+شكل JSON النهائي الإجباري
+==================================================
 {
   "head": "",
   "raw": [],
   "page": ""
-}
-
-اللغة: ${language}
-الطول: ${length}
-
-لخص الملف مع الحفاظ على العناوين بين " " والنقاط المهمة.`;
+}`;
             }
             else if (type === 'سؤال وجواب') {
-                return `[IMPORTANT: RESPOND WITH FLAT JSON ONLY. KEYS: H, Q1, R1, Q2, R2...]
-اللغة: ${language}
-الطول: ${length}
+                return `[IMPORTANT: YOU MUST ALWAYS RESPOND WITH VALID JSON ONLY.
+NO TEXT BEFORE OR AFTER THE JSON.
+DO NOT USE MARKDOWN.
+DO NOT ADD ANY EXTRA KEYS.
+RETURN ONLY A FLAT JSON OBJECT WITH THIS STRUCTURE:]
 
-حول المحتوى لأسئلة وأجوبة متسلسلة.`;
-            }
-            else {
-                return `[IMPORTANT: RESPOND WITH EXACT STRUCTURE]
 {
   "H": "",
-  "Definition": {"Elements": {"X1":"","X2":"","X3":""}, "Aspects": {"F1":"","F2":""}},
-  "Comparison": {"F1": {"X1":"","X2":"","X3":""}, "F2": {"X1":"","X2":"","X3":""}}
+  "Q1": "",
+  "R1": "",
+  "Q2": "",
+  "R2": ""
 }
 
-اللغة: ${language}
-الطول: ${length}
+(Continue numbering sequentially: Q3, R3, Q4, R4 ... as needed.
+No nested objects. No arrays. No additional fields.)
 
-أنشئ مقارنة بين 3 عناصر ووجهي مقارنة على الأقل.`;
+==================================================
+ROLE
+==================================================
+
+أنت نظام ذكاء اصطناعي متخصص في تحليل ملفات PDF وتحويلها إلى صيغة سؤال وجواب.
+يجب قراءة الملف كاملاً قبل إنشاء أي مخرجات.
+ممنوع استخدام أي معرفة خارج محتوى الملف.
+
+==================================================
+المدخلات الإلزامية
+==================================================
+
+اللغة = ${language}
+طول_التلخيص = ${length}
+
+==================================================
+قواعد التحليل
+==================================================
+
+1) اقرأ الملف كاملاً.
+2) يجب أن تغطي الأسئلة كامل الملف.
+3) إذا طول_التلخيص = طويل: عدد أكبر من الأسئلة.
+4) إذا طول_التلخيص = قصير: عدد أقل من الأسئلة.
+
+==================================================
+قواعد بناء JSON
+==================================================
+
+- H : عنوان الملف
+- Q1 : السؤال الأول
+- R1 : الإجابة الأولى
+- وهكذا...
+- الترقيم تسلسلي`;
+            }
+            else {
+                return `[IMPORTANT: YOU MUST ALWAYS RESPOND WITH VALID JSON ONLY.
+NO TEXT BEFORE OR AFTER THE JSON.
+DO NOT USE MARKDOWN.
+DO NOT ADD ANY EXTRA KEYS OUTSIDE THE STRUCTURE BELOW.]
+
+==================================================
+REQUIRED JSON STRUCTURE
+==================================================
+
+{
+  "H": "",
+  "Definition": {
+    "Elements": {
+      "X1": "",
+      "X2": "",
+      "X3": ""
+    },
+    "Aspects": {
+      "F1": "",
+      "F2": ""
+    }
+  },
+  "Comparison": {
+    "F1": {
+      "X1": "",
+      "X2": "",
+      "X3": ""
+    },
+    "F2": {
+      "X1": "",
+      "X2": "",
+      "X3": ""
+    }
+  }
+}
+
+==================================================
+ROLE
+==================================================
+
+أنت نظام ذكاء اصطناعي متخصص في تحليل ملفات PDF وإنشاء مقارنة منظمة.
+يجب قراءة الملف كاملاً.
+ممنوع استخدام أي معرفة خارج النص.
+
+==================================================
+المدخلات الإلزامية
+==================================================
+
+اللغة = ${language}
+طول_المقارنة = ${length}`;
             }
         }
         
@@ -1300,24 +1298,24 @@
                 const text = await response.text();
                 console.log('Server response:', text);
                 
-                // محاولة تنظيف الاستجابة من أي نصوص إضافية
-                let jsonText = text;
+                // محاولة استخراج JSON من الاستجابة
+                let jsonStr = text;
                 const jsonStart = text.indexOf('{');
                 const jsonEnd = text.lastIndexOf('}') + 1;
                 
                 if (jsonStart >= 0 && jsonEnd > jsonStart) {
-                    jsonText = text.substring(jsonStart, jsonEnd);
+                    jsonStr = text.substring(jsonStart, jsonEnd);
                 }
                 
                 try {
-                    summaryData = JSON.parse(jsonText);
+                    summaryData = JSON.parse(jsonStr);
                 } catch (e) {
                     console.error('JSON parse error:', e);
-                    // إذا فشل، نستخدم نص عادي
+                    // إذا فشل، ننشئ كائن بسيط من النص
                     summaryData = {
-                        head: "ملخص",
-                        raw: ["تم استلام الاستجابة"],
-                        page: text.substring(0, 500)
+                        head: "ملخص الملف",
+                        raw: [text.substring(0, 200) + "..."],
+                        page: text
                     };
                 }
                 
@@ -1345,122 +1343,73 @@
                 showNotification('حدث خطأ في الاتصال', 'error');
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-magic"></i> تلخيص الآن';
+                btn.innerHTML = '<i class="fas fa-magic"></i> تلخيص';
             }
         }
         
-        // ========== عرض التلخيص ==========
+        // ========== عرض التلخيص (نفس طريقة الملف القديم) ==========
         function displaySummary() {
             const container = document.getElementById('summary-content');
             const type = currentSettings.type;
             
             if (!summaryData) {
-                container.innerHTML = '<div class="error">حدث خطأ في عرض التلخيص</div>';
+                container.innerHTML = '<div class="error">حدث خطأ</div>';
                 return;
             }
+            
+            let html = '';
             
             if (type === 'عادي') {
-                displayNormalSummary(container);
-            } else if (type === 'سؤال وجواب') {
-                displayQASummary(container);
-            } else {
-                displayComparisonSummary(container);
+                // عنوان
+                if (summaryData.head) {
+                    html += `<div class="summary-head">${summaryData.head}</div>`;
+                }
+                
+                // المحتوى الرئيسي
+                if (summaryData.page) {
+                    html += `<div class="summary-text">${summaryData.page}</div>`;
+                }
+                
+                // النقاط
+                if (summaryData.raw && Array.isArray(summaryData.raw)) {
+                    summaryData.raw.forEach(item => {
+                        html += `
+                            <div class="summary-item">
+                                <div>${item}</div>
+                            </div>
+                        `;
+                    });
+                }
             }
-        }
-        
-        function displayNormalSummary(container) {
-            const data = summaryData;
-            let html = `<div class="summary-head">${data.head || 'ملخص الملف'}</div>`;
-            
-            // الصفحة (التلخيص)
-            if (data.page) {
-                let pageContent = data.page;
-                // تحويل العناوين
-                pageContent = pageContent.replace(/"([^"]+)"/g, '<div class="quote">$1</div>');
-                html += `<div class="summary-page">${pageContent}</div>`;
-            }
-            
-            // النقاط المهمة
-            if (data.raw && Array.isArray(data.raw)) {
-                html += '<div class="raw-list">';
-                data.raw.forEach(item => {
+            else if (type === 'سؤال وجواب') {
+                if (summaryData.H) {
+                    html += `<div class="summary-head">${summaryData.H}</div>`;
+                }
+                
+                let i = 1;
+                while (summaryData[`Q${i}`] && summaryData[`R${i}`]) {
                     html += `
-                        <div class="raw-item">
-                            <i class="fas fa-circle" style="color: var(--accent-primary); margin-top: 5px;"></i>
-                            <span>${item}</span>
+                        <div class="summary-item">
+                            <div class="question">س${i}: ${summaryData[`Q${i}`]}</div>
+                            <div class="answer">${summaryData[`R${i}`]}</div>
                         </div>
                     `;
-                });
-                html += '</div>';
-            }
-            
-            container.innerHTML = html;
-        }
-        
-        function displayQASummary(container) {
-            const data = summaryData;
-            let html = `<div class="summary-head">${data.H || 'أسئلة وأجوبة'}</div>`;
-            html += '<div class="qa-container">';
-            
-            let i = 1;
-            while (data[`Q${i}`] && data[`R${i}`]) {
-                html += `
-                    <div class="qa-item">
-                        <div class="qa-question">
-                            <div class="qa-number">${i}</div>
-                            <div class="qa-question-text">${data[`Q${i}`]}</div>
-                        </div>
-                        <div class="qa-answer">
-                            <div class="qa-answer-icon"><i class="fas fa-check"></i></div>
-                            <div class="qa-answer-text">${data[`R${i}`]}</div>
-                        </div>
-                    </div>
-                `;
-                if (data[`Q${i+1}`]) {
-                    html += '<div class="qa-divider"></div>';
+                    i++;
                 }
-                i++;
             }
-            
-            html += '</div>';
-            container.innerHTML = html;
-        }
-        
-        function displayComparisonSummary(container) {
-            const data = summaryData;
-            
-            if (!data.Definition || !data.Comparison) {
-                container.innerHTML = '<div class="error">بيانات المقارنة غير صحيحة</div>';
-                return;
-            }
-            
-            const elements = data.Definition.Elements || {};
-            const aspects = data.Definition.Aspects || {};
-            
-            let html = `<div class="summary-head">${data.H || 'جدول المقارنة'}</div>`;
-            html += '<div class="comparison-container"><table class="comparison-table">';
-            
-            // رأس الجدول
-            html += '<tr><th>العناصر</th>';
-            for (let aspect in aspects) {
-                html += `<th>${aspects[aspect]}</th>`;
-            }
-            html += '</tr>';
-            
-            // الصفوف
-            for (let elem in elements) {
-                html += '<tr>';
-                html += `<td class="element-label">${elements[elem]}</td>`;
-                
-                for (let aspect in aspects) {
-                    const value = data.Comparison[aspect]?.[elem] || '';
-                    html += `<td>${value}</td>`;
+            else if (type === 'مقارنة') {
+                if (summaryData.H) {
+                    html += `<div class="summary-head">${summaryData.H}</div>`;
                 }
                 
-                html += '</tr>';
+                html += '<pre style="direction: ltr; text-align: left;">' + JSON.stringify(summaryData, null, 2) + '</pre>';
             }
             
-            html += '</table></div>';
+            // إذا مافيش بيانات، نعرض النص الخام
+            if (!html) {
+                html = `<div class="summary-text">${JSON.stringify(summaryData)}</div>`;
+            }
+            
             container.innerHTML = html;
         }
         
@@ -1502,6 +1451,7 @@
                         card.className = 'record-card';
                         
                         const date = new Date(record.timestamp).toLocaleDateString('ar');
+                        const settings = record.settings || {};
                         
                         card.innerHTML = `
                             <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
@@ -1509,9 +1459,9 @@
                                 <span><i class="far fa-clock"></i> ${date}</span>
                             </div>
                             <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                                <span><i class="fas fa-globe"></i> ${record.settings?.language || 'العربية'}</span>
-                                <span><i class="fas fa-arrows-alt-v"></i> ${record.settings?.length || 'طويل'}</span>
-                                <span><i class="fas fa-paint-brush"></i> ${record.settings?.type || 'عادي'}</span>
+                                <span><i class="fas fa-globe"></i> ${settings.language || 'العربية'}</span>
+                                <span><i class="fas fa-arrows-alt-v"></i> ${settings.length || 'طويل'}</span>
+                                <span><i class="fas fa-paint-brush"></i> ${settings.type || 'عادي'}</span>
                             </div>
                         `;
                         
@@ -1552,7 +1502,7 @@
                     settings: { ...currentSettings }
                 });
                 
-                showNotification('تم الحفظ في السجلات', 'success');
+                showNotification('تم الحفظ', 'success');
                 
             } catch (error) {
                 console.error('Error saving:', error);
@@ -1577,11 +1527,11 @@
                 `;
                 
                 displaySummary();
-                showNotification('تم تحميل السجل', 'success');
+                showNotification('تم التحميل', 'success');
                 
             } catch (error) {
                 console.error('Error loading record:', error);
-                showNotification('خطأ في تحميل السجل', 'error');
+                showNotification('خطأ في التحميل', 'error');
             }
         }
         
