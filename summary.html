@@ -680,6 +680,7 @@
             transition: font-size 0.3s ease;
             word-wrap: break-word;
             overflow-wrap: break-word;
+            min-height: 300px;
         }
         
         /* تنسيق المحتوى المحسن */
@@ -957,6 +958,25 @@
             to { width: 0%; }
         }
         
+        /* زر اختبار الاتصال */
+        .test-connection-btn {
+            background: rgba(139, 115, 85, 0.1);
+            color: var(--accent-primary);
+            border: 1px dashed var(--accent-primary);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .test-connection-btn:hover {
+            background: rgba(139, 115, 85, 0.2);
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             :root {
@@ -1086,6 +1106,12 @@
             
             <input type="file" id="pdfFile" accept=".pdf" hidden>
             
+            <div style="text-align: center; margin-top: 15px;">
+                <button class="test-connection-btn" id="test-connection">
+                    <i class="fas fa-plug"></i> اختبار الاتصال بالسيرفر
+                </button>
+            </div>
+            
             <div class="cost-preview" id="cost-preview">
                 <h3 class="cost-title">تفاصيل التكلفة</h3>
                 <div class="cost-details">
@@ -1171,12 +1197,16 @@
             </div>
             
             <div class="result-content-container">
-                <div class="result-content" id="result-content"></div>
+                <div class="result-content" id="result-content">
+                    <p style="color: var(--text-secondary); text-align: center;">سيظهر التلخيص هنا...</p>
+                </div>
             </div>
             
             <div class="raw-summary">
                 <h3 class="raw-title"><i class="fas fa-bullseye"></i> النقاط الرئيسية</h3>
-                <ul class="raw-points" id="raw-points"></ul>
+                <ul class="raw-points" id="raw-points">
+                    <li><i class="fas fa-info-circle"></i> لا توجد نقاط رئيسية بعد</li>
+                </ul>
             </div>
         </section>
         
@@ -1208,7 +1238,15 @@
 
         const auth = firebase.auth();
         const database = firebase.database();
-        const SERVER = "https://wet-aidan-kimon-66eadaf6.koyeb.app";
+        
+        // محاولة عدة سيرفرات
+        const SERVERS = [
+            "https://wet-aidan-kimon-66eadaf6.koyeb.app",
+            "https://api.kimo.dev",
+            "https://awn-server.onrender.com"
+        ];
+        let currentServerIndex = 0;
+        
         const API_ID = "12345";
         const API_PASS = "12345abcde57";
 
@@ -1271,6 +1309,26 @@
             }, duration);
         }
 
+        async function testConnection() {
+            showLoading('جاري اختبار الاتصال...');
+            try {
+                const response = await fetch(SERVERS[0] + '/api/test', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    showNotification('✅ السيرفر الرئيسي يعمل', 'success');
+                } else {
+                    showNotification('⚠️ السيرفر الرئيسي لا يستجيب', 'warning');
+                }
+            } catch (error) {
+                showNotification('❌ السيرفر الرئيسي غير متاح', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
         auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 window.location.replace('login.html');
@@ -1310,6 +1368,10 @@
             setupNavigation();
             setupRecords();
             setupFontControls();
+            
+            // زر اختبار الاتصال
+            document.getElementById('test-connection').onclick = testConnection;
+            
             hideLoading(); // تأكيد إخفاء شاشة التحميل
         }
 
@@ -1540,28 +1602,9 @@
         }
 
         function createPrompt() {
-            const personaInstructions = {
-                'طالب': 'تحدث كأنك طالب جامعي تشرح لزملائك، استخدم لغة شبابية واضحة مع أمثلة بسيطة وحماس',
-                'مدرس': 'تحدث كأنك مدرس محترم في الفصل، استخدم أسلوباً منهجياً منظمًا مع تدرج في الأفكار',
-                'دكتور جامعة': 'تحدث كأنك دكتور في الجامعة، استخدم أسلوباً أكاديمياً عميقاً مع تحليل دقيق',
-                'عالم': 'تحدث كأنك عالم متخصص، استخدم أسلوباً علمياً رصيناً مع تفصيل دقيق ونظريات'
-            };
-
-            const styleInstructions = {
-                'طفولي': 'استخدم كلمات بسيطة جداً، تشبيهات طريفة، جمل قصيرة، وأسلوب مرح وممتع',
-                'بسيط': 'استخدم لغة واضحة وسهلة مع تجنب التعقيد، ركز على الفهم السريع',
-                'معقد': 'استخدم تحليلات عميقة ومصطلحات متقدمة مع مقارنات معقدة وتفاصيل دقيقة جداً',
-                'احترافي': 'استخدم أسلوباً منظماً مع نقاط واضحة وتقسيمات منطقية وتنسيق احترافي'
-            };
-
-            const lengthInstructions = {
-                'طويل': 'اكتب تلخيصاً طويلاً جداً وشاملاً. غطِ كل كلمة وكل فكرة في الملف. لا تحذف أي معلومة. اشرح كل نقطة بالتفصيل. استخدم عناوين متعددة. اجعل التلخيص يغني عن قراءة الملف الأصلي تماماً.',
-                'قصير': 'اكتب تلخيصاً قصيراً جداً. ركز فقط على النقاط الأساسية. تجاهل التفاصيل الصغيرة والأمثلة. اختصر المعلومات بشدة مع الحفاظ على المعنى الأساسي. استخدم جمل قصيرة ومباشرة.'
-            };
-
             return `أنت مساعد متخصص في تلخيص ملفات PDF.
 
-المهمة: لخص ملف PDF المرفق بدقة 100% - لا تفوت أي كلمة أو فكرة من الملف.
+المهمة: لخص ملف PDF المرفق بالكامل من أول صفحة لآخر صفحة. يجب أن يكون التلخيص شاملاً 100% ولا يفوت أي معلومة.
 
 الإعدادات المطلوبة:
 - شخصية الشارح: ${currentSettings.explainerPersona}
@@ -1569,36 +1612,54 @@
 - أسلوب الشرح: ${currentSettings.explanationStyle}
 - طول الشرح: ${currentSettings.explanationLength}
 
-تعليمات شخصية الشارح:
-${personaInstructions[currentSettings.explainerPersona]}
+تعليمات دقيقة:
+1. ${currentSettings.explanationLength === 'طويل' ? 'اكتب تلخيصاً طويلاً جداً ومفصلاً يغطي كل كلمة وفكرة في الملف.' : 'اكتب تلخيصاً قصيراً جداً يركز فقط على النقاط الأساسية.'}
+2. استخدم أسلوب ${currentSettings.explainerPersona} في الشرح.
+3. استخدم لغة ${currentSettings.outputLanguage} فقط.
+4. استخدم أسلوب ${currentSettings.explanationStyle} في التقديم.
+5. للأكواد البرمجية: استخدم blocks مثل \`\`\`كود\`\`\`.
+6. للقوانين: اكتب "قانون:" قبلها.
+7. استخدم عناوين رئيسية وفرعية لتنظيم المحتوى.
 
-تعليمات أسلوب الشرح:
-${styleInstructions[currentSettings.explanationStyle]}
-
-تعليمات طول الشرح:
-${lengthInstructions[currentSettings.explanationLength]}
-
-قواعد صارمة:
-1. حلل الملف بالكامل من أول صفحة لآخر صفحة - لا تتجاهل أي جزء.
-2. يجب أن يكون التلخيص شاملاً 100% ويغطي كل محتوى الملف.
-3. استخدم تنسيقاً واضحاً مع عناوين رئيسية (##) وفرعية (###).
-4. للأكواد البرمجية: ضعها داخل blocks مثل:
-   \`\`\`
-   الكود هنا
-   \`\`\`
-5. للقوانين أو المواد القانونية: ضعها في blocks خاصة واكتب "قانون:" قبلها.
-6. استخدم القوائم النقطية والرقمية لتنظيم المعلومات.
-7. طول التلخيص يجب أن يكون ${currentSettings.explanationLength === 'طويل' ? 'كبيراً جداً وشاملاً' : 'قصيراً جداً ومختصراً'}.
-8. استخرج 5 نقاط رئيسية من الملف (لا أقل ولا أكثر).
-
-شكل الإخراج (JSON فقط):
+يجب أن يكون الرد بصيغة JSON فقط:
 {
   "head": "عنوان مختصر للملف (5-7 كلمات)",
-  "raw": ["النقطة 1", "النقطة 2", "النقطة 3", "النقطة 4", "النقطة 5"],
+  "raw": ["نقطة رئيسية 1", "نقطة رئيسية 2", "نقطة رئيسية 3", "نقطة رئيسية 4", "نقطة رئيسية 5"],
   "page": "محتوى التلخيص الكامل هنا..."
-}
+}`;
+        }
 
-ملاحظة مهمة جداً: تأكد أن التلخيص في حقل "page" يحتوي على كل محتوى الملف بالكامل ولا يحذف أي شيء.`;
+        async function tryServers(base64) {
+            for (let i = 0; i < SERVERS.length; i++) {
+                try {
+                    showNotification(`محاولة الاتصال بالسيرفر ${i+1}...`, 'info');
+                    
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 15000);
+                    
+                    const response = await fetch(SERVERS[i] + '/api/KIMO_DEV', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id: API_ID,
+                            pass: API_PASS,
+                            data: createPrompt(),
+                            PDF_BASE64: base64
+                        }),
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (response.ok) {
+                        currentServerIndex = i;
+                        return response;
+                    }
+                } catch (e) {
+                    console.log(`السيرفر ${i+1} فشل:`, e.message);
+                }
+            }
+            throw new Error('جميع السيرفرات غير متاحة');
         }
 
         async function generateSummary() {
@@ -1624,48 +1685,43 @@ ${lengthInstructions[currentSettings.explanationLength]}
                     reader.readAsDataURL(selectedFile);
                 });
 
-                // مهلة زمنية 30 ثانية
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000);
-
-                const response = await fetch(SERVER + '/api/KIMO_DEV', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        id: API_ID,
-                        pass: API_PASS,
-                        data: createPrompt(),
-                        PDF_BASE64: base64
-                    }),
-                    signal: controller.signal
-                });
-
-                clearTimeout(timeoutId);
-
-                if (!response.ok) throw new Error('فشل الاتصال بالسيرفر');
-
+                const response = await tryServers(base64);
                 const text = await response.text();
+                
                 let result;
-
                 try {
+                    // محاولة استخراج JSON من النص
                     const jsonMatch = text.match(/\{[\s\S]*\}/);
-                    result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
-                    
-                    if (!result.head || !result.raw || !result.page) {
-                        throw new Error('استجابة غير صالحة');
+                    if (jsonMatch) {
+                        result = JSON.parse(jsonMatch[0]);
+                    } else {
+                        // إذا ما لقينا JSON، نخلي النص نفسه كـ page
+                        result = {
+                            head: "ملخص الملف",
+                            raw: ["تم إنشاء الملخص بنجاح"],
+                            page: text
+                        };
                     }
+                    
+                    // التأكد من وجود البيانات المطلوبة
+                    if (!result.head) result.head = "ملخص الملف";
+                    if (!result.raw || !Array.isArray(result.raw)) result.raw = ["تم إنشاء الملخص بنجاح"];
+                    if (!result.page) result.page = text;
+                    
                 } catch (e) {
                     result = {
-                        head: 'ملخص الملف',
-                        raw: ['تم إنشاء الملخص بنجاح'],
-                        page: text.replace(/[\\n]/g, '\n').replace(/\\/g, '')
+                        head: "ملخص الملف",
+                        raw: ["تم إنشاء الملخص بنجاح"],
+                        page: text
                     };
                 }
 
+                // خصم العملات
                 await database.ref(`users_Awn/${currentUser.id}/coin`).set(userCoins - fileInfo.cost);
                 userCoins -= fileInfo.cost;
                 document.getElementById('coins-count').textContent = userCoins;
 
+                // حفظ في السجلات
                 await database.ref(`records/summary_${Date.now()}`).set({
                     id: currentUser.id,
                     fileName: fileInfo.name,
@@ -1683,13 +1739,11 @@ ${lengthInstructions[currentSettings.explanationLength]}
                 document.getElementById('result-section').classList.add('show');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 
-                showNotification('تم إنشاء التلخيص بنجاح', 'success');
+                showNotification('✅ تم إنشاء التلخيص بنجاح', 'success');
+                
             } catch (error) {
-                if (error.name === 'AbortError') {
-                    showNotification('استغرق الطلب وقتاً طويلاً، حاول مرة أخرى', 'warning');
-                } else {
-                    showNotification('حدث خطأ: ' + error.message, 'error');
-                }
+                console.error('خطأ:', error);
+                showNotification('❌ فشل الاتصال بالسيرفر: ' + error.message, 'error');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-robot"></i> إنشاء التلخيص التلقائي';
@@ -1701,10 +1755,15 @@ ${lengthInstructions[currentSettings.explanationLength]}
             document.getElementById('result-title').textContent = result.head || 'ملخص الملف';
             
             let content = result.page || '';
-            content = content.replace(/\\n/g, '\n').replace(/\\r/g, '');
+            // تنظيف النص من الأحرف غير المرغوب فيها
+            content = content
+                .replace(/\\n/g, '\n')
+                .replace(/\\r/g, '')
+                .replace(/\\t/g, ' ')
+                .replace(/\\"/g, '"')
+                .replace(/\\/g, '');
             
-            const formattedContent = formatContent(content);
-            document.getElementById('result-content').innerHTML = formattedContent;
+            document.getElementById('result-content').innerHTML = formatContent(content);
             document.getElementById('result-content').style.fontSize = fontSize + 'px';
             
             const keyPoints = document.getElementById('raw-points');
@@ -1712,78 +1771,110 @@ ${lengthInstructions[currentSettings.explanationLength]}
             
             if (Array.isArray(result.raw) && result.raw.length) {
                 result.raw.forEach(point => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
-                    keyPoints.appendChild(li);
+                    if (point && point !== "Not Output") {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
+                        keyPoints.appendChild(li);
+                    }
                 });
-            } else {
+            }
+            
+            if (keyPoints.children.length === 0) {
                 keyPoints.innerHTML = '<li><i class="fas fa-info-circle"></i> لا توجد نقاط رئيسية</li>';
             }
         }
 
         function formatContent(text) {
-            if (!text) return '';
+            if (!text || text === "Not Output") return '<p style="color: var(--text-secondary);">لا يوجد محتوى للعرض</p>';
             
-            let html = '';
-            let inCodeBlock = false;
-            let codeContent = '';
-            
+            // تقسيم النص إلى أسطر
             const lines = text.split('\n');
+            let html = '';
+            let inList = false;
+            let listType = '';
             
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i];
-                
-                // معالجة blocks الأكواد
-                if (line.trim().startsWith('```')) {
-                    if (!inCodeBlock) {
-                        inCodeBlock = true;
-                        codeContent = '';
-                    } else {
-                        inCodeBlock = false;
-                        html += `<pre><code>${escapeHtml(codeContent)}</code></pre>`;
+            for (let line of lines) {
+                line = line.trim();
+                if (!line) {
+                    if (inList) {
+                        html += listType === 'ul' ? '</ul>' : '</ol>';
+                        inList = false;
                     }
                     continue;
                 }
                 
-                if (inCodeBlock) {
-                    codeContent += line + '\n';
-                    continue;
-                }
+                // تنظيف الخط
+                line = line
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
                 
-                // معالجة القوانين
-                if (line.includes('قانون:') || line.includes('مادة') || line.includes('لائحة')) {
-                    html += `<div class="law-block"><div class="law-title"><i class="fas fa-gavel"></i> نص قانوني</div><p class="law-text">${escapeHtml(line)}</p></div>`;
-                    continue;
-                }
-                
-                // تنسيق النص العادي
-                line = escapeHtml(line)
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\*(.*?)\*/g, '<em>$1</em>');
-                
+                // معالجة العناوين
                 if (line.startsWith('#')) {
+                    if (inList) {
+                        html += listType === 'ul' ? '</ul>' : '</ol>';
+                        inList = false;
+                    }
                     const level = line.match(/^#+/)[0].length;
                     const content = line.replace(/^#+\s*/, '');
                     html += `<h${Math.min(level, 3)}>${content}</h${Math.min(level, 3)}>`;
-                } else if (line.startsWith('- ') || line.startsWith('• ')) {
+                }
+                // معالجة القوائم النقطية
+                else if (line.startsWith('- ') || line.startsWith('• ')) {
+                    if (!inList || listType !== 'ul') {
+                        if (inList) html += '</ol>';
+                        html += '<ul>';
+                        inList = true;
+                        listType = 'ul';
+                    }
                     html += `<li>${line.substring(2)}</li>`;
-                } else if (line.match(/^\d+\. /)) {
+                }
+                // معالجة القوائم الرقمية
+                else if (line.match(/^\d+\. /)) {
+                    if (!inList || listType !== 'ol') {
+                        if (inList) html += '</ul>';
+                        html += '<ol>';
+                        inList = true;
+                        listType = 'ol';
+                    }
                     html += `<li>${line.replace(/^\d+\.\s*/, '')}</li>`;
-                } else if (line.trim()) {
+                }
+                // معالجة الأكواد
+                else if (line.includes('```')) {
+                    if (inList) {
+                        html += listType === 'ul' ? '</ul>' : '</ol>';
+                        inList = false;
+                    }
+                    html += `<pre><code>${line.replace(/```/g, '')}</code></pre>`;
+                }
+                // معالجة القوانين
+                else if (line.includes('قانون:') || line.includes('مادة')) {
+                    if (inList) {
+                        html += listType === 'ul' ? '</ul>' : '</ol>';
+                        inList = false;
+                    }
+                    html += `<div class="law-block">
+                        <div class="law-title"><i class="fas fa-gavel"></i> نص قانوني</div>
+                        <p class="law-text">${line}</p>
+                    </div>`;
+                }
+                // نص عادي
+                else {
+                    if (inList) {
+                        html += listType === 'ul' ? '</ul>' : '</ol>';
+                        inList = false;
+                    }
                     html += `<p>${line}</p>`;
                 }
             }
             
-            return html;
-        }
-
-        function escapeHtml(unsafe) {
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+            if (inList) {
+                html += listType === 'ul' ? '</ul>' : '</ol>';
+            }
+            
+            return html || '<p style="color: var(--text-secondary);">لا يوجد محتوى للعرض</p>';
         }
     </script>
 </body>
