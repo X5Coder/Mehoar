@@ -2,17 +2,17 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عون - تلخيص PDF بالذكاء الاصطناعي</title>
     
-    <!-- تحسين التحميل - تحميل المكتبات بشكل غير متزامن -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght:300;400;700;800;900&family=Tajawal:wght:300;400;500;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* إعادة تعيين الأنماط */
         * {
             margin: 0;
             padding: 0;
@@ -25,15 +25,14 @@
             --primary-dark: #5D4037;
             --secondary: #D4A574;
             --bg: #F5F1E8;
-            --card: #FFFFFF;
+            --white: #FFFFFF;
             --text: #2D3748;
             --text-light: #718096;
             --success: #38A169;
             --error: #E53E3E;
             --warning: #DD6B20;
-            --shadow-sm: 0 4px 12px rgba(139, 115, 85, 0.1);
-            --shadow-md: 0 8px 24px rgba(139, 115, 85, 0.15);
-            --shadow-lg: 0 12px 36px rgba(139, 115, 85, 0.2);
+            --shadow: 0 4px 12px rgba(139, 115, 85, 0.15);
+            --shadow-lg: 0 8px 24px rgba(139, 115, 85, 0.2);
             --radius: 20px;
             --radius-lg: 28px;
             --navbar: 70px;
@@ -45,10 +44,9 @@
             color: var(--text);
             min-height: 100vh;
             direction: rtl;
-            overflow-x: hidden;
         }
         
-        /* شاشة التحميل المحسنة */
+        /* شاشة التحميل */
         .loading-screen {
             position: fixed;
             inset: 0;
@@ -57,7 +55,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 99999;
+            z-index: 9999;
             transition: 0.3s;
         }
         
@@ -67,8 +65,8 @@
         }
         
         .loading-logo {
-            font-weight: 900;
             font-size: 3.5rem;
+            font-weight: 900;
             color: var(--primary);
             margin-bottom: 1.5rem;
             animation: pulse 1.5s infinite;
@@ -90,7 +88,7 @@
         
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* شريط التنقل المحسن */
+        /* شريط التنقل */
         .navbar {
             position: fixed;
             top: 0;
@@ -103,14 +101,14 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 1.5rem;
-            z-index: 10000;
+            z-index: 1000;
             border-bottom: 1px solid rgba(139, 115, 85, 0.1);
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow);
         }
         
         .logo {
-            font-weight: 900;
             font-size: 2.2rem;
+            font-weight: 900;
             color: var(--primary);
             cursor: pointer;
             transition: 0.3s;
@@ -141,7 +139,7 @@
         .nav-btn:hover {
             background: rgba(139, 115, 85, 0.25);
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow);
         }
         
         .coins {
@@ -153,152 +151,6 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        /* نافذة السجلات المحسنة */
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10001;
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.3s;
-            padding: 1rem;
-        }
-        
-        .modal.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: var(--radius-lg);
-            width: min(900px, 95%);
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem;
-            border-bottom: 2px solid rgba(139, 115, 85, 0.1);
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
-        }
-        
-        .modal-header h2 {
-            font-weight: 800;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-        
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.8rem;
-            color: var(--text-light);
-            cursor: pointer;
-            width: 45px;
-            height: 45px;
-            border-radius: var(--radius);
-            transition: 0.3s;
-        }
-        
-        .close-modal:hover {
-            background: rgba(139, 115, 85, 0.1);
-            color: var(--primary);
-            transform: rotate(90deg);
-        }
-        
-        .modal-body { padding: 1.5rem; }
-        
-        /* بطاقات السجلات المحسنة */
-        .records-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
-        }
-        
-        .record-card {
-            background: rgba(139, 115, 85, 0.03);
-            border: 1px solid rgba(139, 115, 85, 0.1);
-            border-radius: var(--radius);
-            padding: 1.2rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        
-        .record-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-            background: rgba(139, 115, 85, 0.06);
-        }
-        
-        .record-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-        
-        .record-name {
-            font-weight: 700;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            word-break: break-word;
-        }
-        
-        .record-date {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            white-space: nowrap;
-        }
-        
-        .record-stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-        
-        .record-stat {
-            background: rgba(139, 115, 85, 0.1);
-            padding: 0.4rem 0.8rem;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 4rem 1rem;
-            color: var(--text-light);
-        }
-        
-        .empty-state i {
-            font-size: 4rem;
-            color: var(--primary-light);
-            opacity: 0.5;
-            margin-bottom: 1rem;
         }
         
         /* المحتوى الرئيسي */
@@ -311,13 +163,13 @@
             margin: 0 auto;
         }
         
-        /* قسم رفع الملف المحسن */
+        /* البطاقات */
         .card {
-            background: white;
+            background: var(--white);
             border-radius: var(--radius-lg);
             padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow);
             border: 1px solid rgba(139, 115, 85, 0.1);
         }
         
@@ -335,6 +187,7 @@
             margin-bottom: 2rem;
         }
         
+        /* رفع الملف */
         .upload-area {
             border: 2px dashed var(--secondary);
             border-radius: var(--radius);
@@ -350,25 +203,11 @@
             background: rgba(212, 165, 116, 0.08);
         }
         
-        .upload-icon {
-            font-size: 3.5rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
+        .upload-icon { font-size: 3.5rem; color: var(--primary); margin-bottom: 1rem; }
+        .upload-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; word-break: break-word; }
+        .upload-hint { color: var(--text-light); font-size: 0.9rem; }
         
-        .upload-text {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            word-break: break-word;
-        }
-        
-        .upload-hint {
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-        
-        /* معاينة التكلفة المحسنة */
+        /* معاينة التكلفة */
         .cost-preview {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -388,22 +227,9 @@
             flex-wrap: wrap;
         }
         
-        .cost-item {
-            text-align: center;
-            min-width: 150px;
-        }
-        
-        .cost-label {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin-bottom: 0.3rem;
-        }
-        
-        .cost-value {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--primary);
-        }
+        .cost-item { text-align: center; min-width: 150px; }
+        .cost-label { color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.3rem; }
+        .cost-value { font-size: 1.8rem; font-weight: 800; color: var(--primary); }
         
         .cost-actions {
             display: flex;
@@ -412,6 +238,7 @@
             flex-wrap: wrap;
         }
         
+        /* الأزرار */
         .btn {
             padding: 0.8rem 2rem;
             border: none;
@@ -428,30 +255,14 @@
         
         .btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow);
         }
         
-        .btn-primary {
-            background: linear-gradient(145deg, var(--primary), var(--primary-light));
-            color: white;
-        }
+        .btn-primary { background: linear-gradient(145deg, var(--primary), var(--primary-light)); color: white; }
+        .btn-danger { background: linear-gradient(145deg, var(--error), #C53030); color: white; }
+        .btn-success { background: linear-gradient(145deg, var(--success), #2F855A); color: white; }
         
-        .btn-danger {
-            background: linear-gradient(145deg, var(--error), #C53030);
-            color: white;
-        }
-        
-        .btn-success {
-            background: linear-gradient(145deg, var(--success), #2F855A);
-            color: white;
-        }
-        
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
-        /* شبكة الإعدادات المحسنة */
+        /* شبكة الإعدادات */
         .settings-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -493,14 +304,159 @@
         }
         
         .option-btn:hover { border-color: var(--primary); }
+        .option-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
         
-        .option-btn.selected {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+        /* نافذة السجلات المحسنة */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 1rem;
         }
         
-        /* قسم النتائج المحسن */
+        .modal.show { display: flex; }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            width: min(1000px, 95%);
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 2px solid rgba(139, 115, 85, 0.1);
+            background: white;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--text-light);
+            cursor: pointer;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-modal:hover {
+            background: rgba(139, 115, 85, 0.1);
+            color: var(--primary);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        /* قائمة السجلات المحسنة */
+        .records-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .record-card {
+            background: rgba(139, 115, 85, 0.03);
+            border: 1px solid rgba(139, 115, 85, 0.1);
+            border-radius: var(--radius);
+            padding: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .record-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            background: rgba(139, 115, 85, 0.06);
+        }
+        
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        
+        .record-name {
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            word-break: break-word;
+            flex: 1;
+        }
+        
+        .record-date {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .record-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        
+        .record-badge {
+            background: rgba(139, 115, 85, 0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .empty-records {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--text-light);
+        }
+        
+        .empty-records i {
+            font-size: 4rem;
+            color: var(--primary-light);
+            opacity: 0.5;
+            margin-bottom: 1rem;
+        }
+        
+        /* النتائج */
         .result-section {
             background: white;
             border-radius: var(--radius-lg);
@@ -562,37 +518,13 @@
             background: white;
             padding: 2rem;
             border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow);
             border: 1px solid rgba(139, 115, 85, 0.1);
             line-height: 1.8;
             transition: font-size 0.3s;
             word-wrap: break-word;
         }
         
-        .result-text h1,
-        .result-text h2,
-        .result-text h3 {
-            color: var(--primary);
-            margin: 1.5rem 0 1rem;
-        }
-        
-        .result-text p { margin: 1rem 0; }
-        
-        .result-text ul,
-        .result-text ol {
-            padding-right: 2rem;
-            margin: 1rem 0;
-        }
-        
-        .result-text blockquote {
-            background: rgba(139, 115, 85, 0.05);
-            border-right: 4px solid var(--primary);
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            margin: 1rem 0;
-        }
-        
-        /* النقاط الرئيسية المحسنة */
         .key-points {
             background: rgba(139, 115, 85, 0.05);
             padding: 2rem;
@@ -618,18 +550,13 @@
             padding: 1rem 1.5rem;
             border-radius: 12px;
             border-right: 5px solid var(--primary);
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow);
             display: flex;
             align-items: center;
             gap: 0.8rem;
         }
         
-        .points-list i {
-            color: var(--primary);
-            flex-shrink: 0;
-        }
-        
-        /* الإشعارات المحسنة */
+        /* الإشعارات */
         .notifications {
             position: fixed;
             top: 90px;
@@ -648,13 +575,12 @@
             box-shadow: var(--shadow-lg);
             border: 1px solid rgba(139, 115, 85, 0.1);
             transform: translateX(400px);
-            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: transform 0.3s ease;
             position: relative;
             overflow: hidden;
         }
         
         .notification.show { transform: translateX(0); }
-        
         .notification.hiding { transform: translateX(400px); }
         
         .notification.success { border-right: 4px solid var(--success); }
@@ -665,16 +591,6 @@
             display: flex;
             align-items: center;
             gap: 0.8rem;
-        }
-        
-        .notification-icon { font-size: 1.2rem; }
-        .notification.success .notification-icon { color: var(--success); }
-        .notification.error .notification-icon { color: var(--error); }
-        .notification.warning .notification-icon { color: var(--warning); }
-        
-        .notification-text {
-            font-family: 'Tajawal', sans-serif;
-            flex: 1;
         }
         
         .notification-progress {
@@ -697,7 +613,7 @@
             to { width: 0%; }
         }
         
-        /* الفوتر المحسن */
+        /* الفوتر */
         .footer {
             text-align: center;
             padding: 2rem 1rem;
@@ -706,17 +622,11 @@
             margin-top: 2rem;
         }
         
-        .support {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-        
         .support-links {
             display: flex;
             gap: 1rem;
+            justify-content: center;
+            margin: 1rem 0;
         }
         
         .support-link {
@@ -734,61 +644,25 @@
         
         .support-link:hover {
             transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow);
         }
         
-        /* تحسينات التجاوب */
+        /* التجاوب */
         @media (max-width: 768px) {
             :root { --navbar: 60px; }
             
             .logo { font-size: 1.8rem; }
-            
             .nav-btn span { display: none; }
-            
             .nav-btn { padding: 0.7rem; border-radius: 50%; }
-            
             .main { padding-left: 1rem; padding-right: 1rem; }
-            
             .card { padding: 1.5rem; }
-            
             .card-title { font-size: 1.6rem; }
-            
-            .cost-grid { gap: 1rem; }
-            
-            .cost-item { min-width: 120px; }
-            
-            .cost-value { font-size: 1.5rem; }
-            
-            .result-content { padding: 1rem; }
-            
-            .result-text { padding: 1rem; }
-            
-            .key-points { padding: 1.5rem; }
             
             .notifications {
                 left: 1rem;
                 right: 1rem;
                 max-width: none;
             }
-        }
-        
-        @media (max-width: 480px) {
-            .records-grid { grid-template-columns: 1fr; }
-            
-            .options-grid { grid-template-columns: 1fr; }
-            
-            .cost-actions { flex-direction: column; }
-            
-            .btn { width: 100%; }
-            
-            .result-header { flex-direction: column; align-items: flex-start; }
-            
-            .font-controls { width: 100%; justify-content: center; }
-        }
-        
-        /* تحسينات الأداء */
-        @media (prefers-reduced-motion: reduce) {
-            * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
         }
     </style>
 </head>
@@ -810,16 +684,16 @@
                 <button class="close-modal" id="closeModal"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body" id="recordsBody">
-                <div class="empty-state" id="emptyRecords">
+                <div class="empty-records" id="emptyRecords" style="display: none;">
                     <i class="fas fa-folder-open"></i>
                     <p>لا توجد سجلات سابقة</p>
                 </div>
-                <div class="records-grid" id="recordsGrid"></div>
+                <div class="records-list" id="recordsList"></div>
             </div>
         </div>
     </div>
 
-    <!-- شريط التنقل المحسن -->
+    <!-- شريط التنقل -->
     <nav class="navbar">
         <div class="logo" id="homeBtn">عون</div>
         <div class="nav-actions">
@@ -836,7 +710,7 @@
 
     <!-- المحتوى الرئيسي -->
     <div class="main">
-        <!-- قسم رفع الملف المحسن -->
+        <!-- قسم رفع الملف -->
         <section class="card" id="uploadSection">
             <h1 class="card-title">تلخيص PDF بالذكاء الاصطناعي</h1>
             <p class="card-subtitle">ارفع ملف PDF واحصل على ملخص شامل في ثوانٍ</p>
@@ -849,7 +723,7 @@
             
             <input type="file" id="fileInput" accept=".pdf" hidden>
             
-            <!-- معاينة التكلفة المحسنة -->
+            <!-- معاينة التكلفة -->
             <div class="cost-preview" id="costPreview">
                 <h3 style="text-align: center; color: var(--primary); margin-bottom: 1rem;">تفاصيل التكلفة</h3>
                 <div class="cost-grid">
@@ -869,7 +743,7 @@
             </div>
         </section>
         
-        <!-- قسم الإعدادات المحسن -->
+        <!-- قسم الإعدادات -->
         <section class="card" id="settingsSection" style="display: none;">
             <h2 class="card-title">إعدادات التلخيص</h2>
             <p class="card-subtitle">خصص طريقة التلخيص حسب احتياجاتك</p>
@@ -917,7 +791,7 @@
             </button>
         </section>
         
-        <!-- قسم النتائج المحسن -->
+        <!-- قسم النتائج -->
         <section class="result-section" id="resultSection">
             <div class="result-header">
                 <h2 class="result-title" id="resultHead">ملخص الملف</h2>
@@ -938,21 +812,19 @@
             </div>
         </section>
         
-        <!-- الفوتر المحسن -->
+        <!-- الفوتر -->
         <footer class="footer">
-            <div class="support">
-                <div>تواصل مع الدعم الفني</div>
-                <div class="support-links">
-                    <a href="https://wa.me/966583617539" target="_blank" class="support-link"><i class="fab fa-whatsapp"></i></a>
-                    <a href="https://t.me/HNHv1" target="_blank" class="support-link"><i class="fab fa-telegram"></i></a>
-                </div>
+            <div>تواصل مع الدعم الفني</div>
+            <div class="support-links">
+                <a href="https://wa.me/966583617539" target="_blank" class="support-link"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://t.me/HNHv1" target="_blank" class="support-link"><i class="fab fa-telegram"></i></a>
             </div>
             <div>جميع الحقوق محفوظة لمنصة عون © 2026</div>
         </footer>
     </div>
 
     <script>
-        // تحميل PDF.js
+        // تهيئة PDF.js
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
         // تهيئة Firebase
@@ -966,14 +838,13 @@
             appId: "1:189921979866:android:95f48de58a69756be924e3"
         });
 
-        // ==================== الثوابت ====================
+        // ========== المتغيرات العامة ==========
         const auth = firebase.auth();
         const database = firebase.database();
         const SERVER = "https://wet-aidan-kimon-66eadaf6.koyeb.app";
         const API_ID = "12345";
         const API_PASS = "12345abcde57";
 
-        // ==================== المتغيرات العامة ====================
         let currentUser = null;
         let userCoins = 0;
         let selectedFile = null;
@@ -984,11 +855,9 @@
             style: 'بسيط',
             length: 'طويل'
         };
-        let currentResult = null;
         let fontSize = 16;
-        let notificationTimer = null;
 
-        // ==================== دوال المساعدة ====================
+        // ========== دوال المساعدة ==========
         function showLoading() {
             document.getElementById('loadingScreen').classList.remove('hidden');
         }
@@ -997,14 +866,10 @@
             document.getElementById('loadingScreen').classList.add('hidden');
         }
 
-        // نظام الإشعارات المحسن
         function showNotification(message, type = 'info', duration = 3000) {
             const container = document.getElementById('notifications');
-            const id = 'notif_' + Date.now() + Math.random();
-            
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
-            notification.id = id;
             
             const icons = {
                 success: 'check-circle',
@@ -1024,7 +889,6 @@
             `;
             
             container.appendChild(notification);
-            
             setTimeout(() => notification.classList.add('show'), 10);
             
             setTimeout(() => {
@@ -1033,7 +897,146 @@
             }, duration);
         }
 
-        // تنسيق المحتوى المحسن
+        // ========== نظام السجلات المحسن ==========
+        async function loadUserRecords() {
+            const recordsList = document.getElementById('recordsList');
+            const emptyRecords = document.getElementById('emptyRecords');
+            
+            recordsList.innerHTML = '';
+            showLoading();
+            
+            try {
+                // جلب جميع السجلات من Firebase
+                const snapshot = await database.ref('records').once('value');
+                
+                if (snapshot.exists()) {
+                    const allRecords = [];
+                    let hasRecords = false;
+                    
+                    snapshot.forEach(child => {
+                        const record = child.val();
+                        // التحقق من أن السجل يخص المستخدم الحالي
+                        if (record.userId === currentUser.id) {
+                            hasRecords = true;
+                            allRecords.push({
+                                id: child.key,
+                                ...record
+                            });
+                        }
+                    });
+                    
+                    if (hasRecords) {
+                        emptyRecords.style.display = 'none';
+                        
+                        // ترتيب السجلات من الأحدث للأقدم
+                        allRecords.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                        
+                        // عرض السجلات
+                        allRecords.forEach(record => {
+                            const date = record.timestamp ? new Date(record.timestamp) : new Date();
+                            const formattedDate = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
+                            
+                            const card = document.createElement('div');
+                            card.className = 'record-card';
+                            card.setAttribute('data-record-id', record.id);
+                            
+                            card.innerHTML = `
+                                <div class="record-header">
+                                    <div class="record-name">
+                                        <i class="fas fa-file-pdf" style="color: var(--primary);"></i>
+                                        <span>${record.fileName || 'ملف PDF'}</span>
+                                    </div>
+                                    <div class="record-date">
+                                        <i class="far fa-calendar-alt"></i>
+                                        ${formattedDate}
+                                    </div>
+                                </div>
+                                <div class="record-details">
+                                    <span class="record-badge">
+                                        <i class="fas fa-file"></i> ${record.pages || 0} صفحة
+                                    </span>
+                                    <span class="record-badge">
+                                        <i class="fas fa-coins"></i> ${record.cost || 0} عملة
+                                    </span>
+                                    <span class="record-badge">
+                                        <i class="fas fa-user-tie"></i> ${record.settings?.persona || 'تلخيص'}
+                                    </span>
+                                    <span class="record-badge">
+                                        <i class="fas fa-language"></i> ${record.settings?.language || 'عربي'}
+                                    </span>
+                                </div>
+                            `;
+                            
+                            // إضافة حدث النقر لعرض الملخص
+                            card.addEventListener('click', () => {
+                                displayRecordContent(record);
+                            });
+                            
+                            recordsList.appendChild(card);
+                        });
+                    } else {
+                        emptyRecords.style.display = 'block';
+                    }
+                } else {
+                    emptyRecords.style.display = 'block';
+                }
+                
+                hideLoading();
+            } catch (error) {
+                hideLoading();
+                console.error('خطأ في تحميل السجلات:', error);
+                showNotification('حدث خطأ في تحميل السجلات', 'error');
+            }
+        }
+
+        // عرض محتوى السجل
+        function displayRecordContent(record) {
+            try {
+                // التحقق من وجود البيانات
+                if (!record.data) {
+                    showNotification('بيانات السجل غير صالحة', 'error');
+                    return;
+                }
+                
+                // إغلاق نافذة السجلات
+                document.getElementById('recordsModal').classList.remove('show');
+                
+                // عرض قسم النتائج
+                document.getElementById('uploadSection').style.display = 'none';
+                document.getElementById('settingsSection').style.display = 'none';
+                document.getElementById('resultSection').classList.add('show');
+                
+                // عرض العنوان
+                document.getElementById('resultHead').textContent = record.data.head || 'ملخص الملف';
+                
+                // عرض المحتوى
+                const content = record.data.page || '';
+                document.getElementById('resultText').innerHTML = formatContent(content);
+                document.getElementById('resultText').style.fontSize = fontSize + 'px';
+                
+                // عرض النقاط الرئيسية
+                const pointsList = document.getElementById('pointsList');
+                pointsList.innerHTML = '';
+                
+                if (record.data.raw && Array.isArray(record.data.raw) && record.data.raw.length > 0) {
+                    record.data.raw.forEach(point => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<i class="fas fa-check-circle" style="color: var(--primary);"></i> ${point}`;
+                        pointsList.appendChild(li);
+                    });
+                } else {
+                    pointsList.innerHTML = '<li><i class="fas fa-info-circle"></i> لا توجد نقاط رئيسية</li>';
+                }
+                
+                showNotification('تم تحميل الملخص بنجاح', 'success');
+                
+            } catch (error) {
+                console.error('خطأ في عرض السجل:', error);
+                showNotification('حدث خطأ في عرض الملخص', 'error');
+            }
+        }
+
+        // تنسيق المحتوى
         function formatContent(text) {
             if (!text) return '';
             
@@ -1045,189 +1048,61 @@
             
             const lines = formatted.split('\n');
             let html = '';
-            let inList = false;
-            let listType = '';
             
             for (let line of lines) {
                 line = line.trim();
                 if (!line) {
-                    if (inList) {
-                        html += listType === 'ul' ? '</ul>' : '</ol>';
-                        inList = false;
-                    }
                     html += '<br>';
                     continue;
                 }
                 
                 if (line.startsWith('#')) {
-                    if (inList) {
-                        html += listType === 'ul' ? '</ul>' : '</ol>';
-                        inList = false;
-                    }
                     const level = line.match(/^#+/)[0].length;
                     const content = line.replace(/^#+\s*/, '');
                     html += `<h${Math.min(level, 3)}>${content}</h${Math.min(level, 3)}>`;
                 } else if (line.startsWith('- ') || line.startsWith('• ')) {
-                    if (!inList || listType !== 'ul') {
-                        if (inList) html += '</ol>';
-                        html += '<ul>';
-                        inList = true;
-                        listType = 'ul';
-                    }
-                    html += `<li>${line.substring(2)}</li>`;
+                    html += `<p style="padding-right: 20px; position: relative;">&bull; ${line.substring(2)}</p>`;
                 } else if (line.match(/^\d+\. /)) {
-                    if (!inList || listType !== 'ol') {
-                        if (inList) html += '</ul>';
-                        html += '<ol>';
-                        inList = true;
-                        listType = 'ol';
-                    }
-                    html += `<li>${line.replace(/^\d+\.\s*/, '')}</li>`;
+                    html += `<p style="padding-right: 20px;">${line}</p>`;
                 } else {
-                    if (inList) {
-                        html += listType === 'ul' ? '</ul>' : '</ol>';
-                        inList = false;
-                    }
                     html += `<p>${line}</p>`;
                 }
-            }
-            
-            if (inList) {
-                html += listType === 'ul' ? '</ul>' : '</ol>';
             }
             
             return html;
         }
 
-        // إنشاء البرومبت المحسن
+        // إنشاء البرومبت
         function createPrompt() {
             const lengthInstructions = {
-                طويل: 'قدم تلخيصاً طويلاً وشاملاً جداً يغطي كل التفاصيل والمعلومات المهمة في الملف مع شرح وافٍ',
+                طويل: 'قدم تلخيصاً طويلاً وشاملاً جداً يغطي كل التفاصيل والمعلومات المهمة',
                 قصير: 'قدم تلخيصاً قصيراً ومختصراً جداً يركز فقط على النقاط الأساسية'
             };
             
-            return `قم بتلخيص ملف PDF التالي بدقة:
+            return `قم بتلخيص ملف PDF التالي:
 
-الإعدادات المطلوبة:
+الإعدادات:
 - شخصية الشارح: ${currentSettings.persona}
 - لغة الإخراج: ${currentSettings.language}
 - أسلوب الشرح: ${currentSettings.style}
 - طول الشرح: ${currentSettings.length}
 
-تعليمات مهمة:
+تعليمات:
 1. ${lengthInstructions[currentSettings.length]}
-2. استخدم أسلوب شرح مناسب لشخصية ${currentSettings.persona}
+2. استخدم أسلوب مناسب لشخصية ${currentSettings.persona}
 3. اكتب بلغة ${currentSettings.language} سليمة
 4. اجعل الأسلوب ${currentSettings.style}
-5. حلل الملف كاملاً من أول صفحة لآخر صفحة
-6. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
+5. استخرج 3-5 نقاط رئيسية
 
-يجب أن يكون الرد بصيغة JSON فقط:
+الرد بصيغة JSON:
 {
-  "head": "عنوان مختصر للملف (5-7 كلمات)",
-  "raw": ["النقطة الأولى", "النقطة الثانية", "النقطة الثالثة"],
-  "page": "محتوى التلخيص الكامل هنا..."
+  "head": "عنوان مختصر للملف",
+  "raw": ["نقطة 1", "نقطة 2", "نقطة 3"],
+  "page": "محتوى التلخيص الكامل"
 }`;
         }
 
-        // عرض النتائج المحسن
-        function displayResult(result) {
-            document.getElementById('resultHead').textContent = result.head || 'ملخص الملف';
-            document.getElementById('resultText').innerHTML = formatContent(result.page || '');
-            document.getElementById('resultText').style.fontSize = fontSize + 'px';
-            
-            const pointsList = document.getElementById('pointsList');
-            pointsList.innerHTML = '';
-            
-            if (Array.isArray(result.raw) && result.raw.length > 0) {
-                result.raw.forEach(point => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
-                    pointsList.appendChild(li);
-                });
-            } else {
-                pointsList.innerHTML = '<li><i class="fas fa-info-circle"></i> لا توجد نقاط رئيسية متاحة</li>';
-            }
-        }
-
-        // تحميل السجلات المحسن
-        async function loadRecords() {
-            const recordsGrid = document.getElementById('recordsGrid');
-            const emptyState = document.getElementById('emptyRecords');
-            
-            showLoading();
-            try {
-                const snapshot = await database.ref('records')
-                    .orderByChild('userId')
-                    .equalTo(currentUser.id)
-                    .once('value');
-                
-                recordsGrid.innerHTML = '';
-                
-                if (snapshot.exists()) {
-                    emptyState.style.display = 'none';
-                    const records = [];
-                    
-                    snapshot.forEach(child => {
-                        records.push({ id: child.key, ...child.val() });
-                    });
-                    
-                    // ترتيب من الأحدث للأقدم
-                    records.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                    
-                    records.forEach(record => {
-                        const date = new Date(record.timestamp || Date.now());
-                        const formattedDate = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
-                        
-                        const card = document.createElement('div');
-                        card.className = 'record-card';
-                        card.innerHTML = `
-                            <div class="record-header">
-                                <div class="record-name">
-                                    <i class="fas fa-file-pdf"></i>
-                                    ${record.fileName || 'ملف PDF'}
-                                </div>
-                                <div class="record-date">
-                                    <i class="far fa-calendar"></i> ${formattedDate}
-                                </div>
-                            </div>
-                            <div class="record-stats">
-                                <span class="record-stat">
-                                    <i class="fas fa-file"></i> ${record.pages || 0}
-                                </span>
-                                <span class="record-stat">
-                                    <i class="fas fa-coins"></i> ${record.cost || 0}
-                                </span>
-                                <span class="record-stat">
-                                    <i class="fas fa-user-tie"></i> ${record.settings?.persona || 'تلخيص'}
-                                </span>
-                            </div>
-                        `;
-                        
-                        card.onclick = () => {
-                            document.getElementById('recordsModal').classList.remove('show');
-                            if (record.data) {
-                                currentResult = record.data;
-                                displayResult(record.data);
-                                document.getElementById('uploadSection').style.display = 'none';
-                                document.getElementById('settingsSection').style.display = 'none';
-                                document.getElementById('resultSection').classList.add('show');
-                            }
-                        };
-                        
-                        recordsGrid.appendChild(card);
-                    });
-                } else {
-                    emptyState.style.display = 'flex';
-                }
-                hideLoading();
-            } catch (error) {
-                hideLoading();
-                showNotification('حدث خطأ في تحميل السجلات', 'error');
-            }
-        }
-
-        // ==================== التحقق من المستخدم ====================
+        // ========== التحقق من المستخدم ==========
         auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 window.location.href = 'login.html';
@@ -1258,16 +1133,17 @@
                 }
             } catch (error) {
                 hideLoading();
-                showNotification('خطأ في تحميل بيانات المستخدم', 'error');
+                showNotification('خطأ في تحميل البيانات', 'error');
             }
         });
 
-        // ==================== تهيئة التطبيق ====================
+        // ========== تهيئة التطبيق ==========
         function initApp() {
-            // رفع الملف
+            // عناصر الصفحة
             const fileInput = document.getElementById('fileInput');
             const uploadArea = document.getElementById('uploadArea');
             
+            // رفع الملف
             uploadArea.onclick = () => fileInput.click();
             
             uploadArea.ondragover = (e) => {
@@ -1313,7 +1189,7 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             };
             
-            // خيارات الإعدادات
+            // إعدادات الخيارات
             const setupOptions = () => {
                 document.querySelectorAll('.option-btn').forEach(btn => {
                     btn.onclick = function() {
@@ -1336,7 +1212,7 @@
             // زر التوليد
             document.getElementById('generateBtn').onclick = generateSummary;
             
-            // التنقل
+            // الصفحة الرئيسية
             document.getElementById('homeBtn').onclick = () => {
                 document.getElementById('uploadSection').style.display = 'block';
                 document.getElementById('settingsSection').style.display = 'none';
@@ -1346,14 +1222,17 @@
                 document.getElementById('uploadText').textContent = 'انقر لاختيار ملف PDF';
             };
             
-            // السجلات
+            // السجلات - المحسنة
             const modal = document.getElementById('recordsModal');
-            document.getElementById('recordsBtn').onclick = () => {
-                loadRecords();
+            const recordsBtn = document.getElementById('recordsBtn');
+            const closeModal = document.getElementById('closeModal');
+            
+            recordsBtn.onclick = () => {
+                loadUserRecords(); // تحميل السجلات عند فتح النافذة
                 modal.classList.add('show');
             };
             
-            document.getElementById('closeModal').onclick = () => {
+            closeModal.onclick = () => {
                 modal.classList.remove('show');
             };
             
@@ -1377,7 +1256,7 @@
             };
         }
 
-        // ==================== معالجة الملف ====================
+        // ========== معالجة الملف ==========
         async function handleFile(file) {
             if (!file.name.toLowerCase().endsWith('.pdf')) {
                 showNotification('الرجاء اختيار ملف PDF فقط', 'error');
@@ -1398,7 +1277,7 @@
                 const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
                 
                 let totalWords = 0;
-                const maxPages = Math.min(pdf.numPages, 100); // حد أقصى 100 صفحة
+                const maxPages = Math.min(pdf.numPages, 100);
                 
                 for (let i = 1; i <= maxPages; i++) {
                     const page = await pdf.getPage(i);
@@ -1409,7 +1288,7 @@
                 
                 const pages = pdf.numPages;
                 let cost = Math.ceil((totalWords / 1000) * 2 * 2) / 2;
-                cost = Math.max(1, Math.min(cost, 50)); // حد أقصى 50 عملة
+                cost = Math.max(1, Math.min(cost, 50));
                 
                 fileInfo = { 
                     name: file.name, 
@@ -1429,7 +1308,7 @@
             }
         }
 
-        // ==================== توليد الملخص ====================
+        // ========== توليد الملخص ==========
         async function generateSummary() {
             if (!selectedFile) {
                 showNotification('الرجاء اختيار ملف أولاً', 'error');
@@ -1447,14 +1326,12 @@
             showLoading();
             
             try {
-                // تحويل الملف لـ Base64
                 const base64 = await new Promise((resolve) => {
                     const reader = new FileReader();
                     reader.onload = () => resolve(reader.result.split(',')[1]);
                     reader.readAsDataURL(selectedFile);
                 });
                 
-                // استدعاء API
                 const response = await fetch(SERVER + '/api/KIMO_DEV', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1463,8 +1340,7 @@
                         pass: API_PASS,
                         data: createPrompt(),
                         PDF_BASE64: base64
-                    }),
-                    timeout: 120000 // 2 دقيقة
+                    })
                 });
                 
                 if (!response.ok) throw new Error('فشل الاتصال بالسيرفر');
@@ -1488,20 +1364,33 @@
                 userCoins -= fileInfo.cost;
                 document.getElementById('coinsCount').textContent = userCoins;
                 
-                // حفظ في السجلات
-                await database.ref('records').push({
+                // حفظ في السجلات باستخدام push لإنشاء مفتاح فريد
+                const newRecordRef = database.ref('records').push();
+                await newRecordRef.set({
                     userId: currentUser.id,
                     fileName: fileInfo.name,
                     pages: fileInfo.pages,
                     cost: fileInfo.cost,
                     timestamp: Date.now(),
-                    settings: currentSettings,
+                    settings: { ...currentSettings },
                     data: result
                 });
                 
                 // عرض النتائج
-                currentResult = result;
-                displayResult(result);
+                document.getElementById('resultHead').textContent = result.head || 'ملخص الملف';
+                document.getElementById('resultText').innerHTML = formatContent(result.page || '');
+                document.getElementById('resultText').style.fontSize = fontSize + 'px';
+                
+                const pointsList = document.getElementById('pointsList');
+                pointsList.innerHTML = '';
+                
+                if (result.raw && Array.isArray(result.raw)) {
+                    result.raw.forEach(point => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
+                        pointsList.appendChild(li);
+                    });
+                }
                 
                 document.getElementById('settingsSection').style.display = 'none';
                 document.getElementById('resultSection').classList.add('show');
