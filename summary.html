@@ -39,8 +39,8 @@
             --shadow-light: 0 4px 12px rgba(139, 115, 85, 0.1);
             --shadow-medium: 0 8px 24px rgba(139, 115, 85, 0.15);
             --shadow-heavy: 0 12px 36px rgba(139, 115, 85, 0.2);
-            --code-bg: #1E1E1E;
-            --code-text: #D4D4D4;
+            --highlight-color: #FF6B6B;
+            --highlight-bg: #FFF5F5;
         }
         
         body {
@@ -89,13 +89,6 @@
             border-left-color: var(--accent-primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-        }
-        
-        .loading-text {
-            margin-top: 20px;
-            color: var(--accent-secondary);
-            font-size: 16px;
-            font-weight: 500;
         }
         
         @keyframes spin {
@@ -680,41 +673,35 @@
             transition: font-size 0.3s ease;
             word-wrap: break-word;
             overflow-wrap: break-word;
-            min-height: 300px;
         }
         
-        /* تنسيق المحتوى المحسن */
-        .result-content h1 {
-            font-size: 2em;
-            color: var(--accent-primary);
-            margin: 30px 0 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--accent-secondary);
-        }
-        
-        .result-content h2 {
-            font-size: 1.6em;
-            color: var(--accent-dark);
-            margin: 25px 0 15px;
-        }
-        
+        /* تنسيق المحتوى */
+        .result-content h1,
+        .result-content h2,
         .result-content h3 {
-            font-size: 1.3em;
-            color: var(--accent-secondary);
-            margin: 20px 0 10px;
+            color: var(--accent-primary);
+            margin: 25px 0 15px;
+            word-wrap: break-word;
         }
+        
+        .result-content h1 { font-size: 2em; }
+        .result-content h2 { font-size: 1.6em; }
+        .result-content h3 { font-size: 1.3em; }
         
         .result-content p {
             margin: 15px 0;
+            word-wrap: break-word;
         }
         
-        .result-content ul, .result-content ol {
+        .result-content ul,
+        .result-content ol {
             margin: 15px 0;
             padding-right: 30px;
         }
         
         .result-content li {
             margin: 8px 0;
+            word-wrap: break-word;
         }
         
         .result-content blockquote {
@@ -723,63 +710,6 @@
             background: rgba(139, 115, 85, 0.05);
             border-right: 4px solid var(--accent-primary);
             border-radius: 10px;
-            font-style: italic;
-        }
-        
-        /* تنسيق الأكواد */
-        .result-content pre {
-            background: var(--code-bg);
-            color: var(--code-text);
-            padding: 20px;
-            border-radius: 12px;
-            overflow-x: auto;
-            direction: ltr;
-            text-align: left;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            box-shadow: inset 0 1px 4px rgba(0,0,0,0.3);
-        }
-        
-        .result-content code {
-            background: rgba(139, 115, 85, 0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            color: var(--accent-dark);
-        }
-        
-        .result-content pre code {
-            background: none;
-            color: inherit;
-            padding: 0;
-            border-radius: 0;
-        }
-        
-        /* تنسيق القوانين */
-        .result-content .law-block {
-            background: linear-gradient(145deg, rgba(139, 115, 85, 0.05), rgba(139, 115, 85, 0.1));
-            border-right: 6px solid var(--accent-primary);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-        }
-        
-        .result-content .law-title {
-            color: var(--accent-primary);
-            font-weight: 800;
-            font-size: 1.2em;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .result-content .law-text {
-            font-weight: 600;
-            color: var(--accent-dark);
         }
         
         /* النقاط الرئيسية */
@@ -864,11 +794,11 @@
             box-shadow: var(--shadow-medium);
         }
         
-        /* الإشعارات المحسنة */
+        /* الإشعارات - تصميم جديد محسن */
         .notification-container {
             position: fixed;
             top: 90px;
-            right: 20px;
+            left: 20px;
             z-index: 10001;
             display: flex;
             flex-direction: column;
@@ -958,25 +888,6 @@
             to { width: 0%; }
         }
         
-        /* زر اختبار الاتصال */
-        .test-connection-btn {
-            background: rgba(139, 115, 85, 0.1);
-            color: var(--accent-primary);
-            border: 1px dashed var(--accent-primary);
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-size: 12px;
-            cursor: pointer;
-            margin-top: 10px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .test-connection-btn:hover {
-            background: rgba(139, 115, 85, 0.2);
-        }
-        
         /* Responsive */
         @media (max-width: 768px) {
             :root {
@@ -1015,8 +926,8 @@
             }
             
             .notification-container {
-                right: 16px;
                 left: 16px;
+                right: 16px;
                 max-width: none;
             }
         }
@@ -1054,7 +965,6 @@
     <div class="loading-screen" id="loading-screen">
         <div class="loading-logo">عون</div>
         <div class="loading-spinner"></div>
-        <div class="loading-text" id="loading-text">جاري التحميل...</div>
     </div>
 
     <!-- الإشعارات المحسنة -->
@@ -1105,12 +1015,6 @@
             </div>
             
             <input type="file" id="pdfFile" accept=".pdf" hidden>
-            
-            <div style="text-align: center; margin-top: 15px;">
-                <button class="test-connection-btn" id="test-connection">
-                    <i class="fas fa-plug"></i> اختبار الاتصال بالسيرفر
-                </button>
-            </div>
             
             <div class="cost-preview" id="cost-preview">
                 <h3 class="cost-title">تفاصيل التكلفة</h3>
@@ -1197,16 +1101,12 @@
             </div>
             
             <div class="result-content-container">
-                <div class="result-content" id="result-content">
-                    <p style="color: var(--text-secondary); text-align: center;">سيظهر التلخيص هنا...</p>
-                </div>
+                <div class="result-content" id="result-content"></div>
             </div>
             
             <div class="raw-summary">
                 <h3 class="raw-title"><i class="fas fa-bullseye"></i> النقاط الرئيسية</h3>
-                <ul class="raw-points" id="raw-points">
-                    <li><i class="fas fa-info-circle"></i> لا توجد نقاط رئيسية بعد</li>
-                </ul>
+                <ul class="raw-points" id="raw-points"></ul>
             </div>
         </section>
         
@@ -1238,15 +1138,7 @@
 
         const auth = firebase.auth();
         const database = firebase.database();
-        
-        // محاولة عدة سيرفرات
-        const SERVERS = [
-            "https://wet-aidan-kimon-66eadaf6.koyeb.app",
-            "https://api.kimo.dev",
-            "https://awn-server.onrender.com"
-        ];
-        let currentServerIndex = 0;
-        
+        const SERVER = "https://wet-aidan-kimon-66eadaf6.koyeb.app";
         const API_ID = "12345";
         const API_PASS = "12345abcde57";
 
@@ -1262,9 +1154,9 @@
         };
         let currentResult = null;
         let fontSize = 16;
+        let notificationTimeout = null;
 
-        function showLoading(text = 'جاري التحميل...') {
-            document.getElementById('loading-text').textContent = text;
+        function showLoading() {
             document.getElementById('loading-screen').classList.remove('hidden');
         }
 
@@ -1309,33 +1201,13 @@
             }, duration);
         }
 
-        async function testConnection() {
-            showLoading('جاري اختبار الاتصال...');
-            try {
-                const response = await fetch(SERVERS[0] + '/api/test', {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                
-                if (response.ok) {
-                    showNotification('✅ السيرفر الرئيسي يعمل', 'success');
-                } else {
-                    showNotification('⚠️ السيرفر الرئيسي لا يستجيب', 'warning');
-                }
-            } catch (error) {
-                showNotification('❌ السيرفر الرئيسي غير متاح', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
         auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 window.location.replace('login.html');
                 return;
             }
             
-            showLoading('جاري تسجيل الدخول...');
+            showLoading();
             try {
                 const snapshot = await database.ref('users_Awn').once('value');
                 if (snapshot.exists()) {
@@ -1358,7 +1230,7 @@
                 }
             } catch (error) {
                 hideLoading();
-                showNotification('خطأ في تحميل البيانات: ' + error.message, 'error');
+                showNotification('خطأ في تحميل البيانات', 'error');
             }
         });
 
@@ -1368,11 +1240,6 @@
             setupNavigation();
             setupRecords();
             setupFontControls();
-            
-            // زر اختبار الاتصال
-            document.getElementById('test-connection').onclick = testConnection;
-            
-            hideLoading(); // تأكيد إخفاء شاشة التحميل
         }
 
         function setupFileUpload() {
@@ -1414,10 +1281,7 @@
             };
 
             confirmBtn.onclick = () => {
-                if (!selectedFile) {
-                    showNotification('الرجاء اختيار ملف أولاً', 'error');
-                    return;
-                }
+                if (!selectedFile) return;
                 if (userCoins < fileInfo.cost) {
                     showNotification(`رصيدك غير كافٍ. تحتاج ${fileInfo.cost} عملة`, 'error');
                     return;
@@ -1437,7 +1301,7 @@
 
             selectedFile = file;
             document.getElementById('upload-text').textContent = file.name;
-            showLoading('جاري تحليل الملف...');
+            showLoading();
 
             try {
                 const buffer = await file.arrayBuffer();
@@ -1466,7 +1330,7 @@
                 showNotification('تم تحليل الملف بنجاح', 'success');
             } catch (error) {
                 hideLoading();
-                showNotification('حدث خطأ في قراءة الملف: ' + error.message, 'error');
+                showNotification('حدث خطأ في قراءة الملف', 'error');
             }
         }
 
@@ -1501,7 +1365,6 @@
                 document.getElementById('pdfFile').value = '';
                 selectedFile = null;
                 document.getElementById('upload-text').textContent = 'انقر لرفع ملف PDF';
-                document.getElementById('cost-preview').classList.remove('show');
             };
         }
 
@@ -1542,7 +1405,7 @@
             const recordsList = document.getElementById('records-list');
             const noRecords = document.getElementById('no-records');
             
-            showLoading('جاري تحميل السجلات...');
+            showLoading();
             try {
                 const snapshot = await database.ref('records').orderByChild('id').equalTo(currentUser.id).once('value');
                 recordsList.innerHTML = '';
@@ -1581,7 +1444,7 @@
                 hideLoading();
             } catch (error) {
                 hideLoading();
-                showNotification('حدث خطأ في تحميل السجلات: ' + error.message, 'error');
+                showNotification('حدث خطأ في تحميل السجلات', 'error');
             }
         }
 
@@ -1602,64 +1465,36 @@
         }
 
         function createPrompt() {
-            return `أنت مساعد متخصص في تلخيص ملفات PDF.
+            let lengthInstruction = '';
+            if (currentSettings.explanationLength === 'طويل') {
+                lengthInstruction = 'قدم تلخيصاً طويلاً وشاملاً ومفصلاً جداً يغطي كل التفاصيل والمعلومات الموجودة في الملف، مع شرح وافٍ لكل نقطة.';
+            } else {
+                lengthInstruction = 'قدم تلخيصاً قصيراً ومختصراً جداً، ركز فقط على النقاط الأساسية والرئيسية دون تفاصيل.';
+            }
+            
+            return `قم بتلخيص ملف PDF التالي.
 
-المهمة: لخص ملف PDF المرفق بالكامل من أول صفحة لآخر صفحة. يجب أن يكون التلخيص شاملاً 100% ولا يفوت أي معلومة.
-
-الإعدادات المطلوبة:
+الإعدادات:
 - شخصية الشارح: ${currentSettings.explainerPersona}
 - لغة الإخراج: ${currentSettings.outputLanguage}
 - أسلوب الشرح: ${currentSettings.explanationStyle}
 - طول الشرح: ${currentSettings.explanationLength}
 
-تعليمات دقيقة:
-1. ${currentSettings.explanationLength === 'طويل' ? 'اكتب تلخيصاً طويلاً جداً ومفصلاً يغطي كل كلمة وفكرة في الملف.' : 'اكتب تلخيصاً قصيراً جداً يركز فقط على النقاط الأساسية.'}
-2. استخدم أسلوب ${currentSettings.explainerPersona} في الشرح.
-3. استخدم لغة ${currentSettings.outputLanguage} فقط.
-4. استخدم أسلوب ${currentSettings.explanationStyle} في التقديم.
-5. للأكواد البرمجية: استخدم blocks مثل \`\`\`كود\`\`\`.
-6. للقوانين: اكتب "قانون:" قبلها.
-7. استخدم عناوين رئيسية وفرعية لتنظيم المحتوى.
+تعليمات دقيقة جداً:
+1. ${lengthInstruction}
+2. تأكد أن طول الشرح يتطابق تماماً مع الاختيار (${currentSettings.explanationLength})
+3. استخدم أسلوب شرح مناسب لشخصية ${currentSettings.explainerPersona}
+4. استخدم لغة ${currentSettings.outputLanguage} بشكل صحيح
+5. اجعل الشرح ${currentSettings.explanationStyle} في أسلوبه
+6. حلل الملف بالكامل من أول صفحة لآخر صفحة
+7. استخرج 3-5 نقاط رئيسية تمثل أهم ما في الملف
 
 يجب أن يكون الرد بصيغة JSON فقط:
 {
   "head": "عنوان مختصر للملف (5-7 كلمات)",
-  "raw": ["نقطة رئيسية 1", "نقطة رئيسية 2", "نقطة رئيسية 3", "نقطة رئيسية 4", "نقطة رئيسية 5"],
+  "raw": ["النقطة الأولى", "النقطة الثانية", "النقطة الثالثة"],
   "page": "محتوى التلخيص الكامل هنا..."
 }`;
-        }
-
-        async function tryServers(base64) {
-            for (let i = 0; i < SERVERS.length; i++) {
-                try {
-                    showNotification(`محاولة الاتصال بالسيرفر ${i+1}...`, 'info');
-                    
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 15000);
-                    
-                    const response = await fetch(SERVERS[i] + '/api/KIMO_DEV', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            id: API_ID,
-                            pass: API_PASS,
-                            data: createPrompt(),
-                            PDF_BASE64: base64
-                        }),
-                        signal: controller.signal
-                    });
-                    
-                    clearTimeout(timeoutId);
-                    
-                    if (response.ok) {
-                        currentServerIndex = i;
-                        return response;
-                    }
-                } catch (e) {
-                    console.log(`السيرفر ${i+1} فشل:`, e.message);
-                }
-            }
-            throw new Error('جميع السيرفرات غير متاحة');
         }
 
         async function generateSummary() {
@@ -1676,7 +1511,7 @@
             const btn = document.getElementById('generate-btn');
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التلخيص...';
-            showLoading('جاري إنشاء التلخيص... قد يستغرق دقيقة');
+            showLoading();
 
             try {
                 const base64 = await new Promise((resolve) => {
@@ -1685,43 +1520,37 @@
                     reader.readAsDataURL(selectedFile);
                 });
 
-                const response = await tryServers(base64);
+                const response = await fetch(SERVER + '/api/KIMO_DEV', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: API_ID,
+                        pass: API_PASS,
+                        data: createPrompt(),
+                        PDF_BASE64: base64
+                    })
+                });
+
+                if (!response.ok) throw new Error('فشل الاتصال بالسيرفر');
+
                 const text = await response.text();
-                
                 let result;
+
                 try {
-                    // محاولة استخراج JSON من النص
                     const jsonMatch = text.match(/\{[\s\S]*\}/);
-                    if (jsonMatch) {
-                        result = JSON.parse(jsonMatch[0]);
-                    } else {
-                        // إذا ما لقينا JSON، نخلي النص نفسه كـ page
-                        result = {
-                            head: "ملخص الملف",
-                            raw: ["تم إنشاء الملخص بنجاح"],
-                            page: text
-                        };
-                    }
-                    
-                    // التأكد من وجود البيانات المطلوبة
-                    if (!result.head) result.head = "ملخص الملف";
-                    if (!result.raw || !Array.isArray(result.raw)) result.raw = ["تم إنشاء الملخص بنجاح"];
-                    if (!result.page) result.page = text;
-                    
+                    result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
                 } catch (e) {
                     result = {
-                        head: "ملخص الملف",
-                        raw: ["تم إنشاء الملخص بنجاح"],
-                        page: text
+                        head: 'ملخص الملف',
+                        raw: ['تم إنشاء الملخص بنجاح'],
+                        page: text.replace(/[\\n]/g, '\n').replace(/\\/g, '')
                     };
                 }
 
-                // خصم العملات
                 await database.ref(`users_Awn/${currentUser.id}/coin`).set(userCoins - fileInfo.cost);
                 userCoins -= fileInfo.cost;
                 document.getElementById('coins-count').textContent = userCoins;
 
-                // حفظ في السجلات
                 await database.ref(`records/summary_${Date.now()}`).set({
                     id: currentUser.id,
                     fileName: fileInfo.name,
@@ -1739,11 +1568,9 @@
                 document.getElementById('result-section').classList.add('show');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 
-                showNotification('✅ تم إنشاء التلخيص بنجاح', 'success');
-                
+                showNotification('تم إنشاء التلخيص بنجاح', 'success');
             } catch (error) {
-                console.error('خطأ:', error);
-                showNotification('❌ فشل الاتصال بالسيرفر: ' + error.message, 'error');
+                showNotification('حدث خطأ: ' + error.message, 'error');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-robot"></i> إنشاء التلخيص التلقائي';
@@ -1755,15 +1582,10 @@
             document.getElementById('result-title').textContent = result.head || 'ملخص الملف';
             
             let content = result.page || '';
-            // تنظيف النص من الأحرف غير المرغوب فيها
-            content = content
-                .replace(/\\n/g, '\n')
-                .replace(/\\r/g, '')
-                .replace(/\\t/g, ' ')
-                .replace(/\\"/g, '"')
-                .replace(/\\/g, '');
+            content = content.replace(/\\n/g, '\n').replace(/\\r/g, '');
             
-            document.getElementById('result-content').innerHTML = formatContent(content);
+            const formattedContent = formatContent(content);
+            document.getElementById('result-content').innerHTML = formattedContent;
             document.getElementById('result-content').style.fontSize = fontSize + 'px';
             
             const keyPoints = document.getElementById('raw-points');
@@ -1771,28 +1593,27 @@
             
             if (Array.isArray(result.raw) && result.raw.length) {
                 result.raw.forEach(point => {
-                    if (point && point !== "Not Output") {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
-                        keyPoints.appendChild(li);
-                    }
+                    const li = document.createElement('li');
+                    li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
+                    keyPoints.appendChild(li);
                 });
-            }
-            
-            if (keyPoints.children.length === 0) {
+            } else {
                 keyPoints.innerHTML = '<li><i class="fas fa-info-circle"></i> لا توجد نقاط رئيسية</li>';
             }
         }
 
         function formatContent(text) {
-            if (!text || text === "Not Output") return '<p style="color: var(--text-secondary);">لا يوجد محتوى للعرض</p>';
+            if (!text) return '';
             
-            // تقسيم النص إلى أسطر
-            const lines = text.split('\n');
+            let formatted = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+            const lines = formatted.split('\n');
             let html = '';
             let inList = false;
             let listType = '';
-            
+
             for (let line of lines) {
                 line = line.trim();
                 if (!line) {
@@ -1800,18 +1621,10 @@
                         html += listType === 'ul' ? '</ul>' : '</ol>';
                         inList = false;
                     }
+                    html += '<br>';
                     continue;
                 }
-                
-                // تنظيف الخط
-                line = line
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;')
-                    .replace(/'/g, '&#039;');
-                
-                // معالجة العناوين
+
                 if (line.startsWith('#')) {
                     if (inList) {
                         html += listType === 'ul' ? '</ul>' : '</ol>';
@@ -1819,10 +1632,8 @@
                     }
                     const level = line.match(/^#+/)[0].length;
                     const content = line.replace(/^#+\s*/, '');
-                    html += `<h${Math.min(level, 3)}>${content}</h${Math.min(level, 3)}>`;
-                }
-                // معالجة القوائم النقطية
-                else if (line.startsWith('- ') || line.startsWith('• ')) {
+                    html += `<h${level}>${content}</h${level}>`;
+                } else if (line.startsWith('- ') || line.startsWith('• ')) {
                     if (!inList || listType !== 'ul') {
                         if (inList) html += '</ol>';
                         html += '<ul>';
@@ -1830,9 +1641,7 @@
                         listType = 'ul';
                     }
                     html += `<li>${line.substring(2)}</li>`;
-                }
-                // معالجة القوائم الرقمية
-                else if (line.match(/^\d+\. /)) {
+                } else if (line.match(/^\d+\. /)) {
                     if (!inList || listType !== 'ol') {
                         if (inList) html += '</ul>';
                         html += '<ol>';
@@ -1840,28 +1649,7 @@
                         listType = 'ol';
                     }
                     html += `<li>${line.replace(/^\d+\.\s*/, '')}</li>`;
-                }
-                // معالجة الأكواد
-                else if (line.includes('```')) {
-                    if (inList) {
-                        html += listType === 'ul' ? '</ul>' : '</ol>';
-                        inList = false;
-                    }
-                    html += `<pre><code>${line.replace(/```/g, '')}</code></pre>`;
-                }
-                // معالجة القوانين
-                else if (line.includes('قانون:') || line.includes('مادة')) {
-                    if (inList) {
-                        html += listType === 'ul' ? '</ul>' : '</ol>';
-                        inList = false;
-                    }
-                    html += `<div class="law-block">
-                        <div class="law-title"><i class="fas fa-gavel"></i> نص قانوني</div>
-                        <p class="law-text">${line}</p>
-                    </div>`;
-                }
-                // نص عادي
-                else {
+                } else {
                     if (inList) {
                         html += listType === 'ul' ? '</ul>' : '</ol>';
                         inList = false;
@@ -1869,12 +1657,12 @@
                     html += `<p>${line}</p>`;
                 }
             }
-            
+
             if (inList) {
                 html += listType === 'ul' ? '</ul>' : '</ol>';
             }
-            
-            return html || '<p style="color: var(--text-secondary);">لا يوجد محتوى للعرض</p>';
+
+            return html;
         }
     </script>
 </body>
