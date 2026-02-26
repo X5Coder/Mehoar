@@ -39,8 +39,8 @@
             --shadow-light: 0 4px 12px rgba(139, 115, 85, 0.1);
             --shadow-medium: 0 8px 24px rgba(139, 115, 85, 0.15);
             --shadow-heavy: 0 12px 36px rgba(139, 115, 85, 0.2);
-            --highlight-color: #FF6B6B;
-            --highlight-bg: #FFF5F5;
+            --code-bg: #1E1E1E;
+            --code-text: #D4D4D4;
         }
         
         body {
@@ -675,33 +675,38 @@
             overflow-wrap: break-word;
         }
         
-        /* تنسيق المحتوى */
-        .result-content h1,
-        .result-content h2,
-        .result-content h3 {
+        /* تنسيق المحتوى المحسن */
+        .result-content h1 {
+            font-size: 2em;
             color: var(--accent-primary);
-            margin: 25px 0 15px;
-            word-wrap: break-word;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-secondary);
         }
         
-        .result-content h1 { font-size: 2em; }
-        .result-content h2 { font-size: 1.6em; }
-        .result-content h3 { font-size: 1.3em; }
+        .result-content h2 {
+            font-size: 1.6em;
+            color: var(--accent-dark);
+            margin: 25px 0 15px;
+        }
+        
+        .result-content h3 {
+            font-size: 1.3em;
+            color: var(--accent-secondary);
+            margin: 20px 0 10px;
+        }
         
         .result-content p {
             margin: 15px 0;
-            word-wrap: break-word;
         }
         
-        .result-content ul,
-        .result-content ol {
+        .result-content ul, .result-content ol {
             margin: 15px 0;
             padding-right: 30px;
         }
         
         .result-content li {
             margin: 8px 0;
-            word-wrap: break-word;
         }
         
         .result-content blockquote {
@@ -710,6 +715,63 @@
             background: rgba(139, 115, 85, 0.05);
             border-right: 4px solid var(--accent-primary);
             border-radius: 10px;
+            font-style: italic;
+        }
+        
+        /* تنسيق الأكواد */
+        .result-content pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.3);
+        }
+        
+        .result-content code {
+            background: rgba(139, 115, 85, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: var(--accent-dark);
+        }
+        
+        .result-content pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+        
+        /* تنسيق القوانين */
+        .result-content .law-block {
+            background: linear-gradient(145deg, rgba(139, 115, 85, 0.05), rgba(139, 115, 85, 0.1));
+            border-right: 6px solid var(--accent-primary);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .result-content .law-title {
+            color: var(--accent-primary);
+            font-weight: 800;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .result-content .law-text {
+            font-weight: 600;
+            color: var(--accent-dark);
         }
         
         /* النقاط الرئيسية */
@@ -794,7 +856,7 @@
             box-shadow: var(--shadow-medium);
         }
         
-        /* الإشعارات - تصميم جديد محسن */
+        /* الإشعارات المحسنة */
         .notification-container {
             position: fixed;
             top: 90px;
@@ -1154,7 +1216,6 @@
         };
         let currentResult = null;
         let fontSize = 16;
-        let notificationTimeout = null;
 
         function showLoading() {
             document.getElementById('loading-screen').classList.remove('hidden');
@@ -1465,36 +1526,81 @@
         }
 
         function createPrompt() {
-            let lengthInstruction = '';
-            if (currentSettings.explanationLength === 'طويل') {
-                lengthInstruction = 'قدم تلخيصاً طويلاً وشاملاً ومفصلاً جداً يغطي كل التفاصيل والمعلومات الموجودة في الملف، مع شرح وافٍ لكل نقطة.';
-            } else {
-                lengthInstruction = 'قدم تلخيصاً قصيراً ومختصراً جداً، ركز فقط على النقاط الأساسية والرئيسية دون تفاصيل.';
-            }
-            
-            return `قم بتلخيص ملف PDF التالي.
+            const personaInstructions = {
+                'طالب': 'استخدم أسلوب طالب يشرح لزملائه، بلغة شبابية حماسية مع أمثلة بسيطة',
+                'مدرس': 'استخدم أسلوب مدرس محترم مع شرح منهجي منظم وتدرج في الأفكار',
+                'دكتور جامعة': 'استخدم أسلوب أكاديمي عميق مع تحليل دقيق ومصطلحات متخصصة',
+                'عالم': 'استخدم أسلوب علمي رصين مع تفصيل دقيق ونظريات وتعمق في المفاهيم'
+            };
 
-الإعدادات:
+            const styleInstructions = {
+                'طفولي': 'استخدم كلمات بسيطة جداً، تشبيهات طريفة، جمل قصيرة، وأسلوب مرح',
+                'بسيط': 'استخدم لغة واضحة وسهلة مع تجنب التعقيد، مع التركيز على الفهم السريع',
+                'معقد': 'استخدم تحليلات عميقة ومصطلحات متقدمة مع مقارنات معقدة وتفاصيل دقيقة',
+                'احترافي': 'استخدم أسلوب مهني منظم مع نقاط واضحة وتقسيمات منطقية وتنسيق احترافي'
+            };
+
+            const lengthInstructions = {
+                'طويل': '''
+                    اكتب تلخيصاً طويلاً جداً وشاملاً وموسعاً.
+                    يجب أن يغطي كل كلمة وكل فكرة وكل تفصيل في الملف.
+                    لا تحذف أي معلومة مهما كانت صغيرة.
+                    اشرح كل نقطة بالتفصيل مع أمثلة وشروحات إضافية.
+                    استخدم عناوين رئيسية وفرعية متعددة.
+                    اجعل التلخيص بحيث يغني عن قراءة الملف الأصلي تماماً.
+                    يجب أن يكون التلخيص موسعاً وشاملاً لكل المحتوى.
+                ''',
+                'قصير': '''
+                    اكتب تلخيصاً قصيراً ومختصراً جداً.
+                    ركز فقط على النقاط الأساسية والرئيسية.
+                    تجاهل التفاصيل الصغيرة والأمثلة والتكرار.
+                    اختصر المعلومات إلى أقصى درجة مع الحفاظ على المعنى الأساسي.
+                    استخدم جمل قصيرة ومباشرة.
+                    الهدف هو إعطاء فكرة سريعة عن المحتوى فقط.
+                '''
+            };
+
+            return `أنت مساعد ذكاء اصطناعي متخصص في تلخيص ملفات PDF بدقة متناهية.
+
+المهمة: تلخيص ملف PDF المرفق بشكل كامل وشامل 100%.
+
+الإعدادات المطلوبة:
 - شخصية الشارح: ${currentSettings.explainerPersona}
 - لغة الإخراج: ${currentSettings.outputLanguage}
 - أسلوب الشرح: ${currentSettings.explanationStyle}
 - طول الشرح: ${currentSettings.explanationLength}
 
-تعليمات دقيقة جداً:
-1. ${lengthInstruction}
-2. تأكد أن طول الشرح يتطابق تماماً مع الاختيار (${currentSettings.explanationLength})
-3. استخدم أسلوب شرح مناسب لشخصية ${currentSettings.explainerPersona}
-4. استخدم لغة ${currentSettings.outputLanguage} بشكل صحيح
-5. اجعل الشرح ${currentSettings.explanationStyle} في أسلوبه
-6. حلل الملف بالكامل من أول صفحة لآخر صفحة
-7. استخرج 3-5 نقاط رئيسية تمثل أهم ما في الملف
+تعليمات شخصية الشارح:
+${personaInstructions[currentSettings.explainerPersona]}
 
-يجب أن يكون الرد بصيغة JSON فقط:
+تعليمات أسلوب الشرح:
+${styleInstructions[currentSettings.explanationStyle]}
+
+تعليمات طول الشرح:
+${lengthInstructions[currentSettings.explanationLength]}
+
+تعليمات إضافية مهمة جداً:
+1. حلل الملف بالكامل من أول صفحة إلى آخر صفحة دون استثناء أي جزء.
+2. تأكد أن التلخيص شامل لكل المحتوى ولا يفوت أي فكرة أو معلومة.
+3. استخدم تنسيقاً واضحاً مع عناوين رئيسية وفرعية.
+4. إذا كان هناك أكواد برمجية في الملف، ضعها داخل blocks خاصة:
+   \`\`\`
+   الكود هنا
+   \`\`\`
+5. إذا كان هناك قوانين أو مواد قانونية، قم بتمييزها في blocks خاصة.
+6. استخدم القوائم النقطية والرقمية لتنظيم المعلومات.
+7. تأكد من أن طول التلخيص يتطابق تماماً مع الاختيار (${currentSettings.explanationLength}).
+8. التلخيص يجب أن يكون باللغة ${currentSettings.outputLanguage} فقط.
+9. استخرج 3-5 نقاط رئيسية تمثل أهم ما في الملف.
+
+شكل الإخراج المطلوب (JSON فقط):
 {
-  "head": "عنوان مختصر للملف (5-7 كلمات)",
-  "raw": ["النقطة الأولى", "النقطة الثانية", "النقطة الثالثة"],
-  "page": "محتوى التلخيص الكامل هنا..."
-}`;
+  "head": "عنوان مختصر للملف (5-7 كلمات يعبر عن المحتوى كاملاً)",
+  "raw": ["النقطة الرئيسية الأولى", "النقطة الرئيسية الثانية", "النقطة الرئيسية الثالثة", "النقطة الرئيسية الرابعة", "النقطة الرئيسية الخامسة"],
+  "page": "هنا المحتوى الكامل للتلخيص مع التنسيق المناسب"
+}
+
+تذكر: يجب أن يكون التلخيص شاملاً 100% للملف ولا يفوت أي شيء.`;
         }
 
         async function generateSummary() {
@@ -1539,6 +1645,10 @@
                 try {
                     const jsonMatch = text.match(/\{[\s\S]*\}/);
                     result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
+                    
+                    if (!result.head || !result.raw || !result.page) {
+                        throw new Error('استجابة غير صالحة');
+                    }
                 } catch (e) {
                     result = {
                         head: 'ملخص الملف',
@@ -1605,64 +1715,87 @@
         function formatContent(text) {
             if (!text) return '';
             
-            let formatted = text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>');
-
-            const lines = formatted.split('\n');
             let html = '';
-            let inList = false;
-            let listType = '';
-
-            for (let line of lines) {
-                line = line.trim();
-                if (!line) {
-                    if (inList) {
-                        html += listType === 'ul' ? '</ul>' : '</ol>';
-                        inList = false;
+            let inCodeBlock = false;
+            let codeContent = '';
+            let inLawBlock = false;
+            let lawContent = '';
+            
+            const lines = text.split('\n');
+            
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+                
+                // معالجة blocks الأكواد
+                if (line.trim().startsWith('```')) {
+                    if (!inCodeBlock) {
+                        inCodeBlock = true;
+                        codeContent = '';
+                    } else {
+                        inCodeBlock = false;
+                        html += `<pre><code>${escapeHtml(codeContent)}</code></pre>`;
                     }
-                    html += '<br>';
                     continue;
                 }
-
-                if (line.startsWith('#')) {
-                    if (inList) {
-                        html += listType === 'ul' ? '</ul>' : '</ol>';
-                        inList = false;
+                
+                if (inCodeBlock) {
+                    codeContent += line + '\n';
+                    continue;
+                }
+                
+                // معالجة blocks القوانين
+                if (line.includes('قانون') || line.includes('مادة') || line.includes('لائحة')) {
+                    if (!inLawBlock) {
+                        inLawBlock = true;
+                        lawContent = '<div class="law-block">';
+                        lawContent += '<div class="law-title"><i class="fas fa-gavel"></i> نص قانوني</div>';
                     }
+                    lawContent += `<p class="law-text">${line}</p>`;
+                    continue;
+                } else if (inLawBlock) {
+                    inLawBlock = false;
+                    lawContent += '</div>';
+                    html += lawContent;
+                }
+                
+                // معالجة التنسيقات العادية
+                line = line
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>');
+                
+                if (line.startsWith('#')) {
                     const level = line.match(/^#+/)[0].length;
                     const content = line.replace(/^#+\s*/, '');
-                    html += `<h${level}>${content}</h${level}>`;
+                    html += `<h${Math.min(level, 3)}>${content}</h${Math.min(level, 3)}>`;
                 } else if (line.startsWith('- ') || line.startsWith('• ')) {
-                    if (!inList || listType !== 'ul') {
-                        if (inList) html += '</ol>';
-                        html += '<ul>';
-                        inList = true;
-                        listType = 'ul';
-                    }
                     html += `<li>${line.substring(2)}</li>`;
                 } else if (line.match(/^\d+\. /)) {
-                    if (!inList || listType !== 'ol') {
-                        if (inList) html += '</ul>';
-                        html += '<ol>';
-                        inList = true;
-                        listType = 'ol';
-                    }
                     html += `<li>${line.replace(/^\d+\.\s*/, '')}</li>`;
-                } else {
-                    if (inList) {
-                        html += listType === 'ul' ? '</ul>' : '</ol>';
-                        inList = false;
-                    }
+                } else if (line.trim()) {
                     html += `<p>${line}</p>`;
                 }
             }
-
-            if (inList) {
-                html += listType === 'ul' ? '</ul>' : '</ol>';
+            
+            if (inLawBlock) {
+                lawContent += '</div>';
+                html += lawContent;
             }
-
+            
             return html;
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
     </script>
 </body>
