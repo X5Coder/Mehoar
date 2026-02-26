@@ -91,6 +91,13 @@
             animation: spin 1s linear infinite;
         }
         
+        .loading-text {
+            margin-top: 20px;
+            color: var(--accent-secondary);
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -860,7 +867,7 @@
         .notification-container {
             position: fixed;
             top: 90px;
-            left: 20px;
+            right: 20px;
             z-index: 10001;
             display: flex;
             flex-direction: column;
@@ -988,8 +995,8 @@
             }
             
             .notification-container {
-                left: 16px;
                 right: 16px;
+                left: 16px;
                 max-width: none;
             }
         }
@@ -1027,6 +1034,7 @@
     <div class="loading-screen" id="loading-screen">
         <div class="loading-logo">عون</div>
         <div class="loading-spinner"></div>
+        <div class="loading-text" id="loading-text">جاري التحميل...</div>
     </div>
 
     <!-- الإشعارات المحسنة -->
@@ -1217,7 +1225,8 @@
         let currentResult = null;
         let fontSize = 16;
 
-        function showLoading() {
+        function showLoading(text = 'جاري التحميل...') {
+            document.getElementById('loading-text').textContent = text;
             document.getElementById('loading-screen').classList.remove('hidden');
         }
 
@@ -1268,7 +1277,7 @@
                 return;
             }
             
-            showLoading();
+            showLoading('جاري تسجيل الدخول...');
             try {
                 const snapshot = await database.ref('users_Awn').once('value');
                 if (snapshot.exists()) {
@@ -1291,7 +1300,7 @@
                 }
             } catch (error) {
                 hideLoading();
-                showNotification('خطأ في تحميل البيانات', 'error');
+                showNotification('خطأ في تحميل البيانات: ' + error.message, 'error');
             }
         });
 
@@ -1301,6 +1310,7 @@
             setupNavigation();
             setupRecords();
             setupFontControls();
+            hideLoading(); // تأكيد إخفاء شاشة التحميل
         }
 
         function setupFileUpload() {
@@ -1342,7 +1352,10 @@
             };
 
             confirmBtn.onclick = () => {
-                if (!selectedFile) return;
+                if (!selectedFile) {
+                    showNotification('الرجاء اختيار ملف أولاً', 'error');
+                    return;
+                }
                 if (userCoins < fileInfo.cost) {
                     showNotification(`رصيدك غير كافٍ. تحتاج ${fileInfo.cost} عملة`, 'error');
                     return;
@@ -1362,7 +1375,7 @@
 
             selectedFile = file;
             document.getElementById('upload-text').textContent = file.name;
-            showLoading();
+            showLoading('جاري تحليل الملف...');
 
             try {
                 const buffer = await file.arrayBuffer();
@@ -1391,7 +1404,7 @@
                 showNotification('تم تحليل الملف بنجاح', 'success');
             } catch (error) {
                 hideLoading();
-                showNotification('حدث خطأ في قراءة الملف', 'error');
+                showNotification('حدث خطأ في قراءة الملف: ' + error.message, 'error');
             }
         }
 
@@ -1426,6 +1439,7 @@
                 document.getElementById('pdfFile').value = '';
                 selectedFile = null;
                 document.getElementById('upload-text').textContent = 'انقر لرفع ملف PDF';
+                document.getElementById('cost-preview').classList.remove('show');
             };
         }
 
@@ -1466,7 +1480,7 @@
             const recordsList = document.getElementById('records-list');
             const noRecords = document.getElementById('no-records');
             
-            showLoading();
+            showLoading('جاري تحميل السجلات...');
             try {
                 const snapshot = await database.ref('records').orderByChild('id').equalTo(currentUser.id).once('value');
                 recordsList.innerHTML = '';
@@ -1505,7 +1519,7 @@
                 hideLoading();
             } catch (error) {
                 hideLoading();
-                showNotification('حدث خطأ في تحميل السجلات', 'error');
+                showNotification('حدث خطأ في تحميل السجلات: ' + error.message, 'error');
             }
         }
 
@@ -1527,42 +1541,27 @@
 
         function createPrompt() {
             const personaInstructions = {
-                'طالب': 'استخدم أسلوب طالب يشرح لزملائه، بلغة شبابية حماسية مع أمثلة بسيطة',
-                'مدرس': 'استخدم أسلوب مدرس محترم مع شرح منهجي منظم وتدرج في الأفكار',
-                'دكتور جامعة': 'استخدم أسلوب أكاديمي عميق مع تحليل دقيق ومصطلحات متخصصة',
-                'عالم': 'استخدم أسلوب علمي رصين مع تفصيل دقيق ونظريات وتعمق في المفاهيم'
+                'طالب': 'تحدث كأنك طالب جامعي تشرح لزملائك، استخدم لغة شبابية واضحة مع أمثلة بسيطة وحماس',
+                'مدرس': 'تحدث كأنك مدرس محترم في الفصل، استخدم أسلوباً منهجياً منظمًا مع تدرج في الأفكار',
+                'دكتور جامعة': 'تحدث كأنك دكتور في الجامعة، استخدم أسلوباً أكاديمياً عميقاً مع تحليل دقيق',
+                'عالم': 'تحدث كأنك عالم متخصص، استخدم أسلوباً علمياً رصيناً مع تفصيل دقيق ونظريات'
             };
 
             const styleInstructions = {
-                'طفولي': 'استخدم كلمات بسيطة جداً، تشبيهات طريفة، جمل قصيرة، وأسلوب مرح',
-                'بسيط': 'استخدم لغة واضحة وسهلة مع تجنب التعقيد، مع التركيز على الفهم السريع',
-                'معقد': 'استخدم تحليلات عميقة ومصطلحات متقدمة مع مقارنات معقدة وتفاصيل دقيقة',
-                'احترافي': 'استخدم أسلوب مهني منظم مع نقاط واضحة وتقسيمات منطقية وتنسيق احترافي'
+                'طفولي': 'استخدم كلمات بسيطة جداً، تشبيهات طريفة، جمل قصيرة، وأسلوب مرح وممتع',
+                'بسيط': 'استخدم لغة واضحة وسهلة مع تجنب التعقيد، ركز على الفهم السريع',
+                'معقد': 'استخدم تحليلات عميقة ومصطلحات متقدمة مع مقارنات معقدة وتفاصيل دقيقة جداً',
+                'احترافي': 'استخدم أسلوباً منظماً مع نقاط واضحة وتقسيمات منطقية وتنسيق احترافي'
             };
 
             const lengthInstructions = {
-                'طويل': '''
-                    اكتب تلخيصاً طويلاً جداً وشاملاً وموسعاً.
-                    يجب أن يغطي كل كلمة وكل فكرة وكل تفصيل في الملف.
-                    لا تحذف أي معلومة مهما كانت صغيرة.
-                    اشرح كل نقطة بالتفصيل مع أمثلة وشروحات إضافية.
-                    استخدم عناوين رئيسية وفرعية متعددة.
-                    اجعل التلخيص بحيث يغني عن قراءة الملف الأصلي تماماً.
-                    يجب أن يكون التلخيص موسعاً وشاملاً لكل المحتوى.
-                ''',
-                'قصير': '''
-                    اكتب تلخيصاً قصيراً ومختصراً جداً.
-                    ركز فقط على النقاط الأساسية والرئيسية.
-                    تجاهل التفاصيل الصغيرة والأمثلة والتكرار.
-                    اختصر المعلومات إلى أقصى درجة مع الحفاظ على المعنى الأساسي.
-                    استخدم جمل قصيرة ومباشرة.
-                    الهدف هو إعطاء فكرة سريعة عن المحتوى فقط.
-                '''
+                'طويل': 'اكتب تلخيصاً طويلاً جداً وشاملاً. غطِ كل كلمة وكل فكرة في الملف. لا تحذف أي معلومة. اشرح كل نقطة بالتفصيل. استخدم عناوين متعددة. اجعل التلخيص يغني عن قراءة الملف الأصلي تماماً.',
+                'قصير': 'اكتب تلخيصاً قصيراً جداً. ركز فقط على النقاط الأساسية. تجاهل التفاصيل الصغيرة والأمثلة. اختصر المعلومات بشدة مع الحفاظ على المعنى الأساسي. استخدم جمل قصيرة ومباشرة.'
             };
 
-            return `أنت مساعد ذكاء اصطناعي متخصص في تلخيص ملفات PDF بدقة متناهية.
+            return `أنت مساعد متخصص في تلخيص ملفات PDF.
 
-المهمة: تلخيص ملف PDF المرفق بشكل كامل وشامل 100%.
+المهمة: لخص ملف PDF المرفق بدقة 100% - لا تفوت أي كلمة أو فكرة من الملف.
 
 الإعدادات المطلوبة:
 - شخصية الشارح: ${currentSettings.explainerPersona}
@@ -1579,28 +1578,27 @@ ${styleInstructions[currentSettings.explanationStyle]}
 تعليمات طول الشرح:
 ${lengthInstructions[currentSettings.explanationLength]}
 
-تعليمات إضافية مهمة جداً:
-1. حلل الملف بالكامل من أول صفحة إلى آخر صفحة دون استثناء أي جزء.
-2. تأكد أن التلخيص شامل لكل المحتوى ولا يفوت أي فكرة أو معلومة.
-3. استخدم تنسيقاً واضحاً مع عناوين رئيسية وفرعية.
-4. إذا كان هناك أكواد برمجية في الملف، ضعها داخل blocks خاصة:
+قواعد صارمة:
+1. حلل الملف بالكامل من أول صفحة لآخر صفحة - لا تتجاهل أي جزء.
+2. يجب أن يكون التلخيص شاملاً 100% ويغطي كل محتوى الملف.
+3. استخدم تنسيقاً واضحاً مع عناوين رئيسية (##) وفرعية (###).
+4. للأكواد البرمجية: ضعها داخل blocks مثل:
    \`\`\`
    الكود هنا
    \`\`\`
-5. إذا كان هناك قوانين أو مواد قانونية، قم بتمييزها في blocks خاصة.
+5. للقوانين أو المواد القانونية: ضعها في blocks خاصة واكتب "قانون:" قبلها.
 6. استخدم القوائم النقطية والرقمية لتنظيم المعلومات.
-7. تأكد من أن طول التلخيص يتطابق تماماً مع الاختيار (${currentSettings.explanationLength}).
-8. التلخيص يجب أن يكون باللغة ${currentSettings.outputLanguage} فقط.
-9. استخرج 3-5 نقاط رئيسية تمثل أهم ما في الملف.
+7. طول التلخيص يجب أن يكون ${currentSettings.explanationLength === 'طويل' ? 'كبيراً جداً وشاملاً' : 'قصيراً جداً ومختصراً'}.
+8. استخرج 5 نقاط رئيسية من الملف (لا أقل ولا أكثر).
 
-شكل الإخراج المطلوب (JSON فقط):
+شكل الإخراج (JSON فقط):
 {
-  "head": "عنوان مختصر للملف (5-7 كلمات يعبر عن المحتوى كاملاً)",
-  "raw": ["النقطة الرئيسية الأولى", "النقطة الرئيسية الثانية", "النقطة الرئيسية الثالثة", "النقطة الرئيسية الرابعة", "النقطة الرئيسية الخامسة"],
-  "page": "هنا المحتوى الكامل للتلخيص مع التنسيق المناسب"
+  "head": "عنوان مختصر للملف (5-7 كلمات)",
+  "raw": ["النقطة 1", "النقطة 2", "النقطة 3", "النقطة 4", "النقطة 5"],
+  "page": "محتوى التلخيص الكامل هنا..."
 }
 
-تذكر: يجب أن يكون التلخيص شاملاً 100% للملف ولا يفوت أي شيء.`;
+ملاحظة مهمة جداً: تأكد أن التلخيص في حقل "page" يحتوي على كل محتوى الملف بالكامل ولا يحذف أي شيء.`;
         }
 
         async function generateSummary() {
@@ -1617,7 +1615,7 @@ ${lengthInstructions[currentSettings.explanationLength]}
             const btn = document.getElementById('generate-btn');
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التلخيص...';
-            showLoading();
+            showLoading('جاري إنشاء التلخيص... قد يستغرق دقيقة');
 
             try {
                 const base64 = await new Promise((resolve) => {
@@ -1625,6 +1623,10 @@ ${lengthInstructions[currentSettings.explanationLength]}
                     reader.onload = () => resolve(reader.result.split(',')[1]);
                     reader.readAsDataURL(selectedFile);
                 });
+
+                // مهلة زمنية 30 ثانية
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000);
 
                 const response = await fetch(SERVER + '/api/KIMO_DEV', {
                     method: 'POST',
@@ -1634,8 +1636,11 @@ ${lengthInstructions[currentSettings.explanationLength]}
                         pass: API_PASS,
                         data: createPrompt(),
                         PDF_BASE64: base64
-                    })
+                    }),
+                    signal: controller.signal
                 });
+
+                clearTimeout(timeoutId);
 
                 if (!response.ok) throw new Error('فشل الاتصال بالسيرفر');
 
@@ -1680,7 +1685,11 @@ ${lengthInstructions[currentSettings.explanationLength]}
                 
                 showNotification('تم إنشاء التلخيص بنجاح', 'success');
             } catch (error) {
-                showNotification('حدث خطأ: ' + error.message, 'error');
+                if (error.name === 'AbortError') {
+                    showNotification('استغرق الطلب وقتاً طويلاً، حاول مرة أخرى', 'warning');
+                } else {
+                    showNotification('حدث خطأ: ' + error.message, 'error');
+                }
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-robot"></i> إنشاء التلخيص التلقائي';
@@ -1718,8 +1727,6 @@ ${lengthInstructions[currentSettings.explanationLength]}
             let html = '';
             let inCodeBlock = false;
             let codeContent = '';
-            let inLawBlock = false;
-            let lawContent = '';
             
             const lines = text.split('\n');
             
@@ -1743,28 +1750,14 @@ ${lengthInstructions[currentSettings.explanationLength]}
                     continue;
                 }
                 
-                // معالجة blocks القوانين
-                if (line.includes('قانون') || line.includes('مادة') || line.includes('لائحة')) {
-                    if (!inLawBlock) {
-                        inLawBlock = true;
-                        lawContent = '<div class="law-block">';
-                        lawContent += '<div class="law-title"><i class="fas fa-gavel"></i> نص قانوني</div>';
-                    }
-                    lawContent += `<p class="law-text">${line}</p>`;
+                // معالجة القوانين
+                if (line.includes('قانون:') || line.includes('مادة') || line.includes('لائحة')) {
+                    html += `<div class="law-block"><div class="law-title"><i class="fas fa-gavel"></i> نص قانوني</div><p class="law-text">${escapeHtml(line)}</p></div>`;
                     continue;
-                } else if (inLawBlock) {
-                    inLawBlock = false;
-                    lawContent += '</div>';
-                    html += lawContent;
                 }
                 
-                // معالجة التنسيقات العادية
-                line = line
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;')
-                    .replace(/'/g, '&#039;')
+                // تنسيق النص العادي
+                line = escapeHtml(line)
                     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                     .replace(/\*(.*?)\*/g, '<em>$1</em>');
                 
@@ -1779,11 +1772,6 @@ ${lengthInstructions[currentSettings.explanationLength]}
                 } else if (line.trim()) {
                     html += `<p>${line}</p>`;
                 }
-            }
-            
-            if (inLawBlock) {
-                lawContent += '</div>';
-                html += lawContent;
             }
             
             return html;
