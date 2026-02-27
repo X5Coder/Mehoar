@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght:300;400;700;800;900&family=Tajawal:wght:300;400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -897,83 +897,53 @@
             }, duration);
         }
 
-        // ========== نظام السجلات المحسن ==========
-        async function loadUserRecords() {
+        // ========== نظام السجلات المحسن - الحل النهائي ==========
+        async function loadAllUserRecords() {
             const recordsList = document.getElementById('recordsList');
             const emptyRecords = document.getElementById('emptyRecords');
             
+            // تنظيف القائمة
             recordsList.innerHTML = '';
             showLoading();
             
             try {
-                // جلب جميع السجلات من Firebase
+                // جلب جميع السجلات من Firebase (بدون فلترة)
                 const snapshot = await database.ref('records').once('value');
                 
                 if (snapshot.exists()) {
-                    const allRecords = [];
-                    let hasRecords = false;
+                    const userRecords = [];
+                    let recordCount = 0;
                     
-                    snapshot.forEach(child => {
-                        const record = child.val();
-                        // التحقق من أن السجل يخص المستخدم الحالي
+                    // تحويل السجلات إلى مصفوفة
+                    snapshot.forEach(childSnapshot => {
+                        const record = childSnapshot.val();
+                        const recordId = childSnapshot.key;
+                        
+                        // التأكد من أن السجل يخص المستخدم الحالي
                         if (record.userId === currentUser.id) {
-                            hasRecords = true;
-                            allRecords.push({
-                                id: child.key,
+                            recordCount++;
+                            userRecords.push({
+                                id: recordId,
                                 ...record
                             });
                         }
                     });
                     
-                    if (hasRecords) {
+                    console.log(`تم العثور على ${recordCount} سجل للمستخدم ${currentUser.id}`);
+                    
+                    if (userRecords.length > 0) {
                         emptyRecords.style.display = 'none';
                         
                         // ترتيب السجلات من الأحدث للأقدم
-                        allRecords.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                        userRecords.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                         
-                        // عرض السجلات
-                        allRecords.forEach(record => {
-                            const date = record.timestamp ? new Date(record.timestamp) : new Date();
-                            const formattedDate = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
-                            
-                            const card = document.createElement('div');
-                            card.className = 'record-card';
-                            card.setAttribute('data-record-id', record.id);
-                            
-                            card.innerHTML = `
-                                <div class="record-header">
-                                    <div class="record-name">
-                                        <i class="fas fa-file-pdf" style="color: var(--primary);"></i>
-                                        <span>${record.fileName || 'ملف PDF'}</span>
-                                    </div>
-                                    <div class="record-date">
-                                        <i class="far fa-calendar-alt"></i>
-                                        ${formattedDate}
-                                    </div>
-                                </div>
-                                <div class="record-details">
-                                    <span class="record-badge">
-                                        <i class="fas fa-file"></i> ${record.pages || 0} صفحة
-                                    </span>
-                                    <span class="record-badge">
-                                        <i class="fas fa-coins"></i> ${record.cost || 0} عملة
-                                    </span>
-                                    <span class="record-badge">
-                                        <i class="fas fa-user-tie"></i> ${record.settings?.persona || 'تلخيص'}
-                                    </span>
-                                    <span class="record-badge">
-                                        <i class="fas fa-language"></i> ${record.settings?.language || 'عربي'}
-                                    </span>
-                                </div>
-                            `;
-                            
-                            // إضافة حدث النقر لعرض الملخص
-                            card.addEventListener('click', () => {
-                                displayRecordContent(record);
-                            });
-                            
+                        // عرض جميع السجلات
+                        userRecords.forEach(record => {
+                            const card = createRecordCard(record);
                             recordsList.appendChild(card);
                         });
+                        
+                        showNotification(`تم تحميل ${userRecords.length} سجل`, 'success');
                     } else {
                         emptyRecords.style.display = 'block';
                     }
@@ -984,9 +954,97 @@
                 hideLoading();
             } catch (error) {
                 hideLoading();
-                console.error('خطأ في تحميل السجلات:', error);
-                showNotification('حدث خطأ في تحميل السجلات', 'error');
+                console.error('خطأ مفصل:', error);
+                showNotification('حدث خطأ في تحميل السجلات: ' + error.message, 'error');
+                
+                // محاولة بديلة - جلب كل السجلات بدون فلترة
+                try {
+                    console.log('محاولة بديلة لجلب السجلات...');
+                    const snapshot = await database.ref('records').once('value');
+                    
+                    if (snapshot.exists()) {
+                        recordsList.innerHTML = '';
+                        let count = 0;
+                        
+                        snapshot.forEach(child => {
+                            const record = child.val();
+                            // عرض مؤقت لكل السجلات للاختبار
+                            const card = document.createElement('div');
+                            card.className = 'record-card';
+                            card.innerHTML = `
+                                <div class="record-header">
+                                    <div class="record-name">
+                                        <i class="fas fa-file-pdf"></i>
+                                        ${record.fileName || 'ملف PDF'} (${record.userId === currentUser.id ? 'خاص بي' : 'آخر'})
+                                    </div>
+                                </div>
+                            `;
+                            recordsList.appendChild(card);
+                            count++;
+                        });
+                        
+                        showNotification(`تم تحميل ${count} سجل (تجريبي)`, 'info');
+                        emptyRecords.style.display = 'none';
+                    }
+                } catch (e) {
+                    console.error('فشلت المحاولة البديلة:', e);
+                }
             }
+        }
+
+        // دالة منفصلة لإنشاء بطاقة السجل
+        function createRecordCard(record) {
+            const card = document.createElement('div');
+            card.className = 'record-card';
+            card.setAttribute('data-record-id', record.id);
+            
+            // تنسيق التاريخ
+            let dateStr = 'تاريخ غير معروف';
+            if (record.timestamp) {
+                const date = new Date(record.timestamp);
+                dateStr = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} - ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+            }
+            
+            // البيانات الافتراضية
+            const fileName = record.fileName || 'ملف PDF';
+            const pages = record.pages || 0;
+            const cost = record.cost || 0;
+            const persona = record.settings?.persona || 'تلخيص';
+            const language = record.settings?.language || 'عربي';
+            
+            card.innerHTML = `
+                <div class="record-header">
+                    <div class="record-name">
+                        <i class="fas fa-file-pdf" style="color: var(--primary);"></i>
+                        <span>${fileName}</span>
+                    </div>
+                    <div class="record-date">
+                        <i class="far fa-calendar-alt"></i>
+                        ${dateStr}
+                    </div>
+                </div>
+                <div class="record-details">
+                    <span class="record-badge">
+                        <i class="fas fa-file"></i> ${pages} صفحة
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas fa-coins"></i> ${cost} عملة
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas fa-user-tie"></i> ${persona}
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas fa-language"></i> ${language}
+                    </span>
+                </div>
+            `;
+            
+            // إضافة حدث النقر
+            card.addEventListener('click', () => {
+                displayRecordContent(record);
+            });
+            
+            return card;
         }
 
         // عرض محتوى السجل
@@ -994,22 +1052,25 @@
             try {
                 // التحقق من وجود البيانات
                 if (!record.data) {
-                    showNotification('بيانات السجل غير صالحة', 'error');
+                    showNotification('بيانات السجل غير مكتملة', 'error');
                     return;
                 }
                 
                 // إغلاق نافذة السجلات
                 document.getElementById('recordsModal').classList.remove('show');
                 
-                // عرض قسم النتائج
+                // إخفاء الأقسام الأخرى
                 document.getElementById('uploadSection').style.display = 'none';
                 document.getElementById('settingsSection').style.display = 'none';
-                document.getElementById('resultSection').classList.add('show');
+                
+                // إظهار قسم النتائج
+                const resultSection = document.getElementById('resultSection');
+                resultSection.classList.add('show');
                 
                 // عرض العنوان
                 document.getElementById('resultHead').textContent = record.data.head || 'ملخص الملف';
                 
-                // عرض المحتوى
+                // عرض المحتوى مع تنسيق بسيط
                 const content = record.data.page || '';
                 document.getElementById('resultText').innerHTML = formatContent(content);
                 document.getElementById('resultText').style.fontSize = fontSize + 'px';
@@ -1043,9 +1104,10 @@
             let formatted = text
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/\\n/g, '\n')
+                .replace(/\\n/g, '<br>')
                 .replace(/\\r/g, '');
             
+            // تقسيم للنقاط
             const lines = formatted.split('\n');
             let html = '';
             
@@ -1056,14 +1118,12 @@
                     continue;
                 }
                 
-                if (line.startsWith('#')) {
+                if (line.startsWith('#') && line.length > 1) {
                     const level = line.match(/^#+/)[0].length;
                     const content = line.replace(/^#+\s*/, '');
                     html += `<h${Math.min(level, 3)}>${content}</h${Math.min(level, 3)}>`;
                 } else if (line.startsWith('- ') || line.startsWith('• ')) {
                     html += `<p style="padding-right: 20px; position: relative;">&bull; ${line.substring(2)}</p>`;
-                } else if (line.match(/^\d+\. /)) {
-                    html += `<p style="padding-right: 20px;">${line}</p>`;
                 } else {
                     html += `<p>${line}</p>`;
                 }
@@ -1079,26 +1139,27 @@
                 قصير: 'قدم تلخيصاً قصيراً ومختصراً جداً يركز فقط على النقاط الأساسية'
             };
             
-            return `قم بتلخيص ملف PDF التالي:
+            return `قم بتلخيص ملف PDF التالي بدقة:
 
-الإعدادات:
+الإعدادات المطلوبة:
 - شخصية الشارح: ${currentSettings.persona}
 - لغة الإخراج: ${currentSettings.language}
 - أسلوب الشرح: ${currentSettings.style}
 - طول الشرح: ${currentSettings.length}
 
-تعليمات:
+تعليمات مهمة:
 1. ${lengthInstructions[currentSettings.length]}
-2. استخدم أسلوب مناسب لشخصية ${currentSettings.persona}
+2. استخدم أسلوب شرح مناسب لشخصية ${currentSettings.persona}
 3. اكتب بلغة ${currentSettings.language} سليمة
 4. اجعل الأسلوب ${currentSettings.style}
-5. استخرج 3-5 نقاط رئيسية
+5. حلل الملف كاملاً من أول صفحة لآخر صفحة
+6. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
 
-الرد بصيغة JSON:
+يجب أن يكون الرد بصيغة JSON فقط:
 {
-  "head": "عنوان مختصر للملف",
-  "raw": ["نقطة 1", "نقطة 2", "نقطة 3"],
-  "page": "محتوى التلخيص الكامل"
+  "head": "عنوان مختصر للملف (5-7 كلمات)",
+  "raw": ["النقطة الأولى", "النقطة الثانية", "النقطة الثالثة"],
+  "page": "محتوى التلخيص الكامل هنا..."
 }`;
         }
 
@@ -1222,13 +1283,13 @@
                 document.getElementById('uploadText').textContent = 'انقر لاختيار ملف PDF';
             };
             
-            // السجلات - المحسنة
+            // السجلات - الإصدار النهائي
             const modal = document.getElementById('recordsModal');
             const recordsBtn = document.getElementById('recordsBtn');
             const closeModal = document.getElementById('closeModal');
             
             recordsBtn.onclick = () => {
-                loadUserRecords(); // تحميل السجلات عند فتح النافذة
+                loadAllUserRecords(); // استخدام الدالة الجديدة
                 modal.classList.add('show');
             };
             
@@ -1364,7 +1425,7 @@
                 userCoins -= fileInfo.cost;
                 document.getElementById('coinsCount').textContent = userCoins;
                 
-                // حفظ في السجلات باستخدام push لإنشاء مفتاح فريد
+                // حفظ في السجلات - استخدام push لإنشاء مفتاح فريد
                 const newRecordRef = database.ref('records').push();
                 await newRecordRef.set({
                     userId: currentUser.id,
@@ -1373,8 +1434,14 @@
                     cost: fileInfo.cost,
                     timestamp: Date.now(),
                     settings: { ...currentSettings },
-                    data: result
+                    data: {
+                        head: result.head || 'ملخص الملف',
+                        raw: result.raw || [],
+                        page: result.page || ''
+                    }
                 });
+                
+                console.log('تم حفظ السجل بنجاح:', newRecordRef.key);
                 
                 // عرض النتائج
                 document.getElementById('resultHead').textContent = result.head || 'ملخص الملف';
@@ -1395,9 +1462,10 @@
                 document.getElementById('settingsSection').style.display = 'none';
                 document.getElementById('resultSection').classList.add('show');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                showNotification('تم إنشاء التلخيص بنجاح', 'success');
+                showNotification('تم إنشاء التلخيص وحفظه في السجلات', 'success');
                 
             } catch (error) {
+                console.error('خطأ في التوليد:', error);
                 showNotification('حدث خطأ: ' + error.message, 'error');
             } finally {
                 btn.disabled = false;
