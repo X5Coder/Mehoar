@@ -265,7 +265,7 @@
         /* شبكة الإعدادات */
         .settings-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
             margin: 2rem 0;
         }
@@ -288,7 +288,7 @@
         
         .options-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
             gap: 0.5rem;
         }
         
@@ -523,6 +523,130 @@
             line-height: 1.8;
             transition: font-size 0.3s;
             word-wrap: break-word;
+        }
+        
+        /* أنماط الجداول الجديدة */
+        .concepts-table, .qa-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .concepts-table th, .qa-table th {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            font-weight: 700;
+            text-align: center;
+        }
+        
+        .concepts-table td, .qa-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
+        }
+        
+        .concepts-table tr:last-child td, .qa-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .concepts-table tr:hover, .qa-table tr:hover {
+            background: rgba(139, 115, 85, 0.02);
+        }
+        
+        .concept-term {
+            font-weight: 700;
+            color: var(--primary);
+            width: 40%;
+        }
+        
+        .concept-def {
+            color: var(--text);
+        }
+        
+        .qa-question {
+            font-weight: 700;
+            color: var(--primary);
+            width: 40%;
+        }
+        
+        .qa-answer {
+            color: var(--text);
+        }
+        
+        /* قسم القوانين */
+        .laws-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(139, 115, 85, 0.03);
+            border-radius: var(--radius);
+            border: 1px solid rgba(139, 115, 85, 0.1);
+        }
+        
+        .laws-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .laws-content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            white-space: pre-wrap;
+            font-family: monospace;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        /* استجابة الجداول للهواتف */
+        @media (max-width: 768px) {
+            .concepts-table, .qa-table {
+                display: block;
+            }
+            
+            .concepts-table thead, .qa-table thead {
+                display: none;
+            }
+            
+            .concepts-table tbody, .qa-table tbody {
+                display: block;
+            }
+            
+            .concepts-table tr, .qa-table tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid rgba(139, 115, 85, 0.1);
+                border-radius: var(--radius);
+                padding: 0.5rem;
+            }
+            
+            .concepts-table td, .qa-table td {
+                display: block;
+                padding: 0.5rem;
+                border: none;
+                text-align: right;
+            }
+            
+            .concepts-table td:before, .qa-table td:before {
+                content: attr(data-label);
+                font-weight: 700;
+                color: var(--primary);
+                display: inline-block;
+                width: 100px;
+                margin-left: 1rem;
+            }
+            
+            .concept-term, .qa-question {
+                width: auto;
+            }
         }
         
         .key-points {
@@ -784,6 +908,16 @@
                         <button class="option-btn selected" data-value="طويل">طويل</button>
                     </div>
                 </div>
+                
+                <!-- قسم شكل التلخيص الجديد -->
+                <div class="setting-group">
+                    <h3 class="setting-title"><i class="fas fa-table"></i> شكل التلخيص</h3>
+                    <div class="options-grid" id="formatOptions">
+                        <button class="option-btn selected" data-value="عادي">تلخيص عادي</button>
+                        <button class="option-btn" data-value="مفاهيم">جدول مفاهيم</button>
+                        <button class="option-btn" data-value="اسئلة">جدول سؤال وجواب</button>
+                    </div>
+                </div>
             </div>
             
             <button class="btn btn-primary" id="generateBtn" style="width: 100%; max-width: 300px; margin: 0 auto; display: block;">
@@ -802,13 +936,19 @@
                 </div>
             </div>
             
-            <div class="result-content">
-                <div class="result-text" id="resultText"></div>
+            <div class="result-content" id="resultContent">
+                <!-- هنا هيتحط المحتوى حسب نوع التلخيص -->
             </div>
             
             <div class="key-points">
                 <h3><i class="fas fa-bullseye"></i> النقاط الرئيسية</h3>
                 <ul class="points-list" id="pointsList"></ul>
+            </div>
+
+            <!-- قسم القوانين (هيظهر بس في التلخيص العادي) -->
+            <div class="laws-section" id="lawsSection" style="display: none;">
+                <h3 class="laws-title"><i class="fas fa-gavel"></i> القوانين والصيغ الرياضية</h3>
+                <div class="laws-content" id="lawsContent"></div>
             </div>
         </section>
         
@@ -853,7 +993,8 @@
             persona: 'مدرس',
             language: 'عربي',
             style: 'بسيط',
-            length: 'طويل'
+            length: 'طويل',
+            format: 'عادي' // القيمة الجديدة
         };
         let fontSize = 16;
 
@@ -897,207 +1038,206 @@
             }, duration);
         }
 
-        // ========== نظام السجلات المحسن - الحل النهائي ==========
-        async function loadAllUserRecords() {
-            const recordsList = document.getElementById('recordsList');
-            const emptyRecords = document.getElementById('emptyRecords');
+        // ========== إنشاء البرومبت حسب نوع التلخيص ==========
+        function createPrompt() {
+            const lengthInstructions = {
+                طويل: 'قدم تلخيصاً طويلاً وشاملاً جداً يغطي كل التفاصيل والمعلومات المهمة',
+                قصير: 'قدم تلخيصاً قصيراً ومختصراً جداً يركز فقط على النقاط الأساسية'
+            };
+
+            // برومبت التلخيص العادي (كما هو)
+            if (currentSettings.format === 'عادي') {
+                return `قم بتلخيص ملف PDF التالي بدقة:
+
+الإعدادات المطلوبة:
+- شخصية الشارح: ${currentSettings.persona}
+- لغة الإخراج: ${currentSettings.language}
+- أسلوب الشرح: ${currentSettings.style}
+- طول الشرح: ${currentSettings.length}
+
+تعليمات مهمة:
+1. ${lengthInstructions[currentSettings.length]}
+2. استخدم أسلوب شرح مناسب لشخصية ${currentSettings.persona}
+3. اكتب بلغة ${currentSettings.language} سليمة
+4. اجعل الأسلوب ${currentSettings.style}
+5. حلل الملف كاملاً من أول صفحة لآخر صفحة
+6. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
+7. في نهاية التلخيص، أضف قسم خاص بعنوان "القوانين والصيغ الرياضية" يحتوي على أي قوانين أو معادلات أو صيغ رياضية موجودة في الملف كما هي تماماً. إذا لم يوجد أي قوانين، اكتب "لا يوجد قوانين في هذا الملف"
+
+يجب أن يكون الرد بصيغة JSON فقط:
+{
+  "head": "عنوان مختصر للملف (5-7 كلمات)",
+  "raw": ["النقطة الأولى", "النقطة الثانية", "النقطة الثالثة"],
+  "page": "محتوى التلخيص الكامل هنا...",
+  "laws": "القوانين والصيغ الرياضية الموجودة في الملف (أو 'لا يوجد قوانين في هذا الملف')"
+}`;
+            }
             
-            // تنظيف القائمة
-            recordsList.innerHTML = '';
-            showLoading();
+            // برومبت جدول المفاهيم
+            else if (currentSettings.format === 'مفاهيم') {
+                return `قم بتحليل ملف PDF التالي واستخراج أهم المفاهيم منه:
+
+الإعدادات المطلوبة:
+- شخصية الشارح: ${currentSettings.persona}
+- لغة الإخراج: ${currentSettings.language}
+- أسلوب الشرح: ${currentSettings.style}
+- طول الشرح: ${currentSettings.length}
+
+تعليمات مهمة:
+1. اقرأ الملف كاملاً بتركيز
+2. استخرج أهم 5-10 مفاهيم من الملف
+3. كل مفهوم يجب أن يأخذ رقم تسلسلي (h1, h2, h3, ...)
+4. كل مفهوم يجب أن يقابله شرح أو تعريف (s1, s2, s3, ...)
+5. استخدم لغة ${currentSettings.language} سليمة
+6. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
+
+يجب أن يكون الرد بصيغة JSON فقط:
+{
+  "head": "عنوان مختصر للملف (5-7 كلمات)",
+  "raw": ["النقطة الأولى", "النقطة الثانية", "النقطة الثالثة"],
+  "h1": "المفهوم الأول",
+  "s1": "شرح وتعريف المفهوم الأول",
+  "h2": "المفهوم الثاني",
+  "s2": "شرح وتعريف المفهوم الثاني",
+  "h3": "المفهوم الثالث",
+  "s3": "شرح وتعريف المفهوم الثالث",
+  "h4": "المفهوم الرابع",
+  "s4": "شرح وتعريف المفهوم الرابع",
+  "h5": "المفهوم الخامس",
+  "s5": "شرح وتعريف المفهوم الخامس"
+}`;
+            }
             
-            try {
-                // جلب جميع السجلات من Firebase (بدون فلترة)
-                const snapshot = await database.ref('records').once('value');
-                
-                if (snapshot.exists()) {
-                    const userRecords = [];
-                    let recordCount = 0;
-                    
-                    // تحويل السجلات إلى مصفوفة
-                    snapshot.forEach(childSnapshot => {
-                        const record = childSnapshot.val();
-                        const recordId = childSnapshot.key;
-                        
-                        // التأكد من أن السجل يخص المستخدم الحالي
-                        if (record.userId === currentUser.id) {
-                            recordCount++;
-                            userRecords.push({
-                                id: recordId,
-                                ...record
-                            });
-                        }
-                    });
-                    
-                    console.log(`تم العثور على ${recordCount} سجل للمستخدم ${currentUser.id}`);
-                    
-                    if (userRecords.length > 0) {
-                        emptyRecords.style.display = 'none';
-                        
-                        // ترتيب السجلات من الأحدث للأقدم
-                        userRecords.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                        
-                        // عرض جميع السجلات
-                        userRecords.forEach(record => {
-                            const card = createRecordCard(record);
-                            recordsList.appendChild(card);
-                        });
-                        
-                        showNotification(`تم تحميل ${userRecords.length} سجل`, 'success');
-                    } else {
-                        emptyRecords.style.display = 'block';
-                    }
-                } else {
-                    emptyRecords.style.display = 'block';
-                }
-                
-                hideLoading();
-            } catch (error) {
-                hideLoading();
-                console.error('خطأ مفصل:', error);
-                showNotification('حدث خطأ في تحميل السجلات: ' + error.message, 'error');
-                
-                // محاولة بديلة - جلب كل السجلات بدون فلترة
-                try {
-                    console.log('محاولة بديلة لجلب السجلات...');
-                    const snapshot = await database.ref('records').once('value');
-                    
-                    if (snapshot.exists()) {
-                        recordsList.innerHTML = '';
-                        let count = 0;
-                        
-                        snapshot.forEach(child => {
-                            const record = child.val();
-                            // عرض مؤقت لكل السجلات للاختبار
-                            const card = document.createElement('div');
-                            card.className = 'record-card';
-                            card.innerHTML = `
-                                <div class="record-header">
-                                    <div class="record-name">
-                                        <i class="fas fa-file-pdf"></i>
-                                        ${record.fileName || 'ملف PDF'} (${record.userId === currentUser.id ? 'خاص بي' : 'آخر'})
-                                    </div>
-                                </div>
-                            `;
-                            recordsList.appendChild(card);
-                            count++;
-                        });
-                        
-                        showNotification(`تم تحميل ${count} سجل (تجريبي)`, 'info');
-                        emptyRecords.style.display = 'none';
-                    }
-                } catch (e) {
-                    console.error('فشلت المحاولة البديلة:', e);
-                }
+            // برومبت جدول سؤال وجواب
+            else if (currentSettings.format === 'اسئلة') {
+                return `قم بتحليل ملف PDF التالي واستخراج أهم الأسئلة والأجوبة منه:
+
+الإعدادات المطلوبة:
+- شخصية الشارح: ${currentSettings.persona}
+- لغة الإخراج: ${currentSettings.language}
+- أسلوب الشرح: ${currentSettings.style}
+- طول الشرح: ${currentSettings.length}
+
+تعليمات مهمة:
+1. اقرأ الملف كاملاً بتركيز
+2. استخرج أهم 5-10 أسئلة وإجاباتها من الملف
+3. كل سؤال يجب أن يأخذ رقم تسلسلي (h1, h2, h3, ...)
+4. كل سؤال يجب أن يقابله إجابة (s1, s2, s3, ...)
+5. استخدم لغة ${currentSettings.language} سليمة
+6. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
+
+يجب أن يكون الرد بصيغة JSON فقط:
+{
+  "head": "عنوان مختصر للملف (5-7 كلمات)",
+  "raw": ["النقطة الأولى", "النقطة الثانية", "النقطة الثالثة"],
+  "h1": "السؤال الأول",
+  "s1": "إجابة السؤال الأول",
+  "h2": "السؤال الثاني",
+  "s2": "إجابة السؤال الثاني",
+  "h3": "السؤال الثالث",
+  "s3": "إجابة السؤال الثالث",
+  "h4": "السؤال الرابع",
+  "s4": "إجابة السؤال الرابع",
+  "h5": "السؤال الخامس",
+  "s5": "إجابة السؤال الخامس"
+}`;
             }
         }
 
-        // دالة منفصلة لإنشاء بطاقة السجل
-        function createRecordCard(record) {
-            const card = document.createElement('div');
-            card.className = 'record-card';
-            card.setAttribute('data-record-id', record.id);
+        // ========== عرض النتائج حسب نوع التلخيص ==========
+        function displayResults(result) {
+            const resultContent = document.getElementById('resultContent');
+            const pointsList = document.getElementById('pointsList');
+            const lawsSection = document.getElementById('lawsSection');
             
-            // تنسيق التاريخ
-            let dateStr = 'تاريخ غير معروف';
-            if (record.timestamp) {
-                const date = new Date(record.timestamp);
-                dateStr = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} - ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+            // العنوان
+            document.getElementById('resultHead').textContent = result.head || 'ملخص الملف';
+            
+            // عرض النقاط الرئيسية
+            pointsList.innerHTML = '';
+            if (result.raw && Array.isArray(result.raw)) {
+                result.raw.forEach(point => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
+                    pointsList.appendChild(li);
+                });
             }
             
-            // البيانات الافتراضية
-            const fileName = record.fileName || 'ملف PDF';
-            const pages = record.pages || 0;
-            const cost = record.cost || 0;
-            const persona = record.settings?.persona || 'تلخيص';
-            const language = record.settings?.language || 'عربي';
-            
-            card.innerHTML = `
-                <div class="record-header">
-                    <div class="record-name">
-                        <i class="fas fa-file-pdf" style="color: var(--primary);"></i>
-                        <span>${fileName}</span>
-                    </div>
-                    <div class="record-date">
-                        <i class="far fa-calendar-alt"></i>
-                        ${dateStr}
-                    </div>
-                </div>
-                <div class="record-details">
-                    <span class="record-badge">
-                        <i class="fas fa-file"></i> ${pages} صفحة
-                    </span>
-                    <span class="record-badge">
-                        <i class="fas fa-coins"></i> ${cost} عملة
-                    </span>
-                    <span class="record-badge">
-                        <i class="fas fa-user-tie"></i> ${persona}
-                    </span>
-                    <span class="record-badge">
-                        <i class="fas fa-language"></i> ${language}
-                    </span>
-                </div>
-            `;
-            
-            // إضافة حدث النقر
-            card.addEventListener('click', () => {
-                displayRecordContent(record);
-            });
-            
-            return card;
-        }
-
-        // عرض محتوى السجل
-        function displayRecordContent(record) {
-            try {
-                // التحقق من وجود البيانات
-                if (!record.data) {
-                    showNotification('بيانات السجل غير مكتملة', 'error');
-                    return;
+            // عرض المحتوى حسب النوع
+            if (currentSettings.format === 'مفاهيم') {
+                // عرض جدول المفاهيم
+                let tableHTML = `
+                    <table class="concepts-table">
+                        <thead>
+                            <tr>
+                                <th>المفهوم</th>
+                                <th>الشرح / التعريف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                for (let i = 1; i <= 10; i++) {
+                    if (result[`h${i}`] && result[`s${i}`]) {
+                        tableHTML += `
+                            <tr>
+                                <td class="concept-term" data-label="المفهوم">${result[`h${i}`]}</td>
+                                <td class="concept-def" data-label="الشرح">${result[`s${i}`]}</td>
+                            </tr>
+                        `;
+                    }
                 }
                 
-                // إغلاق نافذة السجلات
-                document.getElementById('recordsModal').classList.remove('show');
+                tableHTML += `</tbody></table>`;
+                resultContent.innerHTML = tableHTML;
+                lawsSection.style.display = 'none';
+            }
+            
+            else if (currentSettings.format === 'اسئلة') {
+                // عرض جدول الأسئلة والأجوبة
+                let tableHTML = `
+                    <table class="qa-table">
+                        <thead>
+                            <tr>
+                                <th>السؤال</th>
+                                <th>الجواب</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
                 
-                // إخفاء الأقسام الأخرى
-                document.getElementById('uploadSection').style.display = 'none';
-                document.getElementById('settingsSection').style.display = 'none';
+                for (let i = 1; i <= 10; i++) {
+                    if (result[`h${i}`] && result[`s${i}`]) {
+                        tableHTML += `
+                            <tr>
+                                <td class="qa-question" data-label="السؤال">${result[`h${i}`]}</td>
+                                <td class="qa-answer" data-label="الجواب">${result[`s${i}`]}</td>
+                            </tr>
+                        `;
+                    }
+                }
                 
-                // إظهار قسم النتائج
-                const resultSection = document.getElementById('resultSection');
-                resultSection.classList.add('show');
-                
-                // عرض العنوان
-                document.getElementById('resultHead').textContent = record.data.head || 'ملخص الملف';
-                
-                // عرض المحتوى مع تنسيق بسيط
-                const content = record.data.page || '';
-                document.getElementById('resultText').innerHTML = formatContent(content);
+                tableHTML += `</tbody></table>`;
+                resultContent.innerHTML = tableHTML;
+                lawsSection.style.display = 'none';
+            }
+            
+            else {
+                // تلخيص عادي
+                resultContent.innerHTML = `<div class="result-text" id="resultText">${formatContent(result.page || '')}</div>`;
                 document.getElementById('resultText').style.fontSize = fontSize + 'px';
                 
-                // عرض النقاط الرئيسية
-                const pointsList = document.getElementById('pointsList');
-                pointsList.innerHTML = '';
-                
-                if (record.data.raw && Array.isArray(record.data.raw) && record.data.raw.length > 0) {
-                    record.data.raw.forEach(point => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<i class="fas fa-check-circle" style="color: var(--primary);"></i> ${point}`;
-                        pointsList.appendChild(li);
-                    });
+                // عرض قسم القوانين
+                if (result.laws) {
+                    lawsSection.style.display = 'block';
+                    document.getElementById('lawsContent').textContent = result.laws;
                 } else {
-                    pointsList.innerHTML = '<li><i class="fas fa-info-circle"></i> لا توجد نقاط رئيسية</li>';
+                    lawsSection.style.display = 'none';
                 }
-                
-                showNotification('تم تحميل الملخص بنجاح', 'success');
-                
-            } catch (error) {
-                console.error('خطأ في عرض السجل:', error);
-                showNotification('حدث خطأ في عرض الملخص', 'error');
             }
         }
 
-        // تنسيق المحتوى
+        // ========== باقي الدوال (كما هي) ==========
         function formatContent(text) {
             if (!text) return '';
             
@@ -1132,35 +1272,148 @@
             return html;
         }
 
-        // إنشاء البرومبت
-        function createPrompt() {
-            const lengthInstructions = {
-                طويل: 'قدم تلخيصاً طويلاً وشاملاً جداً يغطي كل التفاصيل والمعلومات المهمة',
-                قصير: 'قدم تلخيصاً قصيراً ومختصراً جداً يركز فقط على النقاط الأساسية'
-            };
+        // ========== نظام السجلات ==========
+        async function loadAllUserRecords() {
+            const recordsList = document.getElementById('recordsList');
+            const emptyRecords = document.getElementById('emptyRecords');
             
-            return `قم بتلخيص ملف PDF التالي بدقة:
+            recordsList.innerHTML = '';
+            showLoading();
+            
+            try {
+                const snapshot = await database.ref('records').once('value');
+                
+                if (snapshot.exists()) {
+                    const userRecords = [];
+                    let recordCount = 0;
+                    
+                    snapshot.forEach(childSnapshot => {
+                        const record = childSnapshot.val();
+                        const recordId = childSnapshot.key;
+                        
+                        if (record.userId === currentUser.id) {
+                            recordCount++;
+                            userRecords.push({
+                                id: recordId,
+                                ...record
+                            });
+                        }
+                    });
+                    
+                    console.log(`تم العثور على ${recordCount} سجل للمستخدم ${currentUser.id}`);
+                    
+                    if (userRecords.length > 0) {
+                        emptyRecords.style.display = 'none';
+                        
+                        userRecords.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                        
+                        userRecords.forEach(record => {
+                            const card = createRecordCard(record);
+                            recordsList.appendChild(card);
+                        });
+                        
+                        showNotification(`تم تحميل ${userRecords.length} سجل`, 'success');
+                    } else {
+                        emptyRecords.style.display = 'block';
+                    }
+                } else {
+                    emptyRecords.style.display = 'block';
+                }
+                
+                hideLoading();
+            } catch (error) {
+                hideLoading();
+                console.error('خطأ مفصل:', error);
+                showNotification('حدث خطأ في تحميل السجلات: ' + error.message, 'error');
+            }
+        }
 
-الإعدادات المطلوبة:
-- شخصية الشارح: ${currentSettings.persona}
-- لغة الإخراج: ${currentSettings.language}
-- أسلوب الشرح: ${currentSettings.style}
-- طول الشرح: ${currentSettings.length}
+        function createRecordCard(record) {
+            const card = document.createElement('div');
+            card.className = 'record-card';
+            card.setAttribute('data-record-id', record.id);
+            
+            let dateStr = 'تاريخ غير معروف';
+            if (record.timestamp) {
+                const date = new Date(record.timestamp);
+                dateStr = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} - ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+            }
+            
+            const fileName = record.fileName || 'ملف PDF';
+            const pages = record.pages || 0;
+            const cost = record.cost || 0;
+            const persona = record.settings?.persona || 'تلخيص';
+            const language = record.settings?.language || 'عربي';
+            const format = record.settings?.format || 'عادي';
+            
+            let formatIcon = 'fa-file-alt';
+            if (format === 'مفاهيم') formatIcon = 'fa-table';
+            if (format === 'اسئلة') formatIcon = 'fa-question-circle';
+            
+            card.innerHTML = `
+                <div class="record-header">
+                    <div class="record-name">
+                        <i class="fas fa-file-pdf" style="color: var(--primary);"></i>
+                        <span>${fileName}</span>
+                    </div>
+                    <div class="record-date">
+                        <i class="far fa-calendar-alt"></i>
+                        ${dateStr}
+                    </div>
+                </div>
+                <div class="record-details">
+                    <span class="record-badge">
+                        <i class="fas fa-file"></i> ${pages} صفحة
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas fa-coins"></i> ${cost} عملة
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas fa-user-tie"></i> ${persona}
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas fa-language"></i> ${language}
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas ${formatIcon}"></i> ${format}
+                    </span>
+                </div>
+            `;
+            
+            card.addEventListener('click', () => {
+                displayRecordContent(record);
+            });
+            
+            return card;
+        }
 
-تعليمات مهمة:
-1. ${lengthInstructions[currentSettings.length]}
-2. استخدم أسلوب شرح مناسب لشخصية ${currentSettings.persona}
-3. اكتب بلغة ${currentSettings.language} سليمة
-4. اجعل الأسلوب ${currentSettings.style}
-5. حلل الملف كاملاً من أول صفحة لآخر صفحة
-6. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
-
-يجب أن يكون الرد بصيغة JSON فقط:
-{
-  "head": "عنوان مختصر للملف (5-7 كلمات)",
-  "raw": ["النقطة الأولى", "النقطة الثانية", "النقطة الثالثة"],
-  "page": "محتوى التلخيص الكامل هنا..."
-}`;
+        function displayRecordContent(record) {
+            try {
+                if (!record.data) {
+                    showNotification('بيانات السجل غير مكتملة', 'error');
+                    return;
+                }
+                
+                document.getElementById('recordsModal').classList.remove('show');
+                document.getElementById('uploadSection').style.display = 'none';
+                document.getElementById('settingsSection').style.display = 'none';
+                
+                const resultSection = document.getElementById('resultSection');
+                resultSection.classList.add('show');
+                
+                // ضبط إعدادات العرض حسب نوع السجل
+                if (record.settings) {
+                    currentSettings = { ...currentSettings, ...record.settings };
+                }
+                
+                displayResults(record.data);
+                
+                showNotification('تم تحميل الملخص بنجاح', 'success');
+                
+            } catch (error) {
+                console.error('خطأ في عرض السجل:', error);
+                showNotification('حدث خطأ في عرض الملخص', 'error');
+            }
         }
 
         // ========== التحقق من المستخدم ==========
@@ -1264,6 +1517,7 @@
                             case 'languageOptions': currentSettings.language = value; break;
                             case 'styleOptions': currentSettings.style = value; break;
                             case 'lengthOptions': currentSettings.length = value; break;
+                            case 'formatOptions': currentSettings.format = value; break;
                         }
                     };
                 });
@@ -1283,13 +1537,13 @@
                 document.getElementById('uploadText').textContent = 'انقر لاختيار ملف PDF';
             };
             
-            // السجلات - الإصدار النهائي
+            // السجلات
             const modal = document.getElementById('recordsModal');
             const recordsBtn = document.getElementById('recordsBtn');
             const closeModal = document.getElementById('closeModal');
             
             recordsBtn.onclick = () => {
-                loadAllUserRecords(); // استخدام الدالة الجديدة
+                loadAllUserRecords();
                 modal.classList.add('show');
             };
             
@@ -1305,14 +1559,18 @@
             document.getElementById('increaseFont').onclick = () => {
                 if (fontSize < 24) {
                     fontSize += 2;
-                    document.getElementById('resultText').style.fontSize = fontSize + 'px';
+                    if (currentSettings.format === 'عادي') {
+                        document.getElementById('resultText').style.fontSize = fontSize + 'px';
+                    }
                 }
             };
             
             document.getElementById('decreaseFont').onclick = () => {
                 if (fontSize > 12) {
                     fontSize -= 2;
-                    document.getElementById('resultText').style.fontSize = fontSize + 'px';
+                    if (currentSettings.format === 'عادي') {
+                        document.getElementById('resultText').style.fontSize = fontSize + 'px';
+                    }
                 }
             };
         }
@@ -1413,10 +1671,12 @@
                     const jsonMatch = text.match(/\{[\s\S]*\}/);
                     result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
                 } catch (e) {
+                    // لو مش JSON، نعمله كـ تلخيص عادي
                     result = {
                         head: 'ملخص الملف',
                         raw: ['تم إنشاء الملخص بنجاح'],
-                        page: text.replace(/\\n/g, '\n').replace(/\\/g, '')
+                        page: text.replace(/\\n/g, '\n').replace(/\\/g, ''),
+                        laws: 'لا يوجد قوانين في هذا الملف'
                     };
                 }
                 
@@ -1425,7 +1685,7 @@
                 userCoins -= fileInfo.cost;
                 document.getElementById('coinsCount').textContent = userCoins;
                 
-                // حفظ في السجلات - استخدام push لإنشاء مفتاح فريد
+                // حفظ في السجلات
                 const newRecordRef = database.ref('records').push();
                 await newRecordRef.set({
                     userId: currentUser.id,
@@ -1434,30 +1694,13 @@
                     cost: fileInfo.cost,
                     timestamp: Date.now(),
                     settings: { ...currentSettings },
-                    data: {
-                        head: result.head || 'ملخص الملف',
-                        raw: result.raw || [],
-                        page: result.page || ''
-                    }
+                    data: result
                 });
                 
                 console.log('تم حفظ السجل بنجاح:', newRecordRef.key);
                 
                 // عرض النتائج
-                document.getElementById('resultHead').textContent = result.head || 'ملخص الملف';
-                document.getElementById('resultText').innerHTML = formatContent(result.page || '');
-                document.getElementById('resultText').style.fontSize = fontSize + 'px';
-                
-                const pointsList = document.getElementById('pointsList');
-                pointsList.innerHTML = '';
-                
-                if (result.raw && Array.isArray(result.raw)) {
-                    result.raw.forEach(point => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
-                        pointsList.appendChild(li);
-                    });
-                }
+                displayResults(result);
                 
                 document.getElementById('settingsSection').style.display = 'none';
                 document.getElementById('resultSection').classList.add('show');
