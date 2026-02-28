@@ -1259,6 +1259,8 @@
             const codesSection = document.getElementById('codesSection');
             const fontControls = document.getElementById('fontControls');
             
+            console.log('Displaying results:', result); // للتتبع
+            
             // تحديث اتجاه الصفحة حسب اللغة
             document.body.setAttribute('dir', currentSettings.language === 'انجليزي' ? 'ltr' : 'rtl');
             
@@ -1927,20 +1929,57 @@
                 const text = await response.text();
                 console.log('Raw response:', text); // للتتبع
                 
+                // محاولة استخراج JSON من النص
                 let result;
                 try {
+                    // البحث عن JSON في النص
                     const jsonMatch = text.match(/\{[\s\S]*\}/);
-                    result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
-                    console.log('Parsed result:', result); // للتتبع
+                    if (jsonMatch) {
+                        result = JSON.parse(jsonMatch[0]);
+                    } else {
+                        // إذا لم نجد JSON، نستخدم النص كاملًا كملخص عادي
+                        result = {
+                            head: 'ملخص الملف',
+                            raw: ['تم إنشاء الملخص بنجاح'],
+                            page: text,
+                            laws: '',
+                            codes: []
+                        };
+                    }
                 } catch (e) {
                     console.error('JSON parse error:', e);
+                    // في حالة فشل التحليل، نستخدم النص كاملًا
                     result = {
                         head: 'ملخص الملف',
                         raw: ['تم إنشاء الملخص بنجاح'],
-                        page: text.replace(/\\n/g, '\n').replace(/\\/g, ''),
+                        page: text,
                         laws: '',
                         codes: []
                     };
+                }
+                
+                console.log('Parsed result:', result); // للتتبع
+                
+                // التحقق من وجود بيانات في النتيجة
+                if (currentSettings.format === 'اسئلة') {
+                    let hasData = false;
+                    for (let i = 1; i <= 10; i++) {
+                        if (result[`h${i}`] && result[`s${i}`]) {
+                            hasData = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!hasData && result.page) {
+                        // إذا لم نجد بيانات structured ولكن يوجد نص، نحاول تحويل النص
+                        const lines = result.page.split('\n').filter(l => l.trim());
+                        for (let i = 0; i < lines.length; i += 2) {
+                            if (i + 1 < lines.length) {
+                                result[`h${Math.floor(i/2)+1}`] = lines[i];
+                                result[`s${Math.floor(i/2)+1}`] = lines[i+1];
+                            }
+                        }
+                    }
                 }
                 
                 // خصم الرصيد
