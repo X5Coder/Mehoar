@@ -652,7 +652,7 @@
             color: var(--text);
         }
         
-        /* قسم القوانين والأكواد */
+        /* قسم القوانين والأكواد - يظهر فقط في التلخيص العادي */
         .laws-section, .codes-section {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -1048,13 +1048,13 @@
                 <ul class="points-list" id="pointsList"></ul>
             </div>
 
-            <!-- قسم القوانين (يظهر في جميع أنواع التلخيص) -->
+            <!-- قسم القوانين (يظهر فقط في التلخيص العادي) -->
             <div class="laws-section" id="lawsSection" style="display: none;">
                 <h3 class="laws-title"><i class="fas fa-gavel"></i> القوانين والصيغ الرياضية</h3>
                 <div class="laws-content" id="lawsContent"></div>
             </div>
 
-            <!-- قسم الأكواد (يظهر في جميع أنواع التلخيص) -->
+            <!-- قسم الأكواد (يظهر فقط في التلخيص العادي) -->
             <div class="codes-section" id="codesSection" style="display: none;">
                 <h3 class="codes-title"><i class="fas fa-code"></i> الأكواد البرمجية</h3>
                 <div id="codesContent"></div>
@@ -1149,17 +1149,13 @@
 
         // ========== إنشاء البرومبت حسب نوع التلخيص ==========
         function createPrompt() {
-            // تحديد عدد العناصر المطلوبة بناءً على طول الشرح وحجم الملف
-            const baseCount = currentSettings.length === 'طويل' ? 20 : 8;
-            const maxCount = currentSettings.length === 'طويل' ? 30 : 15;
+            // تحديد عدد العناصر المطلوبة بناءً على طول الشرح
+            const minItems = currentSettings.length === 'طويل' ? 20 : 10;
+            const maxItems = currentSettings.length === 'طويل' ? 35 : 20;
             
             const lengthDesc = currentSettings.length === 'طويل' 
-                ? 'طويل جداً وشامل' 
-                : 'مركز ومختصر لكنه شامل للمعلومات الأساسية';
-            
-            const itemRange = currentSettings.length === 'طويل'
-                ? '15 إلى 30 عنصراً'
-                : '8 إلى 15 عنصراً';
+                ? 'طويل جداً وشامل جداً يغطي كل التفاصيل والمعلومات' 
+                : 'مركز ومختصر لكنه يغطي جميع المعلومات الأساسية';
 
             // برومنت التلخيص العادي
             if (currentSettings.format === 'عادي') {
@@ -1172,22 +1168,21 @@
 - طول الشرح: ${currentSettings.length} (${lengthDesc})
 
 تعليمات مهمة جداً (التزم بها حرفياً):
-1. قم بتحليل الملف كاملاً صفحة بصفحة ولا تهمل أي جزء مهما كان صغيراً
-2. قدم تلخيصاً ${currentSettings.length === 'طويل' ? 'شاملاً جداً يغطي كل التفاصيل والمعلومات' : 'مركزاً لكنه يغطي جميع النقاط الأساسية'}
+1. قم بتحليل الملف كاملاً صفحة بصفحة ولا تهمل أي جزء
+2. قدم تلخيصاً ${currentSettings.length === 'طويل' ? 'شاملاً جداً يغطي كل التفاصيل (1000-2000 كلمة)' : 'مركزاً يغطي الأساسيات (300-600 كلمة)'}
 3. استخدم أسلوب شرح ${currentSettings.style} بشكل دقيق ومناسب لشخصية ${currentSettings.persona}
-4. اكتب بلغة ${currentSettings.language} سليمة 100% وخالية من الأخطاء
-5. استخرج 7-10 نقاط رئيسية تمثل جوهر المحتوى بدقة
+4. اكتب بلغة ${currentSettings.language} سليمة 100%
+5. استخرج 7-10 نقاط رئيسية تمثل جوهر المحتوى
 6. استخرج جميع القوانين والصيغ الرياضية والفيزيائية والكيميائية الموجودة في الملف
 7. استخرج جميع الأكواد البرمجية الموجودة في الملف مع تحديد لغة البرمجة
-8. تأكد من تغطية 100% من محتوى الملف دون فقدان أي جزء مهم
 
 يجب أن يكون الرد بصيغة JSON فقط:
 {
-  "head": "عنوان مختصر للملف (5-7 كلمات)",
-  "raw": ["النقطة الرئيسية 1", "النقطة الرئيسية 2", "النقطة الرئيسية 3", "النقطة الرئيسية 4", "النقطة الرئيسية 5", "النقطة الرئيسية 6", "النقطة الرئيسية 7"],
-  "page": "محتوى التلخيص الكامل والشامل هنا...",
-  "laws": "جميع القوانين والصيغ الرياضية الموجودة في الملف (إذا لم يوجد اكتب 'لا يوجد قوانين')",
-  "codes": ["الكود البرمجي الأول", "الكود البرمجي الثاني", "..."]
+  "head": "عنوان مختصر للملف",
+  "raw": ["نقطة 1", "نقطة 2", "نقطة 3", "نقطة 4", "نقطة 5", "نقطة 6", "نقطة 7"],
+  "page": "محتوى التلخيص الكامل...",
+  "laws": "جميع القوانين والصيغ الرياضية",
+  "codes": ["كود 1", "كود 2"]
 }`;
             }
             
@@ -1202,49 +1197,44 @@
 - طول الشرح: ${currentSettings.length} (${lengthDesc})
 
 تعليمات مهمة جداً (التزم بها حرفياً):
-1. اقرأ الملف كاملاً بتركيز شديد صفحة بصفحة
-2. استخرج ${itemRange} من المفاهيم حسب حجم الملف
-3. كل مفهوم يجب أن يأخذ رقم تسلسلي (h1, h2, h3, ... حتى h30)
-4. كل مفهوم يجب أن يقابله شرح مفصل ودقيق (s1, s2, s3, ... حتى s30)
-5. استخدم أسلوب شرح ${currentSettings.style} مع شخصية ${currentSettings.persona}
-6. استخدم لغة ${currentSettings.language} سليمة
-7. استخرج 7-10 نقاط رئيسية تمثل جوهر المحتوى
-8. استخرج جميع القوانين والصيغ الرياضية وضعها في قسم laws
-9. استخرج جميع الأكواد البرمجية وضعها في مصفوفة codes
-10. غطِّ الملف بالكامل دون إهمال أي مفهوم مهم
+1. اقرأ الملف كاملاً بتركيز شديد
+2. استخرج ${minItems}-${maxItems} مفهوم من الملف حسب حجمه
+3. كل مفهوم يأخذ h1, h2, h3, ... وشرحه s1, s2, s3, ...
+4. استخدم أسلوب شرح ${currentSettings.style} مع شخصية ${currentSettings.persona}
+5. استخدم لغة ${currentSettings.language} سليمة
+6. استخرج 7-10 نقاط رئيسية
+7. لا تخرج أي قوانين أو أكواد - فقط المفاهيم
 
 يجب أن يكون الرد بصيغة JSON فقط:
 {
-  "head": "عنوان مختصر للملف (5-7 كلمات)",
-  "raw": ["النقطة 1", "النقطة 2", "النقطة 3", "النقطة 4", "النقطة 5", "النقطة 6", "النقطة 7"],
-  "h1": "المفهوم 1", "s1": "شرح المفهوم 1",
-  "h2": "المفهوم 2", "s2": "شرح المفهوم 2",
-  "h3": "المفهوم 3", "s3": "شرح المفهوم 3",
-  "h4": "المفهوم 4", "s4": "شرح المفهوم 4",
-  "h5": "المفهوم 5", "s5": "شرح المفهوم 5",
-  "h6": "المفهوم 6", "s6": "شرح المفهوم 6",
-  "h7": "المفهوم 7", "s7": "شرح المفهوم 7",
-  "h8": "المفهوم 8", "s8": "شرح المفهوم 8",
-  "h9": "المفهوم 9", "s9": "شرح المفهوم 9",
-  "h10": "المفهوم 10", "s10": "شرح المفهوم 10",
-  "h11": "المفهوم 11", "s11": "شرح المفهوم 11",
-  "h12": "المفهوم 12", "s12": "شرح المفهوم 12",
-  "h13": "المفهوم 13", "s13": "شرح المفهوم 13",
-  "h14": "المفهوم 14", "s14": "شرح المفهوم 14",
-  "h15": "المفهوم 15", "s15": "شرح المفهوم 15",
-  "h16": "المفهوم 16", "s16": "شرح المفهوم 16",
-  "h17": "المفهوم 17", "s17": "شرح المفهوم 17",
-  "h18": "المفهوم 18", "s18": "شرح المفهوم 18",
-  "h19": "المفهوم 19", "s19": "شرح المفهوم 19",
-  "h20": "المفهوم 20", "s20": "شرح المفهوم 20",
-  "laws": "جميع القوانين والصيغ الرياضية",
-  "codes": ["الكود 1", "الكود 2"]
+  "head": "عنوان مختصر للملف",
+  "raw": ["نقطة 1", "نقطة 2", "نقطة 3", "نقطة 4", "نقطة 5", "نقطة 6", "نقطة 7"],
+  "h1": "مفهوم 1", "s1": "شرح 1",
+  "h2": "مفهوم 2", "s2": "شرح 2",
+  "h3": "مفهوم 3", "s3": "شرح 3",
+  "h4": "مفهوم 4", "s4": "شرح 4",
+  "h5": "مفهوم 5", "s5": "شرح 5",
+  "h6": "مفهوم 6", "s6": "شرح 6",
+  "h7": "مفهوم 7", "s7": "شرح 7",
+  "h8": "مفهوم 8", "s8": "شرح 8",
+  "h9": "مفهوم 9", "s9": "شرح 9",
+  "h10": "مفهوم 10", "s10": "شرح 10",
+  "h11": "مفهوم 11", "s11": "شرح 11",
+  "h12": "مفهوم 12", "s12": "شرح 12",
+  "h13": "مفهوم 13", "s13": "شرح 13",
+  "h14": "مفهوم 14", "s14": "شرح 14",
+  "h15": "مفهوم 15", "s15": "شرح 15",
+  "h16": "مفهوم 16", "s16": "شرح 16",
+  "h17": "مفهوم 17", "s17": "شرح 17",
+  "h18": "مفهوم 18", "s18": "شرح 18",
+  "h19": "مفهوم 19", "s19": "شرح 19",
+  "h20": "مفهوم 20", "s20": "شرح 20"
 }`;
             }
             
             // برومنت جدول سؤال وجواب
             else {
-                return `قم بتحليل ملف PDF التالي واستخراج جميع الأسئلة والأجوبة منه بدقة:
+                return `قم بتحليل ملف PDF التالي واستخراج أهم الأسئلة والأجوبة منه بدقة:
 
 الإعدادات المطلوبة (يجب الالتزام بها بدقة):
 - شخصية الشارح: ${currentSettings.persona}
@@ -1253,43 +1243,38 @@
 - طول الشرح: ${currentSettings.length} (${lengthDesc})
 
 تعليمات مهمة جداً (التزم بها حرفياً):
-1. اقرأ الملف كاملاً بتركيز شديد صفحة بصفحة
-2. استخرج ${itemRange} من الأسئلة والأجوبة حسب حجم الملف
-3. كل سؤال يجب أن يأخذ رقم تسلسلي (h1, h2, h3, ... حتى h30)
-4. كل سؤال يجب أن يقابله إجابة مفصلة ودقيقة (s1, s2, s3, ... حتى s30)
-5. استخدم أسلوب شرح ${currentSettings.style} مع شخصية ${currentSettings.persona}
-6. استخدم لغة ${currentSettings.language} سليمة
-7. استخرج 7-10 نقاط رئيسية تمثل جوهر المحتوى
-8. استخرج جميع القوانين والصيغ الرياضية وضعها في قسم laws
-9. استخرج جميع الأكواد البرمجية وضعها في مصفوفة codes
-10. غطِّ الملف بالكامل دون إهمال أي سؤال مهم
+1. اقرأ الملف كاملاً بتركيز شديد
+2. استخرج ${minItems}-${maxItems} سؤال وجواب من الملف حسب حجمه
+3. كل سؤال يأخذ h1, h2, h3, ... وإجابته s1, s2, s3, ...
+4. استخدم أسلوب شرح ${currentSettings.style} مع شخصية ${currentSettings.persona}
+5. استخدم لغة ${currentSettings.language} سليمة
+6. استخرج 7-10 نقاط رئيسية
+7. لا تخرج أي قوانين أو أكواد - فقط الأسئلة والأجوبة
 
 يجب أن يكون الرد بصيغة JSON فقط:
 {
-  "head": "عنوان مختصر للملف (5-7 كلمات)",
-  "raw": ["النقطة 1", "النقطة 2", "النقطة 3", "النقطة 4", "النقطة 5", "النقطة 6", "النقطة 7"],
-  "h1": "السؤال 1", "s1": "إجابة السؤال 1",
-  "h2": "السؤال 2", "s2": "إجابة السؤال 2",
-  "h3": "السؤال 3", "s3": "إجابة السؤال 3",
-  "h4": "السؤال 4", "s4": "إجابة السؤال 4",
-  "h5": "السؤال 5", "s5": "إجابة السؤال 5",
-  "h6": "السؤال 6", "s6": "إجابة السؤال 6",
-  "h7": "السؤال 7", "s7": "إجابة السؤال 7",
-  "h8": "السؤال 8", "s8": "إجابة السؤال 8",
-  "h9": "السؤال 9", "s9": "إجابة السؤال 9",
-  "h10": "السؤال 10", "s10": "إجابة السؤال 10",
-  "h11": "السؤال 11", "s11": "إجابة السؤال 11",
-  "h12": "السؤال 12", "s12": "إجابة السؤال 12",
-  "h13": "السؤال 13", "s13": "إجابة السؤال 13",
-  "h14": "السؤال 14", "s14": "إجابة السؤال 14",
-  "h15": "السؤال 15", "s15": "إجابة السؤال 15",
-  "h16": "السؤال 16", "s16": "إجابة السؤال 16",
-  "h17": "السؤال 17", "s17": "إجابة السؤال 17",
-  "h18": "السؤال 18", "s18": "إجابة السؤال 18",
-  "h19": "السؤال 19", "s19": "إجابة السؤال 19",
-  "h20": "السؤال 20", "s20": "إجابة السؤال 20",
-  "laws": "جميع القوانين والصيغ الرياضية",
-  "codes": ["الكود 1", "الكود 2"]
+  "head": "عنوان مختصر للملف",
+  "raw": ["نقطة 1", "نقطة 2", "نقطة 3", "نقطة 4", "نقطة 5", "نقطة 6", "نقطة 7"],
+  "h1": "سؤال 1", "s1": "إجابة 1",
+  "h2": "سؤال 2", "s2": "إجابة 2",
+  "h3": "سؤال 3", "s3": "إجابة 3",
+  "h4": "سؤال 4", "s4": "إجابة 4",
+  "h5": "سؤال 5", "s5": "إجابة 5",
+  "h6": "سؤال 6", "s6": "إجابة 6",
+  "h7": "سؤال 7", "s7": "إجابة 7",
+  "h8": "سؤال 8", "s8": "إجابة 8",
+  "h9": "سؤال 9", "s9": "إجابة 9",
+  "h10": "سؤال 10", "s10": "إجابة 10",
+  "h11": "سؤال 11", "s11": "إجابة 11",
+  "h12": "سؤال 12", "s12": "إجابة 12",
+  "h13": "سؤال 13", "s13": "إجابة 13",
+  "h14": "سؤال 14", "s14": "إجابة 14",
+  "h15": "سؤال 15", "s15": "إجابة 15",
+  "h16": "سؤال 16", "s16": "إجابة 16",
+  "h17": "سؤال 17", "s17": "إجابة 17",
+  "h18": "سؤال 18", "s18": "إجابة 18",
+  "h19": "سؤال 19", "s19": "إجابة 19",
+  "h20": "سؤال 20", "s20": "إجابة 20"
 }`;
             }
         }
@@ -1303,11 +1288,7 @@
             const fontControls = document.getElementById('fontControls');
             
             // تحديث اتجاه الصفحة حسب اللغة
-            if (currentSettings.language === 'انجليزي') {
-                document.body.setAttribute('dir', 'ltr');
-            } else {
-                document.body.setAttribute('dir', 'rtl');
-            }
+            document.body.setAttribute('dir', currentSettings.language === 'انجليزي' ? 'ltr' : 'rtl');
             
             // إظهار/إخفاء أزرار حجم الخط
             if (currentSettings.format === 'عادي') {
@@ -1323,7 +1304,7 @@
             pointsList.innerHTML = '';
             if (result.raw && Array.isArray(result.raw)) {
                 result.raw.forEach(point => {
-                    if (point) {
+                    if (point && point.trim()) {
                         const li = document.createElement('li');
                         li.innerHTML = `<i class="fas fa-check-circle" style="color: var(--success);"></i> ${point}`;
                         pointsList.appendChild(li);
@@ -1346,13 +1327,14 @@
                 `;
                 
                 let hasConcepts = false;
-                for (let i = 1; i <= 30; i++) {
-                    if (result[`h${i}`] && result[`s${i}`]) {
+                for (let i = 1; i <= 35; i++) {
+                    if (result[`h${i}`] && result[`s${i}`] && 
+                        result[`h${i}`].trim() && result[`s${i}`].trim()) {
                         hasConcepts = true;
                         tableHTML += `
                             <tr>
-                                <td class="concept-term" data-label="${currentSettings.language === 'انجليزي' ? 'Concept' : 'المفهوم'}">${result[`h${i}`]}</td>
-                                <td class="concept-def" data-label="${currentSettings.language === 'انجليزي' ? 'Explanation' : 'الشرح'}">${result[`s${i}`]}</td>
+                                <td class="concept-term">${result[`h${i}`]}</td>
+                                <td class="concept-def">${result[`s${i}`]}</td>
                             </tr>
                         `;
                     }
@@ -1370,6 +1352,10 @@
                 
                 tableHTML += `</tbody></table></div>`;
                 resultContent.innerHTML = tableHTML;
+                
+                // إخفاء أقسام القوانين والأكواد في الجداول
+                lawsSection.style.display = 'none';
+                codesSection.style.display = 'none';
             }
             
             else if (currentSettings.format === 'اسئلة') {
@@ -1386,13 +1372,14 @@
                 `;
                 
                 let hasQA = false;
-                for (let i = 1; i <= 30; i++) {
-                    if (result[`h${i}`] && result[`s${i}`]) {
+                for (let i = 1; i <= 35; i++) {
+                    if (result[`h${i}`] && result[`s${i}`] &&
+                        result[`h${i}`].trim() && result[`s${i}`].trim()) {
                         hasQA = true;
                         tableHTML += `
                             <tr>
-                                <td class="qa-question" data-label="${currentSettings.language === 'انجليزي' ? 'Question' : 'السؤال'}">${result[`h${i}`]}</td>
-                                <td class="qa-answer" data-label="${currentSettings.language === 'انجليزي' ? 'Answer' : 'الجواب'}">${result[`s${i}`]}</td>
+                                <td class="qa-question">${result[`h${i}`]}</td>
+                                <td class="qa-answer">${result[`s${i}`]}</td>
                             </tr>
                         `;
                     }
@@ -1410,6 +1397,10 @@
                 
                 tableHTML += `</tbody></table></div>`;
                 resultContent.innerHTML = tableHTML;
+                
+                // إخفاء أقسام القوانين والأكواد في الجداول
+                lawsSection.style.display = 'none';
+                codesSection.style.display = 'none';
             }
             
             else {
@@ -1417,44 +1408,58 @@
                 resultContent.innerHTML = `<div class="result-text" id="resultText">${formatContent(result.page || '')}</div>`;
                 const resultText = document.getElementById('resultText');
                 if (resultText) resultText.style.fontSize = fontSize + 'px';
-            }
-            
-            // عرض قسم القوانين (في جميع الحالات)
-            if (result.laws && result.laws !== 'لا يوجد قوانين' && result.laws !== 'No laws') {
-                lawsSection.style.display = 'block';
-                document.getElementById('lawsContent').textContent = result.laws;
-            } else {
-                lawsSection.style.display = 'none';
-            }
-            
-            // عرض قسم الأكواد (في جميع الحالات)
-            if (result.codes && Array.isArray(result.codes) && result.codes.length > 0) {
-                codesSection.style.display = 'block';
-                const codesContent = document.getElementById('codesContent');
-                codesContent.innerHTML = '';
                 
-                result.codes.forEach((code, index) => {
-                    if (code && code !== 'لا يوجد أكواد' && code !== 'No codes') {
-                        const codeBlock = document.createElement('div');
-                        codeBlock.className = 'code-block';
-                        codeBlock.innerHTML = `
-                            <button class="copy-code-btn" onclick="copyCode(this, ${index})">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                            <pre><code>${escapeHtml(code)}</code></pre>
-                        `;
-                        codesContent.appendChild(codeBlock);
+                // عرض القوانين في التلخيص العادي فقط
+                if (result.laws && result.laws.trim() && 
+                    result.laws !== 'لا يوجد قوانين' && 
+                    result.laws !== 'No laws' &&
+                    result.laws !== 'لا يوجد') {
+                    lawsSection.style.display = 'block';
+                    document.getElementById('lawsContent').textContent = result.laws;
+                } else {
+                    lawsSection.style.display = 'none';
+                }
+                
+                // عرض الأكواد في التلخيص العادي فقط
+                if (result.codes && Array.isArray(result.codes) && result.codes.length > 0) {
+                    const validCodes = result.codes.filter(code => 
+                        code && code.trim() && 
+                        code !== 'لا يوجد أكواد' && 
+                        code !== 'No codes'
+                    );
+                    
+                    if (validCodes.length > 0) {
+                        codesSection.style.display = 'block';
+                        const codesContent = document.getElementById('codesContent');
+                        codesContent.innerHTML = '';
+                        
+                        validCodes.forEach((code, index) => {
+                            const codeBlock = document.createElement('div');
+                            codeBlock.className = 'code-block';
+                            codeBlock.innerHTML = `
+                                <button class="copy-code-btn" onclick="copyCode(this, ${index})">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <pre><code>${escapeHtml(code)}</code></pre>
+                            `;
+                            codesContent.appendChild(codeBlock);
+                        });
+                    } else {
+                        codesSection.style.display = 'none';
                     }
-                });
-            } else {
-                codesSection.style.display = 'none';
+                } else {
+                    codesSection.style.display = 'none';
+                }
             }
         }
 
         // ========== دوال النسخ ==========
         window.copyResult = function() {
             let contentToCopy = '';
-            const points = Array.from(document.querySelectorAll('#pointsList li')).map(li => li.textContent.trim()).join('\n');
+            const points = Array.from(document.querySelectorAll('#pointsList li'))
+                .map(li => li.textContent.trim())
+                .filter(p => p)
+                .join('\n');
             
             if (currentSettings.format === 'مفاهيم') {
                 const rows = document.querySelectorAll('.concepts-table tbody tr');
@@ -1485,12 +1490,16 @@
             else {
                 const resultText = document.getElementById('resultText')?.textContent.trim() || '';
                 const laws = document.getElementById('lawsContent')?.textContent.trim() || '';
-                const codes = Array.from(document.querySelectorAll('#codesContent code')).map(code => code.textContent.trim()).join('\n\n---\n\n');
+                const codes = Array.from(document.querySelectorAll('#codesContent code'))
+                    .map(code => code.textContent.trim())
+                    .join('\n\n---\n\n');
                 
                 contentToCopy = `${currentSettings.language === 'انجليزي' ? 'Key Points:\n' : 'النقاط الرئيسية:\n'}${points}\n\n${currentSettings.language === 'انجليزي' ? 'Details:\n' : 'التفاصيل:\n'}${resultText}`;
+                
                 if (laws && laws !== 'لا يوجد قوانين' && laws !== 'No laws') {
                     contentToCopy += `\n\n${currentSettings.language === 'انجليزي' ? 'Laws:\n' : 'القوانين:\n'}${laws}`;
                 }
+                
                 if (codes) {
                     contentToCopy += `\n\n${currentSettings.language === 'انجليزي' ? 'Code Blocks:\n' : 'الأكواد البرمجية:\n'}${codes}`;
                 }
@@ -1505,7 +1514,7 @@
             }
         };
 
-        window.copyCode = function(btn, index) {
+        window.copyCode = function(btn) {
             const codeBlock = btn.closest('.code-block');
             const code = codeBlock.querySelector('code').textContent;
             navigator.clipboard.writeText(code).then(() => {
@@ -1927,12 +1936,11 @@
                     const jsonMatch = text.match(/\{[\s\S]*\}/);
                     result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
                 } catch (e) {
-                    // إذا فشل تحليل JSON، نستخدم النص كما هو
                     result = {
                         head: 'ملخص الملف',
                         raw: ['تم إنشاء الملخص بنجاح'],
                         page: text.replace(/\\n/g, '\n').replace(/\\/g, ''),
-                        laws: 'لا يوجد قوانين',
+                        laws: '',
                         codes: []
                     };
                 }
