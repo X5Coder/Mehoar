@@ -38,12 +38,33 @@
             --navbar: 70px;
         }
         
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Almarai', 'Tajawal', sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
             direction: rtl;
+        }
+        
+        body[dir="ltr"] {
+            direction: ltr;
+            text-align: left;
+        }
+        
+        body[dir="ltr"] .navbar,
+        body[dir="ltr"] .card-title,
+        body[dir="ltr"] .card-subtitle,
+        body[dir="ltr"] .setting-title,
+        body[dir="ltr"] .result-title,
+        body[dir="ltr"] .key-points h3,
+        body[dir="ltr"] .laws-title {
+            text-align: left;
         }
         
         /* شاشة التحميل */
@@ -306,7 +327,7 @@
         .option-btn:hover { border-color: var(--primary); }
         .option-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
         
-        /* نافذة السجلات المحسنة */
+        /* نافذة السجلات */
         .modal {
             position: fixed;
             inset: 0;
@@ -377,7 +398,7 @@
             flex: 1;
         }
         
-        /* قائمة السجلات المحسنة */
+        /* قائمة السجلات */
         .records-list {
             display: flex;
             flex-direction: column;
@@ -481,6 +502,13 @@
             font-weight: 800;
             color: var(--primary);
             word-break: break-word;
+            flex: 1;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
         }
         
         .font-controls {
@@ -490,6 +518,10 @@
             background: rgba(139, 115, 85, 0.05);
             padding: 0.3rem 0.8rem;
             border-radius: 30px;
+        }
+        
+        .font-controls.hidden {
+            display: none;
         }
         
         .font-btn {
@@ -509,6 +541,25 @@
             color: white;
         }
         
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .copy-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+        
         .result-content {
             padding: 2rem;
             background: #FAFAFA;
@@ -525,15 +576,19 @@
             word-wrap: break-word;
         }
         
-        /* أنماط الجداول الجديدة */
+        /* أنماط الجداول المحسنة */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        
         .concepts-table, .qa-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 1rem 0;
             background: white;
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
+            min-width: 600px;
         }
         
         .concepts-table th, .qa-table th {
@@ -542,11 +597,13 @@
             padding: 1rem;
             font-weight: 700;
             text-align: center;
+            position: sticky;
+            top: 0;
         }
         
         .concepts-table td, .qa-table td {
             padding: 1rem;
-            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
+            border-bottom: 2px solid rgba(139, 115, 85, 0.2);
         }
         
         .concepts-table tr:last-child td, .qa-table tr:last-child td {
@@ -554,13 +611,25 @@
         }
         
         .concepts-table tr:hover, .qa-table tr:hover {
-            background: rgba(139, 115, 85, 0.02);
+            background: rgba(139, 115, 85, 0.05);
+        }
+        
+        /* عكس اتجاه الجدول للإنجليزي */
+        body[dir="ltr"] .concepts-table th:first-child,
+        body[dir="ltr"] .qa-table th:first-child {
+            text-align: left;
+        }
+        
+        body[dir="ltr"] .concepts-table td:first-child,
+        body[dir="ltr"] .qa-table td:first-child {
+            text-align: left;
         }
         
         .concept-term {
             font-weight: 700;
             color: var(--primary);
             width: 40%;
+            background: rgba(139, 115, 85, 0.02);
         }
         
         .concept-def {
@@ -571,6 +640,7 @@
             font-weight: 700;
             color: var(--primary);
             width: 40%;
+            background: rgba(139, 115, 85, 0.02);
         }
         
         .qa-answer {
@@ -606,47 +676,59 @@
             text-align: left;
         }
         
-        /* استجابة الجداول للهواتف */
-        @media (max-width: 768px) {
-            .concepts-table, .qa-table {
-                display: block;
-            }
-            
-            .concepts-table thead, .qa-table thead {
-                display: none;
-            }
-            
-            .concepts-table tbody, .qa-table tbody {
-                display: block;
-            }
-            
-            .concepts-table tr, .qa-table tr {
-                display: block;
-                margin-bottom: 1rem;
-                border: 1px solid rgba(139, 115, 85, 0.1);
-                border-radius: var(--radius);
-                padding: 0.5rem;
-            }
-            
-            .concepts-table td, .qa-table td {
-                display: block;
-                padding: 0.5rem;
-                border: none;
-                text-align: right;
-            }
-            
-            .concepts-table td:before, .qa-table td:before {
-                content: attr(data-label);
-                font-weight: 700;
-                color: var(--primary);
-                display: inline-block;
-                width: 100px;
-                margin-left: 1rem;
-            }
-            
-            .concept-term, .qa-question {
-                width: auto;
-            }
+        /* قسم الأكواد */
+        .codes-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(139, 115, 85, 0.03);
+            border-radius: var(--radius);
+            border: 1px solid rgba(139, 115, 85, 0.1);
+        }
+        
+        .codes-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+            text-align: left;
+            position: relative;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+        
+        .copy-code-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.3rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        
+        .copy-code-btn:hover {
+            background: var(--primary-dark);
         }
         
         .key-points {
@@ -680,6 +762,28 @@
             gap: 0.8rem;
         }
         
+        body[dir="ltr"] .points-list li {
+            border-right: none;
+            border-left: 5px solid var(--primary);
+        }
+        
+        /* استجابة الجداول للهواتف */
+        @media (max-width: 768px) {
+            .table-wrapper {
+                margin: 1rem -0.5rem;
+                width: calc(100% + 1rem);
+            }
+            
+            .concepts-table, .qa-table {
+                font-size: 0.9rem;
+            }
+            
+            .concepts-table th, .qa-table th,
+            .concepts-table td, .qa-table td {
+                padding: 0.8rem;
+            }
+        }
+        
         /* الإشعارات */
         .notifications {
             position: fixed;
@@ -710,6 +814,10 @@
         .notification.success { border-right: 4px solid var(--success); }
         .notification.error { border-right: 4px solid var(--error); }
         .notification.warning { border-right: 4px solid var(--warning); }
+        
+        body[dir="ltr"] .notification.success { border-right: none; border-left: 4px solid var(--success); }
+        body[dir="ltr"] .notification.error { border-right: none; border-left: 4px solid var(--error); }
+        body[dir="ltr"] .notification.warning { border-right: none; border-left: 4px solid var(--warning); }
         
         .notification-content {
             display: flex;
@@ -800,7 +908,7 @@
     <!-- الإشعارات -->
     <div class="notifications" id="notifications"></div>
 
-    <!-- نافذة السجلات المحسنة -->
+    <!-- نافذة السجلات -->
     <div class="modal" id="recordsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -909,7 +1017,6 @@
                     </div>
                 </div>
                 
-                <!-- قسم شكل التلخيص الجديد -->
                 <div class="setting-group">
                     <h3 class="setting-title"><i class="fas fa-table"></i> شكل التلخيص</h3>
                     <div class="options-grid" id="formatOptions">
@@ -929,10 +1036,15 @@
         <section class="result-section" id="resultSection">
             <div class="result-header">
                 <h2 class="result-title" id="resultHead">ملخص الملف</h2>
-                <div class="font-controls">
-                    <button class="font-btn" id="decreaseFont">-</button>
-                    <span style="color: var(--primary); font-weight: 600;">حجم الخط</span>
-                    <button class="font-btn" id="increaseFont">+</button>
+                <div class="header-actions">
+                    <button class="copy-btn" id="copyAllBtn" title="نسخ الكل">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <div class="font-controls" id="fontControls">
+                        <button class="font-btn" id="decreaseFont">-</button>
+                        <span style="color: var(--primary); font-weight: 600;">حجم الخط</span>
+                        <button class="font-btn" id="increaseFont">+</button>
+                    </div>
                 </div>
             </div>
             
@@ -945,10 +1057,16 @@
                 <ul class="points-list" id="pointsList"></ul>
             </div>
 
-            <!-- قسم القوانين (هيظهر بس في التلخيص العادي) -->
+            <!-- قسم القوانين -->
             <div class="laws-section" id="lawsSection" style="display: none;">
                 <h3 class="laws-title"><i class="fas fa-gavel"></i> القوانين والصيغ الرياضية</h3>
                 <div class="laws-content" id="lawsContent"></div>
+            </div>
+
+            <!-- قسم الأكواد -->
+            <div class="codes-section" id="codesSection" style="display: none;">
+                <h3 class="codes-title"><i class="fas fa-code"></i> الأكواد البرمجية</h3>
+                <div id="codesContent"></div>
             </div>
         </section>
         
@@ -994,7 +1112,7 @@
             language: 'عربي',
             style: 'بسيط',
             length: 'طويل',
-            format: 'عادي' // القيمة الجديدة
+            format: 'عادي'
         };
         let fontSize = 16;
 
@@ -1038,108 +1156,115 @@
             }, duration);
         }
 
-        // ========== إنشاء البرومبت حسب نوع التلخيص ==========
+        // ========== تحديث اتجاه الصفحة حسب اللغة ==========
+        function updatePageDirection() {
+            if (currentSettings.language === 'انجليزي') {
+                document.body.dir = 'ltr';
+                document.documentElement.lang = 'en';
+            } else {
+                document.body.dir = 'rtl';
+                document.documentElement.lang = 'ar';
+            }
+        }
+
+        // ========== إنشاء البرومبت المحسن حسب نوع التلخيص ==========
         function createPrompt() {
             const lengthInstructions = {
-                طويل: 'قدم تلخيصاً طويلاً وشاملاً جداً يغطي كل التفاصيل والمعلومات المهمة',
-                قصير: 'قدم تلخيصاً قصيراً ومختصراً جداً يركز فقط على النقاط الأساسية'
+                طويل: 'قدم تلخيصاً طويلاً وشاملاً جداً يغطي كل التفاصيل والمعلومات المهمة. استخرج 15 مفهوم/سؤال على الأقل إذا كان المحتوى يسمح بذلك.',
+                قصير: 'قدم تلخيصاً موجزاً مع الحفاظ على المعلومات الأساسية. استخرج 5-7 مفاهيم/أسئلة رئيسية فقط.'
             };
 
-            // برومبت التلخيص العادي (كما هو)
+            const baseInstructions = `
+تعليمات صارمة يجب الالتزام بها:
+1. اقرأ الملف كاملاً من أول صفحة لآخر صفحة بدقة
+2. استخرج جميع المعلومات المهمة بحيث يغني هذا التلخيص عن قراءة الملف الأصلي
+3. التزم تماماً بشخصية الشارح: ${currentSettings.persona} (استخدم أسلوب شرح مناسب لهذه الشخصية)
+4. اكتب بلغة ${currentSettings.language} سليمة وخالية من الأخطاء
+5. اجعل أسلوب الشرح: ${currentSettings.style}
+6. ${lengthInstructions[currentSettings.length]}
+7. كن دقيقاً وصادقاً في استخراج المعلومات من الملف
+8. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
+9. استخرج أي قوانين رياضية أو فيزيائية أو كيميائية أو أي نوع من القوانين الموجودة في الملف
+10. استخرج أي أكواد برمجية موجودة في الملف مع الحفاظ على تنسيقها الأصلي
+`;
+
+            // برومبت التلخيص العادي
             if (currentSettings.format === 'عادي') {
-                return `قم بتلخيص ملف PDF التالي بدقة:
+                return baseInstructions + `
 
-الإعدادات المطلوبة:
-- شخصية الشارح: ${currentSettings.persona}
-- لغة الإخراج: ${currentSettings.language}
-- أسلوب الشرح: ${currentSettings.style}
-- طول الشرح: ${currentSettings.length}
-
-تعليمات مهمة:
-1. ${lengthInstructions[currentSettings.length]}
-2. استخدم أسلوب شرح مناسب لشخصية ${currentSettings.persona}
-3. اكتب بلغة ${currentSettings.language} سليمة
-4. اجعل الأسلوب ${currentSettings.style}
-5. حلل الملف كاملاً من أول صفحة لآخر صفحة
-6. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
-7. في نهاية التلخيص، أضف قسم خاص بعنوان "القوانين والصيغ الرياضية" يحتوي على أي قوانين أو معادلات أو صيغ رياضية موجودة في الملف كما هي تماماً. إذا لم يوجد أي قوانين، اكتب "لا يوجد قوانين في هذا الملف"
-
-يجب أن يكون الرد بصيغة JSON فقط:
+يجب أن يكون الرد بصيغة JSON فقط بهذا الشكل:
 {
   "head": "عنوان مختصر للملف (5-7 كلمات)",
-  "raw": ["النقطة الأولى", "النقطة الثانية", "النقطة الثالثة"],
+  "raw": ["النقطة الرئيسية الأولى", "النقطة الرئيسية الثانية", "النقطة الرئيسية الثالثة"],
   "page": "محتوى التلخيص الكامل هنا...",
-  "laws": "القوانين والصيغ الرياضية الموجودة في الملف (أو 'لا يوجد قوانين في هذا الملف')"
+  "laws": "جميع القوانين والصيغ الرياضية الموجودة في الملف (أو 'لا يوجد قوانين في هذا الملف')",
+  "codes": ["الكود البرمجي الأول", "الكود البرمجي الثاني"] // مصفوفة من الأكواد أو [] إذا لم يوجد
 }`;
             }
             
             // برومبت جدول المفاهيم
             else if (currentSettings.format === 'مفاهيم') {
-                return `قم بتحليل ملف PDF التالي واستخراج أهم المفاهيم منه:
-
-الإعدادات المطلوبة:
-- شخصية الشارح: ${currentSettings.persona}
-- لغة الإخراج: ${currentSettings.language}
-- أسلوب الشرح: ${currentSettings.style}
-- طول الشرح: ${currentSettings.length}
-
-تعليمات مهمة:
-1. اقرأ الملف كاملاً بتركيز
-2. استخرج أهم 5-10 مفاهيم من الملف
-3. كل مفهوم يجب أن يأخذ رقم تسلسلي (h1, h2, h3, ...)
-4. كل مفهوم يجب أن يقابله شرح أو تعريف (s1, s2, s3, ...)
-5. استخدم لغة ${currentSettings.language} سليمة
-6. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
+                const count = currentSettings.length === 'طويل' ? 15 : 7;
+                return baseInstructions + `
+تعليمات إضافية للجدول:
+- استخرج ${count}+ مفهوم من الملف
+- كل مفهوم يجب أن يأخذ رقم تسلسلي (h1, h2, h3, ...)
+- كل مفهوم يجب أن يقابله شرح مفصل (s1, s2, s3, ...)
 
 يجب أن يكون الرد بصيغة JSON فقط:
 {
   "head": "عنوان مختصر للملف (5-7 كلمات)",
-  "raw": ["النقطة الأولى", "النقطة الثانية", "النقطة الثالثة"],
-  "h1": "المفهوم الأول",
-  "s1": "شرح وتعريف المفهوم الأول",
-  "h2": "المفهوم الثاني",
-  "s2": "شرح وتعريف المفهوم الثاني",
-  "h3": "المفهوم الثالث",
-  "s3": "شرح وتعريف المفهوم الثالث",
-  "h4": "المفهوم الرابع",
-  "s4": "شرح وتعريف المفهوم الرابع",
-  "h5": "المفهوم الخامس",
-  "s5": "شرح وتعريف المفهوم الخامس"
+  "raw": ["النقطة الرئيسية الأولى", "النقطة الرئيسية الثانية", "النقطة الرئيسية الثالثة"],
+  "laws": "جميع القوانين والصيغ الرياضية",
+  "codes": ["الكود البرمجي الأول", "الكود البرمجي الثاني"],
+  "h1": "المفهوم الأول", "s1": "شرح المفهوم الأول",
+  "h2": "المفهوم الثاني", "s2": "شرح المفهوم الثاني",
+  "h3": "المفهوم الثالث", "s3": "شرح المفهوم الثالث",
+  "h4": "المفهوم الرابع", "s4": "شرح المفهوم الرابع",
+  "h5": "المفهوم الخامس", "s5": "شرح المفهوم الخامس",
+  "h6": "المفهوم السادس", "s6": "شرح المفهوم السادس",
+  "h7": "المفهوم السابع", "s7": "شرح المفهوم السابع",
+  "h8": "المفهوم الثامن", "s8": "شرح المفهوم الثامن",
+  "h9": "المفهوم التاسع", "s9": "شرح المفهوم التاسع",
+  "h10": "المفهوم العاشر", "s10": "شرح المفهوم العاشر",
+  "h11": "المفهوم الحادي عشر", "s11": "شرح المفهوم الحادي عشر",
+  "h12": "المفهوم الثاني عشر", "s12": "شرح المفهوم الثاني عشر",
+  "h13": "المفهوم الثالث عشر", "s13": "شرح المفهوم الثالث عشر",
+  "h14": "المفهوم الرابع عشر", "s14": "شرح المفهوم الرابع عشر",
+  "h15": "المفهوم الخامس عشر", "s15": "شرح المفهوم الخامس عشر"
 }`;
             }
             
             // برومبت جدول سؤال وجواب
-            else if (currentSettings.format === 'اسئلة') {
-                return `قم بتحليل ملف PDF التالي واستخراج أهم الأسئلة والأجوبة منه:
-
-الإعدادات المطلوبة:
-- شخصية الشارح: ${currentSettings.persona}
-- لغة الإخراج: ${currentSettings.language}
-- أسلوب الشرح: ${currentSettings.style}
-- طول الشرح: ${currentSettings.length}
-
-تعليمات مهمة:
-1. اقرأ الملف كاملاً بتركيز
-2. استخرج أهم 5-10 أسئلة وإجاباتها من الملف
-3. كل سؤال يجب أن يأخذ رقم تسلسلي (h1, h2, h3, ...)
-4. كل سؤال يجب أن يقابله إجابة (s1, s2, s3, ...)
-5. استخدم لغة ${currentSettings.language} سليمة
-6. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
+            else {
+                const count = currentSettings.length === 'طويل' ? 15 : 7;
+                return baseInstructions + `
+تعليمات إضافية للجدول:
+- استخرج ${count}+ سؤال وجواب من الملف
+- كل سؤال يجب أن يأخذ رقم تسلسلي (h1, h2, h3, ...)
+- كل سؤال يجب أن يقابله إجابة مفصلة (s1, s2, s3, ...)
 
 يجب أن يكون الرد بصيغة JSON فقط:
 {
   "head": "عنوان مختصر للملف (5-7 كلمات)",
-  "raw": ["النقطة الأولى", "النقطة الثانية", "النقطة الثالثة"],
-  "h1": "السؤال الأول",
-  "s1": "إجابة السؤال الأول",
-  "h2": "السؤال الثاني",
-  "s2": "إجابة السؤال الثاني",
-  "h3": "السؤال الثالث",
-  "s3": "إجابة السؤال الثالث",
-  "h4": "السؤال الرابع",
-  "s4": "إجابة السؤال الرابع",
-  "h5": "السؤال الخامس",
-  "s5": "إجابة السؤال الخامس"
+  "raw": ["النقطة الرئيسية الأولى", "النقطة الرئيسية الثانية", "النقطة الرئيسية الثالثة"],
+  "laws": "جميع القوانين والصيغ الرياضية",
+  "codes": ["الكود البرمجي الأول", "الكود البرمجي الثاني"],
+  "h1": "السؤال الأول", "s1": "إجابة السؤال الأول",
+  "h2": "السؤال الثاني", "s2": "إجابة السؤال الثاني",
+  "h3": "السؤال الثالث", "s3": "إجابة السؤال الثالث",
+  "h4": "السؤال الرابع", "s4": "إجابة السؤال الرابع",
+  "h5": "السؤال الخامس", "s5": "إجابة السؤال الخامس",
+  "h6": "السؤال السادس", "s6": "إجابة السؤال السادس",
+  "h7": "السؤال السابع", "s7": "إجابة السؤال السابع",
+  "h8": "السؤال الثامن", "s8": "إجابة السؤال الثامن",
+  "h9": "السؤال التاسع", "s9": "إجابة السؤال التاسع",
+  "h10": "السؤال العاشر", "s10": "إجابة السؤال العاشر",
+  "h11": "السؤال الحادي عشر", "s11": "إجابة السؤال الحادي عشر",
+  "h12": "السؤال الثاني عشر", "s12": "إجابة السؤال الثاني عشر",
+  "h13": "السؤال الثالث عشر", "s13": "إجابة السؤال الثالث عشر",
+  "h14": "السؤال الرابع عشر", "s14": "إجابة السؤال الرابع عشر",
+  "h15": "السؤال الخامس عشر", "s15": "إجابة السؤال الخامس عشر"
 }`;
             }
         }
@@ -1149,6 +1274,18 @@
             const resultContent = document.getElementById('resultContent');
             const pointsList = document.getElementById('pointsList');
             const lawsSection = document.getElementById('lawsSection');
+            const codesSection = document.getElementById('codesSection');
+            const fontControls = document.getElementById('fontControls');
+            
+            // تحديث اتجاه الصفحة حسب اللغة
+            updatePageDirection();
+            
+            // إخفاء/إظهار أزرار التحكم بالخط
+            if (currentSettings.format === 'عادي') {
+                fontControls.classList.remove('hidden');
+            } else {
+                fontControls.classList.add('hidden');
+            }
             
             // العنوان
             document.getElementById('resultHead').textContent = result.head || 'ملخص الملف';
@@ -1163,81 +1300,187 @@
                 });
             }
             
+            // عرض القوانين
+            if (result.laws && result.laws !== 'لا يوجد قوانين في هذا الملف') {
+                lawsSection.style.display = 'block';
+                document.getElementById('lawsContent').textContent = result.laws;
+            } else {
+                lawsSection.style.display = 'none';
+            }
+            
+            // عرض الأكواد
+            if (result.codes && Array.isArray(result.codes) && result.codes.length > 0) {
+                codesSection.style.display = 'block';
+                const codesContent = document.getElementById('codesContent');
+                codesContent.innerHTML = '';
+                
+                result.codes.forEach((code, index) => {
+                    const codeBlock = document.createElement('div');
+                    codeBlock.className = 'code-block';
+                    codeBlock.innerHTML = `
+                        <div class="code-header">
+                            <span>كود ${index + 1}</span>
+                            <button class="copy-code-btn" onclick="copyCode(this)">نسخ الكود</button>
+                        </div>
+                        <pre><code>${escapeHtml(code)}</code></pre>
+                    `;
+                    codesContent.appendChild(codeBlock);
+                });
+            } else {
+                codesSection.style.display = 'none';
+            }
+            
             // عرض المحتوى حسب النوع
             if (currentSettings.format === 'مفاهيم') {
                 // عرض جدول المفاهيم
-                let tableHTML = `
-                    <table class="concepts-table">
-                        <thead>
-                            <tr>
-                                <th>المفهوم</th>
-                                <th>الشرح / التعريف</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
+                let tableHTML = '<div class="table-wrapper"><table class="concepts-table"><thead><tr>';
                 
-                for (let i = 1; i <= 10; i++) {
+                if (currentSettings.language === 'انجليزي') {
+                    tableHTML += '<th>Concept</th><th>Definition</th>';
+                } else {
+                    tableHTML += '<th>المفهوم</th><th>الشرح / التعريف</th>';
+                }
+                
+                tableHTML += '</tr></thead><tbody>';
+                
+                for (let i = 1; i <= 20; i++) {
                     if (result[`h${i}`] && result[`s${i}`]) {
                         tableHTML += `
                             <tr>
-                                <td class="concept-term" data-label="المفهوم">${result[`h${i}`]}</td>
-                                <td class="concept-def" data-label="الشرح">${result[`s${i}`]}</td>
+                                <td class="concept-term" data-label="${currentSettings.language === 'انجليزي' ? 'Concept' : 'المفهوم'}">${result[`h${i}`]}</td>
+                                <td class="concept-def" data-label="${currentSettings.language === 'انجليزي' ? 'Definition' : 'الشرح'}">${result[`s${i}`]}</td>
                             </tr>
                         `;
                     }
                 }
                 
-                tableHTML += `</tbody></table>`;
+                tableHTML += '</tbody></table></div>';
                 resultContent.innerHTML = tableHTML;
-                lawsSection.style.display = 'none';
             }
             
             else if (currentSettings.format === 'اسئلة') {
                 // عرض جدول الأسئلة والأجوبة
-                let tableHTML = `
-                    <table class="qa-table">
-                        <thead>
-                            <tr>
-                                <th>السؤال</th>
-                                <th>الجواب</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
+                let tableHTML = '<div class="table-wrapper"><table class="qa-table"><thead><tr>';
                 
-                for (let i = 1; i <= 10; i++) {
+                if (currentSettings.language === 'انجليزي') {
+                    tableHTML += '<th>Question</th><th>Answer</th>';
+                } else {
+                    tableHTML += '<th>السؤال</th><th>الجواب</th>';
+                }
+                
+                tableHTML += '</tr></thead><tbody>';
+                
+                for (let i = 1; i <= 20; i++) {
                     if (result[`h${i}`] && result[`s${i}`]) {
                         tableHTML += `
                             <tr>
-                                <td class="qa-question" data-label="السؤال">${result[`h${i}`]}</td>
-                                <td class="qa-answer" data-label="الجواب">${result[`s${i}`]}</td>
+                                <td class="qa-question" data-label="${currentSettings.language === 'انجليزي' ? 'Question' : 'السؤال'}">${result[`h${i}`]}</td>
+                                <td class="qa-answer" data-label="${currentSettings.language === 'انجليزي' ? 'Answer' : 'الجواب'}">${result[`s${i}`]}</td>
                             </tr>
                         `;
                     }
                 }
                 
-                tableHTML += `</tbody></table>`;
+                tableHTML += '</tbody></table></div>';
                 resultContent.innerHTML = tableHTML;
-                lawsSection.style.display = 'none';
             }
             
             else {
                 // تلخيص عادي
                 resultContent.innerHTML = `<div class="result-text" id="resultText">${formatContent(result.page || '')}</div>`;
                 document.getElementById('resultText').style.fontSize = fontSize + 'px';
-                
-                // عرض قسم القوانين
-                if (result.laws) {
-                    lawsSection.style.display = 'block';
-                    document.getElementById('lawsContent').textContent = result.laws;
-                } else {
-                    lawsSection.style.display = 'none';
-                }
             }
         }
 
-        // ========== باقي الدوال (كما هي) ==========
+        // ========== دالة نسخ الكود ==========
+        window.copyCode = function(button) {
+            const codeBlock = button.closest('.code-block');
+            const code = codeBlock.querySelector('code').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                showNotification('تم نسخ الكود بنجاح', 'success');
+            }).catch(() => {
+                showNotification('فشل نسخ الكود', 'error');
+            });
+        };
+
+        // ========== دالة نسخ الكل ==========
+        function copyAllContent() {
+            let textToCopy = '';
+            
+            // إضافة العنوان
+            textToCopy += document.getElementById('resultHead').textContent + '\n\n';
+            
+            // إضافة النقاط الرئيسية
+            textToCopy += 'النقاط الرئيسية:\n';
+            const points = document.querySelectorAll('#pointsList li');
+            points.forEach((point, index) => {
+                textToCopy += `${index + 1}. ${point.textContent.trim()}\n`;
+            });
+            textToCopy += '\n';
+            
+            // إضافة المحتوى حسب النوع
+            if (currentSettings.format === 'مفاهيم') {
+                textToCopy += 'المفاهيم:\n';
+                for (let i = 1; i <= 20; i++) {
+                    const concept = document.querySelector(`.concepts-table tr:nth-child(${i}) td:first-child`);
+                    const definition = document.querySelector(`.concepts-table tr:nth-child(${i}) td:last-child`);
+                    if (concept && definition) {
+                        textToCopy += `${concept.textContent}\n${definition.textContent}\n\n`;
+                    }
+                }
+            }
+            else if (currentSettings.format === 'اسئلة') {
+                textToCopy += 'الأسئلة والأجوبة:\n';
+                for (let i = 1; i <= 20; i++) {
+                    const question = document.querySelector(`.qa-table tr:nth-child(${i}) td:first-child`);
+                    const answer = document.querySelector(`.qa-table tr:nth-child(${i}) td:last-child`);
+                    if (question && answer) {
+                        textToCopy += `س: ${question.textContent}\nج: ${answer.textContent}\n\n`;
+                    }
+                }
+            }
+            else {
+                // تلخيص عادي
+                const resultText = document.getElementById('resultText');
+                if (resultText) {
+                    textToCopy += resultText.textContent + '\n\n';
+                }
+            }
+            
+            // إضافة القوانين
+            const lawsContent = document.getElementById('lawsContent');
+            if (lawsContent && lawsContent.textContent) {
+                textToCopy += 'القوانين والصيغ الرياضية:\n' + lawsContent.textContent + '\n\n';
+            }
+            
+            // إضافة الأكواد
+            const codeBlocks = document.querySelectorAll('.code-block pre code');
+            if (codeBlocks.length > 0) {
+                textToCopy += 'الأكواد البرمجية:\n';
+                codeBlocks.forEach((code, index) => {
+                    textToCopy += `كود ${index + 1}:\n${code.textContent}\n\n`;
+                });
+            }
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showNotification('تم نسخ المحتوى بنجاح', 'success');
+            }).catch(() => {
+                showNotification('فشل نسخ المحتوى', 'error');
+            });
+        }
+
+        // ========== دالة تنظيف النص للعرض ==========
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // ========== باقي الدوال (منقية من الأخطاء) ==========
         function formatContent(text) {
             if (!text) return '';
             
@@ -1514,7 +1757,10 @@
                         const value = this.dataset.value;
                         switch(parent.id) {
                             case 'personaOptions': currentSettings.persona = value; break;
-                            case 'languageOptions': currentSettings.language = value; break;
+                            case 'languageOptions': 
+                                currentSettings.language = value; 
+                                updatePageDirection();
+                                break;
                             case 'styleOptions': currentSettings.style = value; break;
                             case 'lengthOptions': currentSettings.length = value; break;
                             case 'formatOptions': currentSettings.format = value; break;
@@ -1526,6 +1772,9 @@
             
             // زر التوليد
             document.getElementById('generateBtn').onclick = generateSummary;
+            
+            // زر نسخ الكل
+            document.getElementById('copyAllBtn').onclick = copyAllContent;
             
             // الصفحة الرئيسية
             document.getElementById('homeBtn').onclick = () => {
@@ -1606,6 +1855,8 @@
                 }
                 
                 const pages = pdf.numPages;
+                
+                // نظام حساب العملات القديم
                 let cost = Math.ceil((totalWords / 1000) * 2 * 2) / 2;
                 cost = Math.max(1, Math.min(cost, 50));
                 
@@ -1676,9 +1927,14 @@
                         head: 'ملخص الملف',
                         raw: ['تم إنشاء الملخص بنجاح'],
                         page: text.replace(/\\n/g, '\n').replace(/\\/g, ''),
-                        laws: 'لا يوجد قوانين في هذا الملف'
+                        laws: 'لا يوجد قوانين في هذا الملف',
+                        codes: []
                     };
                 }
+                
+                // التأكد من وجود المصفوفات المطلوبة
+                if (!result.codes) result.codes = [];
+                if (!result.laws) result.laws = 'لا يوجد قوانين في هذا الملف';
                 
                 // خصم الرصيد
                 await database.ref(`users_Awn/${currentUser.id}/coin`).set(userCoins - fileInfo.cost);
