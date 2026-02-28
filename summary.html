@@ -1297,23 +1297,9 @@
                 
                 let hasConcepts = false;
                 
-                // التحقق من وجود مصفوفة questions_and_answers
-                if (result.questions_and_answers && Array.isArray(result.questions_and_answers)) {
-                    result.questions_and_answers.forEach(item => {
-                        if (item.h1 && item.s1) {
-                            hasConcepts = true;
-                            tableHTML += `
-                                <tr>
-                                    <td class="concept-term">${item.h1}</td>
-                                    <td class="concept-def">${item.s1}</td>
-                                </tr>
-                            `;
-                        }
-                    });
-                }
-                
-                // إذا لم نجد questions_and_answers، نبحث عن h1,s1 بالطريقة التقليدية
-                if (!hasConcepts) {
+                // التحقق من نوع النتيجة
+                if (typeof result === 'object') {
+                    // نبحث حتى 50 للتأكد
                     for (let i = 1; i <= 50; i++) {
                         const hKey = `h${i}`;
                         const sKey = `s${i}`;
@@ -1370,23 +1356,9 @@
                 
                 let hasQA = false;
                 
-                // التحقق من وجود مصفوفة questions_and_answers (التنسيق الجديد)
-                if (result.questions_and_answers && Array.isArray(result.questions_and_answers)) {
-                    result.questions_and_answers.forEach(item => {
-                        if (item.h1 && item.s1) {
-                            hasQA = true;
-                            tableHTML += `
-                                <tr>
-                                    <td class="qa-question">${item.h1}</td>
-                                    <td class="qa-answer">${item.s1}</td>
-                                </tr>
-                            `;
-                        }
-                    });
-                }
-                
-                // إذا لم نجد questions_and_answers، نبحث عن h1,s1 بالطريقة التقليدية
-                if (!hasQA) {
+                // التحقق من نوع النتيجة
+                if (typeof result === 'object') {
+                    // نبحث حتى 50 للتأكد
                     for (let i = 1; i <= 50; i++) {
                         const hKey = `h${i}`;
                         const sKey = `s${i}`;
@@ -1401,6 +1373,21 @@
                                 <tr>
                                     <td class="qa-question">${result[hKey]}</td>
                                     <td class="qa-answer">${result[sKey]}</td>
+                                </tr>
+                            `;
+                        }
+                    }
+                }
+                
+                // إذا لم نجد أزواج h/s، نحاول استخدام البيانات من المصفوفة raw
+                if (!hasQA && result.raw && Array.isArray(result.raw)) {
+                    for (let i = 0; i < result.raw.length; i += 2) {
+                        if (i + 1 < result.raw.length) {
+                            hasQA = true;
+                            tableHTML += `
+                                <tr>
+                                    <td class="qa-question">${result.raw[i]}</td>
+                                    <td class="qa-answer">${result.raw[i+1]}</td>
                                 </tr>
                             `;
                         }
@@ -1428,7 +1415,7 @@
             
             else {
                 // تلخيص عادي
-                resultContent.innerHTML = `<div class="result-text" id="resultText">${formatContent(result.page || '')}</div>`;
+                resultContent.innerHTML = `<div class="result-text" id="resultText">${formatContent(result.page || result.text || '')}</div>`;
                 const resultText = document.getElementById('resultText');
                 if (resultText) resultText.style.fontSize = fontSize + 'px';
                 
@@ -1963,12 +1950,34 @@
                 // محاولة استخراج JSON من النص
                 let result;
                 try {
-                    // البحث عن JSON في النص
-                    const jsonMatch = text.match(/\{[\s\S]*\}/);
-                    if (jsonMatch) {
-                        result = JSON.parse(jsonMatch[0]);
-                    } else {
-                        // إذا لم نجد JSON، نستخدم النص كاملًا كملخص عادي
+                    // محاولة تحليل النص كاملًا كـ JSON
+                    result = JSON.parse(text);
+                } catch (e) {
+                    console.log('First parse failed, trying to extract JSON from text');
+                    try {
+                        // البحث عن JSON في النص
+                        const jsonMatch = text.match(/\{[\s\S]*\}/);
+                        if (jsonMatch) {
+                            result = JSON.parse(jsonMatch[0]);
+                        } else {
+                            // البحث عن مصفوفة JSON
+                            const arrayMatch = text.match(/\[[\s\S]*\]/);
+                            if (arrayMatch) {
+                                result = JSON.parse(arrayMatch[0]);
+                            } else {
+                                // إذا لم نجد JSON، نستخدم النص كاملًا كملخص عادي
+                                result = {
+                                    head: 'ملخص الملف',
+                                    raw: ['تم إنشاء الملخص بنجاح'],
+                                    page: text,
+                                    laws: '',
+                                    codes: []
+                                };
+                            }
+                        }
+                    } catch (e2) {
+                        console.error('Second parse failed:', e2);
+                        // في حالة فشل التحليل، نستخدم النص كاملًا
                         result = {
                             head: 'ملخص الملف',
                             raw: ['تم إنشاء الملخص بنجاح'],
@@ -1977,19 +1986,45 @@
                             codes: []
                         };
                     }
-                } catch (e) {
-                    console.error('JSON parse error:', e);
-                    // في حالة فشل التحليل، نستخدم النص كاملًا
+                }
+                
+                // التحقق من نوع النتيجة
+                if (typeof result === 'string') {
+                    // إذا كانت النتيجة نصية، نحولها إلى كائن
                     result = {
                         head: 'ملخص الملف',
                         raw: ['تم إنشاء الملخص بنجاح'],
-                        page: text,
+                        page: result,
                         laws: '',
                         codes: []
                     };
                 }
                 
                 console.log('Parsed result:', result); // للتتبع
+                
+                // التحقق من وجود بيانات في النتيجة
+                if (currentSettings.format === 'اسئلة') {
+                    let hasData = false;
+                    for (let i = 1; i <= 50; i++) {
+                        if (result[`h${i}`] && result[`s${i}`]) {
+                            hasData = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!hasData && result.page) {
+                        // إذا لم نجد بيانات structured ولكن يوجد نص، نحاول تحويل النص
+                        const lines = result.page.split('\n').filter(l => l.trim());
+                        let qCount = 1;
+                        for (let i = 0; i < lines.length; i += 2) {
+                            if (i + 1 < lines.length) {
+                                result[`h${qCount}`] = lines[i];
+                                result[`s${qCount}`] = lines[i+1];
+                                qCount++;
+                            }
+                        }
+                    }
+                }
                 
                 // خصم الرصيد
                 await database.ref(`users_Awn/${currentUser.id}/coin`).set(userCoins - fileInfo.cost);
