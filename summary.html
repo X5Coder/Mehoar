@@ -1151,7 +1151,7 @@
         function createPrompt() {
             // تحديد عدد العناصر المطلوبة بناءً على طول الشرح
             const minItems = currentSettings.length === 'طويل' ? 20 : 10;
-            const maxItems = currentSettings.length === 'طويل' ? 35 : 20;
+            const maxItems = currentSettings.length === 'طويل' ? 40 : 20;
             
             const lengthDesc = currentSettings.length === 'طويل' 
                 ? 'طويل جداً وشامل جداً يغطي كل التفاصيل والمعلومات' 
@@ -1169,7 +1169,7 @@
 
 تعليمات مهمة جداً (التزم بها حرفياً):
 1. قم بتحليل الملف كاملاً صفحة بصفحة ولا تهمل أي جزء
-2. قدم تلخيصاً ${currentSettings.length === 'طويل' ? 'شاملاً جداً يغطي كل التفاصيل (1000-2000 كلمة)' : 'مركزاً يغطي الأساسيات (300-600 كلمة)'}
+2. قدم تلخيصاً ${currentSettings.length === 'طويل' ? 'شاملاً جداً يغطي كل التفاصيل' : 'مركزاً يغطي الأساسيات'}
 3. استخدم أسلوب شرح ${currentSettings.style} بشكل دقيق ومناسب لشخصية ${currentSettings.persona}
 4. اكتب بلغة ${currentSettings.language} سليمة 100%
 5. استخرج 7-10 نقاط رئيسية تمثل جوهر المحتوى
@@ -1188,7 +1188,7 @@
             
             // برومنت جدول المفاهيم
             else if (currentSettings.format === 'مفاهيم') {
-                return `قم بتحليل ملف PDF التالي واستخراج جميع المفاهيم منه بدقة:
+                let prompt = `قم بتحليل ملف PDF التالي واستخراج جميع المفاهيم منه بدقة:
 
 الإعدادات المطلوبة (يجب الالتزام بها بدقة):
 - شخصية الشارح: ${currentSettings.persona}
@@ -1203,38 +1203,24 @@
 4. استخدم أسلوب شرح ${currentSettings.style} مع شخصية ${currentSettings.persona}
 5. استخدم لغة ${currentSettings.language} سليمة
 6. استخرج 7-10 نقاط رئيسية
-7. لا تخرج أي قوانين أو أكواد - فقط المفاهيم
 
 يجب أن يكون الرد بصيغة JSON فقط:
 {
   "head": "عنوان مختصر للملف",
-  "raw": ["نقطة 1", "نقطة 2", "نقطة 3", "نقطة 4", "نقطة 5", "نقطة 6", "نقطة 7"],
-  "h1": "مفهوم 1", "s1": "شرح 1",
-  "h2": "مفهوم 2", "s2": "شرح 2",
-  "h3": "مفهوم 3", "s3": "شرح 3",
-  "h4": "مفهوم 4", "s4": "شرح 4",
-  "h5": "مفهوم 5", "s5": "شرح 5",
-  "h6": "مفهوم 6", "s6": "شرح 6",
-  "h7": "مفهوم 7", "s7": "شرح 7",
-  "h8": "مفهوم 8", "s8": "شرح 8",
-  "h9": "مفهوم 9", "s9": "شرح 9",
-  "h10": "مفهوم 10", "s10": "شرح 10",
-  "h11": "مفهوم 11", "s11": "شرح 11",
-  "h12": "مفهوم 12", "s12": "شرح 12",
-  "h13": "مفهوم 13", "s13": "شرح 13",
-  "h14": "مفهوم 14", "s14": "شرح 14",
-  "h15": "مفهوم 15", "s15": "شرح 15",
-  "h16": "مفهوم 16", "s16": "شرح 16",
-  "h17": "مفهوم 17", "s17": "شرح 17",
-  "h18": "مفهوم 18", "s18": "شرح 18",
-  "h19": "مفهوم 19", "s19": "شرح 19",
-  "h20": "مفهوم 20", "s20": "شرح 20"
-}`;
+  "raw": ["نقطة 1", "نقطة 2", "نقطة 3", "نقطة 4", "نقطة 5", "نقطة 6", "نقطة 7"],`;
+                
+                // إضافة أزواج h/s
+                for (let i = 1; i <= maxItems; i++) {
+                    prompt += `\n  "h${i}": "مفهوم ${i}", "s${i}": "شرح المفهوم ${i}",`;
+                }
+                
+                prompt += '\n  "laws": "", "codes": []\n}';
+                return prompt;
             }
             
             // برومنت جدول سؤال وجواب
             else {
-                return `قم بتحليل ملف PDF التالي واستخراج أهم الأسئلة والأجوبة منه بدقة:
+                let prompt = `قم بتحليل ملف PDF التالي واستخراج أهم الأسئلة والأجوبة منه بدقة:
 
 الإعدادات المطلوبة (يجب الالتزام بها بدقة):
 - شخصية الشارح: ${currentSettings.persona}
@@ -1249,33 +1235,19 @@
 4. استخدم أسلوب شرح ${currentSettings.style} مع شخصية ${currentSettings.persona}
 5. استخدم لغة ${currentSettings.language} سليمة
 6. استخرج 7-10 نقاط رئيسية
-7. لا تخرج أي قوانين أو أكواد - فقط الأسئلة والأجوبة
 
 يجب أن يكون الرد بصيغة JSON فقط:
 {
   "head": "عنوان مختصر للملف",
-  "raw": ["نقطة 1", "نقطة 2", "نقطة 3", "نقطة 4", "نقطة 5", "نقطة 6", "نقطة 7"],
-  "h1": "سؤال 1", "s1": "إجابة 1",
-  "h2": "سؤال 2", "s2": "إجابة 2",
-  "h3": "سؤال 3", "s3": "إجابة 3",
-  "h4": "سؤال 4", "s4": "إجابة 4",
-  "h5": "سؤال 5", "s5": "إجابة 5",
-  "h6": "سؤال 6", "s6": "إجابة 6",
-  "h7": "سؤال 7", "s7": "إجابة 7",
-  "h8": "سؤال 8", "s8": "إجابة 8",
-  "h9": "سؤال 9", "s9": "إجابة 9",
-  "h10": "سؤال 10", "s10": "إجابة 10",
-  "h11": "سؤال 11", "s11": "إجابة 11",
-  "h12": "سؤال 12", "s12": "إجابة 12",
-  "h13": "سؤال 13", "s13": "إجابة 13",
-  "h14": "سؤال 14", "s14": "إجابة 14",
-  "h15": "سؤال 15", "s15": "إجابة 15",
-  "h16": "سؤال 16", "s16": "إجابة 16",
-  "h17": "سؤال 17", "s17": "إجابة 17",
-  "h18": "سؤال 18", "s18": "إجابة 18",
-  "h19": "سؤال 19", "s19": "إجابة 19",
-  "h20": "سؤال 20", "s20": "إجابة 20"
-}`;
+  "raw": ["نقطة 1", "نقطة 2", "نقطة 3", "نقطة 4", "نقطة 5", "نقطة 6", "نقطة 7"],`;
+                
+                // إضافة أزواج h/s
+                for (let i = 1; i <= maxItems; i++) {
+                    prompt += `\n  "h${i}": "سؤال ${i}", "s${i}": "إجابة السؤال ${i}",`;
+                }
+                
+                prompt += '\n  "laws": "", "codes": []\n}';
+                return prompt;
             }
         }
 
@@ -1304,7 +1276,7 @@
             pointsList.innerHTML = '';
             if (result.raw && Array.isArray(result.raw)) {
                 result.raw.forEach(point => {
-                    if (point && point.trim()) {
+                    if (point && point.trim() && point !== 'null' && point !== 'undefined') {
                         const li = document.createElement('li');
                         li.innerHTML = `<i class="fas fa-check-circle" style="color: var(--success);"></i> ${point}`;
                         pointsList.appendChild(li);
@@ -1327,14 +1299,21 @@
                 `;
                 
                 let hasConcepts = false;
-                for (let i = 1; i <= 35; i++) {
-                    if (result[`h${i}`] && result[`s${i}`] && 
-                        result[`h${i}`].trim() && result[`s${i}`].trim()) {
+                // نبحث حتى 50 للتأكد
+                for (let i = 1; i <= 50; i++) {
+                    const hKey = `h${i}`;
+                    const sKey = `s${i}`;
+                    
+                    if (result[hKey] && result[sKey] && 
+                        result[hKey].trim() && result[sKey].trim() &&
+                        result[hKey] !== 'null' && result[sKey] !== 'null' &&
+                        result[hKey] !== 'undefined' && result[sKey] !== 'undefined') {
+                        
                         hasConcepts = true;
                         tableHTML += `
                             <tr>
-                                <td class="concept-term">${result[`h${i}`]}</td>
-                                <td class="concept-def">${result[`s${i}`]}</td>
+                                <td class="concept-term">${result[hKey]}</td>
+                                <td class="concept-def">${result[sKey]}</td>
                             </tr>
                         `;
                     }
@@ -1343,7 +1322,8 @@
                 if (!hasConcepts) {
                     tableHTML += `
                         <tr>
-                            <td colspan="2" style="text-align: center; padding: 2rem;">
+                            <td colspan="2" style="text-align: center; padding: 2rem; color: var(--text-light);">
+                                <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
                                 ${currentSettings.language === 'انجليزي' ? 'No concepts found' : 'لا توجد مفاهيم'}
                             </td>
                         </tr>
@@ -1359,6 +1339,8 @@
             }
             
             else if (currentSettings.format === 'اسئلة') {
+                console.log('Displaying Q&A table with data:', result); // للتتبع
+                
                 let tableHTML = `
                     <div class="table-wrapper">
                         <table class="qa-table">
@@ -1372,14 +1354,21 @@
                 `;
                 
                 let hasQA = false;
-                for (let i = 1; i <= 35; i++) {
-                    if (result[`h${i}`] && result[`s${i}`] &&
-                        result[`h${i}`].trim() && result[`s${i}`].trim()) {
+                // نبحث حتى 50 للتأكد
+                for (let i = 1; i <= 50; i++) {
+                    const hKey = `h${i}`;
+                    const sKey = `s${i}`;
+                    
+                    if (result[hKey] && result[sKey] && 
+                        result[hKey].trim() && result[sKey].trim() &&
+                        result[hKey] !== 'null' && result[sKey] !== 'null' &&
+                        result[hKey] !== 'undefined' && result[sKey] !== 'undefined') {
+                        
                         hasQA = true;
                         tableHTML += `
                             <tr>
-                                <td class="qa-question">${result[`h${i}`]}</td>
-                                <td class="qa-answer">${result[`s${i}`]}</td>
+                                <td class="qa-question">${result[hKey]}</td>
+                                <td class="qa-answer">${result[sKey]}</td>
                             </tr>
                         `;
                     }
@@ -1388,7 +1377,8 @@
                 if (!hasQA) {
                     tableHTML += `
                         <tr>
-                            <td colspan="2" style="text-align: center; padding: 2rem;">
+                            <td colspan="2" style="text-align: center; padding: 2rem; color: var(--text-light);">
+                                <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
                                 ${currentSettings.language === 'انجليزي' ? 'No questions found' : 'لا توجد أسئلة'}
                             </td>
                         </tr>
@@ -1413,7 +1403,8 @@
                 if (result.laws && result.laws.trim() && 
                     result.laws !== 'لا يوجد قوانين' && 
                     result.laws !== 'No laws' &&
-                    result.laws !== 'لا يوجد') {
+                    result.laws !== 'لا يوجد' &&
+                    result.laws !== '') {
                     lawsSection.style.display = 'block';
                     document.getElementById('lawsContent').textContent = result.laws;
                 } else {
@@ -1425,7 +1416,8 @@
                     const validCodes = result.codes.filter(code => 
                         code && code.trim() && 
                         code !== 'لا يوجد أكواد' && 
-                        code !== 'No codes'
+                        code !== 'No codes' &&
+                        code !== ''
                     );
                     
                     if (validCodes.length > 0) {
@@ -1437,7 +1429,7 @@
                             const codeBlock = document.createElement('div');
                             codeBlock.className = 'code-block';
                             codeBlock.innerHTML = `
-                                <button class="copy-code-btn" onclick="copyCode(this, ${index})">
+                                <button class="copy-code-btn" onclick="copyCode(this)">
                                     <i class="fas fa-copy"></i>
                                 </button>
                                 <pre><code>${escapeHtml(code)}</code></pre>
@@ -1458,7 +1450,7 @@
             let contentToCopy = '';
             const points = Array.from(document.querySelectorAll('#pointsList li'))
                 .map(li => li.textContent.trim())
-                .filter(p => p)
+                .filter(p => p && p !== 'null' && p !== 'undefined')
                 .join('\n');
             
             if (currentSettings.format === 'مفاهيم') {
@@ -1468,7 +1460,7 @@
                     if (cells.length === 2) {
                         const concept = cells[0]?.textContent.trim();
                         const def = cells[1]?.textContent.trim();
-                        if (concept && def && concept !== 'لا توجد مفاهيم') {
+                        if (concept && def && concept !== 'لا توجد مفاهيم' && concept !== 'No concepts found') {
                             contentToCopy += `${concept}\n${def}\n\n`;
                         }
                     }
@@ -1481,7 +1473,7 @@
                     if (cells.length === 2) {
                         const question = cells[0]?.textContent.trim();
                         const answer = cells[1]?.textContent.trim();
-                        if (question && answer && question !== 'لا توجد أسئلة') {
+                        if (question && answer && question !== 'لا توجد أسئلة' && question !== 'No questions found') {
                             contentToCopy += `${currentSettings.language === 'انجليزي' ? 'Q: ' : 'س: '}${question}\n${currentSettings.language === 'انجليزي' ? 'A: ' : 'ج: '}${answer}\n\n`;
                         }
                     }
@@ -1496,7 +1488,7 @@
                 
                 contentToCopy = `${currentSettings.language === 'انجليزي' ? 'Key Points:\n' : 'النقاط الرئيسية:\n'}${points}\n\n${currentSettings.language === 'انجليزي' ? 'Details:\n' : 'التفاصيل:\n'}${resultText}`;
                 
-                if (laws && laws !== 'لا يوجد قوانين' && laws !== 'No laws') {
+                if (laws && laws !== 'لا يوجد قوانين' && laws !== 'No laws' && laws !== '') {
                     contentToCopy += `\n\n${currentSettings.language === 'انجليزي' ? 'Laws:\n' : 'القوانين:\n'}${laws}`;
                 }
                 
@@ -1916,13 +1908,16 @@
                     reader.readAsDataURL(selectedFile);
                 });
                 
+                const prompt = createPrompt();
+                console.log('Sending prompt:', prompt); // للتتبع
+                
                 const response = await fetch(SERVER + '/api/KIMO_DEV', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         id: API_ID,
                         pass: API_PASS,
-                        data: createPrompt(),
+                        data: prompt,
                         PDF_BASE64: base64
                     })
                 });
@@ -1930,12 +1925,15 @@
                 if (!response.ok) throw new Error('فشل الاتصال بالسيرفر');
                 
                 const text = await response.text();
-                let result;
+                console.log('Raw response:', text); // للتتبع
                 
+                let result;
                 try {
                     const jsonMatch = text.match(/\{[\s\S]*\}/);
                     result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
+                    console.log('Parsed result:', result); // للتتبع
                 } catch (e) {
+                    console.error('JSON parse error:', e);
                     result = {
                         head: 'ملخص الملف',
                         raw: ['تم إنشاء الملخص بنجاح'],
@@ -1970,6 +1968,7 @@
                 showNotification('تم إنشاء التلخيص وحفظه في السجلات', 'success');
                 
             } catch (error) {
+                console.error('Generation error:', error);
                 showNotification('حدث خطأ: ' + error.message, 'error');
             } finally {
                 btn.disabled = false;
