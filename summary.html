@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عون - تلخيص PDF بالذكاء الاصطناعي</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -38,37 +38,12 @@
             --navbar: 70px;
         }
         
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary) rgba(139, 115, 85, 0.1);
-        }
-        
-        *::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        *::-webkit-scrollbar-track {
-            background: rgba(139, 115, 85, 0.1);
-            border-radius: 10px;
-        }
-        
-        *::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-        }
-        
         body {
             font-family: 'Almarai', 'Tajawal', sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
             direction: rtl;
-        }
-        
-        body[dir="ltr"] {
-            direction: ltr;
-            font-family: 'Tajawal', 'Almarai', sans-serif;
         }
         
         /* شاشة التحميل */
@@ -283,11 +258,6 @@
             box-shadow: var(--shadow);
         }
         
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
         .btn-primary { background: linear-gradient(145deg, var(--primary), var(--primary-light)); color: white; }
         .btn-danger { background: linear-gradient(145deg, var(--error), #C53030); color: white; }
         .btn-success { background: linear-gradient(145deg, var(--success), #2F855A); color: white; }
@@ -336,7 +306,7 @@
         .option-btn:hover { border-color: var(--primary); }
         .option-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
         
-        /* نافذة السجلات */
+        /* نافذة السجلات المحسنة */
         .modal {
             position: fixed;
             inset: 0;
@@ -407,7 +377,7 @@
             flex: 1;
         }
         
-        /* قائمة السجلات */
+        /* قائمة السجلات المحسنة */
         .records-list {
             display: flex;
             flex-direction: column;
@@ -511,14 +481,6 @@
             font-weight: 800;
             color: var(--primary);
             word-break: break-word;
-            flex: 1;
-        }
-        
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            flex-wrap: wrap;
         }
         
         .font-controls {
@@ -528,10 +490,6 @@
             background: rgba(139, 115, 85, 0.05);
             padding: 0.3rem 0.8rem;
             border-radius: 30px;
-        }
-        
-        .font-controls.hidden {
-            display: none;
         }
         
         .font-btn {
@@ -551,31 +509,9 @@
             color: white;
         }
         
-        .copy-btn {
-            background: rgba(139, 115, 85, 0.1);
-            border: 1px solid rgba(139, 115, 85, 0.2);
-            color: var(--primary);
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 1.2rem;
-        }
-        
-        .copy-btn:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-2px);
-        }
-        
         .result-content {
             padding: 2rem;
             background: #FAFAFA;
-            overflow-x: auto;
         }
         
         .result-text {
@@ -589,19 +525,15 @@
             word-wrap: break-word;
         }
         
-        /* أنماط الجداول */
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            margin: 1rem 0;
-        }
-        
+        /* أنماط الجداول الجديدة */
         .concepts-table, .qa-table {
             width: 100%;
             border-collapse: collapse;
+            margin: 1rem 0;
             background: white;
-            min-width: 600px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
         }
         
         .concepts-table th, .qa-table th {
@@ -610,21 +542,14 @@
             padding: 1rem;
             font-weight: 700;
             text-align: center;
-            border: 1px solid var(--primary-dark);
-            font-size: 1.1rem;
         }
         
         .concepts-table td, .qa-table td {
             padding: 1rem;
-            border: 1px solid rgba(139, 115, 85, 0.2);
-            vertical-align: top;
+            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
         }
         
-        .concepts-table tr, .qa-table tr {
-            border-bottom: 2px solid rgba(139, 115, 85, 0.3);
-        }
-        
-        .concepts-table tr:last-child, .qa-table tr:last-child {
+        .concepts-table tr:last-child td, .qa-table tr:last-child td {
             border-bottom: none;
         }
         
@@ -632,21 +557,28 @@
             background: rgba(139, 115, 85, 0.02);
         }
         
-        .concept-term, .qa-question {
+        .concept-term {
             font-weight: 700;
             color: var(--primary);
             width: 40%;
-            background: rgba(139, 115, 85, 0.02);
-            font-size: 1rem;
         }
         
-        .concept-def, .qa-answer {
+        .concept-def {
             color: var(--text);
-            line-height: 1.6;
         }
         
-        /* قسم القوانين والأكواد - يظهر فقط في التلخيص العادي */
-        .laws-section, .codes-section {
+        .qa-question {
+            font-weight: 700;
+            color: var(--primary);
+            width: 40%;
+        }
+        
+        .qa-answer {
+            color: var(--text);
+        }
+        
+        /* قسم القوانين */
+        .laws-section {
             margin-top: 2rem;
             padding: 1.5rem;
             background: rgba(139, 115, 85, 0.03);
@@ -654,7 +586,7 @@
             border: 1px solid rgba(139, 115, 85, 0.1);
         }
         
-        .laws-title, .codes-title {
+        .laws-title {
             font-size: 1.3rem;
             font-weight: 700;
             color: var(--primary);
@@ -669,57 +601,52 @@
             padding: 1.5rem;
             border-radius: var(--radius);
             white-space: pre-wrap;
-            font-family: 'Courier New', monospace;
+            font-family: monospace;
             direction: ltr;
             text-align: left;
-            border: 1px solid rgba(139, 115, 85, 0.1);
         }
         
-        .code-block {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 1.5rem;
-            border-radius: var(--radius);
-            font-family: 'Courier New', monospace;
-            direction: ltr;
-            text-align: left;
-            white-space: pre-wrap;
-            position: relative;
-            margin-bottom: 1rem;
-            border: 1px solid var(--primary);
-        }
-        
-        .code-block pre {
-            margin: 0;
-            overflow-x: auto;
-        }
-        
-        .code-block code {
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        
-        .copy-code-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        
-        .copy-code-btn:hover {
-            background: var(--primary);
-            transform: translateY(-2px);
+        /* استجابة الجداول للهواتف */
+        @media (max-width: 768px) {
+            .concepts-table, .qa-table {
+                display: block;
+            }
+            
+            .concepts-table thead, .qa-table thead {
+                display: none;
+            }
+            
+            .concepts-table tbody, .qa-table tbody {
+                display: block;
+            }
+            
+            .concepts-table tr, .qa-table tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid rgba(139, 115, 85, 0.1);
+                border-radius: var(--radius);
+                padding: 0.5rem;
+            }
+            
+            .concepts-table td, .qa-table td {
+                display: block;
+                padding: 0.5rem;
+                border: none;
+                text-align: right;
+            }
+            
+            .concepts-table td:before, .qa-table td:before {
+                content: attr(data-label);
+                font-weight: 700;
+                color: var(--primary);
+                display: inline-block;
+                width: 100px;
+                margin-left: 1rem;
+            }
+            
+            .concept-term, .qa-question {
+                width: auto;
+            }
         }
         
         .key-points {
@@ -751,12 +678,6 @@
             display: flex;
             align-items: center;
             gap: 0.8rem;
-            line-height: 1.6;
-        }
-        
-        body[dir="ltr"] .points-list li {
-            border-right: none;
-            border-left: 5px solid var(--primary);
         }
         
         /* الإشعارات */
@@ -866,37 +787,6 @@
                 right: 1rem;
                 max-width: none;
             }
-            
-            .table-wrapper {
-                margin: 0.5rem 0;
-            }
-            
-            .concepts-table, .qa-table {
-                min-width: 500px;
-            }
-            
-            .concepts-table td, .qa-table td {
-                padding: 0.8rem;
-            }
-        }
-
-        /* تنسيق النقاط الرئيسية في الجواب */
-        .qa-answer ul, .qa-answer ol {
-            margin-right: 1.5rem;
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .qa-answer li {
-            margin-bottom: 0.3rem;
-        }
-        
-        /* تنسيق العناوين */
-        .result-head {
-            font-size: 1.8rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            text-align: center;
         }
     </style>
 </head>
@@ -910,7 +800,7 @@
     <!-- الإشعارات -->
     <div class="notifications" id="notifications"></div>
 
-    <!-- نافذة السجلات -->
+    <!-- نافذة السجلات المحسنة -->
     <div class="modal" id="recordsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -966,11 +856,7 @@
                         <div class="cost-value" id="pageCount">0</div>
                     </div>
                     <div class="cost-item">
-                        <div class="cost-label">عدد الكلمات</div>
-                        <div class="cost-value" id="wordCount">0</div>
-                    </div>
-                    <div class="cost-item">
-                        <div class="cost-label">التكلفة</div>
+                        <div class="cost-label">التكلفة المطلوبة</div>
                         <div class="cost-value" id="costAmount">0</div>
                     </div>
                 </div>
@@ -994,7 +880,6 @@
                         <button class="option-btn selected" data-value="مدرس">مدرس</button>
                         <button class="option-btn" data-value="دكتور جامعة">دكتور</button>
                         <button class="option-btn" data-value="عالم">عالم</button>
-                        <button class="option-btn" data-value="خبير">خبير</button>
                     </div>
                 </div>
                 
@@ -1013,7 +898,6 @@
                         <button class="option-btn selected" data-value="بسيط">بسيط</button>
                         <button class="option-btn" data-value="معقد">معقد</button>
                         <button class="option-btn" data-value="احترافي">احترافي</button>
-                        <button class="option-btn" data-value="أكاديمي">أكاديمي</button>
                     </div>
                 </div>
                 
@@ -1025,6 +909,7 @@
                     </div>
                 </div>
                 
+                <!-- قسم شكل التلخيص الجديد -->
                 <div class="setting-group">
                     <h3 class="setting-title"><i class="fas fa-table"></i> شكل التلخيص</h3>
                     <div class="options-grid" id="formatOptions">
@@ -1044,15 +929,10 @@
         <section class="result-section" id="resultSection">
             <div class="result-header">
                 <h2 class="result-title" id="resultHead">ملخص الملف</h2>
-                <div class="header-controls">
-                    <div class="font-controls" id="fontControls">
-                        <button class="font-btn" id="decreaseFont">-</button>
-                        <span style="color: var(--primary); font-weight: 600;">حجم الخط</span>
-                        <button class="font-btn" id="increaseFont">+</button>
-                    </div>
-                    <button class="copy-btn" id="copyResultBtn" title="نسخ المحتوى">
-                        <i class="fas fa-copy"></i>
-                    </button>
+                <div class="font-controls">
+                    <button class="font-btn" id="decreaseFont">-</button>
+                    <span style="color: var(--primary); font-weight: 600;">حجم الخط</span>
+                    <button class="font-btn" id="increaseFont">+</button>
                 </div>
             </div>
             
@@ -1065,16 +945,10 @@
                 <ul class="points-list" id="pointsList"></ul>
             </div>
 
-            <!-- قسم القوانين (يظهر فقط في التلخيص العادي) -->
+            <!-- قسم القوانين (هيظهر بس في التلخيص العادي) -->
             <div class="laws-section" id="lawsSection" style="display: none;">
                 <h3 class="laws-title"><i class="fas fa-gavel"></i> القوانين والصيغ الرياضية</h3>
                 <div class="laws-content" id="lawsContent"></div>
-            </div>
-
-            <!-- قسم الأكواد (يظهر فقط في التلخيص العادي) -->
-            <div class="codes-section" id="codesSection" style="display: none;">
-                <h3 class="codes-title"><i class="fas fa-code"></i> الأكواد البرمجية</h3>
-                <div id="codesContent"></div>
             </div>
         </section>
         
@@ -1120,7 +994,7 @@
             language: 'عربي',
             style: 'بسيط',
             length: 'طويل',
-            format: 'عادي'
+            format: 'عادي' // القيمة الجديدة
         };
         let fontSize = 16;
 
@@ -1166,83 +1040,107 @@
 
         // ========== إنشاء البرومبت حسب نوع التلخيص ==========
         function createPrompt() {
-            // تحديد عدد العناصر المطلوبة بناءً على طول الشرح
-            const minItems = currentSettings.length === 'طويل' ? 30 : 15;
-            const maxItems = currentSettings.length === 'طويل' ? 50 : 25;
-            
-            const lengthDesc = currentSettings.length === 'طويل' 
-                ? 'طويل جداً وشامل جداً يغطي كل التفاصيل والمعلومات' 
-                : 'مركز ومختصر لكنه يغطي جميع المعلومات الأساسية';
+            const lengthInstructions = {
+                طويل: 'قدم تلخيصاً طويلاً وشاملاً جداً يغطي كل التفاصيل والمعلومات المهمة',
+                قصير: 'قدم تلخيصاً قصيراً ومختصراً جداً يركز فقط على النقاط الأساسية'
+            };
 
-            // برومنت التلخيص العادي
+            // برومبت التلخيص العادي (كما هو)
             if (currentSettings.format === 'عادي') {
-                return `قم بتلخيص ملف PDF التالي بدقة متناهية وشمولية كاملة:
+                return `قم بتلخيص ملف PDF التالي بدقة:
 
-الإعدادات المطلوبة (يجب الالتزام بها بدقة):
+الإعدادات المطلوبة:
 - شخصية الشارح: ${currentSettings.persona}
 - لغة الإخراج: ${currentSettings.language}
 - أسلوب الشرح: ${currentSettings.style}
-- طول الشرح: ${currentSettings.length} (${lengthDesc})
+- طول الشرح: ${currentSettings.length}
 
-تعليمات مهمة جداً (التزم بها حرفياً):
-1. قم بتحليل الملف كاملاً صفحة بصفحة ولا تهمل أي جزء
-2. قدم تلخيصاً ${currentSettings.length === 'طويل' ? 'شاملاً جداً يغطي كل التفاصيل' : 'مركزاً يغطي الأساسيات'}
-3. استخدم أسلوب شرح ${currentSettings.style} بشكل دقيق ومناسب لشخصية ${currentSettings.persona}
-4. اكتب بلغة ${currentSettings.language} سليمة 100%
-5. استخرج 7-10 نقاط رئيسية تمثل جوهر المحتوى
-6. استخرج جميع القوانين والصيغ الرياضية والفيزيائية والكيميائية الموجودة في الملف
-7. استخرج جميع الأكواد البرمجية الموجودة في الملف مع تحديد لغة البرمجة
+تعليمات مهمة:
+1. ${lengthInstructions[currentSettings.length]}
+2. استخدم أسلوب شرح مناسب لشخصية ${currentSettings.persona}
+3. اكتب بلغة ${currentSettings.language} سليمة
+4. اجعل الأسلوب ${currentSettings.style}
+5. حلل الملف كاملاً من أول صفحة لآخر صفحة
+6. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
+7. في نهاية التلخيص، أضف قسم خاص بعنوان "القوانين والصيغ الرياضية" يحتوي على أي قوانين أو معادلات أو صيغ رياضية موجودة في الملف كما هي تماماً. إذا لم يوجد أي قوانين، اكتب "لا يوجد قوانين في هذا الملف"
 
 يجب أن يكون الرد بصيغة JSON فقط:
 {
-  "head": "عنوان مختصر للملف",
-  "raw": ["نقطة 1", "نقطة 2", "نقطة 3", "نقطة 4", "نقطة 5", "نقطة 6", "نقطة 7"],
-  "page": "محتوى التلخيص الكامل...",
-  "laws": "جميع القوانين والصيغ الرياضية",
-  "codes": ["كود 1", "كود 2"]
+  "head": "عنوان مختصر للملف (5-7 كلمات)",
+  "raw": ["النقطة الأولى", "النقطة الثانية", "النقطة الثالثة"],
+  "page": "محتوى التلخيص الكامل هنا...",
+  "laws": "القوانين والصيغ الرياضية الموجودة في الملف (أو 'لا يوجد قوانين في هذا الملف')"
 }`;
             }
             
-            // برومنت جدول المفاهيم
+            // برومبت جدول المفاهيم
             else if (currentSettings.format === 'مفاهيم') {
-                return `قم بتحليل ملف PDF التالي واستخراج جميع المفاهيم منه بدقة:
+                return `قم بتحليل ملف PDF التالي واستخراج أهم المفاهيم منه:
 
-الإعدادات المطلوبة (يجب الالتزام بها بدقة):
+الإعدادات المطلوبة:
 - شخصية الشارح: ${currentSettings.persona}
 - لغة الإخراج: ${currentSettings.language}
 - أسلوب الشرح: ${currentSettings.style}
-- طول الشرح: ${currentSettings.length} (${lengthDesc})
+- طول الشرح: ${currentSettings.length}
 
-تعليمات مهمة جداً (التزم بها حرفياً):
-1. اقرأ الملف كاملاً بتركيز شديد
-2. استخرج ${minItems}-${maxItems} مفهوم من الملف حسب حجمه
-3. كل مفهوم يأخذ h1, h2, h3, ... وشرحه s1, s2, s3, ...
-4. استخدم أسلوب شرح ${currentSettings.style} مع شخصية ${currentSettings.persona}
+تعليمات مهمة:
+1. اقرأ الملف كاملاً بتركيز
+2. استخرج أهم 5-10 مفاهيم من الملف
+3. كل مفهوم يجب أن يأخذ رقم تسلسلي (h1, h2, h3, ...)
+4. كل مفهوم يجب أن يقابله شرح أو تعريف (s1, s2, s3, ...)
 5. استخدم لغة ${currentSettings.language} سليمة
-6. استخرج 7-10 نقاط رئيسية
+6. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
 
-يجب أن يكون الرد بصيغة JSON فقط مع التأكد من وجود أزواج h1,s1 حتى h${maxItems},s${maxItems}`;
+يجب أن يكون الرد بصيغة JSON فقط:
+{
+  "head": "عنوان مختصر للملف (5-7 كلمات)",
+  "raw": ["النقطة الأولى", "النقطة الثانية", "النقطة الثالثة"],
+  "h1": "المفهوم الأول",
+  "s1": "شرح وتعريف المفهوم الأول",
+  "h2": "المفهوم الثاني",
+  "s2": "شرح وتعريف المفهوم الثاني",
+  "h3": "المفهوم الثالث",
+  "s3": "شرح وتعريف المفهوم الثالث",
+  "h4": "المفهوم الرابع",
+  "s4": "شرح وتعريف المفهوم الرابع",
+  "h5": "المفهوم الخامس",
+  "s5": "شرح وتعريف المفهوم الخامس"
+}`;
             }
             
-            // برومنت جدول سؤال وجواب
-            else {
-                return `قم بتحليل ملف PDF التالي واستخراج أهم الأسئلة والأجوبة منه بدقة:
+            // برومبت جدول سؤال وجواب
+            else if (currentSettings.format === 'اسئلة') {
+                return `قم بتحليل ملف PDF التالي واستخراج أهم الأسئلة والأجوبة منه:
 
-الإعدادات المطلوبة (يجب الالتزام بها بدقة):
+الإعدادات المطلوبة:
 - شخصية الشارح: ${currentSettings.persona}
 - لغة الإخراج: ${currentSettings.language}
 - أسلوب الشرح: ${currentSettings.style}
-- طول الشرح: ${currentSettings.length} (${lengthDesc})
+- طول الشرح: ${currentSettings.length}
 
-تعليمات مهمة جداً (التزم بها حرفياً):
-1. اقرأ الملف كاملاً بتركيز شديد
-2. استخرج ${minItems}-${maxItems} سؤال وجواب من الملف حسب حجمه
-3. كل سؤال يأخذ h1, h2, h3, ... وإجابته s1, s2, s3, ...
-4. استخدم أسلوب شرح ${currentSettings.style} مع شخصية ${currentSettings.persona}
+تعليمات مهمة:
+1. اقرأ الملف كاملاً بتركيز
+2. استخرج أهم 5-10 أسئلة وإجاباتها من الملف
+3. كل سؤال يجب أن يأخذ رقم تسلسلي (h1, h2, h3, ...)
+4. كل سؤال يجب أن يقابله إجابة (s1, s2, s3, ...)
 5. استخدم لغة ${currentSettings.language} سليمة
-6. استخرج 7-10 نقاط رئيسية
+6. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
 
-يجب أن يكون الرد بصيغة JSON فقط مع التأكد من وجود أزواج h1,s1 حتى h${maxItems},s${maxItems}`;
+يجب أن يكون الرد بصيغة JSON فقط:
+{
+  "head": "عنوان مختصر للملف (5-7 كلمات)",
+  "raw": ["النقطة الأولى", "النقطة الثانية", "النقطة الثالثة"],
+  "h1": "السؤال الأول",
+  "s1": "إجابة السؤال الأول",
+  "h2": "السؤال الثاني",
+  "s2": "إجابة السؤال الثاني",
+  "h3": "السؤال الثالث",
+  "s3": "إجابة السؤال الثالث",
+  "h4": "السؤال الرابع",
+  "s4": "إجابة السؤال الرابع",
+  "h5": "السؤال الخامس",
+  "s5": "إجابة السؤال الخامس"
+}`;
             }
         }
 
@@ -1251,20 +1149,6 @@
             const resultContent = document.getElementById('resultContent');
             const pointsList = document.getElementById('pointsList');
             const lawsSection = document.getElementById('lawsSection');
-            const codesSection = document.getElementById('codesSection');
-            const fontControls = document.getElementById('fontControls');
-            
-            console.log('Displaying results:', result); // للتتبع
-            
-            // تحديث اتجاه الصفحة حسب اللغة
-            document.body.setAttribute('dir', currentSettings.language === 'انجليزي' ? 'ltr' : 'rtl');
-            
-            // إظهار/إخفاء أزرار حجم الخط
-            if (currentSettings.format === 'عادي') {
-                fontControls.classList.remove('hidden');
-            } else {
-                fontControls.classList.add('hidden');
-            }
             
             // العنوان
             document.getElementById('resultHead').textContent = result.head || 'ملخص الملف';
@@ -1273,274 +1157,87 @@
             pointsList.innerHTML = '';
             if (result.raw && Array.isArray(result.raw)) {
                 result.raw.forEach(point => {
-                    if (point && point.trim() && point !== 'null' && point !== 'undefined') {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<i class="fas fa-check-circle" style="color: var(--success);"></i> ${point}`;
-                        pointsList.appendChild(li);
-                    }
+                    const li = document.createElement('li');
+                    li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
+                    pointsList.appendChild(li);
                 });
             }
             
             // عرض المحتوى حسب النوع
             if (currentSettings.format === 'مفاهيم') {
+                // عرض جدول المفاهيم
                 let tableHTML = `
-                    <div class="table-wrapper">
-                        <table class="concepts-table">
-                            <thead>
-                                <tr>
-                                    <th>${currentSettings.language === 'انجليزي' ? 'Concept' : 'المفهوم'}</th>
-                                    <th>${currentSettings.language === 'انجليزي' ? 'Explanation' : 'الشرح'}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <table class="concepts-table">
+                        <thead>
+                            <tr>
+                                <th>المفهوم</th>
+                                <th>الشرح / التعريف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                 `;
                 
-                let hasConcepts = false;
-                
-                // التحقق من نوع النتيجة
-                if (typeof result === 'object') {
-                    // نبحث حتى 50 للتأكد
-                    for (let i = 1; i <= 50; i++) {
-                        const hKey = `h${i}`;
-                        const sKey = `s${i}`;
-                        
-                        if (result[hKey] && result[sKey] && 
-                            result[hKey].trim() && result[sKey].trim() &&
-                            result[hKey] !== 'null' && result[sKey] !== 'null' &&
-                            result[hKey] !== 'undefined' && result[sKey] !== 'undefined') {
-                            
-                            hasConcepts = true;
-                            tableHTML += `
-                                <tr>
-                                    <td class="concept-term">${result[hKey]}</td>
-                                    <td class="concept-def">${result[sKey]}</td>
-                                </tr>
-                            `;
-                        }
+                for (let i = 1; i <= 10; i++) {
+                    if (result[`h${i}`] && result[`s${i}`]) {
+                        tableHTML += `
+                            <tr>
+                                <td class="concept-term" data-label="المفهوم">${result[`h${i}`]}</td>
+                                <td class="concept-def" data-label="الشرح">${result[`s${i}`]}</td>
+                            </tr>
+                        `;
                     }
                 }
                 
-                if (!hasConcepts) {
-                    tableHTML += `
-                        <tr>
-                            <td colspan="2" style="text-align: center; padding: 2rem; color: var(--text-light);">
-                                <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
-                                ${currentSettings.language === 'انجليزي' ? 'No concepts found' : 'لا توجد مفاهيم'}
-                            </td>
-                        </tr>
-                    `;
-                }
-                
-                tableHTML += `</tbody></table></div>`;
+                tableHTML += `</tbody></table>`;
                 resultContent.innerHTML = tableHTML;
-                
-                // إخفاء أقسام القوانين والأكواد في الجداول
                 lawsSection.style.display = 'none';
-                codesSection.style.display = 'none';
             }
             
             else if (currentSettings.format === 'اسئلة') {
-                console.log('Displaying Q&A table with data:', result); // للتتبع
-                
+                // عرض جدول الأسئلة والأجوبة
                 let tableHTML = `
-                    <div class="table-wrapper">
-                        <table class="qa-table">
-                            <thead>
-                                <tr>
-                                    <th>${currentSettings.language === 'انجليزي' ? 'Question' : 'السؤال'}</th>
-                                    <th>${currentSettings.language === 'انجليزي' ? 'Answer' : 'الجواب'}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <table class="qa-table">
+                        <thead>
+                            <tr>
+                                <th>السؤال</th>
+                                <th>الجواب</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                 `;
                 
-                let hasQA = false;
-                
-                // التحقق من نوع النتيجة
-                if (typeof result === 'object') {
-                    // نبحث حتى 50 للتأكد
-                    for (let i = 1; i <= 50; i++) {
-                        const hKey = `h${i}`;
-                        const sKey = `s${i}`;
-                        
-                        if (result[hKey] && result[sKey] && 
-                            result[hKey].trim() && result[sKey].trim() &&
-                            result[hKey] !== 'null' && result[sKey] !== 'null' &&
-                            result[hKey] !== 'undefined' && result[sKey] !== 'undefined') {
-                            
-                            hasQA = true;
-                            tableHTML += `
-                                <tr>
-                                    <td class="qa-question">${result[hKey]}</td>
-                                    <td class="qa-answer">${result[sKey]}</td>
-                                </tr>
-                            `;
-                        }
+                for (let i = 1; i <= 10; i++) {
+                    if (result[`h${i}`] && result[`s${i}`]) {
+                        tableHTML += `
+                            <tr>
+                                <td class="qa-question" data-label="السؤال">${result[`h${i}`]}</td>
+                                <td class="qa-answer" data-label="الجواب">${result[`s${i}`]}</td>
+                            </tr>
+                        `;
                     }
                 }
                 
-                // إذا لم نجد أزواج h/s، نحاول استخدام البيانات من المصفوفة raw
-                if (!hasQA && result.raw && Array.isArray(result.raw)) {
-                    for (let i = 0; i < result.raw.length; i += 2) {
-                        if (i + 1 < result.raw.length) {
-                            hasQA = true;
-                            tableHTML += `
-                                <tr>
-                                    <td class="qa-question">${result.raw[i]}</td>
-                                    <td class="qa-answer">${result.raw[i+1]}</td>
-                                </tr>
-                            `;
-                        }
-                    }
-                }
-                
-                if (!hasQA) {
-                    tableHTML += `
-                        <tr>
-                            <td colspan="2" style="text-align: center; padding: 2rem; color: var(--text-light);">
-                                <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
-                                ${currentSettings.language === 'انجليزي' ? 'No questions found' : 'لا توجد أسئلة'}
-                            </td>
-                        </tr>
-                    `;
-                }
-                
-                tableHTML += `</tbody></table></div>`;
+                tableHTML += `</tbody></table>`;
                 resultContent.innerHTML = tableHTML;
-                
-                // إخفاء أقسام القوانين والأكواد في الجداول
                 lawsSection.style.display = 'none';
-                codesSection.style.display = 'none';
             }
             
             else {
                 // تلخيص عادي
-                resultContent.innerHTML = `<div class="result-text" id="resultText">${formatContent(result.page || result.text || '')}</div>`;
-                const resultText = document.getElementById('resultText');
-                if (resultText) resultText.style.fontSize = fontSize + 'px';
+                resultContent.innerHTML = `<div class="result-text" id="resultText">${formatContent(result.page || '')}</div>`;
+                document.getElementById('resultText').style.fontSize = fontSize + 'px';
                 
-                // عرض القوانين في التلخيص العادي فقط
-                if (result.laws && result.laws.trim() && 
-                    result.laws !== 'لا يوجد قوانين' && 
-                    result.laws !== 'No laws' &&
-                    result.laws !== 'لا يوجد' &&
-                    result.laws !== '') {
+                // عرض قسم القوانين
+                if (result.laws) {
                     lawsSection.style.display = 'block';
                     document.getElementById('lawsContent').textContent = result.laws;
                 } else {
                     lawsSection.style.display = 'none';
                 }
-                
-                // عرض الأكواد في التلخيص العادي فقط
-                if (result.codes && Array.isArray(result.codes) && result.codes.length > 0) {
-                    const validCodes = result.codes.filter(code => 
-                        code && code.trim() && 
-                        code !== 'لا يوجد أكواد' && 
-                        code !== 'No codes' &&
-                        code !== ''
-                    );
-                    
-                    if (validCodes.length > 0) {
-                        codesSection.style.display = 'block';
-                        const codesContent = document.getElementById('codesContent');
-                        codesContent.innerHTML = '';
-                        
-                        validCodes.forEach((code, index) => {
-                            const codeBlock = document.createElement('div');
-                            codeBlock.className = 'code-block';
-                            codeBlock.innerHTML = `
-                                <button class="copy-code-btn" onclick="copyCode(this)">
-                                    <i class="fas fa-copy"></i>
-                                </button>
-                                <pre><code>${escapeHtml(code)}</code></pre>
-                            `;
-                            codesContent.appendChild(codeBlock);
-                        });
-                    } else {
-                        codesSection.style.display = 'none';
-                    }
-                } else {
-                    codesSection.style.display = 'none';
-                }
             }
         }
 
-        // ========== دوال النسخ ==========
-        window.copyResult = function() {
-            let contentToCopy = '';
-            const points = Array.from(document.querySelectorAll('#pointsList li'))
-                .map(li => li.textContent.trim())
-                .filter(p => p && p !== 'null' && p !== 'undefined')
-                .join('\n');
-            
-            if (currentSettings.format === 'مفاهيم') {
-                const rows = document.querySelectorAll('.concepts-table tbody tr');
-                rows.forEach(row => {
-                    const cells = row.querySelectorAll('td');
-                    if (cells.length === 2) {
-                        const concept = cells[0]?.textContent.trim();
-                        const def = cells[1]?.textContent.trim();
-                        if (concept && def && concept !== 'لا توجد مفاهيم' && concept !== 'No concepts found') {
-                            contentToCopy += `${concept}\n${def}\n\n`;
-                        }
-                    }
-                });
-            }
-            else if (currentSettings.format === 'اسئلة') {
-                const rows = document.querySelectorAll('.qa-table tbody tr');
-                rows.forEach(row => {
-                    const cells = row.querySelectorAll('td');
-                    if (cells.length === 2) {
-                        const question = cells[0]?.textContent.trim();
-                        const answer = cells[1]?.textContent.trim();
-                        if (question && answer && question !== 'لا توجد أسئلة' && question !== 'No questions found') {
-                            contentToCopy += `${currentSettings.language === 'انجليزي' ? 'Q: ' : 'س: '}${question}\n${currentSettings.language === 'انجليزي' ? 'A: ' : 'ج: '}${answer}\n\n`;
-                        }
-                    }
-                });
-            }
-            else {
-                const resultText = document.getElementById('resultText')?.textContent.trim() || '';
-                const laws = document.getElementById('lawsContent')?.textContent.trim() || '';
-                const codes = Array.from(document.querySelectorAll('#codesContent code'))
-                    .map(code => code.textContent.trim())
-                    .join('\n\n---\n\n');
-                
-                contentToCopy = `${currentSettings.language === 'انجليزي' ? 'Key Points:\n' : 'النقاط الرئيسية:\n'}${points}\n\n${currentSettings.language === 'انجليزي' ? 'Details:\n' : 'التفاصيل:\n'}${resultText}`;
-                
-                if (laws && laws !== 'لا يوجد قوانين' && laws !== 'No laws' && laws !== '') {
-                    contentToCopy += `\n\n${currentSettings.language === 'انجليزي' ? 'Laws:\n' : 'القوانين:\n'}${laws}`;
-                }
-                
-                if (codes) {
-                    contentToCopy += `\n\n${currentSettings.language === 'انجليزي' ? 'Code Blocks:\n' : 'الأكواد البرمجية:\n'}${codes}`;
-                }
-            }
-            
-            if (contentToCopy) {
-                navigator.clipboard.writeText(contentToCopy).then(() => {
-                    showNotification(currentSettings.language === 'انجليزي' ? 'Copied successfully' : 'تم النسخ بنجاح', 'success');
-                }).catch(() => {
-                    showNotification(currentSettings.language === 'انجليزي' ? 'Copy failed' : 'فشل النسخ', 'error');
-                });
-            }
-        };
-
-        window.copyCode = function(btn) {
-            const codeBlock = btn.closest('.code-block');
-            const code = codeBlock.querySelector('code').textContent;
-            navigator.clipboard.writeText(code).then(() => {
-                showNotification(currentSettings.language === 'انجليزي' ? 'Code copied' : 'تم نسخ الكود', 'success');
-            });
-        };
-
-        // ========== دالة تنظيف النص ==========
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
+        // ========== باقي الدوال (كما هي) ==========
         function formatContent(text) {
             if (!text) return '';
             
@@ -1550,6 +1247,7 @@
                 .replace(/\\n/g, '<br>')
                 .replace(/\\r/g, '');
             
+            // تقسيم للنقاط
             const lines = formatted.split('\n');
             let html = '';
             
@@ -1563,11 +1261,11 @@
                 if (line.startsWith('#') && line.length > 1) {
                     const level = line.match(/^#+/)[0].length;
                     const content = line.replace(/^#+\s*/, '');
-                    html += `<h${Math.min(level, 3)} style="color: var(--primary); margin: 1rem 0;">${content}</h${Math.min(level, 3)}>`;
+                    html += `<h${Math.min(level, 3)}>${content}</h${Math.min(level, 3)}>`;
                 } else if (line.startsWith('- ') || line.startsWith('• ')) {
-                    html += `<p style="padding-right: 20px; position: relative; margin: 0.5rem 0;">&bull; ${line.substring(2)}</p>`;
+                    html += `<p style="padding-right: 20px; position: relative;">&bull; ${line.substring(2)}</p>`;
                 } else {
-                    html += `<p style="margin: 0.5rem 0;">${line}</p>`;
+                    html += `<p>${line}</p>`;
                 }
             }
             
@@ -1587,19 +1285,26 @@
                 
                 if (snapshot.exists()) {
                     const userRecords = [];
+                    let recordCount = 0;
                     
                     snapshot.forEach(childSnapshot => {
                         const record = childSnapshot.val();
+                        const recordId = childSnapshot.key;
+                        
                         if (record.userId === currentUser.id) {
+                            recordCount++;
                             userRecords.push({
-                                id: childSnapshot.key,
+                                id: recordId,
                                 ...record
                             });
                         }
                     });
                     
+                    console.log(`تم العثور على ${recordCount} سجل للمستخدم ${currentUser.id}`);
+                    
                     if (userRecords.length > 0) {
                         emptyRecords.style.display = 'none';
+                        
                         userRecords.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                         
                         userRecords.forEach(record => {
@@ -1618,7 +1323,8 @@
                 hideLoading();
             } catch (error) {
                 hideLoading();
-                showNotification('حدث خطأ في تحميل السجلات', 'error');
+                console.error('خطأ مفصل:', error);
+                showNotification('حدث خطأ في تحميل السجلات: ' + error.message, 'error');
             }
         }
 
@@ -1656,11 +1362,21 @@
                     </div>
                 </div>
                 <div class="record-details">
-                    <span class="record-badge"><i class="fas fa-file"></i> ${pages} صفحة</span>
-                    <span class="record-badge"><i class="fas fa-coins"></i> ${cost} عملة</span>
-                    <span class="record-badge"><i class="fas fa-user-tie"></i> ${persona}</span>
-                    <span class="record-badge"><i class="fas fa-language"></i> ${language}</span>
-                    <span class="record-badge"><i class="fas ${formatIcon}"></i> ${format}</span>
+                    <span class="record-badge">
+                        <i class="fas fa-file"></i> ${pages} صفحة
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas fa-coins"></i> ${cost} عملة
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas fa-user-tie"></i> ${persona}
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas fa-language"></i> ${language}
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas ${formatIcon}"></i> ${format}
+                    </span>
                 </div>
             `;
             
@@ -1685,14 +1401,17 @@
                 const resultSection = document.getElementById('resultSection');
                 resultSection.classList.add('show');
                 
+                // ضبط إعدادات العرض حسب نوع السجل
                 if (record.settings) {
                     currentSettings = { ...currentSettings, ...record.settings };
                 }
                 
                 displayResults(record.data);
+                
                 showNotification('تم تحميل الملخص بنجاح', 'success');
                 
             } catch (error) {
+                console.error('خطأ في عرض السجل:', error);
                 showNotification('حدث خطأ في عرض الملخص', 'error');
             }
         }
@@ -1734,9 +1453,11 @@
 
         // ========== تهيئة التطبيق ==========
         function initApp() {
+            // عناصر الصفحة
             const fileInput = document.getElementById('fileInput');
             const uploadArea = document.getElementById('uploadArea');
             
+            // رفع الملف
             uploadArea.onclick = () => fileInput.click();
             
             uploadArea.ondragover = (e) => {
@@ -1762,6 +1483,7 @@
                 if (e.target.files[0]) handleFile(e.target.files[0]);
             };
             
+            // أزرار المعاينة
             document.getElementById('cancelBtn').onclick = () => {
                 fileInput.value = '';
                 selectedFile = null;
@@ -1781,6 +1503,7 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             };
             
+            // إعدادات الخيارات
             const setupOptions = () => {
                 document.querySelectorAll('.option-btn').forEach(btn => {
                     btn.onclick = function() {
@@ -1801,9 +1524,10 @@
             };
             setupOptions();
             
+            // زر التوليد
             document.getElementById('generateBtn').onclick = generateSummary;
-            document.getElementById('copyResultBtn').onclick = copyResult;
             
+            // الصفحة الرئيسية
             document.getElementById('homeBtn').onclick = () => {
                 document.getElementById('uploadSection').style.display = 'block';
                 document.getElementById('settingsSection').style.display = 'none';
@@ -1811,16 +1535,19 @@
                 fileInput.value = '';
                 selectedFile = null;
                 document.getElementById('uploadText').textContent = 'انقر لاختيار ملف PDF';
-                document.body.setAttribute('dir', 'rtl');
             };
             
+            // السجلات
             const modal = document.getElementById('recordsModal');
-            document.getElementById('recordsBtn').onclick = () => {
+            const recordsBtn = document.getElementById('recordsBtn');
+            const closeModal = document.getElementById('closeModal');
+            
+            recordsBtn.onclick = () => {
                 loadAllUserRecords();
                 modal.classList.add('show');
             };
             
-            document.getElementById('closeModal').onclick = () => {
+            closeModal.onclick = () => {
                 modal.classList.remove('show');
             };
             
@@ -1828,12 +1555,12 @@
                 if (e.target === modal) modal.classList.remove('show');
             };
             
+            // تحكم حجم الخط
             document.getElementById('increaseFont').onclick = () => {
                 if (fontSize < 24) {
                     fontSize += 2;
                     if (currentSettings.format === 'عادي') {
-                        const resultText = document.getElementById('resultText');
-                        if (resultText) resultText.style.fontSize = fontSize + 'px';
+                        document.getElementById('resultText').style.fontSize = fontSize + 'px';
                     }
                 }
             };
@@ -1842,8 +1569,7 @@
                 if (fontSize > 12) {
                     fontSize -= 2;
                     if (currentSettings.format === 'عادي') {
-                        const resultText = document.getElementById('resultText');
-                        if (resultText) resultText.style.fontSize = fontSize + 'px';
+                        document.getElementById('resultText').style.fontSize = fontSize + 'px';
                     }
                 }
             };
@@ -1880,9 +1606,7 @@
                 }
                 
                 const pages = pdf.numPages;
-                
-                // نظام حساب التكلفة القديم
-                let cost = Math.ceil((totalWords / 1000) * 2 * 2 * 2) / 2;
+                let cost = Math.ceil((totalWords / 1000) * 2 * 2) / 2;
                 cost = Math.max(1, Math.min(cost, 50));
                 
                 fileInfo = { 
@@ -1893,7 +1617,6 @@
                 };
                 
                 document.getElementById('pageCount').textContent = pages;
-                document.getElementById('wordCount').textContent = totalWords.toLocaleString();
                 document.getElementById('costAmount').textContent = fileInfo.cost + ' عملة';
                 document.getElementById('costPreview').classList.add('show');
                 hideLoading();
@@ -1928,16 +1651,13 @@
                     reader.readAsDataURL(selectedFile);
                 });
                 
-                const prompt = createPrompt();
-                console.log('Sending prompt:', prompt); // للتتبع
-                
                 const response = await fetch(SERVER + '/api/KIMO_DEV', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         id: API_ID,
                         pass: API_PASS,
-                        data: prompt,
+                        data: createPrompt(),
                         PDF_BASE64: base64
                     })
                 });
@@ -1945,85 +1665,19 @@
                 if (!response.ok) throw new Error('فشل الاتصال بالسيرفر');
                 
                 const text = await response.text();
-                console.log('Raw response:', text); // للتتبع
-                
-                // محاولة استخراج JSON من النص
                 let result;
-                try {
-                    // محاولة تحليل النص كاملًا كـ JSON
-                    result = JSON.parse(text);
-                } catch (e) {
-                    console.log('First parse failed, trying to extract JSON from text');
-                    try {
-                        // البحث عن JSON في النص
-                        const jsonMatch = text.match(/\{[\s\S]*\}/);
-                        if (jsonMatch) {
-                            result = JSON.parse(jsonMatch[0]);
-                        } else {
-                            // البحث عن مصفوفة JSON
-                            const arrayMatch = text.match(/\[[\s\S]*\]/);
-                            if (arrayMatch) {
-                                result = JSON.parse(arrayMatch[0]);
-                            } else {
-                                // إذا لم نجد JSON، نستخدم النص كاملًا كملخص عادي
-                                result = {
-                                    head: 'ملخص الملف',
-                                    raw: ['تم إنشاء الملخص بنجاح'],
-                                    page: text,
-                                    laws: '',
-                                    codes: []
-                                };
-                            }
-                        }
-                    } catch (e2) {
-                        console.error('Second parse failed:', e2);
-                        // في حالة فشل التحليل، نستخدم النص كاملًا
-                        result = {
-                            head: 'ملخص الملف',
-                            raw: ['تم إنشاء الملخص بنجاح'],
-                            page: text,
-                            laws: '',
-                            codes: []
-                        };
-                    }
-                }
                 
-                // التحقق من نوع النتيجة
-                if (typeof result === 'string') {
-                    // إذا كانت النتيجة نصية، نحولها إلى كائن
+                try {
+                    const jsonMatch = text.match(/\{[\s\S]*\}/);
+                    result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
+                } catch (e) {
+                    // لو مش JSON، نعمله كـ تلخيص عادي
                     result = {
                         head: 'ملخص الملف',
                         raw: ['تم إنشاء الملخص بنجاح'],
-                        page: result,
-                        laws: '',
-                        codes: []
+                        page: text.replace(/\\n/g, '\n').replace(/\\/g, ''),
+                        laws: 'لا يوجد قوانين في هذا الملف'
                     };
-                }
-                
-                console.log('Parsed result:', result); // للتتبع
-                
-                // التحقق من وجود بيانات في النتيجة
-                if (currentSettings.format === 'اسئلة') {
-                    let hasData = false;
-                    for (let i = 1; i <= 50; i++) {
-                        if (result[`h${i}`] && result[`s${i}`]) {
-                            hasData = true;
-                            break;
-                        }
-                    }
-                    
-                    if (!hasData && result.page) {
-                        // إذا لم نجد بيانات structured ولكن يوجد نص، نحاول تحويل النص
-                        const lines = result.page.split('\n').filter(l => l.trim());
-                        let qCount = 1;
-                        for (let i = 0; i < lines.length; i += 2) {
-                            if (i + 1 < lines.length) {
-                                result[`h${qCount}`] = lines[i];
-                                result[`s${qCount}`] = lines[i+1];
-                                qCount++;
-                            }
-                        }
-                    }
                 }
                 
                 // خصم الرصيد
@@ -2043,6 +1697,9 @@
                     data: result
                 });
                 
+                console.log('تم حفظ السجل بنجاح:', newRecordRef.key);
+                
+                // عرض النتائج
                 displayResults(result);
                 
                 document.getElementById('settingsSection').style.display = 'none';
@@ -2051,7 +1708,7 @@
                 showNotification('تم إنشاء التلخيص وحفظه في السجلات', 'success');
                 
             } catch (error) {
-                console.error('Generation error:', error);
+                console.error('خطأ في التوليد:', error);
                 showNotification('حدث خطأ: ' + error.message, 'error');
             } finally {
                 btn.disabled = false;
