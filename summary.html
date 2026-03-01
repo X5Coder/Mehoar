@@ -609,35 +609,36 @@
             color: var(--text);
         }
         
-        /* قسم القوانين الجديد - قالب منفصل واضح */
+        /* قسم القوانين - قالب منفصل واضح تحت النقاط الرئيسية */
         .laws-section {
             margin-top: 2.5rem;
-            padding: 1.8rem;
-            background: linear-gradient(145deg, #f8f5f0, #f0ebe2);
+            padding: 2rem;
+            background: linear-gradient(145deg, #1a2634, #0f1a24);
             border-radius: var(--radius-lg);
             border: 2px solid var(--primary);
             box-shadow: var(--shadow-lg);
+            direction: ltr;
         }
         
         .laws-title {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             font-weight: 800;
-            color: var(--primary-dark);
-            margin-bottom: 1.5rem;
+            color: #ffd966;
+            margin-bottom: 1.8rem;
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            gap: 1rem;
             border-bottom: 3px solid var(--primary);
-            padding-bottom: 0.8rem;
+            padding-bottom: 1rem;
         }
         
         .laws-title i {
-            color: var(--primary);
-            font-size: 1.8rem;
+            color: #ffd966;
+            font-size: 2rem;
         }
         
         .laws-content {
-            background: #1a1a1a;
+            background: #0a0f14;
             color: #e6e6e6;
             padding: 2rem;
             border-radius: var(--radius);
@@ -648,19 +649,19 @@
             overflow-x: auto;
             line-height: 2;
             font-size: 1.1rem;
-            border-left: 8px solid var(--primary);
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            border-left: 8px solid #ffd966;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.7);
         }
         
-        /* تنسيق القوانين داخل المحتوى */
         .laws-content p {
             margin: 1.2rem 0;
-            padding: 0.8rem 1rem;
-            border-bottom: 2px solid #444;
+            padding: 0.8rem 1.2rem;
+            border-bottom: 2px solid #3a4a5a;
             font-weight: 500;
-            color: #fff;
-            background: rgba(255,255,255,0.05);
+            color: #ffffff;
+            background: rgba(255,255,255,0.03);
             border-radius: 8px;
+            font-family: 'Courier New', monospace;
         }
         
         .laws-content p:last-child {
@@ -668,25 +669,26 @@
         }
         
         .laws-content p:before {
-            content: "📌 ";
+            content: "⚖️ ";
             font-size: 1.2rem;
-            margin-left: 0.5rem;
-            color: var(--primary);
+            margin-left: 0.8rem;
+            color: #ffd966;
         }
         
         /* رسالة لا يوجد قوانين */
         .no-laws-message {
             text-align: center;
-            padding: 2rem;
+            padding: 2.5rem;
             color: var(--text-light);
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-style: italic;
             background: rgba(139, 115, 85, 0.1);
             border-radius: var(--radius);
+            border: 1px dashed var(--primary);
         }
         
         .no-laws-message i {
-            font-size: 3rem;
+            font-size: 3.5rem;
             color: var(--primary-light);
             margin-bottom: 1rem;
             display: block;
@@ -785,11 +787,11 @@
             }
             
             .laws-section {
-                padding: 1.2rem;
+                padding: 1.5rem;
             }
             
             .laws-title {
-                font-size: 1.3rem;
+                font-size: 1.4rem;
             }
             
             .laws-content {
@@ -847,19 +849,6 @@
             align-items: center;
             gap: 0.8rem;
             font-size: 1.1rem;
-        }
-        
-        /* نظام العملات */
-        .coins-calculation {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 2rem;
-            border-radius: var(--radius);
-            font-family: 'Courier New', monospace;
-            direction: ltr;
-            text-align: left;
-            margin: 2rem 0;
-            overflow-x: auto;
         }
         
         /* الإشعارات */
@@ -1111,7 +1100,7 @@
                 <ul class="points-list" id="pointsList"></ul>
             </div>
 
-            <!-- قسم القوانين الجديد - قالب واضح ومنفصل -->
+            <!-- قسم القوانين الجديد - قالب منفصل تحت النقاط الرئيسية -->
             <div class="laws-section" id="lawsSection" style="display: none;">
                 <h3 class="laws-title"><i class="fas fa-gavel"></i> القوانين والصيغ الرياضية</h3>
                 <div class="laws-content" id="lawsContent"></div>
@@ -1320,16 +1309,16 @@
                 basePrompt += `
 
 تعليمات إضافية للتلخيص العادي (مهم جداً):
-- التلخيص يرجع زي ما هو بالضبط بدون تغيير في شكله
-- بعد النقاط الرئيسية، أضف قسم خاص بعنوان "القوانين والصيغ الرياضية" يحتوي على جميع القوانين الموجودة في الملف
+- التلخيص العادي يرجع زي ما هو بالضبط في حقل "page"
+- القوانين والصيغ الرياضية يجب أن تكون في حقل منفصل باسم "laws"
 - استخرج كل قانون مهما كان نوعه: رياضي، فيزيائي، كيميائي، لغوي، أو أي نوع آخر
 - اكتب كل قانون كما هو بالضبط دون أي تغيير أو تعديل
 - افصل بين كل قانون والآخر بخط فارغ واضح
 - تأكد من استخراج جميع القوانين من الملف بشكل كامل
-- إذا لم يوجد أي قوانين في الملف، اكتب: "لا يوجد قوانين في هذا الملف"
-- استخرج جميع الأكواد البرمجية من الملف وضعها في قسم منفصل بعنوان "الأكواد البرمجية" داخل Code Block
+- إذا لم يوجد أي قوانين في الملف، اكتب في حقل "laws": "لا يوجد قوانين في هذا الملف"
+- استخرج جميع الأكواد البرمجية من الملف وضعها في مصفوفة منفصلة باسم "codes"
 
-⚠️ تنبيه مهم: يجب أن يكون الرد JSON صحيح 100% بدون أي نصوص إضافية خارج JSON`;
+⚠️ تنبيه مهم جداً: القوانين يجب أن تكون في حقل منفصل باسم "laws" وليس داخل حقل "page"`;
             }
             
             // هيكل JSON المطلوب
@@ -1341,7 +1330,7 @@
   "head": "عنوان مختصر للملف (5-7 كلمات)",
   "raw": ["النقطة الرئيسية الأولى", "النقطة الرئيسية الثانية", "النقطة الرئيسية الثالثة", "النقطة الرئيسية الرابعة", "النقطة الرئيسية الخامسة"],
   "page": "محتوى التلخيص الكامل والشامل هنا...",
-  "laws": "هنا جميع القوانين المستخرجة من الملف - كل قانون في سطر منفصل مع سطر فارغ بين كل قانون والآخر. اكتبها كما هي بالضبط بدون تغيير.",
+  "laws": "هنا جميع القوانين المستخرجة من الملف في حقل منفصل - كل قانون في سطر منفصل مع سطر فارغ بين كل قانون والآخر",
   "codes": ["الكود الأول", "الكود الثاني"]
 }`;
             }
@@ -1437,7 +1426,7 @@
             
             // عرض المحتوى حسب النوع
             if (currentSettings.format === 'مفاهيم') {
-                // عرض جدول المفاهيم
+                // عرض جدول المفاهيم - بدون تغيير
                 let tableHTML = `
                     <div class="table-container">
                         <table class="concepts-table">
@@ -1469,7 +1458,7 @@
             }
             
             else if (currentSettings.format === 'اسئلة') {
-                // عرض جدول الأسئلة والأجوبة
+                // عرض جدول الأسئلة والأجوبة - بدون تغيير
                 let tableHTML = `
                     <div class="table-container">
                         <table class="qa-table">
@@ -1501,11 +1490,11 @@
             }
             
             else {
-                // تلخيص عادي - زي ما هو بالضبط
+                // تلخيص عادي - نعرض الـ page زي ما هو
                 resultContent.innerHTML = `<div class="result-text" id="resultText">${formatContent(result.page || '')}</div>`;
                 document.getElementById('resultText').style.fontSize = fontSize + 'px';
                 
-                // عرض قسم القوانين الجديد بشكل واضح ومنفصل
+                // عرض القوانين من الحقل المنفصل "laws"
                 if (result.laws && result.laws !== 'لا يوجد قوانين في هذا الملف' && result.laws.trim() !== '') {
                     lawsSection.style.display = 'block';
                     
@@ -1528,7 +1517,7 @@
                     lawsSection.style.display = 'none';
                 }
                 
-                // عرض قسم الأكواد
+                // عرض الأكواد
                 if (result.codes && Array.isArray(result.codes) && result.codes.length > 0) {
                     codesSection.style.display = 'block';
                     const codesContent = document.getElementById('codesContent');
@@ -1583,7 +1572,7 @@
             else {
                 textToCopy = currentResult.page || '';
                 
-                // إضافة القوانين إذا وجدت
+                // إضافة القوانين من الحقل المنفصل إذا وجدت
                 if (currentResult.laws && currentResult.laws !== 'لا يوجد قوانين في هذا الملف' && currentResult.laws.trim() !== '') {
                     textToCopy += '\n\n═══════════════════════════════\n';
                     textToCopy += 'القوانين والصيغ الرياضية:\n';
