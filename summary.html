@@ -609,7 +609,7 @@
             color: var(--text);
         }
         
-        /* قسم القوانين المحسن */
+        /* قسم القوانين - شكل جديد تحت النقاط الرئيسية */
         .laws-section {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -1045,7 +1045,7 @@
                 <ul class="points-list" id="pointsList"></ul>
             </div>
 
-            <!-- قسم القوانين المحسن -->
+            <!-- قسم القوانين الجديد - تحت النقاط الرئيسية مباشرة -->
             <div class="laws-section" id="lawsSection" style="display: none;">
                 <h3 class="laws-title"><i class="fas fa-gavel"></i> القوانين والصيغ الرياضية</h3>
                 <div class="laws-content" id="lawsContent"></div>
@@ -1156,12 +1156,6 @@
             // إضافة 2 عملة زيادة
             cost = cost + 2;
             
-            console.log(`📊 حساب العملات (طريقة الفلاش كارد + 2):
-            - عدد الصفحات: ${pages}
-            - عدد الكلمات: ${words}
-            - المعادلة: Math.ceil((words/1000)*2)/2 + 2
-            - النتيجة: ${cost} عملة`);
-            
             return Math.round(cost * 10) / 10;
         }
 
@@ -1225,7 +1219,8 @@
                 basePrompt += `
 
 تعليمات إضافية للتلخيص العادي (مهم جداً):
-- في نهاية التلخيص، أضف قسم خاص بعنوان "القوانين والصيغ الرياضية" يحتوي على جميع القوانين الموجودة في الملف
+- التلخيص يرجع زي ما هو بالضبط بدون تغيير في شكله
+- بعد النقاط الرئيسية، أضف قسم خاص بعنوان "القوانين والصيغ الرياضية" يحتوي على جميع القوانين الموجودة في الملف
 - استخرج كل قانون مهما كان نوعه: رياضي، فيزيائي، كيميائي، لغوي، أو أي نوع آخر
 - اكتب كل قانون كما هو بالضبط دون أي تغيير أو تعديل
 - افصل بين كل قانون والآخر بخط فارغ واضح
@@ -1339,7 +1334,7 @@
             
             // عرض المحتوى حسب النوع
             if (currentSettings.format === 'مفاهيم') {
-                // عرض جدول المفاهيم مع شريط تمرير
+                // عرض جدول المفاهيم
                 let tableHTML = `
                     <div class="table-container">
                         <table class="concepts-table">
@@ -1371,7 +1366,7 @@
             }
             
             else if (currentSettings.format === 'اسئلة') {
-                // عرض جدول الأسئلة والأجوبة مع شريط تمرير
+                // عرض جدول الأسئلة والأجوبة
                 let tableHTML = `
                     <div class="table-container">
                         <table class="qa-table">
@@ -1403,11 +1398,11 @@
             }
             
             else {
-                // تلخيص عادي
+                // تلخيص عادي - زي ما هو بالضبط
                 resultContent.innerHTML = `<div class="result-text" id="resultText">${formatContent(result.page || '')}</div>`;
                 document.getElementById('resultText').style.fontSize = fontSize + 'px';
                 
-                // عرض قسم القوانين المحسن
+                // عرض قسم القوانين الجديد (تحت النقاط الرئيسية)
                 if (result.laws && result.laws !== 'لا يوجد قوانين في هذا الملف') {
                     lawsSection.style.display = 'block';
                     // تحويل النص إلى فقرات مع الحفاظ على المسافات
@@ -1476,10 +1471,12 @@
             else {
                 textToCopy = currentResult.page || '';
                 
+                // إضافة القوانين إذا وجدت
                 if (currentResult.laws && currentResult.laws !== 'لا يوجد قوانين في هذا الملف') {
                     textToCopy += '\n\nالقوانين والصيغ الرياضية:\n' + currentResult.laws;
                 }
                 
+                // إضافة الأكواد إذا وجدت
                 if (currentResult.codes && Array.isArray(currentResult.codes) && currentResult.codes.length > 0) {
                     textToCopy += '\n\nالأكواد البرمجية:\n';
                     currentResult.codes.forEach((code, index) => {
@@ -1890,7 +1887,7 @@
                 }
                 
                 const pages = pdf.numPages;
-                // استخدام دالة calculateCoins الجديدة
+                // استخدام دالة calculateCoins
                 const cost = calculateCoins(pages, totalWords);
                 
                 fileInfo = { 
