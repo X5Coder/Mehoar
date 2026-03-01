@@ -238,6 +238,31 @@
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
         
+        .logout-btn {
+            background: linear-gradient(145deg, #dc2626, #b91c1c);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 24px rgba(220, 38, 38, 0.2);
+            border: 3px solid #b91c1c;
+            cursor: pointer;
+            transition: var(--transition-quick);
+        }
+        
+        .logout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(220, 38, 38, 0.3);
+        }
+        
+        .logout-btn i {
+            font-size: 18px;
+        }
+        
         .user-nav-right {
             display: flex;
             align-items: center;
@@ -1109,7 +1134,7 @@
                 font-size: 36px;
             }
             
-            .admin-badge, .coins-display {
+            .admin-badge, .coins-display, .logout-btn {
                 padding: 10px 20px;
                 font-size: 15px;
             }
@@ -1185,7 +1210,7 @@
                 gap: 16px;
             }
             
-            .admin-badge, .coins-display {
+            .admin-badge, .coins-display, .logout-btn {
                 padding: 8px 16px;
                 font-size: 14px;
             }
@@ -1253,12 +1278,12 @@
         }
         
         @media (max-width: 400px) {
-            .admin-badge, .coins-display {
+            .admin-badge, .coins-display, .logout-btn {
                 padding: 8px 14px;
                 font-size: 13px;
             }
             
-            .admin-badge i, .coins-display i {
+            .admin-badge i, .coins-display i, .logout-btn i {
                 font-size: 16px;
             }
             
@@ -1297,6 +1322,11 @@
                 <i class="fas fa-crown"></i>
                 <span>Admin</span>
             </div>
+            <!-- زر تسجيل الخروج الخاص بالأدمن فقط -->
+            <button class="logout-btn" id="admin-logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>تسجيل الخروج</span>
+            </button>
         </div>
         <div class="user-nav-right" id="user-nav">
             <div class="coins-display">
@@ -1485,7 +1515,8 @@
             publicNotificationInput: document.getElementById('public-notification-input'),
             sendPublicNotificationBtn: document.getElementById('send-public-notification-btn'),
             loadAllUsersBtn: document.getElementById('load-all-users-btn'),
-            notificationContainer: document.getElementById('notification-container')
+            notificationContainer: document.getElementById('notification-container'),
+            adminLogoutBtn: document.getElementById('admin-logout-btn') // زر تسجيل الخروج الجديد
         };
 
         let currentUser = null;
@@ -1715,6 +1746,36 @@
             
             elements.sendPublicNotificationBtn.addEventListener('click', sendPublicNotification);
             elements.loadAllUsersBtn.addEventListener('click', loadAllUsers);
+            
+            // إضافة حدث لزر تسجيل الخروج الخاص بالأدمن
+            if (elements.adminLogoutBtn) {
+                elements.adminLogoutBtn.addEventListener('click', handleAdminLogout);
+            }
+        }
+
+        // دالة تسجيل الخروج الخاصة بالأدمن
+        async function handleAdminLogout() {
+            try {
+                // إظهار رسالة تأكيد
+                if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                    // إيقاف مراقبة الإشعارات
+                    stopMonitoringNotifications();
+                    
+                    // تسجيل الخروج من Firebase
+                    await auth.signOut();
+                    
+                    // عرض رسالة نجاح
+                    showNotification('تم', 'تم تسجيل الخروج بنجاح', 'success', 'logout-' + Date.now());
+                    
+                    // التوجيه إلى صفحة تسجيل الدخول بعد تأخير بسيط
+                    setTimeout(() => {
+                        window.location.replace('login.html');
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error('Error during logout:', error);
+                showNotification('خطأ', 'فشل في تسجيل الخروج', 'error', 'error-' + Date.now());
+            }
         }
 
         async function loadAllUsers() {
