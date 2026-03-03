@@ -550,6 +550,7 @@
             transition: font-size 0.3s;
             word-wrap: break-word;
             font-size: 16px;
+            white-space: pre-wrap;
         }
         
         /* أنماط الجداول */
@@ -610,69 +611,60 @@
             color: var(--text);
         }
         
-        /* قسم القوانين */
-        .laws-section {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: rgba(139, 115, 85, 0.03);
-            border-radius: var(--radius);
-            border: 1px solid rgba(139, 115, 85, 0.1);
+        /* النقاط الرئيسية */
+        .key-points {
+            background: rgba(139, 115, 85, 0.05);
+            padding: 2rem;
+            border-top: 1px solid rgba(139, 115, 85, 0.1);
         }
         
-        .laws-title {
-            font-size: 1.3rem;
-            font-weight: 700;
+        .key-points h3 {
             color: var(--primary);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 1.3rem;
         }
         
-        .laws-content {
+        .points-list {
+            list-style: none;
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .points-list li {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border-right: 5px solid var(--primary);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .points-list li i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        /* تنسيق القوانين في النص */
+        .law-block {
             background: #1e1e1e;
             color: #d4d4d4;
-            padding: 1.5rem;
-            border-radius: var(--radius);
-            font-family: 'Courier New', monospace;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-family: monospace;
             direction: ltr;
             text-align: left;
             white-space: pre-wrap;
-            overflow-x: auto;
         }
         
-        .laws-content p {
-            margin: 0.5rem 0;
-            color: #d4d4d4;
-        }
-        
-        .laws-content strong {
-            color: #ffd700;
-        }
-        
-        .laws-content em {
-            color: #98c379;
-        }
-        
-        /* قسم الأكواد */
-        .codes-section {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: rgba(139, 115, 85, 0.03);
-            border-radius: var(--radius);
-            border: 1px solid rgba(139, 115, 85, 0.1);
-        }
-        
-        .codes-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
+        /* تنسيق الأكواد */
         .code-block {
             background: #1e1e1e;
             color: #d4d4d4;
@@ -717,46 +709,6 @@
             background: rgba(255,255,255,0.2);
         }
         
-        /* النقاط الرئيسية */
-        .key-points {
-            background: rgba(139, 115, 85, 0.05);
-            padding: 2rem;
-            border-top: 1px solid rgba(139, 115, 85, 0.1);
-        }
-        
-        .key-points h3 {
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.3rem;
-        }
-        
-        .points-list {
-            list-style: none;
-            display: grid;
-            gap: 1rem;
-        }
-        
-        .points-list li {
-            background: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            border-right: 5px solid var(--primary);
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-        
-        .points-list li i {
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-        
         /* استجابة الجداول للهواتف */
         @media (max-width: 768px) {
             :root { --navbar: 60px; }
@@ -791,28 +743,6 @@
                 padding: 0.8rem 1rem;
                 font-size: 0.95rem;
             }
-        }
-        
-        /* تعديلات للغة الإنجليزية */
-        html[dir="ltr"] .concepts-table th:last-child,
-        html[dir="ltr"] .qa-table th:last-child {
-            border-left: none;
-        }
-        
-        html[dir="ltr"] .concepts-table th,
-        html[dir="ltr"] .qa-table th {
-            border-right: 1px solid rgba(255,255,255,0.2);
-            border-left: none;
-        }
-        
-        html[dir="ltr"] .concepts-table th:first-child,
-        html[dir="ltr"] .qa-table th:first-child {
-            border-right: none;
-        }
-        
-        html[dir="ltr"] .laws-content,
-        html[dir="ltr"] .code-block {
-            text-align: left;
         }
         
         /* الإشعارات */
@@ -1152,28 +1082,17 @@
             }, duration);
         }
 
-        // ========== نظام حساب العملات الجديد ==========
+        // ========== نظام حساب العملات ==========
         function calculateCoins(pages, words) {
-            // المعادلة: cost = Math.ceil((words / 1000) * 2) / 2 + 2
             let cost = Math.ceil((words / 1000) * 2) / 2;
-            
-            // الحد الأدنى 1 عملة قبل الإضافة
             if (cost < 1) cost = 1;
-            
-            // إضافة 2 عملة زيادة
             cost = cost + 2;
-            
-            console.log(`📊 حساب العملات:
-            - عدد الصفحات: ${pages}
-            - عدد الكلمات: ${words}
-            - النتيجة: ${cost} عملة`);
-            
             return Math.round(cost * 10) / 10;
         }
 
         // ========== إنشاء البرومبت حسب نوع التلخيص ==========
         function createPrompt() {
-            // إذا كان التلخيص عادي - استخدم التعليمات الجديدة
+            // التلخيص العادي - نطلب رد نصي عادي وليس JSON
             if (currentSettings.format === 'عادي') {
                 const lengthInstructions = {
                     طويل: `قدم شرحاً تلخيصياً كاملاً وشاملاً يغطي الملف بالكامل من البداية للنهاية. يجب أن يكون الشرح مفصلاً وطويلاً بحيث يغني المستخدم تماماً عن قراءة الملف الأصلي.`,
@@ -1188,7 +1107,7 @@
 - أسلوب الشرح: ${currentSettings.style}
 - طول الشرح: ${currentSettings.length}
 
-تعليمات مهمة جداً:
+تعليمات مهمة جداً - اتبعها بدقة:
 1. ${lengthInstructions[currentSettings.length]}
 2. التزم تماماً بشخصية ${currentSettings.persona} في أسلوب الشرح
 3. اكتب بلغة ${currentSettings.language} سليمة وخالية من الأخطاء
@@ -1196,14 +1115,14 @@
 5. غطِ الملف كاملاً من أول صفحة لآخر صفحة - لا تترك أي جزء دون شرح
 6. ابدأ في تلخيص الملف بشكل مباشر بدون أي مقدمات أو كلام زائد
 
-7. استخراج القوانين والصيغ الرياضية:
+7. القوانين والصيغ الرياضية:
    - استخرج جميع القوانين والمعادلات والصيغ الرياضية الموجودة في الملف
    - اكتب كل قانون أو معادلة داخل *نجمة* مثل: *القانون: F = m × a*
    - لا تقم بتلخيص أو اختصار أو حذف أي قانون - انقلها كما هي بالضبط
    - إذا كان هناك أكثر من قانون، اكتب كل قانون في سطر منفصل داخل *
    - اجمع كل القوانين تحت عنوان "**القوانين والصيغ الرياضية:**"
 
-8. استخراج الأكواد البرمجية:
+8. الأكواد البرمجية:
    - استخرج جميع الأكواد البرمجية من الملف
    - ضع كل كود داخل علامات \`\`\` قبل وبعد الكود
    - اكتب اسم لغة البرمجة إن وجدت
@@ -1213,24 +1132,16 @@
 9. النقاط الرئيسية:
    - في نهاية الشرح، أضف 5 نقاط رئيسية تمثل خلاصة الخلاصة
    - اجعلها 5 جمل فقط، كل جملة تمثل فكرة رئيسية من الملف
-   - يجب أن تكون هذه النقاط مبتكرة وتلخص المحتوى بالكامل
    - اكتبها تحت عنوان "**النقاط الرئيسية:**" بشكل واضح
 
-10. هيكل الرد النهائي يجب أن يكون:
-    - أولاً: الشرح التلخيصي الكامل (يبدأ مباشرة بدون عنوان)
-    - ثانياً: القوانين والصيغ الرياضية (إذا وجدت)
-    - ثالثاً: الأكواد البرمجية داخل \`\`\` (إذا وجدت)
-    - رابعاً: النقاط الرئيسية (5 نقاط)
-
-يجب أن يكون الرد بصيغة JSON فقط بهذا الشكل الدقيق:
-{
-  "head": "عنوان مختصر للملف (5-7 كلمات)",
-  "raw": ["النقطة الرئيسية الأولى", "النقطة الرئيسية الثانية", "النقطة الرئيسية الثالثة", "النقطة الرئيسية الرابعة", "النقطة الرئيسية الخامسة"],
-  "page": "هنا يكتب الشرح التلخيصي الكامل مع القوانين والأكواد والنقاط الرئيسية بالتنسيق المطلوب"
-}`;
+10. تنبيه مهم جداً:
+    - الرد يجب أن يكون نصاً عادياً فقط، وليس JSON
+    - لا تستخدم أي تنسيق JSON في الرد
+    - اكتب بشكل طبيعي مع استخدام **للعناوين** و *للقوانين* و \`\`\`للأكواد\`\`\`
+    - ابدأ الشرح مباشرة بدون أي كلمات تمهيدية`;
             }
             
-            // إذا كان التلخيص جداول مفاهيم
+            // جداول المفاهيم - نطلب JSON
             else if (currentSettings.format === 'مفاهيم') {
                 const lengthInstructions = {
                     طويل: 'استخرج 10-15 مفهوم أساسي من الملف مع شرح مفصل لكل مفهوم. غطِ جميع أجزاء الملف.',
@@ -1248,23 +1159,23 @@
 
 تعليمات مهمة:
 1. ${lengthInstructions[currentSettings.length]}
-2. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
+2. استخرج 5 نقاط رئيسية تمثل جوهر المحتوى
 3. ابدأ بشكل مباشر بدون مقدمات
 
-يجب أن يكون الرد بصيغة JSON فقط:
+يجب أن يكون الرد بصيغة JSON فقط بهذا الشكل:
 {
   "head": "عنوان مختصر للملف (5-7 كلمات)",
-  "raw": ["النقطة الرئيسية الأولى", "النقطة الرئيسية الثانية", "النقطة الرئيسية الثالثة", "النقطة الرئيسية الرابعة", "النقطة الرئيسية الخامسة"],
+  "raw": ["نقطة رئيسية 1", "نقطة رئيسية 2", "نقطة رئيسية 3", "نقطة رئيسية 4", "نقطة رئيسية 5"],
   "h1": "المفهوم الأول",
-  "s1": "شرح وتعريف المفهوم الأول",
+  "s1": "شرح المفهوم الأول",
   "h2": "المفهوم الثاني",
-  "s2": "شرح وتعريف المفهوم الثاني",
+  "s2": "شرح المفهوم الثاني",
   "h3": "المفهوم الثالث",
-  "s3": "شرح وتعريف المفهوم الثالث",
+  "s3": "شرح المفهوم الثالث",
   "h4": "المفهوم الرابع",
-  "s4": "شرح وتعريف المفهوم الرابع",
+  "s4": "شرح المفهوم الرابع",
   "h5": "المفهوم الخامس",
-  "s5": "شرح وتعريف المفهوم الخامس"
+  "s5": "شرح المفهوم الخامس"
 }`;
                 
                 if (currentSettings.length === 'طويل') {
@@ -1274,7 +1185,7 @@
                 return prompt;
             }
             
-            // إذا كان التلخيص أسئلة وأجوبة
+            // جداول الأسئلة والأجوبة - نطلب JSON
             else {
                 const lengthInstructions = {
                     طويل: 'استخرج 10-15 سؤال وجواب يغطون جميع محتويات الملف.',
@@ -1292,13 +1203,13 @@
 
 تعليمات مهمة:
 1. ${lengthInstructions[currentSettings.length]}
-2. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
+2. استخرج 5 نقاط رئيسية تمثل جوهر المحتوى
 3. ابدأ بشكل مباشر بدون مقدمات
 
-يجب أن يكون الرد بصيغة JSON فقط:
+يجب أن يكون الرد بصيغة JSON فقط بهذا الشكل:
 {
   "head": "عنوان مختصر للملف (5-7 كلمات)",
-  "raw": ["النقطة الرئيسية الأولى", "النقطة الرئيسية الثانية", "النقطة الرئيسية الثالثة", "النقطة الرئيسية الرابعة", "النقطة الرئيسية الخامسة"],
+  "raw": ["نقطة رئيسية 1", "نقطة رئيسية 2", "نقطة رئيسية 3", "نقطة رئيسية 4", "نقطة رئيسية 5"],
   "h1": "السؤال الأول",
   "s1": "إجابة السؤال الأول",
   "h2": "السؤال الثاني",
@@ -1326,9 +1237,6 @@
             const pointsList = document.getElementById('pointsList');
             const fontControls = document.getElementById('fontControls');
             
-            // العنوان
-            document.getElementById('resultHead').textContent = result.head || 'ملخص الملف';
-            
             // ضبط اتجاه الصفحة حسب اللغة
             if (currentSettings.language === 'انجليزي') {
                 document.documentElement.dir = 'ltr';
@@ -1338,27 +1246,29 @@
                 document.documentElement.lang = 'ar';
             }
             
-            // عرض النقاط الرئيسية
-            pointsList.innerHTML = '';
-            if (result.raw && Array.isArray(result.raw)) {
-                result.raw.forEach(point => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
-                    pointsList.appendChild(li);
-                });
-            }
-            
             // عرض المحتوى حسب النوع
             if (currentSettings.format === 'مفاهيم') {
                 fontControls.style.display = 'none';
+                document.getElementById('resultHead').textContent = result.head || 'جدول المفاهيم';
                 
+                // عرض النقاط الرئيسية
+                pointsList.innerHTML = '';
+                if (result.raw && Array.isArray(result.raw)) {
+                    result.raw.forEach(point => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
+                        pointsList.appendChild(li);
+                    });
+                }
+                
+                // عرض جدول المفاهيم
                 let tableHTML = `
                     <div class="table-container">
                         <table class="concepts-table">
                             <thead>
                                 <tr>
                                     <th>${currentSettings.language === 'انجليزي' ? 'Concept' : 'المفهوم'}</th>
-                                    <th>${currentSettings.language === 'انجليزي' ? 'Definition' : 'الشرح / التعريف'}</th>
+                                    <th>${currentSettings.language === 'انجليزي' ? 'Definition' : 'الشرح'}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1382,7 +1292,19 @@
             
             else if (currentSettings.format === 'اسئلة') {
                 fontControls.style.display = 'none';
+                document.getElementById('resultHead').textContent = result.head || 'أسئلة وأجوبة';
                 
+                // عرض النقاط الرئيسية
+                pointsList.innerHTML = '';
+                if (result.raw && Array.isArray(result.raw)) {
+                    result.raw.forEach(point => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
+                        pointsList.appendChild(li);
+                    });
+                }
+                
+                // عرض جدول الأسئلة
                 let tableHTML = `
                     <div class="table-container">
                         <table class="qa-table">
@@ -1412,27 +1334,67 @@
             }
             
             else {
-                // تلخيص عادي - إظهار أزرار التحكم في الخط
+                // تلخيص عادي - الرد نص عادي مش JSON
                 fontControls.style.display = 'flex';
                 
-                // معالجة النص لعرض القوانين بشكل صحيح
-                let content = result.page || '';
+                // النتيجة هنا ممكن تكون object (لو المستخدم حفظ حاجة قديمة) أو نص
+                let content = '';
+                let rawPoints = [];
+                let title = 'ملخص الملف';
                 
-                // تحويل علامات ** إلى عناوين
-                content = content.replace(/\*\*(.*?)\*\*/g, '<h3 style="color: var(--primary); margin: 1.5rem 0 1rem 0;">$1</h3>');
+                if (typeof result === 'object' && result !== null) {
+                    // لو كانت result object (من السجلات القديمة)
+                    content = result.page || result.text || JSON.stringify(result);
+                    title = result.head || 'ملخص الملف';
+                    rawPoints = result.raw || [];
+                } else {
+                    // لو كانت نص عادي
+                    content = result;
+                }
                 
-                // تحويل *النص* إلى تنسيق خاص للقوانين
-                content = content.replace(/\*(.*?)\*/g, '<div style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 10px; margin: 1rem 0; font-family: monospace; direction: ltr; text-align: left;">$1</div>');
+                document.getElementById('resultHead').textContent = title;
                 
-                // تحويل الأكواد
-                content = content.replace(/```(.*?)```/gs, '<div class="code-block"><pre>$1</pre></div>');
+                // عرض النقاط الرئيسية
+                pointsList.innerHTML = '';
+                if (rawPoints.length > 0) {
+                    rawPoints.forEach(point => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
+                        pointsList.appendChild(li);
+                    });
+                } else {
+                    // لو مفيش نقاط رئيسية منفصلة، نحاول نستخرجها من النص
+                    document.getElementById('keyPointsSection').style.display = 'none';
+                }
                 
-                // تحويل السطور الجديدة إلى <br>
-                content = content.replace(/\n/g, '<br>');
-                
-                resultContent.innerHTML = `<div class="result-text" id="resultText">${content}</div>`;
+                // عرض المحتوى النصي
+                resultContent.innerHTML = `<div class="result-text" id="resultText">${formatText(content)}</div>`;
                 document.getElementById('resultText').style.fontSize = fontSize + 'px';
             }
+        }
+
+        // ========== تنسيق النص للعرض ==========
+        function formatText(text) {
+            if (!text) return '';
+            
+            let formatted = text
+                .replace(/\\n/g, '\n')
+                .replace(/\\r/g, '')
+                .replace(/\\t/g, '    ');
+            
+            // تحويل **العناوين** إلى h3
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<h3 style="color: var(--primary); margin: 1.5rem 0 1rem 0;">$1</h3>');
+            
+            // تحويل *القوانين* إلى blocks
+            formatted = formatted.replace(/\*(.*?)\*/g, '<div class="law-block">$1</div>');
+            
+            // تحويل الأكواد
+            formatted = formatted.replace(/```(.*?)```/gs, '<div class="code-block"><pre>$1</pre></div>');
+            
+            // تحويل السطور الجديدة
+            formatted = formatted.replace(/\n/g, '<br>');
+            
+            return formatted;
         }
 
         // ========== دوال النسخ ==========
@@ -1441,52 +1403,43 @@
             
             let textToCopy = '';
             
-            if (currentSettings.format === 'مفاهيم') {
-                textToCopy = 'جدول المفاهيم:\n\n';
-                const maxItems = currentSettings.length === 'طويل' ? 15 : 7;
-                for (let i = 1; i <= maxItems; i++) {
-                    if (currentResult[`h${i}`] && currentResult[`s${i}`]) {
-                        textToCopy += `${currentResult[`h${i}`]}\n${currentResult[`s${i}`]}\n\n`;
+            if (typeof currentResult === 'object') {
+                if (currentSettings.format === 'مفاهيم') {
+                    textToCopy = 'جدول المفاهيم:\n\n';
+                    const maxItems = currentSettings.length === 'طويل' ? 15 : 7;
+                    for (let i = 1; i <= maxItems; i++) {
+                        if (currentResult[`h${i}`] && currentResult[`s${i}`]) {
+                            textToCopy += `${currentResult[`h${i}`]}\n${currentResult[`s${i}`]}\n\n`;
+                        }
                     }
                 }
-            }
-            else if (currentSettings.format === 'اسئلة') {
-                textToCopy = 'أسئلة وأجوبة:\n\n';
-                const maxItems = currentSettings.length === 'طويل' ? 15 : 7;
-                for (let i = 1; i <= maxItems; i++) {
-                    if (currentResult[`h${i}`] && currentResult[`s${i}`]) {
-                        textToCopy += `س: ${currentResult[`h${i}`]}\nج: ${currentResult[`s${i}`]}\n\n`;
+                else if (currentSettings.format === 'اسئلة') {
+                    textToCopy = 'أسئلة وأجوبة:\n\n';
+                    const maxItems = currentSettings.length === 'طويل' ? 15 : 7;
+                    for (let i = 1; i <= maxItems; i++) {
+                        if (currentResult[`h${i}`] && currentResult[`s${i}`]) {
+                            textToCopy += `س: ${currentResult[`h${i}`]}\nج: ${currentResult[`s${i}`]}\n\n`;
+                        }
                     }
                 }
-            }
-            else {
-                textToCopy = currentResult.page || '';
-            }
-            
-            // إضافة النقاط الرئيسية
-            if (currentResult.raw && Array.isArray(currentResult.raw)) {
-                textToCopy += '\n\nالنقاط الرئيسية:\n';
-                currentResult.raw.forEach((point, index) => {
-                    textToCopy += `${index + 1}. ${point}\n`;
-                });
+                else {
+                    textToCopy = currentResult.page || currentResult.text || '';
+                }
+                
+                if (currentResult.raw && Array.isArray(currentResult.raw)) {
+                    textToCopy += '\n\nالنقاط الرئيسية:\n';
+                    currentResult.raw.forEach((point, index) => {
+                        textToCopy += `${index + 1}. ${point}\n`;
+                    });
+                }
+            } else {
+                textToCopy = currentResult;
             }
             
             navigator.clipboard.writeText(textToCopy).then(() => {
                 showNotification('تم نسخ المحتوى بنجاح', 'success');
             }).catch(() => {
                 showNotification('فشل في نسخ المحتوى', 'error');
-            });
-        }
-
-        function copyCode(button, code) {
-            navigator.clipboard.writeText(code).then(() => {
-                button.innerHTML = '<i class="fas fa-check"></i> تم';
-                setTimeout(() => {
-                    button.innerHTML = '<i class="fas fa-copy"></i> نسخ';
-                }, 2000);
-                showNotification('تم نسخ الكود', 'success');
-            }).catch(() => {
-                showNotification('فشل في نسخ الكود', 'error');
             });
         }
 
@@ -1880,19 +1833,21 @@
                 
                 if (!response.ok) throw new Error('فشل الاتصال بالسيرفر');
                 
-                const text = await response.text();
                 let result;
+                const text = await response.text();
                 
-                try {
-                    const jsonMatch = text.match(/\{[\s\S]*\}/);
-                    result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
-                } catch (e) {
-                    // لو مش JSON، نعمله كـ تلخيص عادي
-                    result = {
-                        head: 'ملخص الملف',
-                        raw: ['تم إنشاء الملخص بنجاح'],
-                        page: text.replace(/\\n/g, '\n').replace(/\\/g, '')
-                    };
+                // لو التلخيص عادي، خزن النص كما هو
+                if (currentSettings.format === 'عادي') {
+                    result = text; // نص عادي
+                } else {
+                    // للجداول، حاول نحول لـ JSON
+                    try {
+                        const jsonMatch = text.match(/\{[\s\S]*\}/);
+                        result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
+                    } catch (e) {
+                        // لو فشل، نخزن كنص
+                        result = { page: text, raw: [] };
+                    }
                 }
                 
                 // خصم الرصيد
@@ -1931,9 +1886,6 @@
                 hideLoading();
             }
         }
-
-        // ========== إضافة دالة copyCode إلى النطاق العام ==========
-        window.copyCode = copyCode;
     </script>
 </body>
 </html>
