@@ -37,7 +37,7 @@
             --radius-lg: 28px;
             --navbar: 70px;
             
-            /* ألوان التنسيقات الجمالية */
+            /* ألوان التنسيقات */
             --title-gradient: linear-gradient(145deg, #8B7355, #A9927D);
             --law-bg: #1E1E1E;
             --law-text: #D4A574;
@@ -563,54 +563,39 @@
             font-size: 16px;
         }
         
-        /* العنوان الرئيسي - بين (* و *) */
+        /* العنوان الرئيسي */
         .main-title {
             text-align: center;
             font-size: 2.2rem;
             font-weight: 900;
-            background: var(--title-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--primary-dark);
             margin: 2rem 0 3rem 0;
             padding: 1rem;
             position: relative;
-            letter-spacing: 1px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--secondary);
+            width: 100%;
         }
         
-        .main-title::before,
-        .main-title::after {
-            content: "✦";
-            color: var(--secondary);
-            font-size: 2rem;
-            margin: 0 1rem;
-            opacity: 0.5;
-        }
-        
-        /* العناوين الفرعية - بين * و * */
+        /* العناوين الفرعية */
         .section-title {
             font-size: 1.8rem;
             font-weight: 800;
             color: var(--primary-dark);
-            margin: 2.5rem 0 1.5rem 0;
-            padding-bottom: 0.5rem;
-            border-bottom: 3px solid var(--secondary);
-            display: inline-block;
-            position: relative;
+            margin: 2rem 0 1rem 0;
+            padding-right: 1rem;
+            border-right: 5px solid var(--secondary);
         }
         
-        .section-title::after {
-            content: "";
-            position: absolute;
-            bottom: -3px;
-            right: 0;
-            width: 50px;
-            height: 3px;
-            background: var(--primary);
+        /* العناوين الصغيرة */
+        .subsection-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 1.5rem 0 1rem 0;
+            padding-right: 0.5rem;
         }
         
-        /* النص المميز - بين ! و ! */
+        /* النص المميز */
         .highlight-text {
             display: inline-block;
             background: var(--highlight-bg);
@@ -620,35 +605,48 @@
             color: var(--primary-dark);
             border-right: 4px solid var(--secondary);
             margin: 0.5rem 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         
-        /* القوانين - بين • و • */
-        .law-block {
+        /* القوانين داخل النص */
+        .inline-law {
             background: var(--law-bg);
             color: var(--law-text);
-            padding: 1.5rem;
-            border-radius: 15px;
-            margin: 1.5rem 0;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
             font-family: 'Courier New', monospace;
             direction: ltr;
             text-align: left;
-            border: 1px solid #D4A574;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            position: relative;
-            overflow-x: auto;
+            display: inline-block;
+            margin: 0.3rem 0;
+            border-right: 4px solid var(--secondary);
         }
         
-        .law-block::before {
-            content: "⚖️";
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            font-size: 1.8rem;
+        /* قسم القوانين المنفصل */
+        .laws-section {
+            margin-top: 3rem;
+            padding: 2rem;
             background: var(--law-bg);
-            padding: 0.3rem;
-            border-radius: 50%;
-            border: 2px solid var(--law-text);
+            border-radius: var(--radius);
+            border: 2px solid var(--secondary);
+        }
+        
+        .laws-section h3 {
+            color: var(--law-text);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .law-item {
+            background: rgba(212, 165, 116, 0.1);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            color: var(--law-text);
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+            text-align: left;
+            border-right: 4px solid var(--secondary);
         }
         
         /* الأكواد البرمجية */
@@ -669,12 +667,6 @@
             align-items: center;
             border-bottom: 1px solid #30363d;
             color: #8b949e;
-            font-family: 'Segoe UI', monospace;
-        }
-        
-        .code-header i {
-            margin-left: 0.5rem;
-            color: var(--secondary);
         }
         
         .copy-code-btn {
@@ -694,23 +686,21 @@
         .copy-code-btn:hover {
             background: #30363d;
             color: white;
-            border-color: var(--secondary);
         }
         
         .code-block pre {
             margin: 0;
             padding: 1.5rem;
             color: var(--code-text);
-            font-family: 'Fira Code', 'Courier New', monospace;
+            font-family: 'Fira Code', monospace;
             font-size: 0.95rem;
             line-height: 1.6;
             white-space: pre-wrap;
-            word-wrap: break-word;
             direction: ltr;
             text-align: left;
         }
         
-        /* الأرقام المميزة - بين - و - */
+        /* الأرقام المميزة */
         .special-number {
             display: inline-block;
             background: var(--number-bg);
@@ -719,21 +709,41 @@
             border-radius: 30px;
             font-weight: 800;
             margin: 0 0.2rem;
-            box-shadow: 0 3px 8px rgba(139, 115, 85, 0.3);
-            font-size: 0.9em;
-            border: 2px solid var(--secondary);
         }
         
         /* الرموز الخاصة */
         .special-symbol {
-            display: inline-block;
             color: var(--secondary);
             font-weight: 900;
             margin: 0 0.3rem;
             font-size: 1.2em;
         }
         
-        /* أنماط الجداول (للمفاهيم والأسئلة) */
+        /* النقاط الرئيسية */
+        .key-points-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(139, 115, 85, 0.05);
+            border-radius: var(--radius);
+            border: 1px solid var(--secondary);
+        }
+        
+        .key-points-section h3 {
+            color: var(--primary-dark);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .key-point-item {
+            background: white;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            border-radius: 12px;
+            border-right: 5px solid var(--primary);
+            box-shadow: var(--shadow);
+        }
+        
+        /* أنماط الجداول - كما هي بدون تغيير */
         .table-container {
             overflow-x: auto;
             margin: 1rem 0;
@@ -882,7 +892,6 @@
             box-shadow: var(--shadow);
         }
         
-        /* استجابة للهواتف */
         @media (max-width: 768px) {
             :root { --navbar: 60px; }
             
@@ -892,24 +901,22 @@
             .main { padding-left: 1rem; padding-right: 1rem; }
             .card { padding: 1.5rem; }
             .card-title { font-size: 1.6rem; }
-            
-            .main-title {
-                font-size: 1.8rem;
-            }
-            
-            .main-title::before,
-            .main-title::after {
-                display: none;
-            }
-            
-            .section-title {
-                font-size: 1.5rem;
-            }
+            .main-title { font-size: 1.8rem; }
+            .section-title { font-size: 1.5rem; }
+            .subsection-title { font-size: 1.3rem; }
             
             .notifications {
                 left: 1rem;
                 right: 1rem;
                 max-width: none;
+            }
+            
+            .concepts-table, .qa-table {
+                min-width: 100%;
+            }
+            
+            .concepts-table td, .qa-table td {
+                padding: 0.8rem;
             }
         }
     </style>
@@ -1048,7 +1055,7 @@
             </button>
         </section>
         
-        <!-- قسم النتائج (بدون نقاط رئيسية منفصلة) -->
+        <!-- قسم النتائج -->
         <section class="result-section" id="resultSection">
             <div class="result-header">
                 <h2 id="resultHead">ملخص الملف</h2>
@@ -1162,7 +1169,7 @@
             return Math.round(cost * 10) / 10;
         }
 
-        // ========== البرومت الجديد للتلخيص العادي ==========
+        // ========== البرومت النهائي للتلخيص العادي فقط ==========
         function getNormalSummaryPrompt() {
             return `
 حلّل الملف التالي بدقة شديدة للغاية وافحصه من أول كلمة إلى آخر كلمة بدون إهمال أي جزء. نفّذ المطلوب فورًا بدون أي مقدمة أو تمهيد أو تعريف بنفسك. اسمك عَون ولا يُسمح بذكر أي اسم آخر نهائيًا.
@@ -1178,61 +1185,41 @@
 1) أول سطر في الرد دائمًا يكون عنوانًا مكوّنًا من 5 كلمات يلخص الملف بالكامل ويوضع هكذا:
 (*عنوان مكوّن من خمس كلمات*)
 
-2) ابدأ الشرح مباشرة بعد العنوان بدون أي فواصل كبيرة بين السطور وبدون أي كلام خارج المحتوى.
+2) ابدأ الشرح مباشرة بعد العنوان بدون أي فواصل كبيرة.
 
-3) استخدم فقط الرموز التالية في التنظيم داخل الشرح:
--
-•
--»
-~
-×
-✓
+3) استخدم الرموز التالية فقط:
+- للعناوين الرئيسية: *عنوان*
+- للعناوين الفرعية: **عنوان فرعي**
+- للنص المميز: !نص مميز!
+- للقوانين داخل الشرح: $قانون$
+- للأرقام المميزة: -رقم-
+- للأكواد: \`\`\`كود\`\`\`
 
-4) أي عنوان فقرة داخل الشرح يكون بين نجمتين هكذا:
-*عنوان الفقرة*
+4) طول الشرح:
+- إذا اختار المستخدم "طويل": قدم شرحًا تفصيليًا شاملًا باستفاضة عالية جدًا يغطي كل جزء من بداية الملف إلى نهايته.
+- إذا اختار المستخدم "قصير": قدم ملخصًا متوسط الطول يغطي الملف بالكامل.
 
-5) أي كلمة أو جملة مميزة توضع هكذا:
-!جملة مميزة!
+5) في نهاية الشرح أضف قسمين منفصلين تمامًا:
 
-6) أي قانون أو صيغة رياضية أو قانون فيزيائي أو قاعدة مكتوبة في الملف تُكتب كما هي حرفيًا بدون أي تعديل بالشكل التالي:
-•نص القانون كما هو موجود في الملف•
-- لا تختصر
-- لا تعيد الصياغة
-- لا تغيّر الرموز
-- إذا وُجدت قوانين اعرضها
-- إذا لم توجد قوانين لا تذكر أي شيء عنها نهائيًا
+أولاً: قسم القوانين والصيغ الرياضية
+اكتبه بالشكل التالي:
+==القوانين والصيغ الرياضية==
+[قائمة بكل القوانين المستخرجة من الملف، كل قانون في سطر منفصل]
 
-7) أي كود برمجي يُكتب كما هو تمامًا بدون أي تعديل داخل:
-\`\`\`
-الكود كما هو
-\`\`\`
-- إذا وُجدت أكواد اعرضها
-- إذا لم توجد أكواد لا تذكر أي شيء عنها نهائيًا
+ثانياً: قسم النقاط الرئيسية
+اكتبه بالشكل التالي:
+==النقاط الرئيسية==
+- النقطة الأولى
+- النقطة الثانية
+- النقطة الثالثة
+- النقطة الرابعة
+- النقطة الخامسة
 
-8) أي رقم يظهر في الشرح يكون بالشكل التالي:
--1-
--25-
--300-
-وهكذا
-
-9) طول الشرح:
-- إذا اختار المستخدم "طويل":
-قدم شرحًا تفصيليًا شاملًا باستفاضة عالية جدًا يغطي كل جزء من بداية الملف إلى نهايته بحيث إذا قرأه المستخدم لا يحتاج إطلاقًا للرجوع إلى الملف الأصلي.
-- إذا اختار المستخدم "قصير":
-قدم ملخصًا متوسط الطول وعدد السطور يغطي الملف بالكامل من أول كلمة لآخر كلمة بدون حذف أي محور أساسي.
-
-10) الالتزام الكامل بشخصية الشارح المختارة وأسلوبه ولغة الإخراج دون أي خروج عنها.
-
-11) ممنوع تمامًا:
-- كتابة مقدمات
-- كتابة تنبيهات
-- كتابة شرح خارج الهيكل
+6) ممنوع تمامًا:
 - استخدام JSON
-- استخدام تنسيقات غير المذكورة
-- ترك مسافات كبيرة بين الفقرات
-- ذكر اسم أي نموذج آخر غير عَون
-
-ابدأ التنفيذ فورًا عند استلام الملف.
+- كتابة مقدمات
+- ترك مسافات كبيرة
+- ذكر أي اسم آخر غير عَون
 `;
         }
 
@@ -1243,7 +1230,7 @@
                 return getNormalSummaryPrompt();
             }
             
-            // جداول المفاهيم - نطلب JSON
+            // جداول المفاهيم - كما هي بدون تغيير
             else if (currentSettings.format === 'مفاهيم') {
                 const lengthInstructions = {
                     طويل: 'استخرج 10-15 مفهوم أساسي من الملف مع شرح مفصل لكل مفهوم. غطِ جميع أجزاء الملف.',
@@ -1285,7 +1272,7 @@
                 return prompt;
             }
             
-            // جداول الأسئلة والأجوبة - نطلب JSON
+            // جداول الأسئلة والأجوبة - كما هي بدون تغيير
             else {
                 const lengthInstructions = {
                     طويل: 'استخرج 10-15 سؤال وجواب يغطون جميع محتويات الملف.',
@@ -1328,7 +1315,7 @@
             }
         }
 
-        // ========== دالة تنسيق النص الجمالي ==========
+        // ========== دالة تنسيق النص للتلخيص العادي ==========
         function formatText(text) {
             if (!text) return '';
             
@@ -1337,19 +1324,43 @@
                 .replace(/\\r/g, '')
                 .replace(/\\t/g, '    ');
             
-            // تنسيق العنوان الرئيسي (*نص*) -> بدون العلامات وفي المنتصف
+            // تخزين الأقسام المنفصلة
+            let lawsSection = '';
+            let keyPointsSection = '';
+            
+            // استخراج قسم القوانين
+            const lawsMatch = formatted.match(/==القوانين والصيغ الرياضية==\s*([\s\S]*?)(?===\s*النقاط الرئيسية==|$)/);
+            if (lawsMatch) {
+                lawsSection = lawsMatch[1].trim();
+                formatted = formatted.replace(/==القوانين والصيغ الرياضية==[\s\S]*?(?===\s*النقاط الرئيسية==|$)/, '');
+            }
+            
+            // استخراج قسم النقاط الرئيسية
+            const pointsMatch = formatted.match(/==النقاط الرئيسية==\s*([\s\S]*?)$/);
+            if (pointsMatch) {
+                keyPointsSection = pointsMatch[1].trim();
+                formatted = formatted.replace(/==النقاط الرئيسية==[\s\S]*?$/, '');
+            }
+            
+            // تنسيق العنوان الرئيسي
             formatted = formatted.replace(/\(\*(.*?)\*\)/g, '<div class="main-title">$1</div>');
             
-            // تنسيق العناوين الفرعية (*نص*) -> بدون العلامات وبولد وكبير
-            formatted = formatted.replace(/\*(.*?)\*/g, '<div class="section-title">$1</div>');
+            // تنسيق العناوين الرئيسية
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<div class="section-title">$1</div>');
             
-            // تنسيق النص المميز (!نص!) -> بدون علامات وبخلفية فاتحة
+            // تنسيق العناوين الفرعية
+            formatted = formatted.replace(/\*(.*?)\*/g, '<div class="subsection-title">$1</div>');
+            
+            // تنسيق النص المميز
             formatted = formatted.replace(/!(.*?)!/g, '<span class="highlight-text">$1</span>');
             
-            // تنسيق القوانين (•نص•) -> بدون علامات وبخلفية داكنة
-            formatted = formatted.replace(/•(.*?)•/g, '<div class="law-block">$1</div>');
+            // تنسيق القوانين داخل النص
+            formatted = formatted.replace(/\$(.*?)\$/g, '<span class="inline-law">$1</span>');
             
-            // تنسيق الأكواد (```نص```) -> بدون علامات وبشكل terminal
+            // تنسيق الأرقام
+            formatted = formatted.replace(/-(\d+)-/g, '<span class="special-number">$1</span>');
+            
+            // تنسيق الأكواد
             formatted = formatted.replace(/```(.*?)```/gs, (match, code) => {
                 const codeId = 'code_' + Math.random().toString(36).substr(2, 9);
                 return `
@@ -1365,14 +1376,40 @@
                 `;
             });
             
-            // تنسيق الأرقام (-رقم-) -> بدون شرطات وبشكل دائري
-            formatted = formatted.replace(/-(\d+)-/g, '<span class="special-number">$1</span>');
+            // تنسيق الرموز
+            formatted = formatted.replace(/([~•])/g, '<span class="special-symbol">$1</span>');
             
-            // تنسيق الرموز الخاصة
-            formatted = formatted.replace(/([-•~×✓])/g, '<span class="special-symbol">$1</span>');
-            
-            // تحويل باقي السطور الجديدة
+            // تحويل السطور
             formatted = formatted.replace(/\n/g, '<br>');
+            
+            // إضافة قسم القوانين في النهاية
+            if (lawsSection) {
+                let lawsHtml = '<div class="laws-section"><h3>📜 القوانين والصيغ الرياضية</h3>';
+                const laws = lawsSection.split('\n').filter(law => law.trim() && !law.startsWith('=='));
+                laws.forEach(law => {
+                    if (law.trim()) {
+                        lawsHtml += `<div class="law-item">${law.trim()}</div>`;
+                    }
+                });
+                lawsHtml += '</div>';
+                formatted += lawsHtml;
+            }
+            
+            // إضافة قسم النقاط الرئيسية
+            if (keyPointsSection) {
+                let pointsHtml = '<div class="key-points-section"><h3>✨ النقاط الرئيسية</h3>';
+                const points = keyPointsSection.split('\n').filter(point => point.trim().startsWith('-'));
+                points.forEach(point => {
+                    if (point.trim()) {
+                        const pointText = point.trim().substring(1).trim();
+                        if (pointText) {
+                            pointsHtml += `<div class="key-point-item">${pointText}</div>`;
+                        }
+                    }
+                });
+                pointsHtml += '</div>';
+                formatted += pointsHtml;
+            }
             
             return formatted;
         }
@@ -1397,7 +1434,7 @@
                 fontControls.style.display = 'none';
                 document.getElementById('resultHead').textContent = result.head || 'جدول المفاهيم';
                 
-                // عرض جدول المفاهيم
+                // عرض جدول المفاهيم - كما هو بدون تغيير
                 let tableHTML = `
                     <div class="table-container">
                         <table class="concepts-table">
@@ -1430,7 +1467,7 @@
                 fontControls.style.display = 'none';
                 document.getElementById('resultHead').textContent = result.head || 'أسئلة وأجوبة';
                 
-                // عرض جدول الأسئلة
+                // عرض جدول الأسئلة - كما هو بدون تغيير
                 let tableHTML = `
                     <div class="table-container">
                         <table class="qa-table">
@@ -1460,12 +1497,12 @@
             }
             
             else {
-                // تلخيص عادي
+                // تلخيص عادي - استخدم التنسيق الجديد
                 fontControls.style.display = 'flex';
                 
                 let content = '';
                 if (typeof result === 'object' && result !== null) {
-                    content = result.page || result.text || JSON.stringify(result);
+                    content = result.page || result.text || '';
                     document.getElementById('resultHead').textContent = result.head || 'ملخص الملف';
                 } else {
                     content = result;
@@ -1477,9 +1514,12 @@
                     }
                 }
                 
-                // تطبيق التنسيق الجمالي
+                // تطبيق التنسيق
                 resultContent.innerHTML = `<div class="result-text" id="resultText">${formatText(content)}</div>`;
-                document.getElementById('resultText').style.fontSize = fontSize + 'px';
+                const resultText = document.getElementById('resultText');
+                if (resultText) {
+                    resultText.style.fontSize = fontSize + 'px';
+                }
             }
         }
 
@@ -1502,7 +1542,7 @@
             }
         };
 
-        // ========== دوال النسخ ==========
+        // ========== نسخ المحتوى كاملاً ==========
         function copyAllContent() {
             if (!currentResult) return;
             
@@ -1963,6 +2003,8 @@
                     settings: { ...currentSettings },
                     data: result
                 });
+                
+                console.log('تم حفظ السجل بنجاح:', newRecordRef.key);
                 
                 // عرض النتائج
                 displayResults(result);
