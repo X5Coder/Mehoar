@@ -36,6 +36,14 @@
             --radius: 20px;
             --radius-lg: 28px;
             --navbar: 70px;
+            
+            /* ألوان التنسيقات الجديدة */
+            --code-bg: #0d1117;
+            --code-text: #e6edf3;
+            --law-bg: #1a2634;
+            --law-text: #e3b341;
+            --special-text: #c586c0;
+            --highlight: #ffd700;
         }
         
         body {
@@ -550,7 +558,6 @@
             transition: font-size 0.3s;
             word-wrap: break-word;
             font-size: 16px;
-            white-space: pre-wrap;
         }
         
         /* أنماط الجداول */
@@ -651,62 +658,172 @@
             font-size: 1.2rem;
         }
         
-        /* تنسيق القوانين في النص */
-        .law-block {
-            background: #1e1e1e;
-            color: #d4d4d4;
+        /* ===== التنسيقات الجديدة المميزة ===== */
+        
+        /* تنسيق العنوان الرئيسي */
+        .main-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--primary-dark);
+            text-align: center;
+            margin: 2rem 0;
             padding: 1rem;
-            border-radius: 10px;
-            margin: 1rem 0;
-            font-family: monospace;
-            direction: ltr;
-            text-align: left;
-            white-space: pre-wrap;
+            background: linear-gradient(145deg, rgba(139, 115, 85, 0.1), rgba(212, 165, 116, 0.1));
+            border-radius: 50px;
+            border: 2px solid var(--secondary);
+            position: relative;
         }
         
-        /* تنسيق الأكواد */
-        .code-block {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 1.5rem;
-            border-radius: var(--radius);
+        .main-title::before,
+        .main-title::after {
+            content: "★";
+            color: var(--secondary);
+            margin: 0 1rem;
+            font-size: 1.5rem;
+        }
+        
+        /* تنسيق عناوين الفقرات */
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 1.5rem 0 1rem 0;
+            padding-right: 1rem;
+            border-right: 5px solid var(--secondary);
+            background: linear-gradient(to left, rgba(212, 165, 116, 0.1), transparent);
+        }
+        
+        /* تنسيق الجمل المميزة */
+        .highlight-sentence {
+            color: var(--primary-dark);
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            background: linear-gradient(145deg, #fff9e6, #fff);
+            border-radius: 5px;
+            display: inline-block;
+            border: 1px dashed var(--secondary);
+        }
+        
+        /* تنسيق الأرقام */
+        .special-number {
+            display: inline-block;
+            background: linear-gradient(145deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-weight: 800;
+            margin: 0 0.2rem;
+            box-shadow: var(--shadow);
+            font-size: 0.9em;
+        }
+        
+        /* تنسيق القوانين */
+        .law-block {
+            background: var(--law-bg);
+            color: var(--law-text);
+            padding: 1.2rem;
+            border-radius: 15px;
+            margin: 1rem 0;
             font-family: 'Courier New', monospace;
             direction: ltr;
             text-align: left;
-            white-space: pre-wrap;
-            overflow-x: auto;
-            margin: 1rem 0;
+            border-right: 5px solid #e3b341;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             position: relative;
+            overflow-x: auto;
+        }
+        
+        .law-block::before {
+            content: "⚖️";
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 1.5rem;
+            background: var(--law-bg);
+            padding: 0.3rem;
+            border-radius: 50%;
+            border: 2px solid var(--law-text);
+        }
+        
+        /* تنسيق الأكواد - مثل terminal */
+        .code-block {
+            background: var(--code-bg);
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            border: 1px solid #30363d;
+        }
+        
+        .code-header {
+            background: #161b22;
+            padding: 0.8rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+            color: #8b949e;
+            font-family: 'Segoe UI', monospace;
+        }
+        
+        .code-header i {
+            margin-left: 0.5rem;
+        }
+        
+        .copy-code-btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .copy-code-btn:hover {
+            background: #30363d;
+            color: white;
+            border-color: #8b949e;
         }
         
         .code-block pre {
             margin: 0;
+            padding: 1.5rem;
+            color: var(--code-text);
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
             white-space: pre-wrap;
             word-wrap: break-word;
+            direction: ltr;
+            text-align: left;
         }
         
-        .code-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-            color: #888;
-            font-size: 0.9rem;
+        /* تنسيق الرموز الخاصة */
+        .special-symbol {
+            color: var(--secondary);
+            font-weight: 800;
+            margin: 0 0.2rem;
         }
         
-        .copy-code-btn {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: 0.3s;
+        /* تنسيق الفواصل */
+        .divider {
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--primary-light);
+            opacity: 0.5;
         }
         
-        .copy-code-btn:hover {
-            background: rgba(255,255,255,0.2);
+        .divider span {
+            display: inline-block;
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+            margin: 0 0.5rem;
         }
         
         /* استجابة الجداول للهواتف */
@@ -726,22 +843,13 @@
                 max-width: none;
             }
             
-            .concepts-table, .qa-table {
-                min-width: 100%;
+            .main-title {
+                font-size: 1.4rem;
             }
             
-            .concepts-table td, .qa-table td {
-                padding: 0.8rem;
-            }
-            
-            .result-text {
-                padding: 1rem;
-                font-size: 14px;
-            }
-            
-            .points-list li {
-                padding: 0.8rem 1rem;
-                font-size: 0.95rem;
+            .main-title::before,
+            .main-title::after {
+                display: none;
             }
         }
         
@@ -1090,55 +1198,89 @@
             return Math.round(cost * 10) / 10;
         }
 
-        // ========== إنشاء البرومبت حسب نوع التلخيص ==========
-        function createPrompt() {
-            // التلخيص العادي - نطلب رد نصي عادي وليس JSON
-            if (currentSettings.format === 'عادي') {
-                const lengthInstructions = {
-                    طويل: `قدم شرحاً تلخيصياً كاملاً وشاملاً يغطي الملف بالكامل من البداية للنهاية. يجب أن يكون الشرح مفصلاً وطويلاً بحيث يغني المستخدم تماماً عن قراءة الملف الأصلي.`,
-                    قصير: `قدم شرحاً تلخيصياً مختصراً يركز على أهم النقاط الأساسية في الملف، مع الحفاظ على التسلسل المنطقي للمحتوى.`
-                };
-                
-                return `قم بتحليل الملف التالي بدقة شديدة وقدم شرحاً تلخيصياً كاملاً:
+        // ========== البرومت الجديد للتلخيص العادي ==========
+        function getNormalSummaryPrompt() {
+            return `
+حلّل الملف التالي بدقة شديدة للغاية وافحصه من أول كلمة إلى آخر كلمة بدون إهمال أي جزء. نفّذ المطلوب فورًا بدون أي مقدمة أو تمهيد أو تعريف بنفسك. اسمك عَون ولا يُسمح بذكر أي اسم آخر نهائيًا.
 
-الإعدادات المطلوبة:
+الإعدادات التي يحددها المستخدم (التزام إلزامي كامل):
 - شخصية الشارح: ${currentSettings.persona}
 - لغة الإخراج: ${currentSettings.language}
 - أسلوب الشرح: ${currentSettings.style}
 - طول الشرح: ${currentSettings.length}
 
-تعليمات مهمة جداً - اتبعها بدقة:
-1. ${lengthInstructions[currentSettings.length]}
-2. التزم تماماً بشخصية ${currentSettings.persona} في أسلوب الشرح
-3. اكتب بلغة ${currentSettings.language} سليمة وخالية من الأخطاء
-4. اجعل أسلوب الشرح ${currentSettings.style} ومناسب للمحتوى
-5. غطِ الملف كاملاً من أول صفحة لآخر صفحة - لا تترك أي جزء دون شرح
-6. ابدأ في تلخيص الملف بشكل مباشر بدون أي مقدمات أو كلام زائد
+قواعد تنفيذ صارمة جدًا:
 
-7. القوانين والصيغ الرياضية:
-   - استخرج جميع القوانين والمعادلات والصيغ الرياضية الموجودة في الملف
-   - اكتب كل قانون أو معادلة داخل *نجمة* مثل: *القانون: F = m × a*
-   - لا تقم بتلخيص أو اختصار أو حذف أي قانون - انقلها كما هي بالضبط
-   - إذا كان هناك أكثر من قانون، اكتب كل قانون في سطر منفصل داخل *
-   - اجمع كل القوانين تحت عنوان "**القوانين والصيغ الرياضية:**"
+1) أول سطر في الرد دائمًا يكون عنوانًا مكوّنًا من 5 كلمات يلخص الملف بالكامل ويوضع هكذا:
+(*عنوان مكوّن من خمس كلمات*)
 
-8. الأكواد البرمجية:
-   - استخرج جميع الأكواد البرمجية من الملف
-   - ضع كل كود داخل علامات \`\`\` قبل وبعد الكود
-   - اكتب اسم لغة البرمجة إن وجدت
-   - انقل الكود كما هو بدون أي تعديل
-   - اجمع كل الأكواد تحت عنوان "**الأكواد البرمجية:**"
+2) ابدأ الشرح مباشرة بعد العنوان بدون أي فواصل كبيرة بين السطور وبدون أي كلام خارج المحتوى.
 
-9. النقاط الرئيسية:
-   - في نهاية الشرح، أضف 5 نقاط رئيسية تمثل خلاصة الخلاصة
-   - اجعلها 5 جمل فقط، كل جملة تمثل فكرة رئيسية من الملف
-   - اكتبها تحت عنوان "**النقاط الرئيسية:**" بشكل واضح
+3) استخدم فقط الرموز التالية في التنظيم داخل الشرح:
+-
+•
+-»
+~
+×
+✓
 
-10. تنبيه مهم جداً:
-    - الرد يجب أن يكون نصاً عادياً فقط، وليس JSON
-    - لا تستخدم أي تنسيق JSON في الرد
-    - اكتب بشكل طبيعي مع استخدام **للعناوين** و *للقوانين* و \`\`\`للأكواد\`\`\`
-    - ابدأ الشرح مباشرة بدون أي كلمات تمهيدية`;
+4) أي عنوان فقرة داخل الشرح يكون بين نجمتين هكذا:
+*عنوان الفقرة*
+
+5) أي كلمة أو جملة مميزة توضع هكذا:
+!جملة مميزة!
+
+6) أي قانون أو صيغة رياضية أو قانون فيزيائي أو قاعدة مكتوبة في الملف تُكتب كما هي حرفيًا بدون أي تعديل بالشكل التالي:
+•نص القانون كما هو موجود في الملف•
+- لا تختصر
+- لا تعيد الصياغة
+- لا تغيّر الرموز
+- إذا وُجدت قوانين اعرضها
+- إذا لم توجد قوانين لا تذكر أي شيء عنها نهائيًا
+
+7) أي كود برمجي يُكتب كما هو تمامًا بدون أي تعديل داخل:
+\`\`\`
+الكود كما هو
+\`\`\`
+- إذا وُجدت أكواد اعرضها
+- إذا لم توجد أكواد لا تذكر أي شيء عنها نهائيًا
+
+8) أي رقم يظهر في الشرح يكون بالشكل التالي:
+-1-
+-25-
+-300-
+وهكذا
+
+9) طول الشرح:
+- إذا اختار المستخدم "طويل":
+قدم شرحًا تفصيليًا شاملًا باستفاضة عالية جدًا يغطي كل جزء من بداية الملف إلى نهايته بحيث إذا قرأه المستخدم لا يحتاج إطلاقًا للرجوع إلى الملف الأصلي.
+- إذا اختار المستخدم "قصير":
+قدم ملخصًا متوسط الطول وعدد السطور يغطي الملف بالكامل من أول كلمة لآخر كلمة بدون حذف أي محور أساسي.
+
+10) الالتزام الكامل بشخصية الشارح المختارة وأسلوبه ولغة الإخراج دون أي خروج عنها.
+
+11) في نهاية الشرح أضف قسم:
+*النقاط الرئيسية*
+ويحتوي على -5- نقاط فقط تمثل خلاصة الخلاصة وأهم الأفكار الجوهرية جدًا في الملف.
+
+12) ممنوع تمامًا:
+- كتابة مقدمات
+- كتابة تنبيهات
+- كتابة شرح خارج الهيكل
+- استخدام JSON
+- استخدام تنسيقات غير المذكورة
+- ترك مسافات كبيرة بين الفقرات
+- ذكر اسم أي نموذج آخر غير عَون
+
+ابدأ التنفيذ فورًا عند استلام الملف.
+`;
+        }
+
+        // ========== إنشاء البرومبت حسب نوع التلخيص ==========
+        function createPrompt() {
+            // التلخيص العادي - استخدم البرومت الجديد
+            if (currentSettings.format === 'عادي') {
+                return getNormalSummaryPrompt();
             }
             
             // جداول المفاهيم - نطلب JSON
@@ -1228,6 +1370,58 @@
                 
                 return prompt;
             }
+        }
+
+        // ========== دالة تنسيق النص المتقدم ==========
+        function formatAdvancedText(text) {
+            if (!text) return '';
+            
+            let formatted = text
+                .replace(/\\n/g, '\n')
+                .replace(/\\r/g, '')
+                .replace(/\\t/g, '    ');
+            
+            // تنسيق العنوان الرئيسي (أول سطر بين قوسين)
+            formatted = formatted.replace(/^\(\*(.*?)\*\)/gm, '<div class="main-title">$1</div>');
+            
+            // تنسيق عناوين الفقرات (بين نجمتين)
+            formatted = formatted.replace(/\*(.*?)\*/g, '<div class="section-title">$1</div>');
+            
+            // تنسيق الجمل المميزة (بين علامتي تعجب)
+            formatted = formatted.replace(/!(.*?)!/g, '<span class="highlight-sentence">$1</span>');
+            
+            // تنسيق الأرقام الخاصة (بين شرطتين)
+            formatted = formatted.replace(/-(\d+)-/g, '<span class="special-number">$1</span>');
+            
+            // تنسيق القوانين (بين • و •)
+            formatted = formatted.replace(/•(.*?)•/g, '<div class="law-block">$1</div>');
+            
+            // تنسيق الأكواد (بين ``` و ```)
+            formatted = formatted.replace(/```(.*?)```/gs, (match, code) => {
+                const codeId = 'code_' + Math.random().toString(36).substr(2, 9);
+                return `
+                    <div class="code-block" id="${codeId}">
+                        <div class="code-header">
+                            <span><i class="fas fa-terminal"></i> كود برمجي</span>
+                            <button class="copy-code-btn" onclick="copyCodeFromElement('${codeId}')">
+                                <i class="fas fa-copy"></i> نسخ الكود
+                            </button>
+                        </div>
+                        <pre>${code.trim()}</pre>
+                    </div>
+                `;
+            });
+            
+            // تنسيق الرموز الخاصة
+            formatted = formatted.replace(/([-•~×✓])/g, '<span class="special-symbol">$1</span>');
+            
+            // تنسيق الفواصل (السطور الفارغة الكبيرة)
+            formatted = formatted.replace(/\n{3,}/g, '<div class="divider"><span></span><span></span><span></span></div>');
+            
+            // تحويل باقي السطور الجديدة
+            formatted = formatted.replace(/\n/g, '<br>');
+            
+            return formatted;
         }
 
         // ========== عرض النتائج حسب نوع التلخيص ==========
@@ -1334,68 +1528,67 @@
             }
             
             else {
-                // تلخيص عادي - الرد نص عادي مش JSON
+                // تلخيص عادي - استخدم التنسيق المتقدم
                 fontControls.style.display = 'flex';
                 
-                // النتيجة هنا ممكن تكون object (لو المستخدم حفظ حاجة قديمة) أو نص
+                // النتيجة ممكن تكون نص أو object
                 let content = '';
-                let rawPoints = [];
-                let title = 'ملخص الملف';
+                let extractedPoints = [];
                 
                 if (typeof result === 'object' && result !== null) {
-                    // لو كانت result object (من السجلات القديمة)
                     content = result.page || result.text || JSON.stringify(result);
-                    title = result.head || 'ملخص الملف';
-                    rawPoints = result.raw || [];
+                    document.getElementById('resultHead').textContent = result.head || 'ملخص الملف';
+                    extractedPoints = result.raw || [];
                 } else {
-                    // لو كانت نص عادي
                     content = result;
+                    
+                    // محاولة استخراج العنوان من أول سطر
+                    const titleMatch = content.match(/^\(\*(.*?)\*\)/);
+                    if (titleMatch) {
+                        document.getElementById('resultHead').textContent = titleMatch[1];
+                    }
+                    
+                    // محاولة استخراج النقاط الرئيسية من النص
+                    const pointsMatch = content.match(/\*النقاط الرئيسية\*[\s\S]*?(-5-.*?)(?:\n|$)/);
+                    if (pointsMatch) {
+                        // النقاط هتكون موجودة في النص المنسق
+                    }
                 }
-                
-                document.getElementById('resultHead').textContent = title;
                 
                 // عرض النقاط الرئيسية
                 pointsList.innerHTML = '';
-                if (rawPoints.length > 0) {
-                    rawPoints.forEach(point => {
+                if (extractedPoints.length > 0) {
+                    extractedPoints.forEach(point => {
                         const li = document.createElement('li');
                         li.innerHTML = `<i class="fas fa-check-circle"></i> ${point}`;
                         pointsList.appendChild(li);
                     });
-                } else {
-                    // لو مفيش نقاط رئيسية منفصلة، نحاول نستخرجها من النص
-                    document.getElementById('keyPointsSection').style.display = 'none';
                 }
                 
-                // عرض المحتوى النصي
-                resultContent.innerHTML = `<div class="result-text" id="resultText">${formatText(content)}</div>`;
+                // تطبيق التنسيق المتقدم
+                resultContent.innerHTML = `<div class="result-text" id="resultText">${formatAdvancedText(content)}</div>`;
                 document.getElementById('resultText').style.fontSize = fontSize + 'px';
             }
         }
 
-        // ========== تنسيق النص للعرض ==========
-        function formatText(text) {
-            if (!text) return '';
-            
-            let formatted = text
-                .replace(/\\n/g, '\n')
-                .replace(/\\r/g, '')
-                .replace(/\\t/g, '    ');
-            
-            // تحويل **العناوين** إلى h3
-            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<h3 style="color: var(--primary); margin: 1.5rem 0 1rem 0;">$1</h3>');
-            
-            // تحويل *القوانين* إلى blocks
-            formatted = formatted.replace(/\*(.*?)\*/g, '<div class="law-block">$1</div>');
-            
-            // تحويل الأكواد
-            formatted = formatted.replace(/```(.*?)```/gs, '<div class="code-block"><pre>$1</pre></div>');
-            
-            // تحويل السطور الجديدة
-            formatted = formatted.replace(/\n/g, '<br>');
-            
-            return formatted;
-        }
+        // ========== دالة نسخ الكود من العنصر ==========
+        window.copyCodeFromElement = function(elementId) {
+            const element = document.getElementById(elementId);
+            const codeElement = element.querySelector('pre');
+            if (codeElement) {
+                const code = codeElement.textContent;
+                navigator.clipboard.writeText(code).then(() => {
+                    const btn = element.querySelector('.copy-code-btn');
+                    btn.innerHTML = '<i class="fas fa-check"></i> تم';
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="fas fa-copy"></i> نسخ الكود';
+                    }, 2000);
+                    showNotification('تم نسخ الكود بنجاح', 'success');
+                }).catch(() => {
+                    showNotification('فشل في نسخ الكود', 'error');
+                });
+            }
+        };
 
         // ========== دوال النسخ ==========
         function copyAllContent() {
