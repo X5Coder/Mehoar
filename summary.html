@@ -549,9 +549,10 @@
             line-height: 1.8;
             transition: font-size 0.3s;
             word-wrap: break-word;
+            font-size: 16px;
         }
         
-        /* أنماط الجداول الجديدة */
+        /* أنماط الجداول */
         .table-container {
             overflow-x: auto;
             margin: 1rem 0;
@@ -640,6 +641,19 @@
             overflow-x: auto;
         }
         
+        .laws-content p {
+            margin: 0.5rem 0;
+            color: #d4d4d4;
+        }
+        
+        .laws-content strong {
+            color: #ffd700;
+        }
+        
+        .laws-content em {
+            color: #98c379;
+        }
+        
         /* قسم الأكواد */
         .codes-section {
             margin-top: 2rem;
@@ -673,6 +687,12 @@
             position: relative;
         }
         
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
         .code-header {
             display: flex;
             justify-content: space-between;
@@ -695,6 +715,46 @@
         
         .copy-code-btn:hover {
             background: rgba(255,255,255,0.2);
+        }
+        
+        /* النقاط الرئيسية */
+        .key-points {
+            background: rgba(139, 115, 85, 0.05);
+            padding: 2rem;
+            border-top: 1px solid rgba(139, 115, 85, 0.1);
+        }
+        
+        .key-points h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .points-list {
+            list-style: none;
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .points-list li {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border-right: 5px solid var(--primary);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .points-list li i {
+            color: var(--primary);
+            font-size: 1.2rem;
         }
         
         /* استجابة الجداول للهواتف */
@@ -721,6 +781,16 @@
             .concepts-table td, .qa-table td {
                 padding: 0.8rem;
             }
+            
+            .result-text {
+                padding: 1rem;
+                font-size: 14px;
+            }
+            
+            .points-list li {
+                padding: 0.8rem 1rem;
+                font-size: 0.95rem;
+            }
         }
         
         /* تعديلات للغة الإنجليزية */
@@ -740,48 +810,9 @@
             border-right: none;
         }
         
-        .key-points {
-            background: rgba(139, 115, 85, 0.05);
-            padding: 2rem;
-            border-top: 1px solid rgba(139, 115, 85, 0.1);
-        }
-        
-        .key-points h3 {
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .points-list {
-            list-style: none;
-            display: grid;
-            gap: 1rem;
-        }
-        
-        .points-list li {
-            background: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            border-right: 5px solid var(--primary);
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-        
-        /* نظام العملات */
-        .coins-calculation {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 2rem;
-            border-radius: var(--radius);
-            font-family: 'Courier New', monospace;
-            direction: ltr;
+        html[dir="ltr"] .laws-content,
+        html[dir="ltr"] .code-block {
             text-align: left;
-            margin: 2rem 0;
-            overflow-x: auto;
         }
         
         /* الإشعارات */
@@ -1028,21 +1059,9 @@
                 <!-- هنا هيتحط المحتوى حسب نوع التلخيص -->
             </div>
             
-            <div class="key-points">
+            <div class="key-points" id="keyPointsSection">
                 <h3><i class="fas fa-bullseye"></i> النقاط الرئيسية</h3>
                 <ul class="points-list" id="pointsList"></ul>
-            </div>
-
-            <!-- قسم القوانين -->
-            <div class="laws-section" id="lawsSection" style="display: none;">
-                <h3 class="laws-title"><i class="fas fa-gavel"></i> القوانين والصيغ الرياضية</h3>
-                <div class="laws-content" id="lawsContent"></div>
-            </div>
-
-            <!-- قسم الأكواد -->
-            <div class="codes-section" id="codesSection" style="display: none;">
-                <h3 class="codes-title"><i class="fas fa-code"></i> الأكواد البرمجية</h3>
-                <div id="codesContent"></div>
             </div>
         </section>
         
@@ -1133,52 +1152,20 @@
             }, duration);
         }
 
-        // ========== نظام العملات المحسن ==========
+        // ========== نظام حساب العملات الجديد ==========
         function calculateCoins(pages, words) {
-            /*
-                نظام حساب العملات المطور:
-                
-                المعادلة الأساسية: cost = ceil((words / 1000) * 2 * 2) / 2
-                
-                شرح المعادلة:
-                1. words / 1000 : تقسيم الكلمات على 1000 لتقليل الرقم
-                2. * 2 : مضاعفة أولى
-                3. * 2 : مضاعفة ثانية
-                4. ceil() : تقريب لأعلى
-                5. / 2 : تقسيم على 2 للحصول على أرقام 0.5
-                
-                معادلة مبسطة: cost = Math.ceil((words / 250) * 2) / 2
-                
-                أمثلة توضيحية:
-                - ملف 1000 كلمة: (1000/250 = 4) * 2 = 8 → ceil(8) = 8 → 8/2 = 4 عملات
-                - ملف 2000 كلمة: (2000/250 = 8) * 2 = 16 → ceil(16) = 16 → 16/2 = 8 عملات
-                - ملف 500 كلمة: (500/250 = 2) * 2 = 4 → ceil(4) = 4 → 4/2 = 2 عملات
-                - ملف 1500 كلمة: (1500/250 = 6) * 2 = 12 → ceil(12) = 12 → 12/2 = 6 عملات
-                
-                الحد الأدنى: 1 عملة
-                الحد الأقصى: 50 عملة
-                
-                الصفحات تؤخذ في الاعتبار:
-                - كل صفحة تحتوي تقريباً على 250-300 كلمة في المتوسط
-                - نظام الأمان: إذا كان عدد الصفحات كبيراً جداً (>100) نحدد التكلفة بـ 50 عملة
-            */
+            // المعادلة: cost = Math.ceil((words / 1000) * 2) / 2 + 2
+            let cost = Math.ceil((words / 1000) * 2) / 2;
             
-            // نظام الأمان للصفحات الكبيرة جداً
-            if (pages > 100) {
-                console.log(`⚠️ ملف كبير جداً: ${pages} صفحة - تطبيق الحد الأقصى 50 عملة`);
-                return 50;
-            }
+            // الحد الأدنى 1 عملة قبل الإضافة
+            if (cost < 1) cost = 1;
             
-            // المعادلة الأساسية
-            let cost = Math.ceil((words / 250) * 2) / 2;
-            
-            // تطبيق الحدود
-            cost = Math.max(1, Math.min(cost, 50));
+            // إضافة 2 عملة زيادة
+            cost = cost + 2;
             
             console.log(`📊 حساب العملات:
             - عدد الصفحات: ${pages}
             - عدد الكلمات: ${words}
-            - المعادلة: ceil((words/250)*2)/2
             - النتيجة: ${cost} عملة`);
             
             return Math.round(cost * 10) / 10;
@@ -1186,86 +1173,83 @@
 
         // ========== إنشاء البرومبت حسب نوع التلخيص ==========
         function createPrompt() {
-            const lengthInstructions = {
-                طويل: currentSettings.format === 'عادي' 
-                    ? 'قدم تلخيصاً طويلاً جداً وشاملاً يغطي كل التفاصيل والمعلومات المهمة في الملف. يجب أن يكون التلخيص مفصلاً بحيث يغني المستخدم عن قراءة الملف كاملاً.'
-                    : currentSettings.format === 'مفاهيم'
-                    ? 'استخرج 10-15 مفهوم أساسي من الملف مع شرح مفصل لكل مفهوم. غطِ جميع أجزاء الملف.'
-                    : 'استخرج 10-15 سؤال وجواب يغطون جميع محتويات الملف. يجب أن تكون الأسئلة شاملة لكل التفاصيل.',
-                    
-                قصير: currentSettings.format === 'عادي'
-                    ? 'قدم تلخيصاً متوسط الطول يركز على النقاط الأساسية والمهمة فقط. لا تهمل التفاصيل الهامة ولكن اختصر قدر الإمكان.'
-                    : currentSettings.format === 'مفاهيم'
-                    ? 'استخرج 5-7 مفاهيم أساسية من الملف مع شرح مختصر لكل مفهوم.'
-                    : 'استخرج 5-7 أسئلة وإجابات أساسية تغطي أهم نقاط الملف.'
-            };
-            
-            let basePrompt = `قم بتحليل ملف PDF التالي بدقة شديدة وغطِ جميع محتوياته بالكامل دون إهمال أي جزء:
+            // إذا كان التلخيص عادي - استخدم التعليمات الجديدة
+            if (currentSettings.format === 'عادي') {
+                const lengthInstructions = {
+                    طويل: `قدم شرحاً تلخيصياً كاملاً وشاملاً يغطي الملف بالكامل من البداية للنهاية. يجب أن يكون الشرح مفصلاً وطويلاً بحيث يغني المستخدم تماماً عن قراءة الملف الأصلي.`,
+                    قصير: `قدم شرحاً تلخيصياً مختصراً يركز على أهم النقاط الأساسية في الملف، مع الحفاظ على التسلسل المنطقي للمحتوى.`
+                };
+                
+                return `قم بتحليل الملف التالي بدقة شديدة وقدم شرحاً تلخيصياً كاملاً:
 
 الإعدادات المطلوبة:
 - شخصية الشارح: ${currentSettings.persona}
 - لغة الإخراج: ${currentSettings.language}
 - أسلوب الشرح: ${currentSettings.style}
 - طول الشرح: ${currentSettings.length}
-- شكل التلخيص: ${currentSettings.format}
 
 تعليمات مهمة جداً:
 1. ${lengthInstructions[currentSettings.length]}
-2. استخدم أسلوب شرح مناسب لشخصية ${currentSettings.persona}
-3. اكتب بلغة ${currentSettings.language} سليمة
-4. اجعل الأسلوب ${currentSettings.style}
-5. حلل الملف كاملاً من أول صفحة لآخر صفحة - لا تترك أي جزء دون تغطية
-6. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى`;
+2. التزم تماماً بشخصية ${currentSettings.persona} في أسلوب الشرح
+3. اكتب بلغة ${currentSettings.language} سليمة وخالية من الأخطاء
+4. اجعل أسلوب الشرح ${currentSettings.style} ومناسب للمحتوى
+5. غطِ الملف كاملاً من أول صفحة لآخر صفحة - لا تترك أي جزء دون شرح
+6. ابدأ في تلخيص الملف بشكل مباشر بدون أي مقدمات أو كلام زائد
 
-            // إضافة تعليمات إضافية حسب نوع التلخيص
-            if (currentSettings.format === 'مفاهيم') {
-                basePrompt += `
+7. استخراج القوانين والصيغ الرياضية:
+   - استخرج جميع القوانين والمعادلات والصيغ الرياضية الموجودة في الملف
+   - اكتب كل قانون أو معادلة داخل *نجمة* مثل: *القانون: F = m × a*
+   - لا تقم بتلخيص أو اختصار أو حذف أي قانون - انقلها كما هي بالضبط
+   - إذا كان هناك أكثر من قانون، اكتب كل قانون في سطر منفصل داخل *
+   - اجمع كل القوانين تحت عنوان "**القوانين والصيغ الرياضية:**"
 
-تعليمات إضافية لجداول المفاهيم:
-- استخرج ${currentSettings.length === 'طويل' ? '10-15' : '5-7'} مفهوم أساسي
-- كل مفهوم يجب أن يأخذ رقم تسلسلي (h1, h2, h3, ...)
-- كل مفهوم يجب أن يقابله شرح مفصل (s1, s2, s3, ...)
-- رتب المفاهيم حسب أهميتها في الملف
-- غطِ جميع أجزاء الملف`;
-            }
-            
-            else if (currentSettings.format === 'اسئلة') {
-                basePrompt += `
+8. استخراج الأكواد البرمجية:
+   - استخرج جميع الأكواد البرمجية من الملف
+   - ضع كل كود داخل علامات \`\`\` قبل وبعد الكود
+   - اكتب اسم لغة البرمجة إن وجدت
+   - انقل الكود كما هو بدون أي تعديل
+   - اجمع كل الأكواد تحت عنوان "**الأكواد البرمجية:**"
 
-تعليمات إضافية لجداول الأسئلة والأجوبة:
-- استخرج ${currentSettings.length === 'طويل' ? '10-15' : '5-7'} سؤال وإجابة
-- كل سؤال يجب أن يأخذ رقم تسلسلي (h1, h2, h3, ...)
-- كل سؤال يجب أن يقابله إجابة شاملة (s1, s2, s3, ...)
-- رتب الأسئلة حسب منطقية التسلسل في الملف
-- غطِ جميع أجزاء الملف`;
-            }
-            
-            else {
-                basePrompt += `
+9. النقاط الرئيسية:
+   - في نهاية الشرح، أضف 5 نقاط رئيسية تمثل خلاصة الخلاصة
+   - اجعلها 5 جمل فقط، كل جملة تمثل فكرة رئيسية من الملف
+   - يجب أن تكون هذه النقاط مبتكرة وتلخص المحتوى بالكامل
+   - اكتبها تحت عنوان "**النقاط الرئيسية:**" بشكل واضح
 
-تعليمات إضافية للتلخيص العادي:
-- في نهاية التلخيص، أضف قسم خاص بعنوان "القوانين والصيغ الرياضية" يحتوي على أي قوانين أو معادلات أو صيغ رياضية موجودة في الملف كما هي تماماً
-- استخرج جميع الأكواد البرمجية من الملف وضعها في قسم منفصل بعنوان "الأكواد البرمجية" داخل Code Block
-- إذا لم يوجد قوانين، اكتب "لا يوجد قوانين في هذا الملف"
-- إذا لم يوجد أكواد، تجاهل قسم الأكواد`;
-            }
-            
-            // هيكل JSON المطلوب
-            if (currentSettings.format === 'عادي') {
-                basePrompt += `
+10. هيكل الرد النهائي يجب أن يكون:
+    - أولاً: الشرح التلخيصي الكامل (يبدأ مباشرة بدون عنوان)
+    - ثانياً: القوانين والصيغ الرياضية (إذا وجدت)
+    - ثالثاً: الأكواد البرمجية داخل \`\`\` (إذا وجدت)
+    - رابعاً: النقاط الرئيسية (5 نقاط)
 
-يجب أن يكون الرد بصيغة JSON فقط:
+يجب أن يكون الرد بصيغة JSON فقط بهذا الشكل الدقيق:
 {
   "head": "عنوان مختصر للملف (5-7 كلمات)",
   "raw": ["النقطة الرئيسية الأولى", "النقطة الرئيسية الثانية", "النقطة الرئيسية الثالثة", "النقطة الرئيسية الرابعة", "النقطة الرئيسية الخامسة"],
-  "page": "محتوى التلخيص الكامل والشامل هنا...",
-  "laws": "القوانين والصيغ الرياضية الموجودة في الملف (أو 'لا يوجد قوانين في هذا الملف')",
-  "codes": ["الكود الأول", "الكود الثاني"] // مصفوفة تحتوي على الأكواد المستخرجة
+  "page": "هنا يكتب الشرح التلخيصي الكامل مع القوانين والأكواد والنقاط الرئيسية بالتنسيق المطلوب"
 }`;
             }
             
+            // إذا كان التلخيص جداول مفاهيم
             else if (currentSettings.format === 'مفاهيم') {
-                basePrompt += `
+                const lengthInstructions = {
+                    طويل: 'استخرج 10-15 مفهوم أساسي من الملف مع شرح مفصل لكل مفهوم. غطِ جميع أجزاء الملف.',
+                    قصير: 'استخرج 5-7 مفاهيم أساسية من الملف مع شرح مختصر لكل مفهوم.'
+                };
+                
+                let prompt = `قم بتحليل ملف PDF التالي بدقة وقدم جدول مفاهيم:
+
+الإعدادات المطلوبة:
+- شخصية الشارح: ${currentSettings.persona}
+- لغة الإخراج: ${currentSettings.language}
+- أسلوب الشرح: ${currentSettings.style}
+- طول الشرح: ${currentSettings.length}
+- شكل التلخيص: مفاهيم
+
+تعليمات مهمة:
+1. ${lengthInstructions[currentSettings.length]}
+2. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
+3. ابدأ بشكل مباشر بدون مقدمات
 
 يجب أن يكون الرد بصيغة JSON فقط:
 {
@@ -1284,12 +1268,32 @@
 }`;
                 
                 if (currentSettings.length === 'طويل') {
-                    basePrompt = basePrompt.replace('"h5":', '"h6":,"s6":,"h7":,"s7":,"h8":,"s8":,"h9":,"s9":,"h10":,"s10":,"h11":,"s11":,"h12":,"s12":,"h13":,"s13":,"h14":,"s14":,"h15":,"s15":');
+                    prompt = prompt.replace('"h5":', '"h6":,"s6":,"h7":,"s7":,"h8":,"s8":,"h9":,"s9":,"h10":,"s10":,"h11":,"s11":,"h12":,"s12":,"h13":,"s13":,"h14":,"s14":,"h15":,"s15":');
                 }
+                
+                return prompt;
             }
             
-            else if (currentSettings.format === 'اسئلة') {
-                basePrompt += `
+            // إذا كان التلخيص أسئلة وأجوبة
+            else {
+                const lengthInstructions = {
+                    طويل: 'استخرج 10-15 سؤال وجواب يغطون جميع محتويات الملف.',
+                    قصير: 'استخرج 5-7 أسئلة وإجابات أساسية تغطي أهم نقاط الملف.'
+                };
+                
+                let prompt = `قم بتحليل ملف PDF التالي بدقة وقدم جدول أسئلة وأجوبة:
+
+الإعدادات المطلوبة:
+- شخصية الشارح: ${currentSettings.persona}
+- لغة الإخراج: ${currentSettings.language}
+- أسلوب الشرح: ${currentSettings.style}
+- طول الشرح: ${currentSettings.length}
+- شكل التلخيص: اسئلة
+
+تعليمات مهمة:
+1. ${lengthInstructions[currentSettings.length]}
+2. استخرج 3-5 نقاط رئيسية تمثل جوهر المحتوى
+3. ابدأ بشكل مباشر بدون مقدمات
 
 يجب أن يكون الرد بصيغة JSON فقط:
 {
@@ -1308,11 +1312,11 @@
 }`;
                 
                 if (currentSettings.length === 'طويل') {
-                    basePrompt = basePrompt.replace('"h5":', '"h6":,"s6":,"h7":,"s7":,"h8":,"s8":,"h9":,"s9":,"h10":,"s10":,"h11":,"s11":,"h12":,"s12":,"h13":,"s13":,"h14":,"s14":,"h15":,"s15":');
+                    prompt = prompt.replace('"h5":', '"h6":,"s6":,"h7":,"s7":,"h8":,"s8":,"h9":,"s9":,"h10":,"s10":,"h11":,"s11":,"h12":,"s12":,"h13":,"s13":,"h14":,"s14":,"h15":,"s15":');
                 }
+                
+                return prompt;
             }
-            
-            return basePrompt;
         }
 
         // ========== عرض النتائج حسب نوع التلخيص ==========
@@ -1320,16 +1324,7 @@
             currentResult = result;
             const resultContent = document.getElementById('resultContent');
             const pointsList = document.getElementById('pointsList');
-            const lawsSection = document.getElementById('lawsSection');
-            const codesSection = document.getElementById('codesSection');
             const fontControls = document.getElementById('fontControls');
-            
-            // إخفاء/إظهار أزرار التحكم في الخط حسب نوع التلخيص
-            if (currentSettings.format === 'عادي') {
-                fontControls.style.display = 'flex';
-            } else {
-                fontControls.style.display = 'none';
-            }
             
             // العنوان
             document.getElementById('resultHead').textContent = result.head || 'ملخص الملف';
@@ -1355,7 +1350,8 @@
             
             // عرض المحتوى حسب النوع
             if (currentSettings.format === 'مفاهيم') {
-                // عرض جدول المفاهيم مع شريط تمرير
+                fontControls.style.display = 'none';
+                
                 let tableHTML = `
                     <div class="table-container">
                         <table class="concepts-table">
@@ -1373,8 +1369,8 @@
                     if (result[`h${i}`] && result[`s${i}`]) {
                         tableHTML += `
                             <tr>
-                                <td class="concept-term" data-label="${currentSettings.language === 'انجليزي' ? 'Concept' : 'المفهوم'}">${result[`h${i}`]}</td>
-                                <td class="concept-def" data-label="${currentSettings.language === 'انجليزي' ? 'Definition' : 'الشرح'}">${result[`s${i}`]}</td>
+                                <td class="concept-term">${result[`h${i}`]}</td>
+                                <td class="concept-def">${result[`s${i}`]}</td>
                             </tr>
                         `;
                     }
@@ -1382,12 +1378,11 @@
                 
                 tableHTML += `</tbody></table></div>`;
                 resultContent.innerHTML = tableHTML;
-                lawsSection.style.display = 'none';
-                codesSection.style.display = 'none';
             }
             
             else if (currentSettings.format === 'اسئلة') {
-                // عرض جدول الأسئلة والأجوبة مع شريط تمرير
+                fontControls.style.display = 'none';
+                
                 let tableHTML = `
                     <div class="table-container">
                         <table class="qa-table">
@@ -1405,8 +1400,8 @@
                     if (result[`h${i}`] && result[`s${i}`]) {
                         tableHTML += `
                             <tr>
-                                <td class="qa-question" data-label="${currentSettings.language === 'انجليزي' ? 'Question' : 'السؤال'}">${result[`h${i}`]}</td>
-                                <td class="qa-answer" data-label="${currentSettings.language === 'انجليزي' ? 'Answer' : 'الجواب'}">${result[`s${i}`]}</td>
+                                <td class="qa-question">${result[`h${i}`]}</td>
+                                <td class="qa-answer">${result[`s${i}`]}</td>
                             </tr>
                         `;
                     }
@@ -1414,46 +1409,29 @@
                 
                 tableHTML += `</tbody></table></div>`;
                 resultContent.innerHTML = tableHTML;
-                lawsSection.style.display = 'none';
-                codesSection.style.display = 'none';
             }
             
             else {
-                // تلخيص عادي
-                resultContent.innerHTML = `<div class="result-text" id="resultText">${formatContent(result.page || '')}</div>`;
+                // تلخيص عادي - إظهار أزرار التحكم في الخط
+                fontControls.style.display = 'flex';
+                
+                // معالجة النص لعرض القوانين بشكل صحيح
+                let content = result.page || '';
+                
+                // تحويل علامات ** إلى عناوين
+                content = content.replace(/\*\*(.*?)\*\*/g, '<h3 style="color: var(--primary); margin: 1.5rem 0 1rem 0;">$1</h3>');
+                
+                // تحويل *النص* إلى تنسيق خاص للقوانين
+                content = content.replace(/\*(.*?)\*/g, '<div style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 10px; margin: 1rem 0; font-family: monospace; direction: ltr; text-align: left;">$1</div>');
+                
+                // تحويل الأكواد
+                content = content.replace(/```(.*?)```/gs, '<div class="code-block"><pre>$1</pre></div>');
+                
+                // تحويل السطور الجديدة إلى <br>
+                content = content.replace(/\n/g, '<br>');
+                
+                resultContent.innerHTML = `<div class="result-text" id="resultText">${content}</div>`;
                 document.getElementById('resultText').style.fontSize = fontSize + 'px';
-                
-                // عرض قسم القوانين
-                if (result.laws && result.laws !== 'لا يوجد قوانين في هذا الملف') {
-                    lawsSection.style.display = 'block';
-                    document.getElementById('lawsContent').textContent = result.laws;
-                } else {
-                    lawsSection.style.display = 'none';
-                }
-                
-                // عرض قسم الأكواد
-                if (result.codes && Array.isArray(result.codes) && result.codes.length > 0) {
-                    codesSection.style.display = 'block';
-                    const codesContent = document.getElementById('codesContent');
-                    codesContent.innerHTML = '';
-                    
-                    result.codes.forEach((code, index) => {
-                        const codeBlock = document.createElement('div');
-                        codeBlock.className = 'code-block';
-                        codeBlock.innerHTML = `
-                            <div class="code-header">
-                                <span>كود ${index + 1}</span>
-                                <button class="copy-code-btn" onclick="copyCode(this, \`${code.replace(/`/g, '\\`')}\`)">
-                                    <i class="fas fa-copy"></i> نسخ
-                                </button>
-                            </div>
-                            <pre>${escapeHtml(code)}</pre>
-                        `;
-                        codesContent.appendChild(codeBlock);
-                    });
-                } else {
-                    codesSection.style.display = 'none';
-                }
             }
         }
 
@@ -1483,17 +1461,6 @@
             }
             else {
                 textToCopy = currentResult.page || '';
-                
-                if (currentResult.laws && currentResult.laws !== 'لا يوجد قوانين في هذا الملف') {
-                    textToCopy += '\n\nالقوانين والصيغ الرياضية:\n' + currentResult.laws;
-                }
-                
-                if (currentResult.codes && Array.isArray(currentResult.codes) && currentResult.codes.length > 0) {
-                    textToCopy += '\n\nالأكواد البرمجية:\n';
-                    currentResult.codes.forEach((code, index) => {
-                        textToCopy += `\n--- كود ${index + 1} ---\n${code}\n`;
-                    });
-                }
             }
             
             // إضافة النقاط الرئيسية
@@ -1521,47 +1488,6 @@
             }).catch(() => {
                 showNotification('فشل في نسخ الكود', 'error');
             });
-        }
-
-        // ========== دوال مساعدة ==========
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function formatContent(text) {
-            if (!text) return '';
-            
-            let formatted = text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/\\n/g, '<br>')
-                .replace(/\\r/g, '');
-            
-            // تقسيم للنقاط
-            const lines = formatted.split('\n');
-            let html = '';
-            
-            for (let line of lines) {
-                line = line.trim();
-                if (!line) {
-                    html += '<br>';
-                    continue;
-                }
-                
-                if (line.startsWith('#') && line.length > 1) {
-                    const level = line.match(/^#+/)[0].length;
-                    const content = line.replace(/^#+\s*/, '');
-                    html += `<h${Math.min(level, 3)}>${content}</h${Math.min(level, 3)}>`;
-                } else if (line.startsWith('- ') || line.startsWith('• ')) {
-                    html += `<p style="padding-right: 20px; position: relative;">&bull; ${line.substring(2)}</p>`;
-                } else {
-                    html += `<p>${line}</p>`;
-                }
-            }
-            
-            return html;
         }
 
         // ========== نظام السجلات ==========
@@ -1888,9 +1814,8 @@
                 const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
                 
                 let totalWords = 0;
-                const maxPages = Math.min(pdf.numPages, 100);
                 
-                for (let i = 1; i <= maxPages; i++) {
+                for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const content = await page.getTextContent();
                     const text = content.items.map(item => item.str).join(' ');
@@ -1966,8 +1891,7 @@
                     result = {
                         head: 'ملخص الملف',
                         raw: ['تم إنشاء الملخص بنجاح'],
-                        page: text.replace(/\\n/g, '\n').replace(/\\/g, ''),
-                        laws: 'لا يوجد قوانين في هذا الملف'
+                        page: text.replace(/\\n/g, '\n').replace(/\\/g, '')
                     };
                 }
                 
