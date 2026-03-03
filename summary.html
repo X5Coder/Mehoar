@@ -39,8 +39,6 @@
             
             /* ألوان التنسيقات */
             --title-gradient: linear-gradient(145deg, #8B7355, #A9927D);
-            --law-bg: #1E1E1E;
-            --law-text: #D4A574;
             --code-bg: #0D1117;
             --code-text: #E6EDF3;
             --highlight-bg: #FFF3E0;
@@ -607,46 +605,31 @@
             margin: 0.5rem 0;
         }
         
-        /* القوانين داخل النص */
-        .inline-law {
-            background: var(--law-bg);
-            color: var(--law-text);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            direction: ltr;
-            text-align: left;
-            display: inline-block;
-            margin: 0.3rem 0;
-            border-right: 4px solid var(--secondary);
-        }
-        
-        /* قسم القوانين المنفصل */
+        /* قسم القوانين - بدون خلفية، فقط Bold */
         .laws-section {
             margin-top: 3rem;
-            padding: 2rem;
-            background: var(--law-bg);
-            border-radius: var(--radius);
-            border: 2px solid var(--secondary);
+            padding: 2rem 0;
+            border-top: 2px solid var(--secondary);
         }
         
         .laws-section h3 {
-            color: var(--law-text);
+            color: var(--primary-dark);
             font-size: 1.8rem;
             margin-bottom: 1.5rem;
             text-align: center;
         }
         
         .law-item {
-            background: rgba(212, 165, 116, 0.1);
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 8px;
-            color: var(--law-text);
+            font-weight: 700;
+            padding: 0.5rem 0;
+            margin: 0.5rem 0;
             font-family: 'Courier New', monospace;
             direction: ltr;
             text-align: left;
-            border-right: 4px solid var(--secondary);
+            color: var(--text);
+            border: none;
+            background: none;
+            box-shadow: none;
         }
         
         /* الأكواد البرمجية */
@@ -1169,7 +1152,7 @@
             return Math.round(cost * 10) / 10;
         }
 
-        // ========== البرومت النهائي للتلخيص العادي فقط ==========
+        // ========== البرومت النهائي للتلخيص العادي مع تحسين القوانين ==========
         function getNormalSummaryPrompt() {
             return `
 حلّل الملف التالي بدقة شديدة للغاية وافحصه من أول كلمة إلى آخر كلمة بدون إهمال أي جزء. نفّذ المطلوب فورًا بدون أي مقدمة أو تمهيد أو تعريف بنفسك. اسمك عَون ولا يُسمح بذكر أي اسم آخر نهائيًا.
@@ -1191,7 +1174,6 @@
 - للعناوين الرئيسية: *عنوان*
 - للعناوين الفرعية: **عنوان فرعي**
 - للنص المميز: !نص مميز!
-- للقوانين داخل الشرح: $قانون$
 - للأرقام المميزة: -رقم-
 - للأكواد: \`\`\`كود\`\`\`
 
@@ -1204,7 +1186,34 @@
 أولاً: قسم القوانين والصيغ الرياضية
 اكتبه بالشكل التالي:
 ==القوانين والصيغ الرياضية==
-[قائمة بكل القوانين المستخرجة من الملف، كل قانون في سطر منفصل]
+
+تعليمات مهمة جداً لكتابة القوانين:
+
+1. انسخ القوانين فقط كما هي مكتوبة في الملف الأصلي بدون أي تعديل
+2. لا تشرح ولا تفسر ولا تعيد كتابة القانون بأسلوب مختلف
+3. لا تختصر الرموز
+4. حافظ على نفس ترتيب الرموز والأقواس والأسس والكسور
+
+طريقة كتابة الصيغ الرياضية:
+
+- الكسور: اكتبها بالشكل (البسط) / (المقام)
+  مثال: r_d = (I + ((Par - N_d) / n)) / ((N_d + Par) / 2)
+
+- الأسس: استخدم علامة ^
+  مثال: (1 + r)^n
+
+- الجذور: استخدم sqrt(القيمة)
+  مثال: sqrt(1 + r)
+
+- بيتا: اكتبها Beta أو b كما في الملف
+- دلتا: اكتبها Delta إذا كانت مكتوبة هكذا
+- سيجما: اكتبها sum إذا كانت صيغة تجميع
+
+كل قانون في سطر مستقل بدون ترقيم وبدون عناوين وبدون فواصل.
+
+مثال للصيغة الصحيحة:
+r_d = (I + ((Par - N_d) / n)) / ((N_d + Par) / 2)
+K_d = r_d (1 - T)
 
 ثانياً: قسم النقاط الرئيسية
 اكتبه بالشكل التالي:
@@ -1220,6 +1229,7 @@
 - كتابة مقدمات
 - ترك مسافات كبيرة
 - ذكر أي اسم آخر غير عَون
+- إضافة أي خلفية أو تنسيق للقوانين
 `;
         }
 
@@ -1354,9 +1364,6 @@
             // تنسيق النص المميز
             formatted = formatted.replace(/!(.*?)!/g, '<span class="highlight-text">$1</span>');
             
-            // تنسيق القوانين داخل النص
-            formatted = formatted.replace(/\$(.*?)\$/g, '<span class="inline-law">$1</span>');
-            
             // تنسيق الأرقام
             formatted = formatted.replace(/-(\d+)-/g, '<span class="special-number">$1</span>');
             
@@ -1382,7 +1389,7 @@
             // تحويل السطور
             formatted = formatted.replace(/\n/g, '<br>');
             
-            // إضافة قسم القوانين في النهاية
+            // إضافة قسم القوانين - بدون خلفية، فقط Bold
             if (lawsSection) {
                 let lawsHtml = '<div class="laws-section"><h3>📜 القوانين والصيغ الرياضية</h3>';
                 const laws = lawsSection.split('\n').filter(law => law.trim() && !law.startsWith('=='));
