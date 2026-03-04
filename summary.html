@@ -9,6 +9,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
+    <!-- MathJax لعرض الصيغ الرياضية -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800&family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
@@ -38,13 +42,12 @@
             --navbar: 70px;
             
             /* ألوان التنسيقات */
-            --title-gradient: linear-gradient(145deg, #8B7355, #A9927D);
             --law-bg: #1E1E1E;
             --law-text: #D4A574;
             --code-bg: #0D1117;
             --code-text: #E6EDF3;
             --highlight-bg: #FFF3E0;
-            --number-bg: #8B7355;
+            --chapter-bg: rgba(139, 115, 85, 0.05);
         }
         
         body {
@@ -545,7 +548,7 @@
             color: white;
         }
         
-        /* ===== أنماط التنسيقات الجمالية ===== */
+        /* ===== أنماط التنسيقات ===== */
         .result-content {
             padding: 2rem;
             background: #FAFAFA;
@@ -563,7 +566,7 @@
             font-size: 16px;
         }
         
-        /* العنوان الرئيسي - 5 كلمات بين قوسين */
+        /* العنوان الرئيسي */
         .main-title {
             text-align: center;
             font-size: 2.2rem;
@@ -571,9 +574,7 @@
             color: var(--primary-dark);
             margin: 0 0 3rem 0;
             padding: 1rem;
-            position: relative;
             border-bottom: 3px solid var(--secondary);
-            width: 100%;
             background: linear-gradient(145deg, #8B7355, #A9927D);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -586,16 +587,19 @@
             font-weight: 800;
             color: var(--primary-dark);
             margin: 2rem 0 1rem 0;
-            padding-right: 1rem;
+            padding: 1rem 1.5rem;
+            background: var(--chapter-bg);
             border-right: 5px solid var(--secondary);
+            border-radius: 0 12px 12px 0;
         }
         
         /* الشرح العادي */
-        .normal-text {
-            font-size: 1rem;
+        .explanation-text {
+            font-size: 1.1rem;
             line-height: 1.8;
             color: var(--text);
-            margin: 0.5rem 0;
+            margin: 0.5rem 0 1.5rem 1rem;
+            padding-right: 1rem;
         }
         
         /* قسم القوانين */
@@ -607,20 +611,40 @@
             border: 2px solid var(--secondary);
         }
         
+        .laws-container h3 {
+            color: var(--law-text);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 700;
+        }
+        
         .law-item {
             background: rgba(212, 165, 116, 0.1);
             padding: 1.5rem;
             margin: 1rem 0;
             border-radius: 8px;
             color: var(--law-text);
-            font-family: 'Fira Code', 'Courier New', monospace;
             direction: ltr;
-            text-align: left;
+            text-align: center;
             border-right: 4px solid var(--secondary);
             font-size: 1.2rem;
             overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+        }
+        
+        /* تنسيق الصيغ الرياضية عبر MathJax */
+        .law-item mjx-container {
+            color: var(--law-text) !important;
+            font-size: 1.2rem !important;
+        }
+        
+        .law-separator {
+            width: 50px;
+            height: 3px;
+            background: var(--secondary);
+            margin: 1.5rem auto;
+            opacity: 0.3;
+            border-radius: 3px;
         }
         
         /* الأكواد البرمجية */
@@ -678,50 +702,54 @@
         .key-points-container {
             margin-top: 3rem;
             padding: 2rem;
-            background: rgba(139, 115, 85, 0.05);
+            background: linear-gradient(145deg, #8B7355, #A9927D);
             border-radius: var(--radius);
-            border: 1px solid var(--secondary);
+        }
+        
+        .key-points-container h3 {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
         
         .key-point-item {
             background: white;
-            padding: 1.2rem 1.8rem;
+            padding: 1.2rem 2rem;
             margin: 1rem 0;
-            border-radius: 12px;
-            border-right: 5px solid var(--primary);
+            border-radius: 50px;
+            border-right: 5px solid var(--primary-dark);
             box-shadow: var(--shadow);
             font-size: 1.1rem;
             font-weight: 500;
             color: var(--text);
+            transition: 0.3s;
+        }
+        
+        .key-point-item:hover {
+            transform: translateX(-5px);
+            box-shadow: var(--shadow-lg);
         }
         
         /* الجملة التحفيزية */
         .motivation-sentence {
             margin-top: 3rem;
-            padding: 1.5rem;
+            padding: 2rem;
             text-align: center;
-            font-size: 1.5rem;
-            font-weight: 800;
+            font-size: 1.8rem;
+            font-weight: 900;
             color: var(--primary);
             background: linear-gradient(145deg, #8B7355, #A9927D);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            border-top: 2px dashed var(--secondary);
-            border-bottom: 2px dashed var(--secondary);
+            border-top: 3px solid var(--secondary);
+            border-bottom: 3px solid var(--secondary);
         }
         
-        /* الفاصل بين القوانين */
-        .law-separator {
-            width: 50px;
-            height: 3px;
-            background: var(--secondary);
-            margin: 1.5rem auto;
-            opacity: 0.3;
-            border-radius: 3px;
-        }
-        
-        /* أنماط الجداول - كما هي بدون تغيير */
+        /* أنماط الجداول */
         .table-container {
             overflow-x: auto;
             margin: 1rem 0;
@@ -763,10 +791,6 @@
         
         .concepts-table tr:last-child td, .qa-table tr:last-child td {
             border-bottom: none;
-        }
-        
-        .concepts-table tr:hover, .qa-table tr:hover {
-            background: rgba(139, 115, 85, 0.02);
         }
         
         .concept-term, .qa-question {
@@ -880,6 +904,7 @@
             .card { padding: 1.5rem; }
             .card-title { font-size: 1.6rem; }
             .main-title { font-size: 1.8rem; }
+            .chapter-name { font-size: 1.5rem; }
             
             .notifications {
                 left: 1rem;
@@ -887,17 +912,14 @@
                 max-width: none;
             }
             
-            .concepts-table, .qa-table {
-                min-width: 100%;
-            }
-            
-            .concepts-table td, .qa-table td {
-                padding: 0.8rem;
-            }
-            
-            .law-item {
+            .key-point-item {
+                padding: 1rem 1.5rem;
                 font-size: 1rem;
-                padding: 1rem;
+            }
+            
+            .motivation-sentence {
+                font-size: 1.4rem;
+                padding: 1.5rem;
             }
         }
     </style>
@@ -1150,7 +1172,7 @@
             return Math.round(cost * 10) / 10;
         }
 
-        // ========== البرومت المعدل للتلخيص العادي فقط ==========
+        // ========== البرومت المعدل للتلخيص العادي ==========
         function getNormalSummaryPrompt() {
             return `
 حلّل الملف بالكامل من أوله لآخره بدون إهمال أي سطر.
@@ -1223,12 +1245,9 @@
 
         // ========== إنشاء البرومبت حسب نوع التلخيص ==========
         function createPrompt() {
-            // التلخيص العادي - استخدم البرومت المعدل
             if (currentSettings.format === 'عادي') {
                 return getNormalSummaryPrompt();
             }
-            
-            // جداول المفاهيم - كما هي بدون تغيير
             else if (currentSettings.format === 'مفاهيم') {
                 const lengthInstructions = {
                     طويل: 'استخرج 10-15 مفهوم أساسي من الملف مع شرح مفصل لكل مفهوم. غطِ جميع أجزاء الملف.',
@@ -1270,7 +1289,6 @@
                 return prompt;
             }
             
-            // جداول الأسئلة والأجوبة - كما هي بدون تغيير
             else {
                 const lengthInstructions = {
                     طويل: 'استخرج 10-15 سؤال وجواب يغطون جميع محتويات الملف.',
@@ -1313,11 +1331,11 @@
             }
         }
 
-        // ========== دالة تنسيق النص للتلخيص العادي مع استخراج القوانين والنقاط ==========
+        // ========== دالة تنسيق النص للتلخيص العادي ==========
         function formatText(text) {
             if (!text) return '';
             
-            // استخراج القوانين (بين ## ##)
+            // 1. استخراج القوانين (بين ## ##)
             const lawRegex = /##(.*?)##/g;
             const laws = [];
             let match;
@@ -1325,66 +1343,73 @@
                 laws.push(match[1].trim());
             }
             
-            // استخراج الأكواد (بين ***الكود***)
+            // 2. استخراج الأكواد (بين ***الكود***)
             const codeRegex = /\*\*\*الكود\*\*\*\s*([\s\S]*?)(?=\*\*\*الكود\*\*\*|$)/g;
             const codes = [];
             while ((match = codeRegex.exec(text)) !== null) {
                 codes.push(match[1].trim());
             }
             
-            // استخراج النقاط الجوهرية (بين + +)
+            // 3. استخراج النقاط الجوهرية (بين + +)
             const pointsRegex = /\+(.*?)\+/g;
             const points = [];
             while ((match = pointsRegex.exec(text)) !== null) {
                 points.push(match[1].trim());
             }
             
-            // استخراج الجملة التحفيزية (آخر سطر)
-            const lines = text.split('\n').filter(line => line.trim());
-            const motivationLine = lines[lines.length - 1];
+            // 4. استخراج الجملة التحفيزية (آخر سطر غير فارغ)
+            const lines = text.split('\n').filter(line => line.trim() && !line.match(/##/) && !line.match(/\+\+/) && !line.match(/\*\*\*/));
+            const motivationLine = lines.length > 0 ? lines[lines.length - 1].trim() : '';
             
-            // إزالة الأجزاء المستخرجة من النص الأصلي
+            // 5. تنظيف النص من الرموز الخاصة
             let cleanText = text
                 .replace(lawRegex, '') // إزالة القوانين
                 .replace(/\*\*\*الكود\*\*\*[\s\S]*?(?=\*\*\*الكود\*\*\*|$)/g, '') // إزالة الأكواد
                 .replace(pointsRegex, '') // إزالة النقاط
-                .replace(motivationLine, ''); // إزالة الجملة التحفيزية مؤقتاً
+                .split('\n')
+                .filter(line => line.trim() && !line.match(/##/) && !line.match(/\+\+/) && !line.match(/\*\*\*/))
+                .join('\n');
             
-            // معالجة السطور
+            // 6. تقسيم النص إلى أجزاء (فصول)
+            const lines_array = cleanText.split('\n').filter(line => line.trim());
             let formatted = '';
-            const cleanLines = cleanText.split('\n');
             
-            for (let i = 0; i < cleanLines.length; i++) {
-                const line = cleanLines[i].trim();
-                if (!line) continue;
+            for (let i = 0; i < lines_array.length; i++) {
+                const line = lines_array[i].trim();
                 
                 // السطر الأول هو العنوان
                 if (i === 0 && line.match(/^\(.*\)$/)) {
                     formatted += `<div class="main-title">${line.replace(/[()]/g, '')}</div>`;
                 }
-                // الكشف عن أسماء الفصول (عادةً تكون بدون علامات خاصة)
-                else if (line.includes('الفصل') || line.includes('الجزء') || line.includes('Chapter') || line.includes('Section')) {
+                // الكشف عن أسماء الفصول (كلمات مفتاحية)
+                else if (line.includes('الفصل') || line.includes('الجزء') || 
+                         line.includes('Chapter') || line.includes('Section') ||
+                         line.match(/^\d+[\.\-]/) || line.match(/^[أ-ي][\.\-]/)) {
                     formatted += `<div class="chapter-name">${line}</div>`;
                 }
-                // نص عادي
-                else {
-                    formatted += `<div class="normal-text">${line}</div>`;
+                // نص عادي (شرح)
+                else if (line.length > 0) {
+                    formatted += `<div class="explanation-text">${line}</div>`;
                 }
             }
             
-            // إضافة قسم القوانين إذا وجدت
+            // 7. إضافة قسم القوانين مع تحويلها لصيغ رياضية
             if (laws.length > 0) {
                 formatted += '<div class="laws-container">';
+                formatted += '<h3><i class="fas fa-square-root-alt"></i> القوانين والصيغ الرياضية</h3>';
+                
                 laws.forEach((law, index) => {
-                    formatted += `<div class="law-item">${law}</div>`;
+                    // تحويل القانون لصيغة رياضية
+                    formatted += `<div class="law-item">\\(${law}\\)</div>`;
                     if (index < laws.length - 1) {
                         formatted += '<div class="law-separator"></div>';
                     }
                 });
+                
                 formatted += '</div>';
             }
             
-            // إضافة قسم الأكواد إذا وجدت
+            // 8. إضافة الأكواد البرمجية
             if (codes.length > 0) {
                 codes.forEach(code => {
                     const codeId = 'code_' + Math.random().toString(36).substr(2, 9);
@@ -1402,26 +1427,30 @@
                 });
             }
             
-            // إضافة قسم النقاط الجوهرية (8 نقاط)
+            // 9. إضافة النقاط الجوهرية (8 نقاط فقط)
             if (points.length > 0) {
                 formatted += '<div class="key-points-container">';
+                formatted += '<h3><i class="fas fa-star"></i> النقاط الجوهرية</h3>';
+                
+                // أخذ أول 8 نقاط فقط
                 points.slice(0, 8).forEach(point => {
                     if (point) {
-                        formatted += `<div class="key-point-item">${point}</div>`;
+                        formatted += `<div class="key-point-item"><i class="fas fa-check-circle" style="color: var(--primary); margin-left: 10px;"></i> ${point}</div>`;
                     }
                 });
+                
                 formatted += '</div>';
             }
             
-            // إضافة الجملة التحفيزية
-            if (motivationLine && !motivationLine.includes('==')) {
-                formatted += `<div class="motivation-sentence">${motivationLine}</div>`;
+            // 10. إضافة الجملة التحفيزية
+            if (motivationLine && motivationLine.length > 0) {
+                formatted += `<div class="motivation-sentence">✨ ${motivationLine} ✨</div>`;
             }
             
             return formatted;
         }
 
-        // ========== عرض النتائج حسب نوع التلخيص ==========
+        // ========== عرض النتائج مع تفعيل MathJax ==========
         function displayResults(result) {
             currentResult = result;
             const resultContent = document.getElementById('resultContent');
@@ -1441,7 +1470,6 @@
                 fontControls.style.display = 'none';
                 document.getElementById('resultHead').textContent = result.head || 'جدول المفاهيم';
                 
-                // عرض جدول المفاهيم - كما هو بدون تغيير
                 let tableHTML = `
                     <div class="table-container">
                         <table class="concepts-table">
@@ -1474,7 +1502,6 @@
                 fontControls.style.display = 'none';
                 document.getElementById('resultHead').textContent = result.head || 'أسئلة وأجوبة';
                 
-                // عرض جدول الأسئلة - كما هو بدون تغيير
                 let tableHTML = `
                     <div class="table-container">
                         <table class="qa-table">
@@ -1504,7 +1531,7 @@
             }
             
             else {
-                // تلخيص عادي - استخدم التنسيق الجديد
+                // تلخيص عادي
                 fontControls.style.display = 'flex';
                 
                 let content = '';
@@ -1523,6 +1550,14 @@
                 
                 // تطبيق التنسيق
                 resultContent.innerHTML = `<div class="result-text" id="resultText">${formatText(content)}</div>`;
+                
+                // تفعيل MathJax لعرض الصيغ الرياضية
+                if (window.MathJax) {
+                    MathJax.typesetPromise?.().then(() => {
+                        console.log('MathJax تم تحديثه');
+                    }).catch((err) => console.log('خطأ في MathJax:', err));
+                }
+                
                 const resultText = document.getElementById('resultText');
                 if (resultText) {
                     resultText.style.fontSize = fontSize + 'px';
@@ -1576,9 +1611,18 @@
                 }
                 else {
                     textToCopy = currentResult.page || currentResult.text || '';
+                    
+                    // إزالة الرموز الخاصة من النص المنسوخ
+                    textToCopy = textToCopy
+                        .replace(/##(.*?)##/g, '$1')
+                        .replace(/\+\+(.*?)\+\+/g, '$1')
+                        .replace(/\*\*\*الكود\*\*\*/g, '');
                 }
             } else {
-                textToCopy = currentResult;
+                textToCopy = currentResult
+                    .replace(/##(.*?)##/g, '$1')
+                    .replace(/\+\+(.*?)\+\+/g, '$1')
+                    .replace(/\*\*\*الكود\*\*\*/g, '');
             }
             
             navigator.clipboard.writeText(textToCopy).then(() => {
