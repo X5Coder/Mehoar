@@ -9,6 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     
@@ -42,6 +43,8 @@
             --code-text: #E6EDF3;
             --highlight-bg: #FFF3E0;
             --number-bg: #8B7355;
+            --formula-bg: #f8f9fa;
+            --point-bg: #f0f4f8;
         }
         
         body {
@@ -604,11 +607,10 @@
             margin: 0.5rem 0;
         }
         
-        /* قسم القوانين - بدون أي تنسيق خاص */
+        /* قسم القوانين */
         .laws-section {
             margin-top: 3rem;
-            padding: 1rem 0;
-            border-top: 2px solid var(--secondary);
+            padding: 1.5rem 0;
         }
         
         .laws-section h3 {
@@ -618,22 +620,47 @@
             text-align: center;
         }
         
-        .law-item {
+        .formula-item {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--formula-bg);
+            border-radius: 10px;
+            border-right: 4px solid var(--secondary);
             font-family: 'Courier New', monospace;
             direction: ltr;
             text-align: left;
-            padding: 0.3rem 0;
-            margin: 0.2rem 0;
-            color: var(--text);
-            white-space: pre-wrap;
-            word-break: break-word;
-            border: none;
-            background: none;
-            box-shadow: none;
-            font-weight: normal;
+            overflow-x: auto;
+        }
+        
+        .formula-divider {
+            text-align: center;
+            margin: 1rem 0;
+            color: var(--primary-light);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+        
+        .formula-divider span {
+            display: inline-block;
+            width: 50px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+            margin: 0 0.5rem;
         }
         
         /* الأكواد البرمجية */
+        .code-section {
+            margin-top: 3rem;
+            padding: 1.5rem 0;
+        }
+        
+        .code-section h3 {
+            color: var(--primary-dark);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
         .code-block {
             background: var(--code-bg);
             border-radius: 12px;
@@ -684,6 +711,51 @@
             text-align: left;
         }
         
+        /* النقاط الجوهرية */
+        .points-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: linear-gradient(145deg, #f9f7f5, #fff);
+            border-radius: var(--radius);
+            border: 2px solid var(--secondary);
+        }
+        
+        .points-section h3 {
+            color: var(--primary-dark);
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .point-item {
+            background: white;
+            padding: 1.2rem 1.8rem;
+            margin: 1rem 0;
+            border-radius: 50px;
+            border-right: 8px solid var(--primary);
+            box-shadow: var(--shadow);
+            font-weight: 500;
+            position: relative;
+            transition: 0.3s;
+        }
+        
+        .point-item:hover {
+            transform: translateX(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .point-item::before {
+            content: "✨";
+            position: absolute;
+            right: -10px;
+            top: -10px;
+            font-size: 1.2rem;
+            background: white;
+            border-radius: 50%;
+            padding: 0.2rem;
+            box-shadow: var(--shadow);
+        }
+        
         /* الأرقام المميزة */
         .special-number {
             display: inline-block;
@@ -703,28 +775,17 @@
             font-size: 1.2em;
         }
         
-        /* النقاط الرئيسية */
-        .key-points-section {
+        /* جملة تحفيزية */
+        .motivation-sentence {
             margin-top: 3rem;
-            padding: 2rem;
-            background: rgba(139, 115, 85, 0.05);
-            border-radius: var(--radius);
-            border: 1px solid var(--secondary);
-        }
-        
-        .key-points-section h3 {
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
             color: var(--primary-dark);
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .key-point-item {
-            background: white;
-            padding: 1rem 1.5rem;
-            margin: 1rem 0;
-            border-radius: 12px;
-            border-right: 5px solid var(--primary);
-            box-shadow: var(--shadow);
+            border-top: 2px dashed var(--secondary);
+            border-bottom: 2px dashed var(--secondary);
+            background: rgba(212, 165, 116, 0.05);
         }
         
         /* أنماط الجداول */
@@ -901,6 +962,11 @@
             
             .concepts-table td, .qa-table td {
                 padding: 0.8rem;
+            }
+            
+            .point-item {
+                padding: 1rem;
+                border-radius: 30px;
             }
         }
     </style>
@@ -1153,86 +1219,74 @@
             return Math.round(cost * 10) / 10;
         }
 
-        // ========== البرومت النهائي للتلخيص العادي مع تحسين القوانين ==========
-        function getNormalSummaryPrompt() {
+        // ========== البرومت الجديد للتلخيص العادي ==========
+        function getExecutionPrompt() {
             return `
-حلّل الملف التالي بدقة شديدة للغاية وافحصه من أول كلمة إلى آخر كلمة بدون إهمال أي جزء. نفّذ المطلوب فورًا بدون أي مقدمة أو تمهيد أو تعريف بنفسك. اسمك عَون ولا يُسمح بذكر أي اسم آخر نهائيًا.
+حلّل الملف بالكامل من أوله لآخره بدون إهمال أي سطر.
+ابدأ فورًا في التنفيذ بدون أي مقدمة.
 
-الإعدادات التي يحددها المستخدم (التزام إلزامي كامل):
-- شخصية الشارح: ${currentSettings.persona}
-- لغة الإخراج: ${currentSettings.language}
-- أسلوب الشرح: ${currentSettings.style}
-- طول الشرح: ${currentSettings.length}
+اسمك عَون فقط.
 
-قواعد تنفيذ صارمة جدًا:
+الإعدادات:
+الشخصية: ${currentSettings.persona}
+اللغة: ${currentSettings.language}
+الأسلوب: ${currentSettings.style}
+الطول: ${currentSettings.length}
 
-1) أول سطر في الرد دائمًا يكون عنوانًا مكوّنًا من 5 كلمات يلخص الملف بالكامل ويوضع هكذا:
-(*عنوان مكوّن من خمس كلمات*)
+=================
+هيكل الإخراج
+=================
 
-2) ابدأ الشرح مباشرة بعد العنوان بدون أي فواصل كبيرة.
+1) السطر الأول فقط:
+عنوان مكوّن من خمس كلمات بين قوسين.(العنوان 5 كلمات)
 
-3) استخدم الرموز التالية فقط:
-- للعناوين الرئيسية: *عنوان*
-- للعناوين الفرعية: **عنوان فرعي**
-- للنص المميز: !نص مميز!
-- للأرقام المميزة: -رقم-
-- للأكواد: \`\`\`كود\`\`\`
+2) الشرح:
+- اكتب اسم كل فصل أو جزء كما ورد.
+- تحته الشرح الخاص به.
+- ثم الجزء التالي.
+- بدون فواصل كبيرة.
+- بدون مقدمات.
+- بدون تعليقات شخصية.
 
-4) طول الشرح:
-- إذا اختار المستخدم "طويل": قدم شرحًا تفصيليًا شاملًا باستفاضة عالية جدًا يغطي كل جزء من بداية الملف إلى نهايته.
-- إذا اختار المستخدم "قصير": قدم ملخصًا متوسط الطول يغطي الملف بالكامل.
+3) القوانين (إذا وُجدت فقط):
+- اكتب كل قانون في سطر مستقل.
+- كل قانون يكون داخل:
+##القانون##
+- لا تكتب أي شيء قبل أو بعد ##
+- لا تكتب عناوين.
+- لا تكتب كلمة قوانين.
+- لا تشرح القانون.
+- لا تضف أمثلة.
+- اكتب القانون بصيغة LaTeX رياضية مباشرة
+استخرج كل القوانين الي داخل الملف بدون اهمال ولا قانون
 
-5) في نهاية الشرح أضف قسمين منفصلين تمامًا:
+4) الأكواد (إذا وُجدت فقط):
+- قبل كل كود اكتب سطر يحتوي فقط على:
+***الكود***
+- في السطر التالي مباشرة ضع الكود كما هو حرفيًا.
+- لا تشرح الكود.
+- لا تعدل تنسيقه.
 
-أولاً: قسم القوانين والصيغ الرياضية
-اكتبه بالشكل التالي:
-==القوانين والصيغ الرياضية==
+5) النقاط الجوهرية (إجباري):
+اكتب 8 نقاط فقط.
+كل نقطة في سطر مستقل بهذا الشكل:
++الجملة المهمة هنا+
 
-تعليمات مهمة جداً لكتابة القوانين - اتبعها بدقة متناهية:
+6) في النهاية:
+اكتب سطر واحد فقط يحتوي على جملة تحفيزية قصيرة.
 
-1. استخرج جميع القوانين والصيغ الرياضية الموجودة في الملف.
-2. اكتب كل قانون في سطر واحد كامل ومتكامل.
-3. لا تقطع المعادلة على عدة أسطر.
-4. حافظ على جميع الرموز الرياضية: ( ) [ ] { } + - × ÷ / ^ √ ∑ ∏ = ≠ ≈ ≤ ≥ ∞ α β γ θ λ μ π σ .
-5. اكتب الكسور بالشكل (البسط) / (المقام) أو كما هي في الملف.
-6. اكتب الأسس باستخدام علامة ^ مثل: x^2, (1+r)^n.
-7. اكتب الجذور باستخدام sqrt(المقدار) أو كما هي في الملف.
-8. حافظ على ترتيب الحدود والأقواس كما هي في الملف تمامًا.
-9. لا تستخدم أي تنسيق Markdown: لا ** ولا ## ولا \`\`\` ولا أي رموز تنسيق.
-10. لا تكتب أي شرح أو تعريف أو كلمات توضيحية قبل القانون أو بعده.
-11. لا تكتب "حيث أن" أو "تعريف" أو "قانون".
-12. اكتب القانون فقط كما هو.
-13. إذا كان القانون مكتوبًا في الملف بطريقة معينة، انسخه بنفس الطريقة بالضبط.
-14. لا تغير شكل القانون ولا تبتكر صيغة جديدة.
+=================
+ممنوعات
+=================
+- لا تستخدم Markdown.
+- لا تستخدم JSON.
+- لا تكتب عناوين إضافية.
+- لا تكرر القوانين.
+- لا تغير شكل أي قانون.
+- لا تضع مسافات كبيرة.
+- لا تكتب أي شيء خارج الهيكل المطلوب.
 
-مثال للصيغة الصحيحة:
-r_d = (I + ((Par - N_d) / n)) / ((N_d + Par) / 2)
-K_d = r_d (1 - T)
-NPV = ∑ (CF_t / (1 + r)^t) - I
-Beta = Cov(R_i, R_m) / Var(R_m)
-
-كل قانون في سطر مستقل.
-لا تكتب أي شيء غير القوانين نفسها.
-لا تكتب عناوين داخل القسم.
-لا تكتب ترقيم.
-لا تكتب أمثلة.
-لا تكتب شرح.
-
-ثانياً: قسم النقاط الرئيسية
-اكتبه بالشكل التالي:
-==النقاط الرئيسية==
-- النقطة الأولى
-- النقطة الثانية
-- النقطة الثالثة
-- النقطة الرابعة
-- النقطة الخامسة
-
-6) ممنوع تمامًا:
-- استخدام JSON
-- كتابة مقدمات
-- ترك مسافات كبيرة
-- ذكر أي اسم آخر غير عَون
-- استخدام أي تنسيق Markdown في القوانين
+ابدأ التنفيذ.
 `;
         }
 
@@ -1240,7 +1294,7 @@ Beta = Cov(R_i, R_m) / Var(R_m)
         function createPrompt() {
             // التلخيص العادي - استخدم البرومت الجديد
             if (currentSettings.format === 'عادي') {
-                return getNormalSummaryPrompt();
+                return getExecutionPrompt();
             }
             
             // جداول المفاهيم - كما هي بدون تغيير
@@ -1328,8 +1382,153 @@ Beta = Cov(R_i, R_m) / Var(R_m)
             }
         }
 
-        // ========== دالة تنسيق النص للتلخيص العادي ==========
-        function formatText(text) {
+        // ========== دالة معالجة النص للتلخيص العادي ==========
+        function processNormalSummary(text) {
+            if (!text) return '';
+            
+            // تخزين الأجزاء المختلفة
+            let mainTitle = '';
+            let explanation = '';
+            let laws = [];
+            let codes = [];
+            let points = [];
+            let motivation = '';
+            
+            // تقسيم النص إلى أجزاء
+            const lines = text.split('\n');
+            
+            // استخراج العنوان (أول سطر)
+            if (lines.length > 0) {
+                const titleMatch = lines[0].match(/\((.*?)\)/);
+                if (titleMatch) {
+                    mainTitle = titleMatch[1];
+                }
+            }
+            
+            // استخراج القوانين باستخدام Regex
+            const lawMatches = text.match(/##(.*?)##/g) || [];
+            laws = lawMatches.map(law => law.replace(/##/g, '').trim());
+            
+            // استخراج الأكواد
+            const codeRegex = /\*\*\*(.*?)\*\*\*\s*\n([\s\S]*?)(?=\n\*\*\*|$|\n##|\n\+|$)/g;
+            let codeMatch;
+            while ((codeMatch = codeRegex.exec(text)) !== null) {
+                if (codeMatch[2] && codeMatch[2].trim()) {
+                    codes.push(codeMatch[2].trim());
+                }
+            }
+            
+            // استخراج النقاط الجوهرية
+            const pointMatches = text.match(/\+([^+]+)\+/g) || [];
+            points = pointMatches.map(point => point.replace(/\+/g, '').trim()).slice(0, 8);
+            
+            // استخراج الجملة التحفيزية (آخر سطر غير فارغ)
+            const nonEmptyLines = lines.filter(line => line.trim() !== '');
+            if (nonEmptyLines.length > 0) {
+                const lastLine = nonEmptyLines[nonEmptyLines.length - 1];
+                if (!lastLine.includes('##') && !lastLine.includes('***') && !lastLine.includes('+')) {
+                    motivation = lastLine.trim();
+                }
+            }
+            
+            // استخراج الشرح (كل النص ما عدا الأجزاء المستخرجة)
+            explanation = text;
+            
+            // إزالة الأجزاء المستخرجة من الشرح
+            lawMatches.forEach(law => {
+                explanation = explanation.replace(law, '');
+            });
+            
+            pointMatches.forEach(point => {
+                explanation = explanation.replace(point, '');
+            });
+            
+            // إزالة الأكواد من الشرح
+            let tempExplanation = explanation;
+            codeRegex.lastIndex = 0;
+            while ((codeMatch = codeRegex.exec(tempExplanation)) !== null) {
+                explanation = explanation.replace(codeMatch[0], '');
+            }
+            
+            // تنظيف الشرح من الأسطر الفارغة الزائدة
+            explanation = explanation.split('\n')
+                .filter(line => {
+                    return line.trim() !== '' && 
+                           !line.includes('##') && 
+                           !line.includes('***') && 
+                           !line.includes('+') &&
+                           !line.match(/\(.*?\)/);
+                })
+                .join('\n');
+            
+            return {
+                title: mainTitle,
+                explanation: explanation,
+                laws: laws,
+                codes: codes,
+                points: points,
+                motivation: motivation
+            };
+        }
+
+        // ========== دالة تنسيق القوانين باستخدام MathJax ==========
+        function renderFormulas(formulas) {
+            if (!formulas || formulas.length === 0) return '';
+            
+            let html = '<div class="laws-section"><h3>📜 القوانين والصيغ الرياضية</h3>';
+            
+            formulas.forEach((formula, index) => {
+                html += `<div class="formula-item">\\(${formula}\\)</div>`;
+                if (index < formulas.length - 1) {
+                    html += '<div class="formula-divider"><span></span> • <span></span></div>';
+                }
+            });
+            
+            html += '</div>';
+            return html;
+        }
+
+        // ========== دالة تنسيق الأكواد ==========
+        function renderCodes(codes) {
+            if (!codes || codes.length === 0) return '';
+            
+            let html = '<div class="code-section"><h3>💻 الأكواد البرمجية</h3>';
+            
+            codes.forEach((code, index) => {
+                const codeId = 'code_' + Math.random().toString(36).substr(2, 9) + '_' + index;
+                html += `
+                    <div class="code-block" id="${codeId}">
+                        <div class="code-header">
+                            <span><i class="fas fa-terminal"></i> كود برمجي ${index + 1}</span>
+                            <button class="copy-code-btn" onclick="copyCodeFromElement('${codeId}')">
+                                <i class="fas fa-copy"></i> نسخ
+                            </button>
+                        </div>
+                        <pre>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            return html;
+        }
+
+        // ========== دالة تنسيق النقاط الجوهرية ==========
+        function renderPoints(points) {
+            if (!points || points.length === 0) return '';
+            
+            let html = '<div class="points-section"><h3>✨ النقاط الجوهرية</h3>';
+            
+            points.forEach(point => {
+                html += `<div class="point-item">${point}</div>`;
+            });
+            
+            html += '</div>';
+            return html;
+        }
+
+        // ========== دالة تنسيق الشرح ==========
+        function formatExplanation(text) {
             if (!text) return '';
             
             let formatted = text
@@ -1337,104 +1536,92 @@ Beta = Cov(R_i, R_m) / Var(R_m)
                 .replace(/\\r/g, '')
                 .replace(/\\t/g, '    ');
             
-            // تخزين الأقسام المنفصلة
-            let lawsSection = '';
-            let keyPointsSection = '';
-            
-            // استخراج قسم القوانين
-            const lawsMatch = formatted.match(/==القوانين والصيغ الرياضية==\s*([\s\S]*?)(?===\s*النقاط الرئيسية==|$)/);
-            if (lawsMatch) {
-                lawsSection = lawsMatch[1].trim();
-                formatted = formatted.replace(/==القوانين والصيغ الرياضية==[\s\S]*?(?===\s*النقاط الرئيسية==|$)/, '');
-            }
-            
-            // استخراج قسم النقاط الرئيسية
-            const pointsMatch = formatted.match(/==النقاط الرئيسية==\s*([\s\S]*?)$/);
-            if (pointsMatch) {
-                keyPointsSection = pointsMatch[1].trim();
-                formatted = formatted.replace(/==النقاط الرئيسية==[\s\S]*?$/, '');
-            }
-            
-            // تنسيق العنوان الرئيسي
-            formatted = formatted.replace(/\(\*(.*?)\*\)/g, '<div class="main-title">$1</div>');
-            
-            // تنسيق العناوين الرئيسية
+            // تحويل العناوين
             formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<div class="section-title">$1</div>');
-            
-            // تنسيق العناوين الفرعية
             formatted = formatted.replace(/\*(.*?)\*/g, '<div class="subsection-title">$1</div>');
             
-            // تنسيق النص المميز
+            // تحويل النص المميز
             formatted = formatted.replace(/!(.*?)!/g, '<span class="highlight-text">$1</span>');
             
-            // تنسيق الأرقام
+            // تحويل الأرقام
             formatted = formatted.replace(/-(\d+)-/g, '<span class="special-number">$1</span>');
             
-            // تنسيق الأكواد
-            formatted = formatted.replace(/```(.*?)```/gs, (match, code) => {
-                const codeId = 'code_' + Math.random().toString(36).substr(2, 9);
-                return `
-                    <div class="code-block" id="${codeId}">
-                        <div class="code-header">
-                            <span><i class="fas fa-code"></i> كود برمجي</span>
-                            <button class="copy-code-btn" onclick="copyCodeFromElement('${codeId}')">
-                                <i class="fas fa-copy"></i> نسخ
-                            </button>
-                        </div>
-                        <pre>${code.trim()}</pre>
-                    </div>
-                `;
-            });
-            
-            // تنسيق الرموز
+            // تحويل الرموز
             formatted = formatted.replace(/([~•])/g, '<span class="special-symbol">$1</span>');
             
             // تحويل السطور
             formatted = formatted.replace(/\n/g, '<br>');
             
-            // إضافة قسم القوانين - بدون أي تنسيق خاص
-            if (lawsSection) {
-                let lawsHtml = '<div class="laws-section"><h3>📜 القوانين والصيغ الرياضية</h3>';
-                // تقسيم القوانين - كل سطر يعتبر قانون منفصل
-                const laws = lawsSection.split('\n').filter(law => law.trim() && !law.startsWith('=='));
-                laws.forEach(law => {
-                    if (law.trim()) {
-                        // إزالة أي تنسيق Markdown قد يكون موجودًا
-                        let cleanLaw = law.trim()
-                            .replace(/\*\*/g, '')
-                            .replace(/\*/g, '')
-                            .replace(/`/g, '')
-                            .replace(/#/g, '');
-                        lawsHtml += `<div class="law-item">${cleanLaw}</div>`;
-                    }
-                });
-                lawsHtml += '</div>';
-                formatted += lawsHtml;
-            }
-            
-            // إضافة قسم النقاط الرئيسية
-            if (keyPointsSection) {
-                let pointsHtml = '<div class="key-points-section"><h3>✨ النقاط الرئيسية</h3>';
-                const points = keyPointsSection.split('\n').filter(point => point.trim().startsWith('-'));
-                points.forEach(point => {
-                    if (point.trim()) {
-                        const pointText = point.trim().substring(1).trim();
-                        if (pointText) {
-                            pointsHtml += `<div class="key-point-item">${pointText}</div>`;
-                        }
-                    }
-                });
-                pointsHtml += '</div>';
-                formatted += pointsHtml;
-            }
-            
             return formatted;
+        }
+
+        // ========== دالة عرض التلخيص العادي ==========
+        function displayNormalSummary(result) {
+            const resultContent = document.getElementById('resultContent');
+            const fontControls = document.getElementById('fontControls');
+            
+            fontControls.style.display = 'flex';
+            
+            let processed;
+            if (typeof result === 'object' && result !== null) {
+                processed = processNormalSummary(result.page || result.text || '');
+            } else {
+                processed = processNormalSummary(result);
+            }
+            
+            // بناء HTML الكامل
+            let html = '<div class="result-text" id="resultText">';
+            
+            // العنوان
+            if (processed.title) {
+                html += `<div class="main-title">${processed.title}</div>`;
+                document.getElementById('resultHead').textContent = processed.title;
+            }
+            
+            // الشرح
+            if (processed.explanation) {
+                html += formatExplanation(processed.explanation);
+            }
+            
+            // القوانين
+            if (processed.laws && processed.laws.length > 0) {
+                html += renderFormulas(processed.laws);
+            }
+            
+            // الأكواد
+            if (processed.codes && processed.codes.length > 0) {
+                html += renderCodes(processed.codes);
+            }
+            
+            // النقاط الجوهرية
+            if (processed.points && processed.points.length > 0) {
+                html += renderPoints(processed.points);
+            }
+            
+            // الجملة التحفيزية
+            if (processed.motivation) {
+                html += `<div class="motivation-sentence">✨ ${processed.motivation} ✨</div>`;
+            }
+            
+            html += '</div>';
+            
+            resultContent.innerHTML = html;
+            
+            // تطبيق حجم الخط
+            const resultText = document.getElementById('resultText');
+            if (resultText) {
+                resultText.style.fontSize = fontSize + 'px';
+            }
+            
+            // تشغيل MathJax لتحويل الصيغ
+            if (window.MathJax) {
+                MathJax.typesetPromise?.().catch(err => console.log('MathJax error:', err));
+            }
         }
 
         // ========== عرض النتائج حسب نوع التلخيص ==========
         function displayResults(result) {
             currentResult = result;
-            const resultContent = document.getElementById('resultContent');
             const fontControls = document.getElementById('fontControls');
             
             // ضبط اتجاه الصفحة حسب اللغة
@@ -1477,7 +1664,7 @@ Beta = Cov(R_i, R_m) / Var(R_m)
                 }
                 
                 tableHTML += `</tbody></table></div>`;
-                resultContent.innerHTML = tableHTML;
+                document.getElementById('resultContent').innerHTML = tableHTML;
             }
             
             else if (currentSettings.format === 'اسئلة') {
@@ -1510,33 +1697,12 @@ Beta = Cov(R_i, R_m) / Var(R_m)
                 }
                 
                 tableHTML += `</tbody></table></div>`;
-                resultContent.innerHTML = tableHTML;
+                document.getElementById('resultContent').innerHTML = tableHTML;
             }
             
             else {
-                // تلخيص عادي - استخدم التنسيق الجديد
-                fontControls.style.display = 'flex';
-                
-                let content = '';
-                if (typeof result === 'object' && result !== null) {
-                    content = result.page || result.text || '';
-                    document.getElementById('resultHead').textContent = result.head || 'ملخص الملف';
-                } else {
-                    content = result;
-                    
-                    // محاولة استخراج العنوان من أول سطر
-                    const titleMatch = content.match(/^\(\*(.*?)\*\)/);
-                    if (titleMatch) {
-                        document.getElementById('resultHead').textContent = titleMatch[1];
-                    }
-                }
-                
-                // تطبيق التنسيق
-                resultContent.innerHTML = `<div class="result-text" id="resultText">${formatText(content)}</div>`;
-                const resultText = document.getElementById('resultText');
-                if (resultText) {
-                    resultText.style.fontSize = fontSize + 'px';
-                }
+                // تلخيص عادي
+                displayNormalSummary(result);
             }
         }
 
@@ -1585,7 +1751,18 @@ Beta = Cov(R_i, R_m) / Var(R_m)
                     }
                 }
                 else {
-                    textToCopy = currentResult.page || currentResult.text || '';
+                    // للتلخيص العادي، نحتاج لمعالجة النص
+                    const processed = processNormalSummary(currentResult.page || currentResult.text || '');
+                    textToCopy = processed.title + '\n\n' + processed.explanation + '\n\n';
+                    if (processed.laws.length > 0) {
+                        textToCopy += 'القوانين:\n' + processed.laws.join('\n') + '\n\n';
+                    }
+                    if (processed.points.length > 0) {
+                        textToCopy += 'النقاط الجوهرية:\n' + processed.points.map((p, i) => `${i+1}. ${p}`).join('\n') + '\n\n';
+                    }
+                    if (processed.motivation) {
+                        textToCopy += processed.motivation;
+                    }
                 }
             } else {
                 textToCopy = currentResult;
