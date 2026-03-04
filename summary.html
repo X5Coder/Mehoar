@@ -600,8 +600,8 @@
         
         /* قسم القوانين - بدون خلفية */
         .laws-container {
-            margin-top: 3rem;
-            padding: 1.5rem 0;
+            margin: 3rem 0;
+            padding: 2rem 0;
             border-top: 2px dashed var(--secondary);
             border-bottom: 2px dashed var(--secondary);
         }
@@ -616,29 +616,38 @@
         
         .law-item {
             padding: 1.2rem;
-            margin: 0.5rem 0;
+            margin: 1rem 0;
             color: var(--law-text);
             text-align: center;
             font-size: 1.3rem;
             font-weight: 500;
+            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
             direction: ltr;
             overflow-x: auto;
-            background: transparent;
+            background: transparent !important;
         }
         
-        /* تنسيق MathJax */
+        .law-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* تنسيق النصوص العربية داخل MathJax */
         .law-item mjx-container {
             font-size: 1.3rem !important;
             direction: ltr !important;
             text-align: center !important;
-            color: var(--law-text) !important;
+            padding: 0.5rem 0 !important;
+        }
+        
+        .law-item mjx-container[jax="CHTML"][display="true"] {
+            margin: 0.5rem 0 !important;
         }
         
         .law-separator {
-            width: 50px;
+            width: 30px;
             height: 2px;
             background: var(--secondary);
-            margin: 1rem auto;
+            margin: 1.5rem auto;
             opacity: 0.2;
             border-radius: 2px;
         }
@@ -721,7 +730,7 @@
             line-height: 1.7;
             color: var(--text);
             transition: 0.3s;
-            position: relative;
+            font-weight: 500;
         }
         
         .key-point-item:hover {
@@ -729,25 +738,12 @@
             box-shadow: var(--shadow);
         }
         
-        .point-number {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 30px;
-            margin-left: 15px;
-            font-weight: 700;
-        }
-        
-        /* الجملة التحفيزية - عبارات تشجيعية فقط */
+        /* الجملة التحفيزية */
         .motivation-sentence {
             margin-top: 3rem;
             padding: 2rem;
             text-align: center;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 900;
             color: var(--primary);
             border-top: 3px solid var(--secondary);
@@ -924,7 +920,7 @@
             }
             
             .motivation-sentence {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
                 padding: 1.5rem;
             }
             
@@ -1114,7 +1110,7 @@
             appId: "1:189921979866:android:95f48de58a69756be924e3"
         });
 
-        // إعداد MathJax
+        // إعداد MathJax للتعامل مع النصوص العربية
         window.MathJax = {
             tex: {
                 inlineMath: [['\\(', '\\)']],
@@ -1135,6 +1131,8 @@
             startup: {
                 ready: () => {
                     MathJax.startup.defaultReady();
+                    // تعديل لعرض النصوص العربية بشكل صحيح
+                    const MmlVisitor = MathJax.startup.document.adaptor;
                 }
             }
         };
@@ -1159,20 +1157,6 @@
         };
         let fontSize = 16;
         let currentResult = null;
-
-        // قائمة بالعبارات التحفيزية
-        const motivationalPhrases = [
-            "اجتهد لتوفق 💪",
-            "النجاح حليف المجتهدين 🌟",
-            "واصل المسير نحو القمة 🏔️",
-            "بالعلم ترتقي الأمم 📚",
-            "المستقبل لمن يجتهد اليوم 🔮",
-            "صناع النجاح لا يعرفون المستحيل 🏆",
-            "التعليم هو جواز سفرك للمستقبل ✨",
-            "حقق أحلامك خطوة بخطوة 🎯",
-            "العلم نور والجهل ظلام 💡",
-            "أنت تصنع الفرق ابدأ الآن 🚀"
-        ];
 
         // ========== دوال المساعدة ==========
         function showLoading() {
@@ -1226,8 +1210,6 @@
         function getNormalSummaryPrompt() {
             return `
 حلّل الملف بالكامل من أوله لآخره بدون إهمال أي سطر.
-ابدأ فورًا في التنفيذ بدون أي مقدمة.
-
 اسمك عَون فقط.
 
 الإعدادات:
@@ -1237,64 +1219,52 @@
 الطول: ${currentSettings.length}
 
 =================
-هيكل الإخراج
+هيكل الإخراج بدقة
 =================
 
-1) السطر الأول فقط:
-عنوان مكوّن من خمس كلمات بين قوسين.(العنوان 5 كلمات)
+1) أول سطر فقط:
+عنوان مكون من 5 كلمات بين قوسين ()
+(مثال: (قوانين نيوتن للحركة والديناميكا))
 
-2) الشرح:
-- اكتب اسم كل فصل أو جزء كما ورد.
-- تحته الشرح الخاص به.
-- ثم الجزء التالي.
-- بدون فواصل كبيرة.
-- بدون مقدمات.
-- بدون تعليقات شخصية.
+2) شرح الملف:
+- اكتب اسم كل فصل أو جزء كما ورد في الملف
+- تحت كل اسم فصل اكتب الشرح الخاص به
+- استمر هكذا حتى نهاية الملف
+- بدون فواصل أو تعليقات
 
-3) القوانين (إذا وُجدت فقط):
-- اكتب كل قانون في سطر مستقل.
-- كل قانون يكون داخل:
-##القانون##
-- لا تكتب أي شيء قبل أو بعد ##
-- لا تكتب عناوين.
-- لا تكتب كلمة قوانين.
-- لا تشرح القانون.
-- لا تضف أمثلة.
-- اكتب القانون بصيغة LaTeX رياضية مباشرة
-استخرج كل القوانين الي داخل الملف بدون اهمال ولا قانون
+3) القوانين (إذا وجدت في الملف):
+- ضع كل قانون في سطر مستقل
+- كل قانون داخل ## فقط
+- مثال: ## F = ma ##
+- لا تكتب كلمة "قوانين" ولا عناوين
+- لا تشرح القانون ولا تضف أمثلة
 
-4) الأكواد (إذا وُجدت فقط):
-- قبل كل كود اكتب سطر يحتوي فقط على:
-***الكود***
-- في السطر التالي مباشرة ضع الكود كما هو حرفيًا.
-- لا تشرح الكود.
-- لا تعدل تنسيقه.
+4) الأكواد البرمجية (إذا وجدت):
+- قبل كل كود اكتب سطر واحد فقط: ***الكود***
+- في السطر التالي مباشرة: اكتب الكود كما هو حرفياً
+- لا تشرح الكود ولا تعدل تنسيقه
 
 5) النقاط الجوهرية (إجباري):
-اكتب 8 نقاط فقط مستخلصة من الملف ككل.
-يجب أن تكون هذه النقاط:
-- استنتاجية تلخص جوهر الملف
-- بدون قوانين أو أكواد برمجية
-- كل نقطة جملة مفيدة تشرح فكرة مهمة من الملف
+اكتب 8 نقاط فقط - كل نقطة هي خلاصة وجوهر الملف
+كل نقطة تبدأ بـ + وتنتهي بـ +
+يُمنع منعاً باتاً كتابة أي قانون داخل النقاط
+النقاط تكون جمل مفهومة وموجزة
 
-كل نقطة في سطر مستقل بهذا الشكل:
-+نقطة جوهرية مهمة من الملف+
-
-6) في النهاية:
-اكتب سطر واحد فقط يحتوي على كلمة "تحفيز:" متبوعة بعبارة تحفيزية قصيرة.
+6) الجملة التحفيزية (إجباري):
+في نهاية الملف فقط اكتب جملة تحفيزية قصيرة مثل:
+"اجتهد لتوفق" أو "المثابرة طريق النجاح"
+لا تكتب جمل طويلة ولا شكر
 
 =================
-ممنوعات
+ممنوعات نهائياً
 =================
-- لا تستخدم Markdown.
-- لا تستخدم JSON.
-- لا تكتب عناوين إضافية.
-- لا تكرر القوانين.
-- لا تغير شكل أي قانون.
-- لا تضع مسافات كبيرة.
-- لا تكتب أي شيء خارج الهيكل المطلوب.
+- ممنوع كتابة قوانين داخل النقاط الجوهرية
+- ممنوع تكرار القوانين
+- ممنوع استخدام Markdown أو JSON
+- ممنوع كتابة عناوين إضافية
+- ممنوع تغيير شكل ## أو ***الكود***
 
-ابدأ التنفيذ.
+ابدأ التنفيذ فوراً:
 `;
         }
 
@@ -1395,33 +1365,78 @@
             const laws = [];
             let match;
             while ((match = lawRegex.exec(text)) !== null) {
-                laws.push(match[1].trim());
+                // تنظيف القانون من المسافات الزائدة
+                const law = match[1].trim();
+                if (law && !laws.includes(law)) {
+                    laws.push(law);
+                }
             }
             
             // 2. استخراج الأكواد (بين ***الكود***)
             const codeRegex = /\*\*\*الكود\*\*\*\s*([\s\S]*?)(?=\*\*\*الكود\*\*\*|$)/g;
             const codes = [];
             while ((match = codeRegex.exec(text)) !== null) {
-                codes.push(match[1].trim());
+                const code = match[1].trim();
+                if (code) {
+                    codes.push(code);
+                }
             }
             
-            // 3. استخراج النقاط الجوهرية (بين + +)
+            // 3. استخراج النقاط الجوهرية (بين + +) - مع التأكد من عدم وجود قوانين فيها
             const pointsRegex = /\+(.*?)\+/g;
             const points = [];
             while ((match = pointsRegex.exec(text)) !== null) {
-                points.push(match[1].trim());
+                const point = match[1].trim();
+                // التأكد أن النقطة لا تحتوي على رموز قوانين
+                if (point && !point.includes('##') && !point.includes('=') && !point.match(/[+\-*/^=]/)) {
+                    points.push(point);
+                }
             }
             
-            // 4. تنظيف النص من الرموز الخاصة
+            // 4. استخراج الجملة التحفيزية (آخر سطر)
+            const lines = text.split('\n').filter(line => line.trim());
+            let motivationLine = '';
+            
+            // البحث عن جملة تحفيزية مناسبة
+            for (let i = lines.length - 1; i >= 0; i--) {
+                const line = lines[i].trim();
+                // التأكد أنها ليست قانون ولا نقطة ولا كود
+                if (line && !line.match(/##/) && !line.match(/\+\+/) && !line.match(/\*\*\*/) && 
+                    !line.includes('=') && line.length < 50) {
+                    motivationLine = line;
+                    break;
+                }
+            }
+            
+            // إذا لم نجد جملة تحفيزية، نستخدم جملة افتراضية
+            if (!motivationLine || motivationLine.length < 3) {
+                const motivationalPhrases = [
+                    "اجتهد لتوفق",
+                    "المثابرة طريق النجاح",
+                    "بالعلم ترتقي الأمم",
+                    "وما النجاح إلا بالجد",
+                    "اطلب العلم من المهد إلى اللحد"
+                ];
+                motivationLine = motivationalPhrases[Math.floor(Math.random() * motivationalPhrases.length)];
+            }
+            
+            // 5. تنظيف النص من الرموز الخاصة مع الحفاظ على القوانين والأكواد والنقاط
             let cleanText = text
-                .replace(lawRegex, '') // إزالة القوانين
-                .replace(/\*\*\*الكود\*\*\*[\s\S]*?(?=\*\*\*الكود\*\*\*|$)/g, '') // إزالة الأكواد
-                .replace(pointsRegex, '') // إزالة النقاط
+                .replace(lawRegex, '') // نزيل القوانين مؤقتاً
+                .replace(/\*\*\*الكود\*\*\*[\s\S]*?(?=\*\*\*الكود\*\*\*|$)/g, '') // نزيل الأكواد مؤقتاً
+                .replace(pointsRegex, '') // نزيل النقاط مؤقتاً
                 .split('\n')
-                .filter(line => line.trim() && !line.match(/^\(.*\)$/) && !line.match(/تحفيز:/))
+                .filter(line => {
+                    const trimmed = line.trim();
+                    return trimmed && 
+                           !trimmed.match(/^\(.*\)$/) && 
+                           !trimmed.match(/##/) && 
+                           !trimmed.match(/\+\+/) && 
+                           !trimmed.match(/\*\*\*/);
+                })
                 .join('\n');
             
-            // 5. تقسيم النص إلى أجزاء (فصول)
+            // 6. تقسيم النص إلى أجزاء (فصول)
             const lines_array = cleanText.split('\n').filter(line => line.trim());
             let formatted = '';
             
@@ -1444,17 +1459,27 @@
                 }
             }
             
-            // 6. إضافة قسم القوانين - مع تحويلها لصيغ رياضية
+            // 7. إضافة قسم القوانين - مع تفعيل MathJax
             if (laws.length > 0) {
                 formatted += '<div class="laws-container">';
                 formatted += '<h3>📐 القوانين والصيغ الرياضية</h3>';
                 
                 laws.forEach((law, index) => {
-                    // تنظيف القانون
+                    // تنظيف القانون من أي نصوص غير مرغوب فيها
                     const cleanLaw = law.replace(/[\\n\\r]/g, '').trim();
                     
-                    // عرض القانون داخل MathJax
-                    formatted += `<div class="law-item tex2jax_process">\\(${cleanLaw}\\)</div>`;
+                    // التحقق إذا كان القانون يحتوي على نصوص عربية
+                    const hasArabic = /[\u0600-\u06FF]/.test(cleanLaw);
+                    
+                    if (hasArabic) {
+                        // إذا كان هناك نص عربي، نعرضه بشكل عادي
+                        formatted += `<div class="law-item" style="direction: rtl; text-align: center;">${cleanLaw}</div>`;
+                    } else {
+                        // إذا كان رياضياً، نستخدم MathJax مع معالجة خاصة
+                        // نضيف مسافات حول العمليات الحسابية إذا لزم الأمر
+                        const mathLaw = cleanLaw.replace(/([+\-*/=])/g, ' $1 ');
+                        formatted += `<div class="law-item">\\(${mathLaw}\\)</div>`;
+                    }
                     
                     if (index < laws.length - 1) {
                         formatted += '<div class="law-separator"></div>';
@@ -1464,7 +1489,7 @@
                 formatted += '</div>';
             }
             
-            // 7. إضافة الأكواد البرمجية - فقط إذا وجدت أكواد
+            // 8. إضافة الأكواد البرمجية
             if (codes.length > 0) {
                 codes.forEach(code => {
                     const codeId = 'code_' + Math.random().toString(36).substr(2, 9);
@@ -1482,28 +1507,33 @@
                 });
             }
             
-            // 8. إضافة النقاط الجوهرية - 8 نقاط استنتاجية فقط
+            // 9. إضافة النقاط الجوهرية - 8 نقاط فقط مع التأكد من عدم وجود قوانين
             if (points.length > 0) {
                 formatted += '<div class="key-points-container">';
                 formatted += '<h3>✨ النقاط الجوهرية</h3>';
                 
-                // فلترة النقاط لإزالة أي شيء يشبه القوانين
-                const filteredPoints = points
-                    .filter(point => !point.includes('\\') && !point.includes('=') && !point.includes('_') && !point.includes('{'))
-                    .slice(0, 8);
+                // تصفية النقاط للتأكد من عدم وجود قوانين
+                const cleanPoints = points.filter(point => 
+                    point && 
+                    !point.includes('##') && 
+                    !point.includes('=') && 
+                    !point.match(/[+\-*/^=]/)
+                );
                 
-                filteredPoints.forEach((point, index) => {
-                    if (point && point.length > 0) {
-                        formatted += `<div class="key-point-item"><span class="point-number">${index + 1}</span> ${point}</div>`;
+                // أخذ أول 8 نقاط فقط
+                cleanPoints.slice(0, 8).forEach((point, index) => {
+                    if (point) {
+                        formatted += `<div class="key-point-item"><span style="display: inline-block; width: 30px; height: 30px; background: var(--primary); color: white; border-radius: 50%; text-align: center; line-height: 30px; margin-left: 15px;">${index + 1}</span> ${point}</div>`;
                     }
                 });
                 
                 formatted += '</div>';
             }
             
-            // 9. إضافة الجملة التحفيزية - نختار عبارة عشوائية من القائمة
-            const randomPhrase = motivationalPhrases[Math.floor(Math.random() * motivationalPhrases.length)];
-            formatted += `<div class="motivation-sentence">✨ ${randomPhrase} ✨</div>`;
+            // 10. إضافة الجملة التحفيزية
+            if (motivationLine && motivationLine.length > 0) {
+                formatted += `<div class="motivation-sentence">✨ ${motivationLine} ✨</div>`;
+            }
             
             return formatted;
         }
@@ -1613,7 +1643,7 @@
                 if (window.MathJax) {
                     setTimeout(() => {
                         MathJax.typesetPromise?.().catch(err => console.log('MathJax error:', err));
-                    }, 300);
+                    }, 200);
                 }
                 
                 const resultText = document.getElementById('resultText');
@@ -1674,15 +1704,13 @@
                     textToCopy = textToCopy
                         .replace(/##(.*?)##/g, '$1')
                         .replace(/\+(.*?)\+/g, '$1')
-                        .replace(/\*\*\*الكود\*\*\*/g, '')
-                        .replace(/تحفيز:.*$/gm, '');
+                        .replace(/\*\*\*الكود\*\*\*/g, '');
                 }
             } else {
                 textToCopy = currentResult
                     .replace(/##(.*?)##/g, '$1')
                     .replace(/\+(.*?)\+/g, '$1')
-                    .replace(/\*\*\*الكود\*\*\*/g, '')
-                    .replace(/تحفيز:.*$/gm, '');
+                    .replace(/\*\*\*الكود\*\*\*/g, '');
             }
             
             navigator.clipboard.writeText(textToCopy).then(() => {
