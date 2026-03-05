@@ -1202,64 +1202,34 @@
             return Math.round(cost * 10) / 10;
         }
 
-        // ========== البرومت المعدل حسب طلبك ==========
+        // ========== البرومت المعدل بشكل نهائي - مبسط وخالي من التعارض ==========
         function getNormalSummaryPrompt() {
-            return `
-**تعليمات صارمة:**
-اسمك عون فقط.
-اقرأ الملف كاملاً من أول كلمة لآخر كلمة بتركيز شديد.
-نفذ التعليمات التالية بدقة وبدون أي إضافات أو تعليقات شخصية.
+            return `اقرأ ملف PDF بالكامل من أول كلمة لآخر كلمة بتركيز شديد.
 
-**الإعدادات:**
-- الشخصية: ${currentSettings.persona}
-- اللغة: ${currentSettings.language}
-- الأسلوب: ${currentSettings.style}
-- الطول: ${currentSettings.length}
+الإعدادات المطلوبة:
+- شخصية الشارح: ${currentSettings.persona}
+- لغة الإخراج: ${currentSettings.language}
+- أسلوب الشرح: ${currentSettings.style}
+- طول الشرح: ${currentSettings.length}
 
-**هيكل الإخراج الإلزامي:**
+نفذ التعليمات التالية بدقة شديدة وبدون إضافة أي كلمة خارج الهيكل المطلوب:
 
-1) **السطر الأول فقط:** عنوان من 5 كلمات يكون جوهر الملف، ضعه بين قوسين. مثال: (نظرية النسبية وأثرها)
+1. [العنوان الرئيسي] اكتب عنواناً من 5 كلمات يلخص الملف، ضعه بين قوسين منجلين [[ ]]. مثال: [[نظرية النسبية وتطبيقاتها]]
 
-2) **الشرح المقسم:**
-   - قسم الملف إلى فقرات رئيسية بناءً على محتواه.
-   - لكل فقرة، اكتب عنوانها بين علامة ^ ^. مثال: ^المقدمة^
-   - في السطر التالي مباشرة، اكتب شرح الفقرة كاملاً حسب الطول المطلوب والأسلوب المختار.
-   - انتقل للفقرة التالية بنفس الطريقة.
+2. [الشرح المقسم] قسم الملف إلى فقرات رئيسية. كل فقرة تبدأ بعنوان بين قوسين مربعين [ ]. مثال: [المقدمة] ثم في السطر التالي اكتب شرح الفقرة كاملاً. ثم [القسم الأول] ثم شرحه، وهكذا.
 
-3) **القوانين (إن وُجدت):**
-   - استخرج كل القوانين والصيغ الرياضية من الملف.
-   - كل قانون اكتبه في سطر مستقل داخل ## ##.
-   - مثال: ##E = mc^2##
-   - إذا كان القانون يحتوي على نصوص عربية، اتركه كما هو داخل ## ##.
-   - لا تكتب أي شيء قبل أو بعد ##، ولا تشرحها.
-   - إذا لم يجد الملف أي قوانين، تجاهل هذا القسم بالكامل.
+3. [القوانين] استخرج كل القوانين والصيغ الرياضية من الملف. اكتب كل قانون في سطر مستقل داخل أقواس معقوفة { }. مثال: {E = mc^2}. إذا كان القانون يحتوي على نص عربي، اكتبه كما هو داخل { }. إذا لم يجد الملف قوانين، لا تكتب أي شيء.
 
-4) **الأكواد البرمجية (إن وُجدت):**
-   - استخرج كل الأكواد البرمجية من الملف.
-   - قبل كل كود، اكتب سطراً يحتوي فقط على: ***الكود***
-   - في السطر التالي، انسخ الكود كما هو حرفياً.
-   - إذا لم يجد الملف أي أكواد، تجاهل هذا القسم بالكامل.
+4. [الأكواد] استخرج كل الأكواد البرمجية من الملف. اكتب قبل كل كود سطراً يحتوي فقط على <<كود>> وفي السطر التالي اكتب الكود كما هو. إذا لم يجد الملف أكواد، لا تكتب أي شيء.
 
-5) **النقاط الجوهرية (إجباري):**
-   - استنتج 8 نقاط فقط تمثل خلاصة خلاصة الملف.
-   - هذه النقاط هي أهم ما يجب تذكره من الملف، ويُمنع أن تكون قوانين أو أكواد.
-   - اكتب كل نقطة في سطر مستقل داخل + +.
-   - مثال: +الكتلة والطاقة وجهان لعملة واحدة+
+5. [النقاط الجوهرية] استنتج 8 نقاط فقط تمثل أهم خلاصة الملف. يجب أن تكون هذه النقاط مفاهيم أساسية وليست قوانين أو أكواد. اكتب كل نقطة في سطر مستقل داخل علامتي < >. مثال: <الكتلة والطاقة وجهان لعملة واحدة>
 
-6) **الخاتمة التحفيزية (إجباري):**
-   - في نهاية الرد، اكتب سطراً واحداً يحتوي على جملة تحفيزية مناسبة للمحتوى.
-   - يمكن أن تكون مقولة مأثورة، أو آية قرآنية، أو حديث شريف، أو حكمة قصيرة.
-   - ضع هذه الجملة بين ¡ ¡.
-   - مثال: ¡"وقل اعملوا فسيرى الله عملكم"¡
+6. [الخاتمة التحفيزية] اكتب سطراً واحداً فقط في النهاية يحتوي على جملة تحفيزية مناسبة (مقولة، آية قرآنية، أو حديث شريف). ضع الجملة بين علامتي ]] [[. مثال: ]]وقل اعملوا فسيرى الله عملكم[[
 
-**ممنوعات نهائية:**
-- لا تستخدم Markdown أو JSON في الرد (هذا الهيكل مخصص فقط للتلخيص العادي).
-- لا تكتب أي كلمة خارج الهيكل المحدد، مثل "إليك الملخص" أو "تم بحمد الله".
-- لا تكرر القوانين أو النقاط.
-- لا تضف مسافات أو أسطراً فارغة غير ضرورية.
-
-ابدأ التنفيذ فوراً:
-`;
+تنبيهات هامة:
+- لا تكتب أي كلمة خارج الهيكل المحدد.
+- لا تستخدم علامات Markdown أو JSON.
+- ابدأ التنفيذ فوراً بدون مقدمات.`;
         }
 
         // ========== إنشاء البرومبت حسب نوع التلخيص ==========
@@ -1351,146 +1321,100 @@
         }
 
         // ========== دالة تحويل القوانين لصيغ MathJax مع استثناء العربية ==========
-        function renderFormulas(text) {
-            return text.replace(/##(.*?)##/g, (_, formula) => {
-                const trimmedFormula = formula.trim();
-                // التحقق إذا كانت تحتوي على أحرف عربية
-                const hasArabic = /[\u0600-\u06FF]/.test(trimmedFormula);
-                if (hasArabic) {
-                    // إذا كان فيها عربي، نعرضها كنص عادي
-                    return `<div class="law-item" style="direction: rtl; text-align: center;">${trimmedFormula}</div>`;
-                } else {
-                    // إذا كانت رياضية، نعرضها مع MathJax
-                    return `<div class="law-item">\\(${trimmedFormula}\\)</div>`;
-                }
-            });
+        function renderFormulas(formula) {
+            // التحقق إذا كانت تحتوي على أحرف عربية
+            const hasArabic = /[\u0600-\u06FF]/.test(formula);
+            if (hasArabic) {
+                // إذا كان فيها عربي، نعرضها كنص عادي
+                return `<div class="law-item" style="direction: rtl; text-align: center;">${formula}</div>`;
+            } else {
+                // إذا كانت رياضية، نعرضها مع MathJax
+                return `<div class="law-item">\\(${formula}\\)</div>`;
+            }
         }
 
         // ========== دالة تنسيق النص للتلخيص العادي ==========
         function formatText(text) {
             if (!text) return '';
             
-            // 1. استخراج القوانين (بين ## ##) - سنستخدمها لاحقاً مع renderFormulas
-            // 2. استخراج الأكواد (بين ***الكود***)
+            // 1. استخراج العنوان الرئيسي [[ ]]
+            const mainTitleRegex = /\[\[(.*?)\]\]/;
+            const mainTitleMatch = text.match(mainTitleRegex);
+            let mainTitle = '';
+            if (mainTitleMatch) {
+                mainTitle = mainTitleMatch[1].trim();
+            }
+            
+            // 2. استخراج الأقسام [ ] والعناوين
+            const sections = [];
+            const sectionRegex = /\[(.*?)\]\s*([\s\S]*?)(?=\[|$|\[\[|\{|\<|\]\]|<<)/g;
+            let sectionMatch;
+            while ((sectionMatch = sectionRegex.exec(text)) !== null) {
+                const title = sectionMatch[1].trim();
+                const content = sectionMatch[2].trim();
+                if (title && content) {
+                    sections.push({ title, content });
+                }
+            }
+            
+            // 3. استخراج القوانين { }
+            const laws = [];
+            const lawRegex = /\{(.*?)\}/g;
+            let lawMatch;
+            while ((lawMatch = lawRegex.exec(text)) !== null) {
+                laws.push(lawMatch[1].trim());
+            }
+            
+            // 4. استخراج الأكواد <<كود>>
             const codeBlocks = [];
-            const codeRegex = /\*\*\*الكود\*\*\*\s*([\s\S]*?)(?=\*\*\*الكود\*\*\*|$)/g;
-            let match;
-            while ((match = codeRegex.exec(text)) !== null) {
-                codeBlocks.push(match[1].trim());
+            const codeRegex = /<<كود>>\s*([\s\S]*?)(?=<<كود>>|$|\[|\{|\<|\]\]|\[\[)/g;
+            let codeMatch;
+            while ((codeMatch = codeRegex.exec(text)) !== null) {
+                codeBlocks.push(codeMatch[1].trim());
             }
             
-            // 3. استخراج النقاط الجوهرية (بين + +)
+            // 5. استخراج النقاط الجوهرية < >
             const points = [];
-            const pointsRegex = /\+(.*?)\+/g;
-            while ((match = pointsRegex.exec(text)) !== null) {
-                points.push(match[1].trim());
+            const pointsRegex = /\<(.*?)\>/g;
+            let pointMatch;
+            while ((pointMatch = pointsRegex.exec(text)) !== null) {
+                points.push(pointMatch[1].trim());
             }
             
-            // 4. استخراج الجملة التحفيزية (بين ¡ ¡)
+            // 6. استخراج الجملة التحفيزية ]] [[
+            const motivationRegex = /\]\](.*?)\[\[/;
+            const motivationMatch = text.match(motivationRegex);
             let motivation = '';
-            const motivationRegex = /¡(.*?)¡/g;
-            const motivationMatch = motivationRegex.exec(text);
             if (motivationMatch) {
                 motivation = motivationMatch[1].trim();
-            }
-            
-            // 5. استخراج العناوين (بين ^ ^) والشرح
-            // سنقوم بتنظيف النص من الرموز الأخرى أولاً لعزل العناوين والشرح
-            let cleanTextForSections = text
-                .replace(codeRegex, '') // إزالة الأكواد مؤقتاً
-                .replace(pointsRegex, '') // إزالة النقاط مؤقتاً
-                .replace(motivationRegex, '') // إزالة التحفيز مؤقتاً
-                .replace(/##.*?##/g, ''); // إزالة القوانين مؤقتاً
-            
-            // الآن نقسم النص المتبقي باستخدام العناوين ^ ^
-            const sections = [];
-            const titleRegex = /\^(.*?)\^/g;
-            let lastIndex = 0;
-            let titleMatch;
-            const tempText = cleanTextForSections;
-            
-            // نبحث عن كل عنوان ونأخذ ما بعده حتى العنوان التالي
-            const titles = [];
-            while ((titleMatch = titleRegex.exec(tempText)) !== null) {
-                titles.push({
-                    title: titleMatch[1].trim(),
-                    index: titleMatch.index,
-                    endIndex: titleMatch.index + titleMatch[0].length
-                });
-            }
-            
-            if (titles.length > 0) {
-                for (let i = 0; i < titles.length; i++) {
-                    const currentTitle = titles[i];
-                    const nextTitle = titles[i + 1];
-                    
-                    // بداية النص بعد العنوان الحالي
-                    const startOfContent = currentTitle.endIndex;
-                    // نهاية المحتوى (إما بداية العنوان التالي أو نهاية السلسلة)
-                    const endOfContent = nextTitle ? nextTitle.index : tempText.length;
-                    
-                    const content = tempText.substring(startOfContent, endOfContent).trim();
-                    
-                    sections.push({
-                        title: currentTitle.title,
-                        content: content
-                    });
-                }
-            } else {
-                // إذا لم يجد عناوين، يعتبر كل النص شرحاً بدون عنوان رئيسي
-                sections.push({
-                    title: null,
-                    content: tempText.trim()
-                });
             }
             
             // بداية بناء HTML
             let formatted = '';
             
-            // 6. استخراج العنوان الرئيسي (بين قوسين)
-            const mainTitleRegex = /^\((.*?)\)/m;
-            const mainTitleMatch = text.match(mainTitleRegex);
-            if (mainTitleMatch) {
-                formatted += `<div class="main-title">${mainTitleMatch[1].trim()}</div>`;
+            // إضافة العنوان الرئيسي
+            if (mainTitle) {
+                formatted += `<div class="main-title">${mainTitle}</div>`;
             }
             
-            // 7. إضافة الأقسام (العناوين والشرح)
+            // إضافة الأقسام (العناوين والشرح)
             sections.forEach(section => {
-                if (section.title) {
-                    formatted += `<div class="ai-section-title">${section.title}</div>`;
-                }
-                if (section.content) {
-                    // تقسيم المحتوى إلى فقرات
-                    const paragraphs = section.content.split('\n').filter(p => p.trim().length > 0);
-                    paragraphs.forEach(p => {
-                        formatted += `<div class="explanation-text">${p}</div>`;
-                    });
-                }
+                formatted += `<div class="ai-section-title">${section.title}</div>`;
+                // تقسيم المحتوى إلى فقرات
+                const paragraphs = section.content.split('\n').filter(p => p.trim().length > 0);
+                paragraphs.forEach(p => {
+                    formatted += `<div class="explanation-text">${p}</div>`;
+                });
             });
             
-            // 8. إضافة قسم القوانين - إذا وجدت
-            const lawsInText = text.match(/##(.*?)##/g);
-            if (lawsInText && lawsInText.length > 0) {
+            // إضافة قسم القوانين - إذا وجدت
+            if (laws.length > 0) {
                 formatted += '<div class="laws-container">';
                 formatted += '<h3>📐 القوانين والصيغ الرياضية</h3>';
                 
-                // استخدام الدالة renderFormulas لتحويل القوانين
-                // نمرر النص ولكننا سنستخرج القوانين بشكل منفصل لتنسيقها
-                const lawItems = [];
-                const lawRegexGlobal = /##(.*?)##/g;
-                let lawMatch;
-                while ((lawMatch = lawRegexGlobal.exec(text)) !== null) {
-                    lawItems.push(lawMatch[1].trim());
-                }
-                
-                lawItems.forEach((law, index) => {
-                    const hasArabic = /[\u0600-\u06FF]/.test(law);
-                    if (hasArabic) {
-                        formatted += `<div class="law-item" style="direction: rtl; text-align: center;">${law}</div>`;
-                    } else {
-                        formatted += `<div class="law-item">\\(${law}\\)</div>`;
-                    }
-                    if (index < lawItems.length - 1) {
+                laws.forEach((law, index) => {
+                    formatted += renderFormulas(law);
+                    if (index < laws.length - 1) {
                         formatted += '<div class="law-separator"></div>';
                     }
                 });
@@ -1498,7 +1422,7 @@
                 formatted += '</div>';
             }
             
-            // 9. إضافة الأكواد البرمجية - فقط إذا وجدت
+            // إضافة الأكواد البرمجية - فقط إذا وجدت
             if (codeBlocks.length > 0) {
                 codeBlocks.forEach(code => {
                     const codeId = 'code_' + Math.random().toString(36).substr(2, 9);
@@ -1516,7 +1440,7 @@
                 });
             }
             
-            // 10. إضافة النقاط الجوهرية - 8 نقاط استنتاجية فقط
+            // إضافة النقاط الجوهرية - 8 نقاط استنتاجية فقط
             if (points.length > 0) {
                 formatted += '<div class="key-points-container">';
                 formatted += '<h3>✨ النقاط الجوهرية</h3>';
@@ -1531,7 +1455,7 @@
                 formatted += '</div>';
             }
             
-            // 11. إضافة الجملة التحفيزية
+            // إضافة الجملة التحفيزية
             if (motivation) {
                 formatted += `<div class="motivation-sentence">✨ ${motivation} ✨</div>`;
             }
@@ -1631,7 +1555,7 @@
                     content = result;
                     
                     // محاولة استخراج العنوان من أول سطر
-                    const titleMatch = content.match(/^\((.*?)\)/m);
+                    const titleMatch = content.match(/\[\[(.*?)\]\]/);
                     if (titleMatch) {
                         document.getElementById('resultHead').textContent = titleMatch[1];
                     }
@@ -1703,19 +1627,21 @@
                     
                     // إزالة الرموز الخاصة من النص المنسوخ
                     textToCopy = textToCopy
-                        .replace(/##(.*?)##/g, '$1')
-                        .replace(/\+(.*?)\+/g, '$1')
-                        .replace(/\^(.*?)\^/g, '$1')
-                        .replace(/¡(.*?)¡/g, '$1')
-                        .replace(/\*\*\*الكود\*\*\*/g, '');
+                        .replace(/\[\[(.*?)\]\]/g, '$1')
+                        .replace(/\[(.*?)\]/g, '$1')
+                        .replace(/\{(.*?)\}/g, '$1')
+                        .replace(/\<(.*?)\>/g, '$1')
+                        .replace(/\]\](.*?)\[\[/g, '$1')
+                        .replace(/<<كود>>/g, '');
                 }
             } else {
                 textToCopy = currentResult
-                    .replace(/##(.*?)##/g, '$1')
-                    .replace(/\+(.*?)\+/g, '$1')
-                    .replace(/\^(.*?)\^/g, '$1')
-                    .replace(/¡(.*?)¡/g, '$1')
-                    .replace(/\*\*\*الكود\*\*\*/g, '');
+                    .replace(/\[\[(.*?)\]\]/g, '$1')
+                    .replace(/\[(.*?)\]/g, '$1')
+                    .replace(/\{(.*?)\}/g, '$1')
+                    .replace(/\<(.*?)\>/g, '$1')
+                    .replace(/\]\](.*?)\[\[/g, '$1')
+                    .replace(/<<كود>>/g, '');
             }
             
             navigator.clipboard.writeText(textToCopy).then(() => {
