@@ -636,6 +636,7 @@
             text-align: center;
             border-right: 4px solid var(--secondary);
             border-bottom: 1px solid rgba(212, 165, 116, 0.2);
+            font-size: 1.2rem;
         }
         
         .formula-item:last-child {
@@ -1358,7 +1359,7 @@
 [[MOTIVATION]]
 
 
-اكتب جملة تحفيزية أو دينية قصيرة بالتشكيل تشجع المستخدم على الاستمرار و تكون مأخوذه من ايه قرأنيه او حديث او مقوله او اي شيئ مشهور و يحفذ المستخدم على الاستمرار
+اكتب جملة تحفيزية أو دينية قصيرة تشجع المستخدم على الاستمرار و تكون مأخوذه من ايه قرأنيه او حديث او مقوله او اي شيئ مشهور و يحفذ المستخدم على الاستمرار
 
 
 [[/MOTIVATION]]
@@ -1508,28 +1509,33 @@
             }
         }
 
-        // ========== دالة تنسيق النص المهيكل الجديد ==========
+        // ========== دالة تنسيق النص المهيكل الجديدة والمحسنة ==========
         function formatStructuredText(text) {
             if (!text) return '';
             
             let html = '<div class="result-text" id="resultText">';
             
-            // استخراج العنوان
-            const titleMatch = text.match(/\[\[TITLE\]\]\s*([\s\S]*?)\s*\[\[\/TITLE\]\]/);
-            if (titleMatch) {
+            // استخراج العنوان - بشكل أكثر مرونة
+            const titleRegex = /\[\[TITLE\]\]\s*([\s\S]*?)\s*\[\[\/TITLE\]\]/i;
+            const titleMatch = text.match(titleRegex);
+            if (titleMatch && titleMatch[1].trim()) {
                 html += `<div class="awn-title">${titleMatch[1].trim()}</div>`;
             }
             
-            // استخراج الأقسام
-            const sectionsMatch = text.match(/\[\[SECTIONS\]\]\s*([\s\S]*?)\s*\[\[\/SECTIONS\]\]/);
+            // استخراج الأقسام - بشكل أكثر مرونة
+            const sectionsRegex = /\[\[SECTIONS\]\]\s*([\s\S]*?)\s*\[\[\/SECTIONS\]\]/i;
+            const sectionsMatch = text.match(sectionsRegex);
             if (sectionsMatch) {
                 const sectionsContent = sectionsMatch[1];
-                const sectionRegex = /\[\[SECTION\]\]\s*\[\[NAME\]\]\s*([\s\S]*?)\s*\[\[\/NAME\]\]\s*\[\[EXPLANATION\]\]\s*([\s\S]*?)\s*\[\[\/EXPLANATION\]\]\s*\[\[\/SECTION\]\]/g;
+                // نمط أكثر مرونة للبحث عن الأقسام
+                const sectionRegex = /\[\[SECTION\]\]\s*\[\[NAME\]\]\s*([\s\S]*?)\s*\[\[\/NAME\]\]\s*\[\[EXPLANATION\]\]\s*([\s\S]*?)\s*\[\[\/EXPLANATION\]\]\s*\[\[\/SECTION\]\]/gi;
                 
                 let sectionMatch;
                 let sectionsHtml = '<div class="sections-container">';
+                let sectionFound = false;
                 
                 while ((sectionMatch = sectionRegex.exec(sectionsContent)) !== null) {
+                    sectionFound = true;
                     const name = sectionMatch[1].trim();
                     const explanation = sectionMatch[2].trim();
                     
@@ -1542,14 +1548,18 @@
                 }
                 
                 sectionsHtml += '</div>';
-                html += sectionsHtml;
+                if (sectionFound) {
+                    html += sectionsHtml;
+                }
             }
             
-            // استخراج القوانين
-            const formulasMatch = text.match(/\[\[FORMULAS\]\]\s*([\s\S]*?)\s*\[\[\/FORMULAS\]\]/);
+            // استخراج القوانين - بشكل أكثر مرونة
+            const formulasRegex = /\[\[FORMULAS\]\]\s*([\s\S]*?)\s*\[\[\/FORMULAS\]\]/i;
+            const formulasMatch = text.match(formulasRegex);
             if (formulasMatch) {
                 const formulasContent = formulasMatch[1];
-                const formulaRegex = /\[\[FORMULA\]\]\s*([\s\S]*?)\s*\[\[\/FORMULA\]\]/g;
+                // البحث عن القوانين الفردية
+                const formulaRegex = /\[\[FORMULA\]\]\s*([\s\S]*?)\s*\[\[\/FORMULA\]\]/gi;
                 
                 let formulaMatch;
                 let formulasHtml = '<div class="formulas-container"><div class="formulas-title">📜 القوانين والصيغ الرياضية</div>';
@@ -1557,32 +1567,32 @@
                 
                 while ((formulaMatch = formulaRegex.exec(formulasContent)) !== null) {
                     const formula = formulaMatch[1].trim();
-                    // تحقق إذا كان القانون عربي (يحتوي على حروف عربية) لا تستخدم MathJax
-                    const isArabic = /[\u0600-\u06FF]/.test(formula);
-                    
-                    if (isArabic) {
-                        formulasHtml += `<div class="formula-item">${formula}</div>`;
-                    } else {
-                        // للقوانين اللاتينية، استخدم MathJax
-                        formulasHtml += `<div class="formula-item">\\[${formula}\\]</div>`;
-                    }
-                    formulaCount++;
-                    
-                    // أضف فاصل بين القوانين
-                    if (formulaCount > 1) {
-                        formulasHtml += '<div class="separator"></div>';
+                    if (formula) {
+                        // تحقق إذا كان القانون عربي (يحتوي على حروف عربية)
+                        const isArabic = /[\u0600-\u06FF]/.test(formula);
+                        
+                        if (isArabic) {
+                            formulasHtml += `<div class="formula-item">${formula}</div>`;
+                        } else {
+                            // للقوانين اللاتينية، استخدم MathJax
+                            formulasHtml += `<div class="formula-item">\\[${formula}\\]</div>`;
+                        }
+                        formulaCount++;
                     }
                 }
                 
-                formulasHtml += '</div>';
-                html += formulasHtml;
+                if (formulaCount > 0) {
+                    formulasHtml += '</div>';
+                    html += formulasHtml;
+                }
             }
             
-            // استخراج الأكواد
-            const codesMatch = text.match(/\[\[CODES\]\]\s*([\s\S]*?)\s*\[\[\/CODES\]\]/);
+            // استخراج الأكواد - بشكل أكثر مرونة
+            const codesRegex = /\[\[CODES\]\]\s*([\s\S]*?)\s*\[\[\/CODES\]\]/i;
+            const codesMatch = text.match(codesRegex);
             if (codesMatch) {
                 const codesContent = codesMatch[1];
-                const codeRegex = /\[\[CODE\]\]\s*([\s\S]*?)\s*\[\[\/CODE\]\]/g;
+                const codeRegex = /\[\[CODE\]\]\s*([\s\S]*?)\s*\[\[\/CODE\]\]/gi;
                 
                 let codeMatch;
                 let codesHtml = '<div class="codes-container">';
@@ -1590,53 +1600,60 @@
                 
                 while ((codeMatch = codeRegex.exec(codesContent)) !== null) {
                     const code = codeMatch[1].trim();
-                    const codeId = 'code_' + Math.random().toString(36).substr(2, 9);
-                    
-                    codesHtml += `
-                        <div class="code-card" id="${codeId}">
-                            <div class="code-header">
-                                <span><i class="fas fa-code"></i> كود برمجي</span>
-                                <button class="copy-code-btn" onclick="copyCodeFromElement('${codeId}')">
-                                    <i class="fas fa-copy"></i> نسخ
-                                </button>
+                    if (code) {
+                        const codeId = 'code_' + Math.random().toString(36).substr(2, 9);
+                        
+                        codesHtml += `
+                            <div class="code-card" id="${codeId}">
+                                <div class="code-header">
+                                    <span><i class="fas fa-code"></i> كود برمجي</span>
+                                    <button class="copy-code-btn" onclick="copyCodeFromElement('${codeId}')">
+                                        <i class="fas fa-copy"></i> نسخ
+                                    </button>
+                                </div>
+                                <pre>${code}</pre>
                             </div>
-                            <pre>${code}</pre>
-                        </div>
-                    `;
-                    
-                    codeCount++;
-                    
-                    // أضف فاصل بين الأكواد إذا كان هناك أكثر من كود
-                    if (codeCount > 1) {
-                        codesHtml += '<div class="separator"></div>';
+                        `;
+                        
+                        codeCount++;
                     }
                 }
                 
-                codesHtml += '</div>';
-                html += codesHtml;
+                if (codeCount > 0) {
+                    codesHtml += '</div>';
+                    html += codesHtml;
+                }
             }
             
-            // استخراج النقاط الرئيسية
-            const keyPointsMatch = text.match(/\[\[KEY_POINTS\]\]\s*([\s\S]*?)\s*\[\[\/KEY_POINTS\]\]/);
+            // استخراج النقاط الرئيسية - بشكل أكثر مرونة
+            const keyPointsRegex = /\[\[KEY_POINTS\]\]\s*([\s\S]*?)\s*\[\[\/KEY_POINTS\]\]/i;
+            const keyPointsMatch = text.match(keyPointsRegex);
             if (keyPointsMatch) {
                 const pointsContent = keyPointsMatch[1];
-                const pointRegex = /\[\[POINT\]\]\s*([\s\S]*?)\s*\[\[\/POINT\]\]/g;
+                const pointRegex = /\[\[POINT\]\]\s*([\s\S]*?)\s*\[\[\/POINT\]\]/gi;
                 
                 let pointMatch;
                 let pointsHtml = '<div class="key-points-container"><div class="key-points-title">✨ النقاط الرئيسية</div>';
+                let pointCount = 0;
                 
                 while ((pointMatch = pointRegex.exec(pointsContent)) !== null) {
                     const point = pointMatch[1].trim();
-                    pointsHtml += `<div class="point-item">${point}</div>`;
+                    if (point) {
+                        pointsHtml += `<div class="point-item">${point}</div>`;
+                        pointCount++;
+                    }
                 }
                 
-                pointsHtml += '</div>';
-                html += pointsHtml;
+                if (pointCount > 0) {
+                    pointsHtml += '</div>';
+                    html += pointsHtml;
+                }
             }
             
-            // استخراج الجملة التحفيزية
-            const motivationMatch = text.match(/\[\[MOTIVATION\]\]\s*([\s\S]*?)\s*\[\[\/MOTIVATION\]\]/);
-            if (motivationMatch) {
+            // استخراج الجملة التحفيزية - بشكل أكثر مرونة
+            const motivationRegex = /\[\[MOTIVATION\]\]\s*([\s\S]*?)\s*\[\[\/MOTIVATION\]\]/i;
+            const motivationMatch = text.match(motivationRegex);
+            if (motivationMatch && motivationMatch[1].trim()) {
                 const motivation = motivationMatch[1].trim();
                 html += `
                     <div class="motivation-container">
@@ -1742,6 +1759,9 @@
                     content = result;
                 }
                 
+                // طباعة المحتوى في الكونسول للتأكد من وصوله
+                console.log('Content received:', content);
+                
                 // تطبيق التنسيق الجديد
                 resultContent.innerHTML = formatStructuredText(content);
                 
@@ -1751,14 +1771,16 @@
                 }
                 
                 // تحديث عنوان الصفحة
-                const titleMatch = content.match(/\[\[TITLE\]\]\s*([\s\S]*?)\s*\[\[\/TITLE\]\]/);
+                const titleMatch = content.match(/\[\[TITLE\]\]\s*([\s\S]*?)\s*\[\[\/TITLE\]\]/i);
                 if (titleMatch) {
                     document.getElementById('resultHead').textContent = titleMatch[1].trim();
                 }
                 
                 // إعادة تشغيل MathJax للقوانين
                 if (window.MathJax) {
-                    MathJax.typesetPromise();
+                    setTimeout(() => {
+                        MathJax.typesetPromise();
+                    }, 500);
                 }
             }
         }
@@ -2218,6 +2240,9 @@
                 
                 let result;
                 const text = await response.text();
+                
+                // طباعة الاستجابة للتأكد
+                console.log('API Response:', text);
                 
                 // لو التلخيص عادي، خزن النص كما هو
                 if (currentSettings.format === 'عادي') {
