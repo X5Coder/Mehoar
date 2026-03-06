@@ -9,11 +9,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-    
-    <!-- MathJax for LaTeX formulas -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.js" id="MathJax-script" async></script>
     
     <style>
         * {
@@ -39,6 +37,15 @@
             --radius: 20px;
             --radius-lg: 28px;
             --navbar: 70px;
+            
+            /* ألوان التنسيقات */
+            --title-gradient: linear-gradient(145deg, #8B7355, #A9927D);
+            --law-bg: #1E1E1E;
+            --law-text: #D4A574;
+            --code-bg: #0D1117;
+            --code-text: #E6EDF3;
+            --highlight-bg: #FFF3E0;
+            --number-bg: #8B7355;
         }
         
         body {
@@ -97,7 +104,7 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 70px;
+            height: var(--navbar);
             background: var(--bg);
             backdrop-filter: blur(10px);
             display: flex;
@@ -158,7 +165,7 @@
         
         /* المحتوى الرئيسي */
         .main {
-            padding-top: calc(70px + 2rem);
+            padding-top: calc(var(--navbar) + 2rem);
             padding-left: 1.5rem;
             padding-right: 1.5rem;
             padding-bottom: 3rem;
@@ -169,7 +176,7 @@
         /* البطاقات */
         .card {
             background: var(--white);
-            border-radius: 28px;
+            border-radius: var(--radius-lg);
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: var(--shadow);
@@ -193,7 +200,7 @@
         /* رفع الملف */
         .upload-area {
             border: 2px dashed var(--secondary);
-            border-radius: 20px;
+            border-radius: var(--radius);
             padding: 3rem 1.5rem;
             text-align: center;
             cursor: pointer;
@@ -215,7 +222,7 @@
             margin-top: 2rem;
             padding: 1.5rem;
             background: rgba(139, 115, 85, 0.05);
-            border-radius: 20px;
+            border-radius: var(--radius);
             border: 1px solid rgba(139, 115, 85, 0.1);
             display: none;
         }
@@ -245,7 +252,7 @@
         .btn {
             padding: 0.8rem 2rem;
             border: none;
-            border-radius: 20px;
+            border-radius: var(--radius);
             font-weight: 700;
             cursor: pointer;
             transition: 0.3s;
@@ -269,6 +276,7 @@
         .btn-primary { background: linear-gradient(145deg, var(--primary), var(--primary-light)); color: white; }
         .btn-danger { background: linear-gradient(145deg, var(--error), #C53030); color: white; }
         .btn-success { background: linear-gradient(145deg, var(--success), #2F855A); color: white; }
+        .btn-secondary { background: linear-gradient(145deg, #6c757d, #5a6268); color: white; }
         
         /* شبكة الإعدادات */
         .settings-grid {
@@ -280,7 +288,7 @@
         
         .setting-group {
             background: rgba(139, 115, 85, 0.03);
-            border-radius: 20px;
+            border-radius: var(--radius);
             padding: 1.2rem;
             border: 1px solid rgba(139, 115, 85, 0.1);
         }
@@ -331,7 +339,7 @@
         
         .modal-content {
             background: white;
-            border-radius: 28px;
+            border-radius: var(--radius-lg);
             width: min(1000px, 95%);
             max-height: 85vh;
             overflow: hidden;
@@ -346,6 +354,7 @@
             align-items: center;
             padding: 1.5rem;
             border-bottom: 2px solid rgba(139, 115, 85, 0.1);
+            background: white;
         }
         
         .modal-header h2 {
@@ -394,7 +403,7 @@
         .record-card {
             background: rgba(139, 115, 85, 0.03);
             border: 1px solid rgba(139, 115, 85, 0.1);
-            border-radius: 20px;
+            border-radius: var(--radius);
             padding: 1.2rem;
             cursor: pointer;
             transition: 0.3s;
@@ -463,10 +472,10 @@
             margin-bottom: 1rem;
         }
         
-        /* ===== قسم النتائج ===== */
+        /* ===== قسم النتائج الرئيسي ===== */
         .result-section {
             background: white;
-            border-radius: 28px;
+            border-radius: var(--radius-lg);
             overflow: hidden;
             box-shadow: var(--shadow-lg);
             display: none;
@@ -537,7 +546,7 @@
             color: white;
         }
         
-        /* أنماط العرض */
+        /* ===== أنماط التنسيقات الجديدة ===== */
         .result-content {
             padding: 2rem;
             background: #FAFAFA;
@@ -546,7 +555,7 @@
         .result-text {
             background: white;
             padding: 2rem;
-            border-radius: 20px;
+            border-radius: var(--radius);
             box-shadow: var(--shadow);
             border: 1px solid rgba(139, 115, 85, 0.1);
             line-height: 1.8;
@@ -555,25 +564,27 @@
             font-size: 16px;
         }
         
-        /* العنوان */
-        .awn-title {
+        /* العنوان الرئيسي */
+        .summary-title {
             text-align: center;
             font-size: 2.2rem;
             font-weight: 900;
             color: var(--primary-dark);
-            margin: 2rem 0 3rem 0;
+            margin: 1rem 0 3rem 0;
             padding: 1rem;
+            position: relative;
             border-bottom: 3px solid var(--secondary);
+            width: 100%;
         }
         
-        /* الأقسام */
+        /* قسم الفصول */
         .sections-container {
             margin: 2rem 0;
         }
         
         .section-card {
             background: rgba(139, 115, 85, 0.02);
-            border-radius: 20px;
+            border-radius: var(--radius);
             padding: 1.5rem;
             margin-bottom: 2rem;
             border: 1px solid rgba(139, 115, 85, 0.1);
@@ -583,31 +594,30 @@
             font-size: 1.8rem;
             font-weight: 800;
             color: var(--primary-dark);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             padding-right: 1rem;
             border-right: 5px solid var(--secondary);
         }
         
         .section-explanation {
-            font-size: 1.1rem;
-            line-height: 1.8;
             color: var(--text);
-            padding: 0.5rem 0;
+            line-height: 1.8;
+            font-size: 1rem;
         }
         
-        /* القوانين */
-        .formulas-container {
+        /* قسم القوانين */
+        .formulas-section {
             margin: 3rem 0;
             padding: 2rem;
-            background: #1E1E1E;
-            border-radius: 20px;
+            background: var(--law-bg);
+            border-radius: var(--radius);
             border: 2px solid var(--secondary);
         }
         
-        .formulas-title {
-            color: #D4A574;
+        .formulas-section h3 {
+            color: var(--law-text);
             font-size: 1.8rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             text-align: center;
         }
         
@@ -616,21 +626,51 @@
             padding: 1.5rem;
             margin: 1rem 0;
             border-radius: 8px;
-            color: #D4A574;
             text-align: center;
-            border-right: 4px solid var(--secondary);
-            font-size: 1.2rem;
+            border-bottom: 1px solid rgba(212, 165, 116, 0.2);
         }
         
-        /* الأكواد */
-        .codes-container {
+        .formula-item:last-child {
+            border-bottom: none;
+        }
+        
+        .formula-item .math {
+            color: var(--law-text);
+            font-size: 1.3rem;
+            direction: ltr;
+        }
+        
+        .arabic-formula {
+            color: var(--law-text);
+            font-size: 1.2rem;
+            font-family: 'Almarai', sans-serif;
+            direction: rtl;
+        }
+        
+        /* قسم الأكواد */
+        .codes-section {
             margin: 3rem 0;
         }
         
-        .code-card {
-            background: #0D1117;
+        .codes-section h3 {
+            color: var(--primary-dark);
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+        }
+        
+        .code-item {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
+            padding-bottom: 2rem;
+        }
+        
+        .code-item:last-child {
+            border-bottom: none;
+        }
+        
+        .code-block {
+            background: var(--code-bg);
             border-radius: 12px;
-            margin: 1.5rem 0;
             overflow: hidden;
             box-shadow: 0 8px 25px rgba(0,0,0,0.4);
             border: 1px solid #30363d;
@@ -665,10 +705,10 @@
             color: white;
         }
         
-        .code-card pre {
+        .code-block pre {
             margin: 0;
             padding: 1.5rem;
-            color: #E6EDF3;
+            color: var(--code-text);
             font-family: 'Fira Code', monospace;
             font-size: 0.95rem;
             line-height: 1.6;
@@ -677,20 +717,19 @@
             text-align: left;
         }
         
-        /* النقاط الرئيسية */
-        .key-points-container {
+        /* قسم النقاط الرئيسية */
+        .points-section {
             margin: 3rem 0;
             padding: 2rem;
             background: rgba(139, 115, 85, 0.05);
-            border-radius: 20px;
+            border-radius: var(--radius);
             border: 1px solid var(--secondary);
         }
         
-        .key-points-title {
+        .points-section h3 {
             color: var(--primary-dark);
             font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            text-align: center;
+            margin-bottom: 2rem;
         }
         
         .point-item {
@@ -701,23 +740,42 @@
             border-right: 5px solid var(--primary);
             box-shadow: var(--shadow);
             font-size: 1.1rem;
+            position: relative;
         }
         
-        /* الجملة التحفيزية */
-        .motivation-container {
+        .point-item::before {
+            content: "•";
+            color: var(--primary);
+            font-weight: 900;
+            font-size: 1.5rem;
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        /* جملة تحفيزية */
+        .motivation-section {
             margin: 3rem 0 1rem;
             padding: 2rem;
             background: linear-gradient(145deg, var(--primary), var(--primary-light));
-            border-radius: 20px;
+            border-radius: var(--radius);
             text-align: center;
             color: white;
-            box-shadow: var(--shadow-lg);
         }
         
         .motivation-text {
             font-size: 1.5rem;
             font-weight: 700;
             line-height: 2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        /* الفواصل الشفافة */
+        .transparent-separator {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(139, 115, 85, 0.3), transparent);
+            margin: 2rem 0;
         }
         
         /* الإشعارات */
@@ -812,13 +870,15 @@
         }
         
         @media (max-width: 768px) {
+            :root { --navbar: 60px; }
+            
             .logo { font-size: 1.8rem; }
             .nav-btn span { display: none; }
             .nav-btn { padding: 0.7rem; border-radius: 50%; }
             .main { padding-left: 1rem; padding-right: 1rem; }
             .card { padding: 1.5rem; }
             .card-title { font-size: 1.6rem; }
-            .awn-title { font-size: 1.8rem; }
+            .summary-title { font-size: 1.8rem; }
             .section-name { font-size: 1.5rem; }
             
             .notifications {
@@ -977,7 +1037,9 @@
                 </div>
             </div>
             
-            <div class="result-content" id="resultContent"></div>
+            <div class="result-content" id="resultContent">
+                <!-- هنا يظهر المحتوى حسب نوع التلخيص -->
+            </div>
         </section>
         
         <!-- الفوتر -->
@@ -1067,7 +1129,7 @@
             }, duration);
         }
 
-        // ========== حساب العملات ==========
+        // ========== نظام حساب العملات ==========
         function calculateCoins(pages, words) {
             let cost = Math.ceil((words / 1000) * 2) / 2;
             if (cost < 1) cost = 1;
@@ -1075,418 +1137,485 @@
             return Math.round(cost * 10) / 10;
         }
 
-        // ========== البرومت ==========
-        function getStructuredPrompt() {
+        // ========== البرومت الجديد ==========
+        function getNewPrompt() {
             return `
+مهم جداً: التزم بالبنية التالية حرفياً.
+
+أي نص خارج البنية يعتبر خطأ.
 
 ====================
-
 المهمة
-
 ====================
-
 
 اقرأ ملف PDF بالكامل من البداية إلى النهاية بدون تجاهل أي سطر.
 
 ابدأ التنفيذ مباشرة بدون أي مقدمة.
 
-
 اسم النظام: عَون
-
 
 الإعدادات:
 
-
 الشخصية: ${currentSettings.persona}
-
 اللغة: ${currentSettings.language}
-
 الأسلوب: ${currentSettings.style}
-
 طول التلخيص: ${currentSettings.length}
 
-
 ====================
-
 قواعد الإخراج
-
 ====================
-
 
 ممنوع كتابة أي نص خارج الوسوم المحددة.
 
-
 ====================
-
 هيكل الإخراج
-
 ====================
-
 
 [[TITLE]]
-
 اكتب عنوان مكون من خمس كلمات فقط يوضح محتوى الملف بالكامل.
-
 [[/TITLE]]
-
 
 [[SECTIONS]]
 
-
 لكل فصل أو باب أو جزء في الملف حسب تقسيمة الملف استخدم الشكل التالي:
 
-
 [[SECTION]]
-
 [[NAME]]
-
 اسم الفصل او الباب حسب تقسيمة الملف كما ورد في الملف
-
 [[/NAME]]
 
-
 [[EXPLANATION]]
-
 شرح هذا الفصل.
 
 إذا كان طول التلخيص = طويل
-
-اكتب شرحًا مفصلاً وطويلا و يكون كل جزء بشكل كافي وافي و طويل و يهيئ المستخدم اذا قرأ النص لن يحتاج الى قرائة الملف بالكامل
-
+اكتب شرحًا مفصلًا وطويلا و يكون كل جزء بشكل كافي وافي و طويل و يهيئ المستخدم اذا قرأ النص لن يحتاج الى قرائة الملف بالكامل
 
 إذا كان طول التلخيص = قصير
-
-اكتب شرحًا مختصرًا مفيدا ومستنتج من داخل الملف بحيث اذا قرأه المساخدم ياخذ فكرة عاملة عن كل محتوى الملف بالكامل
-
+اكتب شرحًا مختصرًا مفيدا ومستنتج من داخل الملف بحيث اذا قرأه المساخدم ياخذ فكرة عامله عن كل محتوى الملف بالكامل
 [[/EXPLANATION]]
-
-
 [[/SECTION]]
-
 
 كرر نفس البنية لكل الفصول.
 
-
 [[/SECTIONS]]
-
 
 [[FORMULAS]]
 
-
 إذا وجدت قوانين في الملف:
-
 
 اكتب كل قانون بالشكل التالي:
 
-
 [[FORMULA]]
-
 القانون بصيغة LaTeX الصحيحة
-
 [[/FORMULA]]
 
-
 الشروط:
-
-
 - كل قانون في وسم منفصل
-
 - لا تشرح القانون
-
 - لا تضف قوانين غير موجودة
-
 - لا تكرر القوانين
-
 - لا تعدل صيغة القانون
-
 
 إذا لم توجد قوانين لا تكتبها نهائيا ولا تكتب الوسوم بتاعتها
 
-
 [[/FORMULAS]]
-
 
 [[CODES]]
 
-
 في حالة وجدت أكواد:
 
-
 [[CODE]]
-
 ضع الكود كما هو حرفيًا بدون تعديل اي شيئ كما في الملف بالظبط
-
 [[/CODE]]
-
 
 كرر لكل كود بشكل منفصل
 
-
 [[/CODES]]
 
-
-اذا لم تجد اكواد لا تكتب اكواد نهائيا ولا تكتب الوسوم الخاصه بها ايضا 
-
+اذا لم تجد اكواد لا تكتب اكواد نهائيا ولا تكتب الوسوم الخاصه بها ايضا 
 
 [[KEY_POINTS]]
 
-
 اكتب 8 نقاط جوهرية فقط مستخلصة من الملف بالكامل.
-
 
 كل نقطة بالشكل التالي:
 
-
 [[POINT]]
-
 النقطة الجوهرية
-
 [[/POINT]]
 
-
 شروط كتابة النقاط الجوهرية :
-
 - لا تحتوي على قوانين
-
 - لا تحتوي على معادلات
-
 - يجب أن تكون خلاصة الملف
-
 -يجب ان تكون مستنتجه من الملف وتكون مهمه جدا اهم الاجزاء في الملف بالكامل
-
 
 [[/KEY_POINTS]]
 
-
 [[MOTIVATION]]
-
-
-اكتب جملة تحفيزية أو دينية قصيرة تشجع المستخدم على الاستمرار و تكون مأخوذه من ايه قرأنيه او حديث او مقوله او اي شيئ مشهور و يحفذ المستخدم على الاستمرار
-
-
+اكتب جملة تحفيزية أو دينية قصيرة بالتشكيل تشجع المستخدم على الاستمرار و تكون مأخوذه من ايه قرأنيه او حديث او مقوله او اي شيئ مشهور و يحفذ المستخدم على الاستمرار
 [[/MOTIVATION]]
 
-
 ====================
-
 قواعد صارمة
-
 ====================
-
 
 - لا تستخدم Markdown
-
 - لا تستخدم JSON
-
 - لا تضف عناوين
-
 - لا تكتب أي تعليق
-
 - لا تكتب أي نص خارج الوسوم
-
 - لا تضف أمثلة
-
 - لا تكرر القوانين
 
-
 ====================
-
 التحقق قبل الإرسال
-
 ====================
-
 
 قبل إرسال الإجابة تأكد من:
 
-
 - وجود عنوان واحد فقط
-
 - وجود 8 نقاط جوهرية بالضبط
-
 - كل قانون داخل [[FORMULA]]
-
 - كل كود داخل [[CODE]]
-
 - عدم وجود نص خارج الوسوم
-
 
 ====================
 
-
 ابدأ التنفيذ الآن.
-
-
 `;
         }
 
-        // ========== إنشاء البرومبت ==========
+        // ========== إنشاء البرومبت حسب نوع التلخيص ==========
         function createPrompt() {
+            // التلخيص العادي - استخدم البرومت الجديد
             if (currentSettings.format === 'عادي') {
-                return getStructuredPrompt();
-            } else if (currentSettings.format === 'مفاهيم') {
-                return `قم بتحليل ملف PDF وقدم جدول مفاهيم بشكل JSON...`; // مختصر
-            } else {
-                return `قم بتحليل ملف PDF وقدم جدول أسئلة وأجوبة بشكل JSON...`; // مختصر
+                return getNewPrompt();
+            }
+            
+            // جداول المفاهيم - كما هي بدون تغيير
+            else if (currentSettings.format === 'مفاهيم') {
+                const lengthInstructions = {
+                    طويل: 'استخرج 10-15 مفهوم أساسي من الملف مع شرح مفصل لكل مفهوم. غطِ جميع أجزاء الملف.',
+                    قصير: 'استخرج 5-7 مفاهيم أساسية من الملف مع شرح مختصر لكل مفهوم.'
+                };
+                
+                let prompt = `قم بتحليل ملف PDF التالي بدقة وقدم جدول مفاهيم:
+
+الإعدادات المطلوبة:
+- شخصية الشارح: ${currentSettings.persona}
+- لغة الإخراج: ${currentSettings.language}
+- أسلوب الشرح: ${currentSettings.style}
+- طول الشرح: ${currentSettings.length}
+- شكل التلخيص: مفاهيم
+
+تعليمات مهمة:
+1. ${lengthInstructions[currentSettings.length]}
+2. ابدأ بشكل مباشر بدون مقدمات
+
+يجب أن يكون الرد بصيغة JSON فقط بهذا الشكل:
+{
+  "head": "عنوان مختصر للملف (5-7 كلمات)",
+  "h1": "المفهوم الأول",
+  "s1": "شرح المفهوم الأول",
+  "h2": "المفهوم الثاني",
+  "s2": "شرح المفهوم الثاني",
+  "h3": "المفهوم الثالث",
+  "s3": "شرح المفهوم الثالث",
+  "h4": "المفهوم الرابع",
+  "s4": "شرح المفهوم الرابع",
+  "h5": "المفهوم الخامس",
+  "s5": "شرح المفهوم الخامس"
+}`;
+                
+                if (currentSettings.length === 'طويل') {
+                    prompt = prompt.replace('"h5":', '"h6":,"s6":,"h7":,"s7":,"h8":,"s8":,"h9":,"s9":,"h10":,"s10":,"h11":,"s11":,"h12":,"s12":,"h13":,"s13":,"h14":,"s14":,"h15":,"s15":');
+                }
+                
+                return prompt;
+            }
+            
+            // جداول الأسئلة والأجوبة - كما هي بدون تغيير
+            else {
+                const lengthInstructions = {
+                    طويل: 'استخرج 10-15 سؤال وجواب يغطون جميع محتويات الملف.',
+                    قصير: 'استخرج 5-7 أسئلة وإجابات أساسية تغطي أهم نقاط الملف.'
+                };
+                
+                let prompt = `قم بتحليل ملف PDF التالي بدقة وقدم جدول أسئلة وأجوبة:
+
+الإعدادات المطلوبة:
+- شخصية الشارح: ${currentSettings.persona}
+- لغة الإخراج: ${currentSettings.language}
+- أسلوب الشرح: ${currentSettings.style}
+- طول الشرح: ${currentSettings.length}
+- شكل التلخيص: اسئلة
+
+تعليمات مهمة:
+1. ${lengthInstructions[currentSettings.length]}
+2. ابدأ بشكل مباشر بدون مقدمات
+
+يجب أن يكون الرد بصيغة JSON فقط بهذا الشكل:
+{
+  "head": "عنوان مختصر للملف (5-7 كلمات)",
+  "h1": "السؤال الأول",
+  "s1": "إجابة السؤال الأول",
+  "h2": "السؤال الثاني",
+  "s2": "إجابة السؤال الثاني",
+  "h3": "السؤال الثالث",
+  "s3": "إجابة السؤال الثالث",
+  "h4": "السؤال الرابع",
+  "s4": "إجابة السؤال الرابع",
+  "h5": "السؤال الخامس",
+  "s5": "إجابة السؤال الخامس"
+}`;
+                
+                if (currentSettings.length === 'طويل') {
+                    prompt = prompt.replace('"h5":', '"h6":,"s6":,"h7":,"s7":,"h8":,"s8":,"h9":,"s9":,"h10":,"s10":,"h11":,"s11":,"h12":,"s12":,"h13":,"s13":,"h14":,"s14":,"h15":,"s15":');
+                }
+                
+                return prompt;
             }
         }
 
-        // ========== دالة استخراج الوسوم بدقة ==========
-        function extractTags(text) {
-            const result = {
-                title: '',
-                sections: [],
-                formulas: [],
-                codes: [],
-                points: [],
-                motivation: ''
-            };
-
+        // ========== دالة تنسيق النص للتلخيص العادي (الجديد) ==========
+        function formatNewSummary(text) {
+            if (!text) return '';
+            
+            let html = '';
+            
             // استخراج العنوان
-            const titleMatch = text.match(/\[\[TITLE\]\]\s*([\s\S]*?)\s*\[\[\/TITLE\]\]/);
+            const titleMatch = text.match(/\[\[TITLE\]\]([\s\S]*?)\[\[\/TITLE\]\]/);
             if (titleMatch) {
-                result.title = titleMatch[1].trim();
+                html += `<div class="summary-title">${titleMatch[1].trim()}</div>`;
             }
-
-            // استخراج الأقسام
-            const sectionsMatch = text.match(/\[\[SECTIONS\]\]\s*([\s\S]*?)\s*\[\[\/SECTIONS\]\]/);
+            
+            // استخراج الأقسام (الفصول)
+            const sectionsMatch = text.match(/\[\[SECTIONS\]\]([\s\S]*?)\[\[\/SECTIONS\]\]/);
             if (sectionsMatch) {
                 const sectionsContent = sectionsMatch[1];
-                const sectionRegex = /\[\[SECTION\]\]\s*\[\[NAME\]\]\s*([\s\S]*?)\s*\[\[\/NAME\]\]\s*\[\[EXPLANATION\]\]\s*([\s\S]*?)\s*\[\[\/EXPLANATION\]\]\s*\[\[\/SECTION\]\]/g;
+                const sectionRegex = /\[\[SECTION\]\]\s*\[\[NAME\]\]([\s\S]*?)\[\[\/NAME\]\]\s*\[\[EXPLANATION\]\]([\s\S]*?)\[\[\/EXPLANATION\]\]\s*\[\[\/SECTION\]\]/g;
                 
-                let match;
-                while ((match = sectionRegex.exec(sectionsContent)) !== null) {
-                    result.sections.push({
-                        name: match[1].trim(),
-                        explanation: match[2].trim()
-                    });
+                let sectionMatch;
+                let sectionsHtml = '<div class="sections-container">';
+                
+                while ((sectionMatch = sectionRegex.exec(sectionsContent)) !== null) {
+                    const name = sectionMatch[1].trim();
+                    const explanation = sectionMatch[2].trim();
+                    
+                    sectionsHtml += `
+                        <div class="section-card">
+                            <div class="section-name">${name}</div>
+                            <div class="section-explanation">${explanation.replace(/\n/g, '<br>')}</div>
+                        </div>
+                    `;
                 }
+                
+                sectionsHtml += '</div>';
+                html += sectionsHtml;
             }
-
+            
             // استخراج القوانين
-            const formulasMatch = text.match(/\[\[FORMULAS\]\]\s*([\s\S]*?)\s*\[\[\/FORMULAS\]\]/);
+            const formulasMatch = text.match(/\[\[FORMULAS\]\]([\s\S]*?)\[\[\/FORMULAS\]\]/);
             if (formulasMatch) {
                 const formulasContent = formulasMatch[1];
-                const formulaRegex = /\[\[FORMULA\]\]\s*([\s\S]*?)\s*\[\[\/FORMULA\]\]/g;
+                const formulaRegex = /\[\[FORMULA\]\]([\s\S]*?)\[\[\/FORMULA\]\]/g;
                 
-                let match;
-                while ((match = formulaRegex.exec(formulasContent)) !== null) {
-                    result.formulas.push(match[1].trim());
+                let formulaMatch;
+                let formulasHtml = '<div class="formulas-section"><h3>📐 القوانين والصيغ الرياضية</h3>';
+                
+                while ((formulaMatch = formulaRegex.exec(formulasContent)) !== null) {
+                    const formula = formulaMatch[1].trim();
+                    
+                    // التحقق إذا كان القانون بالعربية أو يحتوي على LaTeX
+                    if (/[أ-ي]/.test(formula)) {
+                        // قانون عربي - عرض كما هو
+                        formulasHtml += `<div class="formula-item"><div class="arabic-formula">${formula}</div></div>`;
+                    } else {
+                        // قانون رياضي - استخدام MathJax
+                        formulasHtml += `<div class="formula-item"><div class="math">\\(${formula}\\)</div></div>`;
+                    }
                 }
+                
+                formulasHtml += '</div>';
+                html += formulasHtml;
+                
+                // تحديث MathJax بعد إضافة القوانين
+                setTimeout(() => {
+                    if (window.MathJax) {
+                        MathJax.typesetPromise();
+                    }
+                }, 100);
             }
-
+            
             // استخراج الأكواد
-            const codesMatch = text.match(/\[\[CODES\]\]\s*([\s\S]*?)\s*\[\[\/CODES\]\]/);
+            const codesMatch = text.match(/\[\[CODES\]\]([\s\S]*?)\[\[\/CODES\]\]/);
             if (codesMatch) {
                 const codesContent = codesMatch[1];
-                const codeRegex = /\[\[CODE\]\]\s*([\s\S]*?)\s*\[\[\/CODE\]\]/g;
+                const codeRegex = /\[\[CODE\]\]([\s\S]*?)\[\[\/CODE\]\]/g;
                 
-                let match;
-                while ((match = codeRegex.exec(codesContent)) !== null) {
-                    result.codes.push(match[1].trim());
+                let codeMatch;
+                let codesHtml = '<div class="codes-section"><h3>💻 الأكواد البرمجية</h3>';
+                
+                while ((codeMatch = codeRegex.exec(codesContent)) !== null) {
+                    const code = codeMatch[1].trim();
+                    const codeId = 'code_' + Math.random().toString(36).substr(2, 9);
+                    
+                    codesHtml += `
+                        <div class="code-item">
+                            <div class="code-block" id="${codeId}">
+                                <div class="code-header">
+                                    <span><i class="fas fa-code"></i> كود برمجي</span>
+                                    <button class="copy-code-btn" onclick="copyCodeFromElement('${codeId}')">
+                                        <i class="fas fa-copy"></i> نسخ
+                                    </button>
+                                </div>
+                                <pre>${code}</pre>
+                            </div>
+                        </div>
+                    `;
                 }
+                
+                codesHtml += '</div>';
+                html += codesHtml;
             }
-
+            
             // استخراج النقاط الرئيسية
-            const pointsMatch = text.match(/\[\[KEY_POINTS\]\]\s*([\s\S]*?)\s*\[\[\/KEY_POINTS\]\]/);
+            const pointsMatch = text.match(/\[\[KEY_POINTS\]\]([\s\S]*?)\[\[\/KEY_POINTS\]\]/);
             if (pointsMatch) {
                 const pointsContent = pointsMatch[1];
-                const pointRegex = /\[\[POINT\]\]\s*([\s\S]*?)\s*\[\[\/POINT\]\]/g;
+                const pointRegex = /\[\[POINT\]\]([\s\S]*?)\[\[\/POINT\]\]/g;
                 
-                let match;
-                while ((match = pointRegex.exec(pointsContent)) !== null) {
-                    result.points.push(match[1].trim());
+                let pointMatch;
+                let pointsHtml = '<div class="points-section"><h3>✨ النقاط الرئيسية</h3>';
+                
+                while ((pointMatch = pointRegex.exec(pointsContent)) !== null) {
+                    const point = pointMatch[1].trim();
+                    pointsHtml += `<div class="point-item">${point}</div>`;
                 }
+                
+                pointsHtml += '</div>';
+                html += pointsHtml;
             }
-
+            
             // استخراج الجملة التحفيزية
-            const motivationMatch = text.match(/\[\[MOTIVATION\]\]\s*([\s\S]*?)\s*\[\[\/MOTIVATION\]\]/);
+            const motivationMatch = text.match(/\[\[MOTIVATION\]\]([\s\S]*?)\[\[\/MOTIVATION\]\]/);
             if (motivationMatch) {
-                result.motivation = motivationMatch[1].trim();
-            }
-
-            return result;
-        }
-
-        // ========== دالة تنسيق النتائج ==========
-        function formatExtractedTags(tags) {
-            let html = '<div class="result-text" id="resultText">';
-
-            // العنوان
-            if (tags.title) {
-                html += `<div class="awn-title">${tags.title}</div>`;
-            }
-
-            // الأقسام
-            if (tags.sections.length > 0) {
-                html += '<div class="sections-container">';
-                tags.sections.forEach(section => {
-                    html += `
-                        <div class="section-card">
-                            <div class="section-name">${section.name}</div>
-                            <div class="section-explanation">${section.explanation.replace(/\n/g, '<br>')}</div>
-                        </div>
-                    `;
-                });
-                html += '</div>';
-            }
-
-            // القوانين
-            if (tags.formulas.length > 0) {
-                html += '<div class="formulas-container"><div class="formulas-title">📜 القوانين والصيغ الرياضية</div>';
-                tags.formulas.forEach((formula, index) => {
-                    const isArabic = /[\u0600-\u06FF]/.test(formula);
-                    if (isArabic) {
-                        html += `<div class="formula-item">${formula}</div>`;
-                    } else {
-                        html += `<div class="formula-item">\\[${formula}\\]</div>`;
-                    }
-                });
-                html += '</div>';
-            }
-
-            // الأكواد
-            if (tags.codes.length > 0) {
-                html += '<div class="codes-container">';
-                tags.codes.forEach(code => {
-                    const codeId = 'code_' + Math.random().toString(36).substr(2, 9);
-                    html += `
-                        <div class="code-card" id="${codeId}">
-                            <div class="code-header">
-                                <span><i class="fas fa-code"></i> كود برمجي</span>
-                                <button class="copy-code-btn" onclick="copyCodeFromElement('${codeId}')">
-                                    <i class="fas fa-copy"></i> نسخ
-                                </button>
-                            </div>
-                            <pre>${code}</pre>
-                        </div>
-                    `;
-                });
-                html += '</div>';
-            }
-
-            // النقاط الرئيسية
-            if (tags.points.length > 0) {
-                html += '<div class="key-points-container"><div class="key-points-title">✨ النقاط الرئيسية</div>';
-                tags.points.forEach(point => {
-                    html += `<div class="point-item">${point}</div>`;
-                });
-                html += '</div>';
-            }
-
-            // الجملة التحفيزية
-            if (tags.motivation) {
+                const motivation = motivationMatch[1].trim();
                 html += `
-                    <div class="motivation-container">
-                        <div class="motivation-text">${tags.motivation}</div>
+                    <div class="motivation-section">
+                        <div class="motivation-text">${motivation}</div>
                     </div>
                 `;
             }
-
-            html += '</div>';
+            
             return html;
         }
 
-        // ========== نسخ الكود ==========
+        // ========== عرض النتائج حسب نوع التلخيص ==========
+        function displayResults(result) {
+            currentResult = result;
+            const resultContent = document.getElementById('resultContent');
+            const fontControls = document.getElementById('fontControls');
+            
+            // ضبط اتجاه الصفحة حسب اللغة
+            if (currentSettings.language === 'انجليزي') {
+                document.documentElement.dir = 'ltr';
+                document.documentElement.lang = 'en';
+            } else {
+                document.documentElement.dir = 'rtl';
+                document.documentElement.lang = 'ar';
+            }
+            
+            // عرض المحتوى حسب النوع
+            if (currentSettings.format === 'مفاهيم') {
+                fontControls.style.display = 'none';
+                document.getElementById('resultHead').textContent = result.head || 'جدول المفاهيم';
+                
+                // عرض جدول المفاهيم
+                let tableHTML = `
+                    <div class="table-container">
+                        <table class="concepts-table">
+                            <thead>
+                                <tr>
+                                    <th>${currentSettings.language === 'انجليزي' ? 'Concept' : 'المفهوم'}</th>
+                                    <th>${currentSettings.language === 'انجليزي' ? 'Definition' : 'الشرح'}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                const maxItems = currentSettings.length === 'طويل' ? 15 : 7;
+                for (let i = 1; i <= maxItems; i++) {
+                    if (result[`h${i}`] && result[`s${i}`]) {
+                        tableHTML += `
+                            <tr>
+                                <td class="concept-term">${result[`h${i}`]}</td>
+                                <td class="concept-def">${result[`s${i}`]}</td>
+                            </tr>
+                        `;
+                    }
+                }
+                
+                tableHTML += `</tbody></table></div>`;
+                resultContent.innerHTML = tableHTML;
+            }
+            
+            else if (currentSettings.format === 'اسئلة') {
+                fontControls.style.display = 'none';
+                document.getElementById('resultHead').textContent = result.head || 'أسئلة وأجوبة';
+                
+                // عرض جدول الأسئلة
+                let tableHTML = `
+                    <div class="table-container">
+                        <table class="qa-table">
+                            <thead>
+                                <tr>
+                                    <th>${currentSettings.language === 'انجليزي' ? 'Question' : 'السؤال'}</th>
+                                    <th>${currentSettings.language === 'انجليزي' ? 'Answer' : 'الجواب'}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                const maxItems = currentSettings.length === 'طويل' ? 15 : 7;
+                for (let i = 1; i <= maxItems; i++) {
+                    if (result[`h${i}`] && result[`s${i}`]) {
+                        tableHTML += `
+                            <tr>
+                                <td class="qa-question">${result[`h${i}`]}</td>
+                                <td class="qa-answer">${result[`s${i}`]}</td>
+                            </tr>
+                        `;
+                    }
+                }
+                
+                tableHTML += `</tbody></table></div>`;
+                resultContent.innerHTML = tableHTML;
+            }
+            
+            else {
+                // تلخيص عادي - استخدم التنسيق الجديد
+                fontControls.style.display = 'flex';
+                
+                let content = '';
+                if (typeof result === 'object' && result !== null) {
+                    content = result.page || result.text || '';
+                } else {
+                    content = result;
+                }
+                
+                // تطبيق التنسيق الجديد
+                resultContent.innerHTML = `<div class="result-text" id="resultText">${formatNewSummary(content)}</div>`;
+                
+                const resultText = document.getElementById('resultText');
+                if (resultText) {
+                    resultText.style.fontSize = fontSize + 'px';
+                }
+            }
+        }
+
+        // ========== دالة نسخ الكود ==========
         window.copyCodeFromElement = function(elementId) {
             const element = document.getElementById(elementId);
             const codeElement = element.querySelector('pre');
@@ -1498,80 +1627,50 @@
                     setTimeout(() => {
                         btn.innerHTML = '<i class="fas fa-copy"></i> نسخ';
                     }, 2000);
-                    showNotification('تم نسخ الكود', 'success');
+                    showNotification('تم نسخ الكود بنجاح', 'success');
                 }).catch(() => {
-                    showNotification('فشل في النسخ', 'error');
+                    showNotification('فشل في نسخ الكود', 'error');
                 });
             }
         };
 
-        // ========== نسخ المحتوى ==========
+        // ========== نسخ المحتوى كاملاً ==========
         function copyAllContent() {
             if (!currentResult) return;
             
             let textToCopy = '';
-            if (typeof currentResult === 'string') {
-                textToCopy = currentResult.replace(/\[\[\/?.+?\]\]/g, '').trim();
+            
+            if (typeof currentResult === 'object') {
+                if (currentSettings.format === 'مفاهيم') {
+                    textToCopy = 'جدول المفاهيم:\n\n';
+                    const maxItems = currentSettings.length === 'طويل' ? 15 : 7;
+                    for (let i = 1; i <= maxItems; i++) {
+                        if (currentResult[`h${i}`] && currentResult[`s${i}`]) {
+                            textToCopy += `${currentResult[`h${i}`]}\n${currentResult[`s${i}`]}\n\n`;
+                        }
+                    }
+                }
+                else if (currentSettings.format === 'اسئلة') {
+                    textToCopy = 'أسئلة وأجوبة:\n\n';
+                    const maxItems = currentSettings.length === 'طويل' ? 15 : 7;
+                    for (let i = 1; i <= maxItems; i++) {
+                        if (currentResult[`h${i}`] && currentResult[`s${i}`]) {
+                            textToCopy += `س: ${currentResult[`h${i}`]}\nج: ${currentResult[`s${i}`]}\n\n`;
+                        }
+                    }
+                }
+                else {
+                    textToCopy = currentResult.page || currentResult.text || '';
+                }
             } else {
-                textToCopy = currentResult.page || currentResult.text || '';
+                textToCopy = currentResult;
             }
             
             navigator.clipboard.writeText(textToCopy).then(() => {
-                showNotification('تم نسخ المحتوى', 'success');
+                showNotification('تم نسخ المحتوى بنجاح', 'success');
             }).catch(() => {
-                showNotification('فشل في النسخ', 'error');
+                showNotification('فشل في نسخ المحتوى', 'error');
             });
-        }
-
-        // ========== عرض النتائج ==========
-        function displayResults(result) {
-            currentResult = result;
-            const resultContent = document.getElementById('resultContent');
-            const fontControls = document.getElementById('fontControls');
-            
-            if (currentSettings.language === 'انجليزي') {
-                document.documentElement.dir = 'ltr';
-                document.documentElement.lang = 'en';
-            } else {
-                document.documentElement.dir = 'rtl';
-                document.documentElement.lang = 'ar';
-            }
-            
-            if (currentSettings.format === 'مفاهيم') {
-                fontControls.style.display = 'none';
-                // عرض جدول المفاهيم
-                // ... (مختصر)
-            } else if (currentSettings.format === 'اسئلة') {
-                fontControls.style.display = 'none';
-                // عرض جدول الأسئلة
-                // ... (مختصر)
-            } else {
-                fontControls.style.display = 'flex';
-                
-                let content = '';
-                if (typeof result === 'object') {
-                    content = result.page || result.text || '';
-                } else {
-                    content = result;
-                }
-                
-                // استخراج الوسوم
-                const tags = extractTags(content);
-                console.log('Extracted tags:', tags); // للتأكد
-                
-                // تنسيق وعرض
-                resultContent.innerHTML = formatExtractedTags(tags);
-                
-                // تحديث العنوان
-                if (tags.title) {
-                    document.getElementById('resultHead').textContent = tags.title;
-                }
-                
-                // تشغيل MathJax
-                if (window.MathJax) {
-                    setTimeout(() => MathJax.typesetPromise(), 500);
-                }
-            }
         }
 
         // ========== نظام السجلات ==========
@@ -1590,8 +1689,13 @@
                     
                     snapshot.forEach(childSnapshot => {
                         const record = childSnapshot.val();
+                        const recordId = childSnapshot.key;
+                        
                         if (record.userId === currentUser.id) {
-                            userRecords.push({ id: childSnapshot.key, ...record });
+                            userRecords.push({
+                                id: recordId,
+                                ...record
+                            });
                         }
                     });
                     
@@ -1616,49 +1720,96 @@
                 hideLoading();
             } catch (error) {
                 hideLoading();
-                showNotification('حدث خطأ في تحميل السجلات', 'error');
+                console.error('خطأ مفصل:', error);
+                showNotification('حدث خطأ في تحميل السجلات: ' + error.message, 'error');
             }
         }
 
         function createRecordCard(record) {
             const card = document.createElement('div');
             card.className = 'record-card';
+            card.setAttribute('data-record-id', record.id);
             
             let dateStr = 'تاريخ غير معروف';
             if (record.timestamp) {
                 const date = new Date(record.timestamp);
-                dateStr = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
+                dateStr = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} - ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
             }
+            
+            const fileName = record.fileName || 'ملف PDF';
+            const pages = record.pages || 0;
+            const cost = record.cost || 0;
+            const persona = record.settings?.persona || 'تلخيص';
+            const language = record.settings?.language || 'عربي';
+            const format = record.settings?.format || 'عادي';
+            
+            let formatIcon = 'fa-file-alt';
+            if (format === 'مفاهيم') formatIcon = 'fa-table';
+            if (format === 'اسئلة') formatIcon = 'fa-question-circle';
             
             card.innerHTML = `
                 <div class="record-header">
                     <div class="record-name">
-                        <i class="fas fa-file-pdf"></i>
-                        <span>${record.fileName || 'ملف PDF'}</span>
+                        <i class="fas fa-file-pdf" style="color: var(--primary);"></i>
+                        <span>${fileName}</span>
                     </div>
-                    <div class="record-date">${dateStr}</div>
+                    <div class="record-date">
+                        <i class="far fa-calendar-alt"></i>
+                        ${dateStr}
+                    </div>
                 </div>
                 <div class="record-details">
-                    <span class="record-badge"><i class="fas fa-file"></i> ${record.pages || 0} صفحة</span>
-                    <span class="record-badge"><i class="fas fa-coins"></i> ${record.cost || 0} عملة</span>
+                    <span class="record-badge">
+                        <i class="fas fa-file"></i> ${pages} صفحة
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas fa-coins"></i> ${cost} عملة
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas fa-user-tie"></i> ${persona}
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas fa-language"></i> ${language}
+                    </span>
+                    <span class="record-badge">
+                        <i class="fas ${formatIcon}"></i> ${format}
+                    </span>
                 </div>
             `;
             
             card.addEventListener('click', () => {
+                displayRecordContent(record);
+            });
+            
+            return card;
+        }
+
+        function displayRecordContent(record) {
+            try {
+                if (!record.data) {
+                    showNotification('بيانات السجل غير مكتملة', 'error');
+                    return;
+                }
+                
                 document.getElementById('recordsModal').classList.remove('show');
                 document.getElementById('uploadSection').style.display = 'none';
                 document.getElementById('settingsSection').style.display = 'none';
-                document.getElementById('resultSection').classList.add('show');
+                
+                const resultSection = document.getElementById('resultSection');
+                resultSection.classList.add('show');
                 
                 if (record.settings) {
                     currentSettings = { ...currentSettings, ...record.settings };
                 }
                 
                 displayResults(record.data);
-                showNotification('تم تحميل الملخص', 'success');
-            });
-            
-            return card;
+                
+                showNotification('تم تحميل الملخص بنجاح', 'success');
+                
+            } catch (error) {
+                console.error('خطأ في عرض السجل:', error);
+                showNotification('حدث خطأ في عرض الملخص', 'error');
+            }
         }
 
         // ========== التحقق من المستخدم ==========
@@ -1698,23 +1849,28 @@
 
         // ========== تهيئة التطبيق ==========
         function initApp() {
+            // عناصر الصفحة
             const fileInput = document.getElementById('fileInput');
             const uploadArea = document.getElementById('uploadArea');
             
+            // رفع الملف
             uploadArea.onclick = () => fileInput.click();
             
             uploadArea.ondragover = (e) => {
                 e.preventDefault();
                 uploadArea.style.borderColor = 'var(--primary)';
+                uploadArea.style.backgroundColor = 'rgba(139, 115, 85, 0.1)';
             };
             
             uploadArea.ondragleave = () => {
                 uploadArea.style.borderColor = '';
+                uploadArea.style.backgroundColor = '';
             };
             
             uploadArea.ondrop = (e) => {
                 e.preventDefault();
                 uploadArea.style.borderColor = '';
+                uploadArea.style.backgroundColor = '';
                 const file = e.dataTransfer.files[0];
                 if (file) handleFile(file);
             };
@@ -1723,6 +1879,7 @@
                 if (e.target.files[0]) handleFile(e.target.files[0]);
             };
             
+            // أزرار المعاينة
             document.getElementById('cancelBtn').onclick = () => {
                 fileInput.value = '';
                 selectedFile = null;
@@ -1743,25 +1900,30 @@
             };
             
             // إعدادات الخيارات
-            document.querySelectorAll('.option-btn').forEach(btn => {
-                btn.onclick = function() {
-                    const parent = this.parentElement;
-                    parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-                    this.classList.add('selected');
-                    
-                    const value = this.dataset.value;
-                    switch(parent.id) {
-                        case 'personaOptions': currentSettings.persona = value; break;
-                        case 'languageOptions': currentSettings.language = value; break;
-                        case 'styleOptions': currentSettings.style = value; break;
-                        case 'lengthOptions': currentSettings.length = value; break;
-                        case 'formatOptions': currentSettings.format = value; break;
-                    }
-                };
-            });
+            const setupOptions = () => {
+                document.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.onclick = function() {
+                        const parent = this.parentElement;
+                        parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                        this.classList.add('selected');
+                        
+                        const value = this.dataset.value;
+                        switch(parent.id) {
+                            case 'personaOptions': currentSettings.persona = value; break;
+                            case 'languageOptions': currentSettings.language = value; break;
+                            case 'styleOptions': currentSettings.style = value; break;
+                            case 'lengthOptions': currentSettings.length = value; break;
+                            case 'formatOptions': currentSettings.format = value; break;
+                        }
+                    };
+                });
+            };
+            setupOptions();
             
+            // زر التوليد
             document.getElementById('generateBtn').onclick = generateSummary;
             
+            // الصفحة الرئيسية
             document.getElementById('homeBtn').onclick = () => {
                 document.getElementById('uploadSection').style.display = 'block';
                 document.getElementById('settingsSection').style.display = 'none';
@@ -1773,13 +1935,17 @@
                 document.documentElement.lang = 'ar';
             };
             
+            // السجلات
             const modal = document.getElementById('recordsModal');
-            document.getElementById('recordsBtn').onclick = () => {
+            const recordsBtn = document.getElementById('recordsBtn');
+            const closeModal = document.getElementById('closeModal');
+            
+            recordsBtn.onclick = () => {
                 loadAllUserRecords();
                 modal.classList.add('show');
             };
             
-            document.getElementById('closeModal').onclick = () => {
+            closeModal.onclick = () => {
                 modal.classList.remove('show');
             };
             
@@ -1787,22 +1953,26 @@
                 if (e.target === modal) modal.classList.remove('show');
             };
             
+            // تحكم حجم الخط
             document.getElementById('increaseFont').onclick = () => {
                 if (fontSize < 24) {
                     fontSize += 2;
-                    const resultText = document.getElementById('resultText');
-                    if (resultText) resultText.style.fontSize = fontSize + 'px';
+                    if (currentSettings.format === 'عادي' && document.getElementById('resultText')) {
+                        document.getElementById('resultText').style.fontSize = fontSize + 'px';
+                    }
                 }
             };
             
             document.getElementById('decreaseFont').onclick = () => {
                 if (fontSize > 12) {
                     fontSize -= 2;
-                    const resultText = document.getElementById('resultText');
-                    if (resultText) resultText.style.fontSize = fontSize + 'px';
+                    if (currentSettings.format === 'عادي' && document.getElementById('resultText')) {
+                        document.getElementById('resultText').style.fontSize = fontSize + 'px';
+                    }
                 }
             };
             
+            // زر نسخ الكل
             document.getElementById('copyAllBtn').onclick = copyAllContent;
         }
 
@@ -1814,7 +1984,7 @@
             }
             
             if (file.size > 50 * 1024 * 1024) {
-                showNotification('حجم الملف كبير جداً', 'error');
+                showNotification('حجم الملف كبير جداً (الحد الأقصى 50 ميجابايت)', 'error');
                 return;
             }
             
@@ -1835,20 +2005,21 @@
                     totalWords += text.split(/\s+/).filter(w => w.length > 1).length;
                 }
                 
-                const cost = calculateCoins(pdf.numPages, totalWords);
+                const pages = pdf.numPages;
+                const cost = calculateCoins(pages, totalWords);
                 
                 fileInfo = { 
                     name: file.name, 
-                    pages: pdf.numPages, 
+                    pages, 
                     words: totalWords, 
                     cost
                 };
                 
-                document.getElementById('pageCount').textContent = pdf.numPages;
+                document.getElementById('pageCount').textContent = pages;
                 document.getElementById('costAmount').textContent = fileInfo.cost + ' عملة';
                 document.getElementById('costPreview').classList.add('show');
                 hideLoading();
-                showNotification('تم تحليل الملف', 'success');
+                showNotification('تم تحليل الملف بنجاح', 'success');
             } catch (error) {
                 hideLoading();
                 showNotification('حدث خطأ في قراءة الملف', 'error');
@@ -1892,13 +2063,14 @@
                 
                 if (!response.ok) throw new Error('فشل الاتصال بالسيرفر');
                 
-                const text = await response.text();
-                console.log('API Response:', text); // للتأكد
-                
                 let result;
+                const text = await response.text();
+                
+                // لو التلخيص عادي، خزن النص كما هو
                 if (currentSettings.format === 'عادي') {
                     result = text;
                 } else {
+                    // للجداول، حاول نحول لـ JSON
                     try {
                         const jsonMatch = text.match(/\{[\s\S]*\}/);
                         result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
@@ -1913,7 +2085,8 @@
                 document.getElementById('coinsCount').textContent = userCoins;
                 
                 // حفظ في السجلات
-                await database.ref('records').push({
+                const newRecordRef = database.ref('records').push();
+                await newRecordRef.set({
                     userId: currentUser.id,
                     fileName: fileInfo.name,
                     pages: fileInfo.pages,
@@ -1923,16 +2096,18 @@
                     data: result
                 });
                 
+                console.log('تم حفظ السجل بنجاح:', newRecordRef.key);
+                
                 // عرض النتائج
                 displayResults(result);
                 
                 document.getElementById('settingsSection').style.display = 'none';
                 document.getElementById('resultSection').classList.add('show');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                showNotification('تم إنشاء التلخيص وحفظه', 'success');
+                showNotification('تم إنشاء التلخيص وحفظه في السجلات', 'success');
                 
             } catch (error) {
-                console.error('خطأ:', error);
+                console.error('خطأ في التوليد:', error);
                 showNotification('حدث خطأ: ' + error.message, 'error');
             } finally {
                 btn.disabled = false;
