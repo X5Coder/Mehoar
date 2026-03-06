@@ -1378,67 +1378,92 @@
             }
         }
 
-        // ========== دالة تنسيق النص للتلخيص العادي (الجديد) ==========
+        // ========== دالة تنسيق النص للتلخيص العادي (المحسنة) ==========
         function formatNewSummary(text) {
-            if (!text) return '';
+            if (!text) return '<p>لا يوجد محتوى</p>';
+            
+            // تنظيف النص من أحرف carriage return
+            text = text.replace(/\r/g, '').trim();
             
             let html = '';
             
-            // استخراج العنوان
-            const titleMatch = text.match(/\[\[TITLE\]\]([\s\S]*?)\[\[\/TITLE\]\]/);
-            if (titleMatch) {
-                html += `<div class="summary-title">${titleMatch[1].trim()}</div>`;
+            // ========= دالة مساعدة لاستخراج وسم واحد =========
+            function extract(tag) {
+                const regex = new RegExp(`\\[\\[${tag}\\]\\]([\\s\\S]*?)\\[\\[\\/${tag}\\]\\]`, 'i');
+                const match = text.match(regex);
+                return match ? match[1].trim() : null;
             }
             
-            // استخراج الأقسام (الفصول)
-            const sectionsMatch = text.match(/\[\[SECTIONS\]\]([\s\S]*?)\[\[\/SECTIONS\]\]/);
-            if (sectionsMatch) {
-                const sectionsContent = sectionsMatch[1];
-                const sectionRegex = /\[\[SECTION\]\]\s*\[\[NAME\]\]([\s\S]*?)\[\[\/NAME\]\]\s*\[\[EXPLANATION\]\]([\s\S]*?)\[\[\/EXPLANATION\]\]\s*\[\[\/SECTION\]\]/g;
+            // ========= دالة مساعدة لاستخراج جميع وسوم متكررة =========
+            function extractAll(tag) {
+                const regex = new RegExp(`\\[\\[${tag}\\]\\]([\\s\\S]*?)\\[\\[\\/${tag}\\]\\]`, 'gi');
+                const results = [];
+                let match;
+                while ((match = regex.exec(text)) !== null) {
+                    results.push(match[1].trim());
+                }
+                return results;
+            }
+            
+            // ================= TITLE =================
+            const title = extract('TITLE');
+            if (title) {
+                html += `<div class="summary-title">${title}</div>`;
+            }
+            
+            // ================= SECTIONS =================
+            const sectionsBlock = extract('SECTIONS');
+            if (sectionsBlock) {
+                const sectionRegex = /\[\[SECTION\]\]([\s\S]*?)\[\[\/SECTION\]\]/gi;
+                let sectionsHTML = '<div class="sections-container">';
+                let match;
                 
-                let sectionMatch;
-                let sectionsHtml = '<div class="sections-container">';
-                
-                while ((sectionMatch = sectionRegex.exec(sectionsContent)) !== null) {
-                    const name = sectionMatch[1].trim();
-                    const explanation = sectionMatch[2].trim();
+                while ((match = sectionRegex.exec(sectionsBlock)) !== null) {
+                    const sectionText = match[1];
                     
-                    sectionsHtml += `
+                    // استخراج اسم القسم
+                    const nameMatch = sectionText.match(/\[\[NAME\]\]([\s\S]*?)\[\[\/NAME\]\]/i);
+                    // استخراج الشرح
+                    const expMatch = sectionText.match(/\[\[EXPLANATION\]\]([\s\S]*?)\[\[\/EXPLANATION\]\]/i);
+                    
+                    const sectionName = nameMatch ? nameMatch[1].trim() : "قسم";
+                    const explanation = expMatch ? expMatch[1].trim().replace(/\n/g, "<br>") : "";
+                    
+                    sectionsHTML += `
                         <div class="section-card">
-                            <div class="section-name">${name}</div>
-                            <div class="section-explanation">${explanation.replace(/\n/g, '<br>')}</div>
+                            <div class="section-name">${sectionName}</div>
+                            <div class="section-explanation">${explanation}</div>
                         </div>
                     `;
                 }
                 
-                sectionsHtml += '</div>';
-                html += sectionsHtml;
+                sectionsHTML += "</div>";
+                html += sectionsHTML;
             }
             
-            // استخراج القوانين
-            const formulasMatch = text.match(/\[\[FORMULAS\]\]([\s\S]*?)\[\[\/FORMULAS\]\]/);
-            if (formulasMatch) {
-                const formulasContent = formulasMatch[1];
-                const formulaRegex = /\[\[FORMULA\]\]([\s\S]*?)\[\[\/FORMULA\]\]/g;
+            // ================= FORMULAS =================
+            const formulas = extractAll('FORMULA');
+            if (formulas.length > 0) {
+                html += `<div class="formulas-section"><h3>📐 القوانين والصيغ الرياضية</h3>`;
                 
-                let formulaMatch;
-                let formulasHtml = '<div class="formulas-section"><h3>📐 القوانين والصيغ الرياضية</h3>';
-                
-                while ((formulaMatch = formulaRegex.exec(formulasContent)) !== null) {
-                    const formula = formulaMatch[1].trim();
-                    
-                    // التحقق إذا كان القانون بالعربية أو يحتوي على LaTeX
-                    if (/[أ-ي]/.test(formula)) {
-                        // قانون عربي - عرض كما هو
-                        formulasHtml += `<div class="formula-item"><div class="arabic-formula">${formula}</div></div>`;
+                formulas.forEach(f => {
+                    // التحقق إذا كان القانون بالعربية
+                    if (/[أ-ي]/.test(f)) {
+                        html += `
+                            <div class="formula-item">
+                                <div class="arabic-formula">${f}</div>
+                            </div>
+                        `;
                     } else {
-                        // قانون رياضي - استخدام MathJax
-                        formulasHtml += `<div class="formula-item"><div class="math">\\(${formula}\\)</div></div>`;
+                        html += `
+                            <div class="formula-item">
+                                <div class="math">\\(${f}\\)</div>
+                            </div>
+                        `;
                     }
-                }
+                });
                 
-                formulasHtml += '</div>';
-                html += formulasHtml;
+                html += `</div>`;
                 
                 // تحديث MathJax بعد إضافة القوانين
                 setTimeout(() => {
@@ -1448,25 +1473,20 @@
                 }, 100);
             }
             
-            // استخراج الأكواد
-            const codesMatch = text.match(/\[\[CODES\]\]([\s\S]*?)\[\[\/CODES\]\]/);
-            if (codesMatch) {
-                const codesContent = codesMatch[1];
-                const codeRegex = /\[\[CODE\]\]([\s\S]*?)\[\[\/CODE\]\]/g;
+            // ================= CODES =================
+            const codes = extractAll('CODE');
+            if (codes.length > 0) {
+                html += `<div class="codes-section"><h3>💻 الأكواد البرمجية</h3>`;
                 
-                let codeMatch;
-                let codesHtml = '<div class="codes-section"><h3>💻 الأكواد البرمجية</h3>';
-                
-                while ((codeMatch = codeRegex.exec(codesContent)) !== null) {
-                    const code = codeMatch[1].trim();
-                    const codeId = 'code_' + Math.random().toString(36).substr(2, 9);
+                codes.forEach(code => {
+                    const id = "code_" + Math.random().toString(36).slice(2);
                     
-                    codesHtml += `
+                    html += `
                         <div class="code-item">
-                            <div class="code-block" id="${codeId}">
+                            <div class="code-block" id="${id}">
                                 <div class="code-header">
                                     <span><i class="fas fa-code"></i> كود برمجي</span>
-                                    <button class="copy-code-btn" onclick="copyCodeFromElement('${codeId}')">
+                                    <button class="copy-code-btn" onclick="copyCodeFromElement('${id}')">
                                         <i class="fas fa-copy"></i> نسخ
                                     </button>
                                 </div>
@@ -1474,39 +1494,36 @@
                             </div>
                         </div>
                     `;
-                }
+                });
                 
-                codesHtml += '</div>';
-                html += codesHtml;
+                html += "</div>";
             }
             
-            // استخراج النقاط الرئيسية
-            const pointsMatch = text.match(/\[\[KEY_POINTS\]\]([\s\S]*?)\[\[\/KEY_POINTS\]\]/);
-            if (pointsMatch) {
-                const pointsContent = pointsMatch[1];
-                const pointRegex = /\[\[POINT\]\]([\s\S]*?)\[\[\/POINT\]\]/g;
+            // ================= KEY POINTS =================
+            const points = extractAll('POINT');
+            if (points.length > 0) {
+                html += `<div class="points-section"><h3>✨ النقاط الرئيسية</h3>`;
                 
-                let pointMatch;
-                let pointsHtml = '<div class="points-section"><h3>✨ النقاط الرئيسية</h3>';
+                points.forEach(point => {
+                    html += `<div class="point-item">${point}</div>`;
+                });
                 
-                while ((pointMatch = pointRegex.exec(pointsContent)) !== null) {
-                    const point = pointMatch[1].trim();
-                    pointsHtml += `<div class="point-item">${point}</div>`;
-                }
-                
-                pointsHtml += '</div>';
-                html += pointsHtml;
+                html += "</div>";
             }
             
-            // استخراج الجملة التحفيزية
-            const motivationMatch = text.match(/\[\[MOTIVATION\]\]([\s\S]*?)\[\[\/MOTIVATION\]\]/);
-            if (motivationMatch) {
-                const motivation = motivationMatch[1].trim();
+            // ================= MOTIVATION =================
+            const motivation = extract('MOTIVATION');
+            if (motivation) {
                 html += `
                     <div class="motivation-section">
                         <div class="motivation-text">${motivation}</div>
                     </div>
                 `;
+            }
+            
+            // fallback لو لم يتم العثور على أي وسوم
+            if (!html) {
+                html = `<pre>${text}</pre>`;
             }
             
             return html;
@@ -1595,18 +1612,13 @@
             }
             
             else {
-                // تلخيص عادي - استخدم التنسيق الجديد
+                // تلخيص عادي - استخدم التنسيق الجديد المحسن
                 fontControls.style.display = 'flex';
                 
-                let content = '';
-                if (typeof result === 'object' && result !== null) {
-                    content = result.page || result.text || '';
-                } else {
-                    content = result;
-                }
+                // تطبيق التنسيق الجديد على النص
+                const formattedContent = formatNewSummary(result);
                 
-                // تطبيق التنسيق الجديد
-                resultContent.innerHTML = `<div class="result-text" id="resultText">${formatNewSummary(content)}</div>`;
+                resultContent.innerHTML = `<div class="result-text" id="resultText">${formattedContent}</div>`;
                 
                 const resultText = document.getElementById('resultText');
                 if (resultText) {
@@ -2068,7 +2080,7 @@
                 
                 // لو التلخيص عادي، خزن النص كما هو
                 if (currentSettings.format === 'عادي') {
-                    result = text;
+                    result = text; // نخزن النص الخام
                 } else {
                     // للجداول، حاول نحول لـ JSON
                     try {
