@@ -170,30 +170,33 @@
             gap: 0.5rem;
         }
         
-        /* المحتوى الرئيسي - توسيع العرض */
+        /* المحتوى الرئيسي */
         .main {
             padding-top: calc(var(--navbar) + 2rem);
-            padding-left: 2rem;
-            padding-right: 2rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
             padding-bottom: 3rem;
-            max-width: 1600px; /* زيادة الحد الأقصى */
+            max-width: 100%;
             margin: 0 auto;
             width: 100%;
         }
         
-        /* البطاقات - توسيع العرض */
+        /* البطاقات - للأقسام العادية (رفع الملف والإعدادات) */
         .card {
             background: var(--white);
             border-radius: var(--radius-lg);
-            padding: 2.5rem; /* زيادة padding */
+            padding: 2.5rem;
             margin-bottom: 2rem;
             box-shadow: var(--shadow);
             border: 1px solid rgba(139, 115, 85, 0.1);
             width: 100%;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .card-title {
-            font-size: 2.2rem; /* تكبير الخط */
+            font-size: 2.2rem;
             font-weight: 800;
             color: var(--primary);
             text-align: center;
@@ -211,7 +214,7 @@
         .upload-area {
             border: 2px dashed var(--secondary);
             border-radius: var(--radius);
-            padding: 4rem 2rem; /* زيادة المساحة */
+            padding: 4rem 2rem;
             text-align: center;
             cursor: pointer;
             transition: 0.3s;
@@ -260,7 +263,7 @@
         
         /* الأزرار */
         .btn {
-            padding: 1rem 2.5rem; /* تكبير الأزرار */
+            padding: 1rem 2.5rem;
             border: none;
             border-radius: var(--radius);
             font-weight: 700;
@@ -485,7 +488,7 @@
             margin-bottom: 1rem;
         }
         
-        /* ===== قسم النتائج الرئيسي - توسيع العرض ===== */
+        /* ===== قسم النتائج الرئيسي - موسع بالكامل ===== */
         .result-section {
             background: white;
             border-radius: var(--radius-lg);
@@ -493,6 +496,8 @@
             box-shadow: var(--shadow-lg);
             display: none;
             width: 100%;
+            max-width: 100%;
+            margin: 0;
         }
         
         .result-section.show { display: block; }
@@ -505,6 +510,7 @@
             border-bottom: 1px solid rgba(139, 115, 85, 0.1);
             flex-wrap: wrap;
             gap: 1rem;
+            background: white;
         }
         
         .result-header h2 {
@@ -562,25 +568,27 @@
             color: white;
         }
         
-        /* ===== أنماط التنسيقات - توسيع العرض ===== */
+        /* ===== حاوية النتائج الخارجية - موسعة ===== */
         .result-content {
-            padding: 3rem; /* زيادة padding */
+            padding: 3rem;
             background: #FAFAFA;
+            width: 100%;
         }
         
+        /* ===== حاوية النص الداخلية - موسعة ===== */
         .result-text {
             background: white;
-            padding: 3rem; /* زيادة padding */
+            padding: 3rem;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             border: 1px solid rgba(139, 115, 85, 0.1);
-            line-height: 2; /* زيادة تباعد الأسطر */
+            line-height: 2;
             transition: font-size 0.3s;
             word-wrap: break-word;
-            font-size: 18px; /* زيادة حجم الخط الأساسي */
-            max-width: 1400px;
-            margin: 0 auto;
+            font-size: 18px;
             width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
         }
         
         /* تنسيق الفقرات داخل النص */
@@ -877,6 +885,9 @@
             border-top: 1px solid rgba(139, 115, 85, 0.1);
             margin-top: 3rem;
             font-size: 1.1rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .support-links {
@@ -911,7 +922,7 @@
             .logo { font-size: 1.8rem; }
             .nav-btn span { display: none; }
             .nav-btn { padding: 0.7rem; border-radius: 50%; }
-            .main { padding-left: 1rem; padding-right: 1rem; }
+            .main { padding-left: 0.5rem; padding-right: 0.5rem; }
             .card { padding: 1.5rem; }
             .card-title { font-size: 1.8rem; }
             .result-content { padding: 1.5rem; }
@@ -1070,7 +1081,7 @@
             </button>
         </section>
         
-        <!-- قسم النتائج -->
+        <!-- قسم النتائج - موسع بالكامل -->
         <section class="result-section" id="resultSection">
             <div class="result-header">
                 <h2 id="resultHead">ملخص الملف</h2>
@@ -1133,7 +1144,7 @@
             length: 'طويل',
             format: 'عادي'
         };
-        let fontSize = 18; // زيادة حجم الخط الأساسي
+        let fontSize = 18;
         let currentResult = null;
 
         // ========== دوال المساعدة ==========
@@ -1186,7 +1197,7 @@
                 .replace(/'/g, "&#039;");
         }
 
-        // ========== دالة تحليل رد الذكاء الاصطناعي (النسخة القوية) ==========
+        // ========== دالة تحليل رد الذكاء الاصطناعي ==========
         function parseAIResponse(text) {
             let formulas = [];
             let codes = [];
@@ -1199,7 +1210,6 @@
             // استبدال القوانين بعناصر HTML
             let cleanText = text.replace(formulaRegex, (match, formula) => {
                 formulas.push(formula.trim());
-                // استخدام encodeURIComponent للحفاظ على النص بشكل آمن
                 return `<div class="formula-block" data-latex="${encodeURIComponent(formula.trim())}"></div>`;
             });
             
@@ -1227,7 +1237,7 @@
             };
         }
 
-        // ========== دالة عرض القوانين باستخدام KaTeX أولاً ثم MathJax كبديل ==========
+        // ========== دالة عرض القوانين باستخدام KaTeX أولاً ثم MathJax ==========
         function renderFormulas() {
             const elements = document.querySelectorAll(".formula-block");
             
@@ -1235,7 +1245,6 @@
                 const latex = decodeURIComponent(el.dataset.latex);
                 
                 try {
-                    // محاولة استخدام KaTeX أولاً (الأسرع)
                     katex.render(latex, el, {
                         throwOnError: true,
                         displayMode: true,
@@ -1244,16 +1253,13 @@
                 } catch (katexError) {
                     console.warn('KaTeX failed, trying MathJax:', katexError);
                     
-                    // إذا فشل KaTeX، استخدم MathJax كخطة بديلة
                     if (window.MathJax) {
                         el.innerHTML = "\\[" + latex + "\\]";
                         MathJax.typesetPromise([el]).catch(mathjaxError => {
                             console.error('MathJax also failed:', mathjaxError);
-                            // إذا فشل الاثنان، عرض النص الأصلي
                             el.innerHTML = `<div style="direction: ltr; text-align: center; padding: 1rem; background: #f5f5f5; border-radius: 8px;">${escapeHTML(latex)}</div>`;
                         });
                     } else {
-                        // إذا لم يكن MathJax متاحاً، عرض النص الأصلي
                         el.innerHTML = `<div style="direction: ltr; text-align: center; padding: 1rem; background: #f5f5f5; border-radius: 8px;">${escapeHTML(latex)}</div>`;
                     }
                 }
@@ -1268,466 +1274,270 @@
             return Math.round(cost * 10) / 10;
         }
 
-        // ========== البرومت الجديد للتلخيص العادي ==========
+        // ========== البرومت الجديد مع شرط طول النص ==========
         function getNormalSummaryPrompt() {
+            // تحديد الحد الأقصى للكلمات حسب طول التلخيص
+            const maxWords = currentSettings.length === 'طويل' ? 1400 : 800;
+            
             return `
-المهمة
+# ==================== المهمة
 
-====================
-
-اقرأ ملف PDF بالكامل من البداية إلى النهاية بدون تجاهل أي سطر.
-
-ابدأ التنفيذ مباشرة بدون أي مقدمة.
-
+اقرأ ملف PDF بالكامل من البداية إلى النهاية بدون تجاهل أي سطر. ابدأ التنفيذ مباشرة بدون أي مقدمة.
 
 اسم النظام: عَون
 
-
 الإعدادات:
-
 الشخصية: ${currentSettings.persona}
-
 اللغة: ${currentSettings.language}
-
 الأسلوب: ${currentSettings.style}
-
 طول التلخيص: ${currentSettings.length}
 
+# ==================== شرط طول النص (شرط صارم)
 
-====================
+يوجد حد أقصى لطول النص النهائي يجب الالتزام به بدقة:
 
-ترتيب الإخراج الإجباري
+إذا كان طول التلخيص = طويل  
+يجب أن يكون النص النهائي بالكامل 1400 كلمة كحد أقصى ولا يسمح بتجاوز هذا الحد إطلاقاً.
 
-====================
+إذا كان طول التلخيص = قصير  
+يجب أن يكون النص النهائي بالكامل 800 كلمة كحد أقصى ولا يسمح بتجاوز هذا الحد إطلاقاً.
 
+قواعد هذا الشرط:
+- يمنع تجاوز الحد المحدد حتى بكلمة واحدة.
+- يمكن أن يكون النص أقل من الحد لكن لا يمكن أن يتجاوزه.
+- يجب حساب الكلمات في النص النهائي بالكامل قبل الإرسال.
+- الحد يشمل كل شيء في الإخراج: الشرح + الأمثلة + القوانين + الأكواد + النقاط + الجملة التحفيزية.
+
+# ==================== ترتيب الإخراج الإجباري
 
 يجب الالتزام بالترتيب التالي حرفياً:
 
-
 1- العنوان  
-
 2- الفقرات والشرح  
-
 3- الأمثلة (إذا احتاج الملف إلى أمثلة)  
-
 4- القوانين (إذا وجدت فقط)  
-
 5- الأكواد البرمجية (إذا وجدت فقط)  
-
 6- النقاط الجوهرية  
-
-7- الجملة التحفيزية  
-
+7- الجملة التحفيزية
 
 ممنوع تغيير هذا الترتيب.
 
-
-====================
-
-العنوان
-
-====================
-
+# ==================== العنوان
 
 أول سطر في الإجابة يجب أن يكون العنوان بالشكل التالي:
 
-
 {{العنوان}}
-
 
 يجب أن يكون العنوان مكوناً من خمس كلمات فقط ويعبر عن محتوى الملف بالكامل.
 
-
-====================
-
-الفقرات والشرح
-
-====================
-
+# ==================== الفقرات والشرح
 
 بعد العنوان مباشرة يبدأ التلخيص.
 
-
 يجب تقسيم التلخيص إلى فقرات حسب الفصول أو الأبواب أو الأجزاء كما وردت في الملف.
-
 
 شكل الفقرات يجب أن يكون كالتالي:
 
+--»🔸 عنوان الفقرة 🔸 الشرح الخاص بها
 
---»🔸 عنوان الفقرة 🔸  
-
-الشرح الخاص بها
-
-
---»🔸 عنوان الفقرة التالية 🔸  
-
-الشرح الخاص بها
-
+--»🔸 عنوان الفقرة التالية 🔸 الشرح الخاص بها
 
 قواعد الفقرات:
 
 - كل عنوان فقرة يبدأ بالشكل: --»🔸
-
 - ينتهي عنوان الفقرة بالرمز 🔸
-
 - بعد العنوان مباشرة يأتي الشرح
-
 - لا تترك مسافات كبيرة بين الفقرات
-
 - الشرح يجب أن يكون مستنتجاً من محتوى الملف
-
 
 طريقة الشرح تعتمد على طول التلخيص:
 
-
 إذا كان طول التلخيص = طويل  
-
 اكتب شرحاً مفصلاً وطويلاً بحيث إذا قرأ المستخدم التلخيص لن يحتاج إلى قراءة الملف بالكامل.
 
-
 إذا كان طول التلخيص = قصير  
-
 اكتب شرحاً مختصراً مفيداً يعطي فكرة عامة واضحة عن محتوى الفصل.
 
-
-====================
-
-الأمثلة
-
-====================
-
+# ==================== الأمثلة
 
 بعد الانتهاء من الشرح قد يكون من المفيد إضافة أمثلة تطبيقية لزيادة الفهم.
 
-
 إذا احتاج الملف إلى أمثلة اكتب أولاً:
-
 
 ««🔸 أمثلة تطبيقية 🔸»»
 
-
 قواعد الأمثلة:
 
-
 - الحد الأقصى للأمثلة هو 5 أمثلة فقط.
-
 - يمكن أن يكون العدد أقل إذا كان ذلك كافياً.
-
 - إذا كان الملف لا يحتاج إلى أمثلة فلا تكتب هذا القسم نهائياً.
-
 - لا تكتب أمثلة للقوانين نفسها.
-
 - الأمثلة تكون لتوضيح المفاهيم أو التطبيقات فقط.
-
 
 شكل كتابة الأمثلة يجب أن يكون كالتالي:
 
-
 ×1» نص المثال  
-
 الشرح أو الحل تحت المثال مباشرة
 
-
 ×2» نص المثال الثاني  
-
 الشرح أو الحل أو التفسير تحت المثال مباشرة
 
-
 ×3» نص المثال الثالث  
-
 الشرح أو الحل أو التفسير
-
 
 قواعد الأمثلة:
 
 - يمكن أن يحتوي المثال على شرح أو تفسير أو حل
-
 - ليس من الضروري أن يكون كل مثال مسألة حسابية
-
 - يمكن أن يكون مثالاً توضيحياً لفكرة أو مفهوم
-
 - يجب أن يكون المثال مرتبطاً بمحتوى الملف
-
 - لا تكتب أكثر من 5 أمثلة
 
-
-====================
-
-القوانين
-
-====================
-
+# ==================== القوانين
 
 إذا وجدت قوانين أو علاقات علمية داخل الملف اكتب أولاً:
 
-
 ««🔸 القوانين 🔸»»
-
 
 بعدها اكتب جميع القوانين الموجودة في الملف.
 
-
 يوجد نوعان من القوانين ويجب التفرقة بينهما:
 
-
---------------------------------
-
-النوع الأول: القوانين الرمزية
-
---------------------------------
-
+## النوع الأول: القوانين الرمزية
 
 وهي القوانين المكتوبة برموز رياضية أو علمية.
 
-
 يجب إخراجها بصيغة LaTeX.
 
-
-مهم جداً:
-
-يجب كتابة القانون بصيغة LaTeX ولكن بنفس الشكل الموجود داخل الملف بدون أي تعديل أو تغيير.
-
+مهم جداً: يجب كتابة القانون بصيغة LaTeX ولكن بنفس الشكل الموجود داخل الملف بدون أي تعديل أو تغيير.
 
 ممنوع:
 
 - شرح القانون
-
 - تبسيطه
-
 - إعادة صياغته
-
 - إضافة رموز
-
 - حذف أي جزء منه
-
 
 طريقة الكتابة:
 
-
-⟪FORMULA⟫
-
-القانون بصيغة LaTeX كما ورد في الملف
-
-⟫FORMULA⟫
-
+⟪FORMULA⟫ القانون بصيغة LaTeX كما ورد في الملف ⟫FORMULA⟫
 
 قواعد القوانين الرمزية:
 
 - كل قانون داخل كتلة منفصلة
-
 - إذا وجد أكثر من قانون كرر نفس البنية لكل قانون
-
 - لا تدمج قانونين داخل نفس الكتلة
-
 - لا تكتب أي نص داخل الوسوم غير القانون فقط
 
-
---------------------------------
-
-النوع الثاني: القوانين العربية
-
---------------------------------
-
+## النوع الثاني: القوانين العربية
 
 إذا كان القانون مكتوباً بالعربية النصية داخل الملف وليس معادلة رمزية:
 
-
 اكتبه كما هو حرفياً.
-
 
 قواعد القوانين العربية:
 
 - يكتب كسطر مستقل
-
 - لا يوضع داخل ⟪FORMULA⟫
-
 - لا يتم تعديل صياغته
-
 - لا يتم شرحه
-
 
 ترتيب القوانين داخل القسم يكون كالتالي:
 
-
 1- القوانين الرمزية داخل ⟪FORMULA⟫  
-
 2- بعدها القوانين العربية النصية بدون أي وسوم
 
+إذا لم توجد قوانين في الملف: لا تكتب قسم القوانين نهائياً.
 
-إذا لم توجد قوانين في الملف:
-
-لا تكتب قسم القوانين نهائياً.
-
-
-====================
-
-الأكواد البرمجية
-
-====================
-
+# ==================== الأكواد البرمجية
 
 إذا وجدت أكواد في الملف اكتب أولاً:
 
-
 ««🔸 الاكواد البرمجية 🔸»»
-
 
 بعدها ضع الأكواد.
 
-
 كل كود يجب أن يكون بين العلامتين التاليتين:
 
-
-⟪CODE⟫
-
-الكود كما هو حرفياً بدون أي تعديل
-
-⟫CODE⟫
-
+⟪CODE⟫ الكود كما هو حرفياً بدون أي تعديل ⟫CODE⟫
 
 قواعد الأكواد:
 
 - يمكن أن يوجد كود واحد أو عدة أكواد
-
 - إذا وجد أكثر من كود ضع كل كود في كتلة منفصلة
-
 - لا تدمج أكثر من كود داخل نفس الكتلة
-
 - يجب نقل الكود كما هو حرفياً
-
 - يمنع تعديل أي حرف في الكود
 
+إذا لم توجد أكواد في الملف: لا تكتب كلمة الاكواد البرمجية ولا تكتب أي شيء متعلق بها.
 
-إذا لم توجد أكواد في الملف:
-
-لا تكتب كلمة الاكواد البرمجية ولا تكتب أي شيء متعلق بها.
-
-
-====================
-
-النقاط الجوهرية
-
-====================
-
+# ==================== النقاط الجوهرية
 
 بعد الانتهاء من الشرح والأمثلة والقوانين والأكواد اكتب أولاً:
 
-
 ««🔸 النقاط الجوهرية 🔸»»
-
 
 ثم اكتب 8 نقاط فقط مستخلصة من الملف بالكامل بالشكل التالي:
 
-
 1--⟩ النقطة الأولى
-
 
 2--⟩ النقطة الثانية
 
-
 3--⟩ النقطة الثالثة
-
 
 4--⟩ النقطة الرابعة
 
-
 5--⟩ النقطة الخامسة
-
 
 6--⟩ النقطة السادسة
 
-
 7--⟩ النقطة السابعة
 
-
 8--⟩ النقطة الثامنة
-
 
 قواعد النقاط:
 
 - يجب أن تكون بين كل نقطة والتي تليها مسافة سطر واحد
-
 - لا تحتوي على قوانين
-
 - لا تحتوي على معادلات
-
 - تمثل خلاصة أهم أفكار الملف
-
 - تكون مستنتجة من المحتوى نفسه
 
-
-====================
-
-الجملة التحفيزية
-
-====================
-
+# ==================== الجملة التحفيزية
 
 في النهاية اكتب:
 
-
 💕 الجملة التحفيذية 🔑
-
 
 ثم اكتب بعدها مباشرة جملة تحفيزية قصيرة بالتشكيل الكامل تشجع المستخدم على الاستمرار.
 
-
-====================
-
-قواعد صارمة
-
-====================
-
+# ==================== قواعد صارمة
 
 - لا تستخدم Markdown
-
 - لا تستخدم JSON
-
 - لا تكتب أي تعليق
-
 - لا تكرر القوانين
-
 - لا تكتب أي نص داخل ⟪FORMULA⟫ غير القانون
-
 - لا تكتب أي نص داخل ⟪CODE⟫ غير الكود
 
-
-====================
-
-التحقق قبل الإرسال
-
-====================
-
+# ==================== التحقق قبل الإرسال
 
 تأكد من:
 
-
 - العنوان مكتوب بين {{ }}
-
 - الترتيب صحيح
-
 - الفقرات تبدأ بالشكل --»🔸 وتنتهي 🔸
-
 - الأمثلة لا تتجاوز 5
-
 - وجود 8 نقاط جوهرية فقط
-
 - وجود مسافة سطر واحد بين كل نقطة
-
 - كل قانون رمزي مكتوب بصيغة LaTeX
-
 - كل قانون رمزي داخل ⟪FORMULA⟫ و ⟫FORMULA⟫
-
 - القوانين العربية مكتوبة كما هي بدون وسوم
-
 - كل كود بين ⟪CODE⟫ و ⟫CODE⟫
-
 - عدم كتابة قسم القوانين إذا لم توجد قوانين
-
 - عدم كتابة قسم الأكواد إذا لم توجد أكواد
-
 - عدم كتابة قسم الأمثلة إذا لم يحتج الملف إلى أمثلة
-
 
 ابدأ التنفيذ الآن.
 `;
@@ -1735,12 +1545,10 @@
 
         // ========== إنشاء البرومبت حسب نوع التلخيص ==========
         function createPrompt() {
-            // التلخيص العادي - استخدم البرومت الجديد
             if (currentSettings.format === 'عادي') {
                 return getNormalSummaryPrompt();
             }
             
-            // جداول المفاهيم - كما هي بدون تغيير
             else if (currentSettings.format === 'مفاهيم') {
                 const lengthInstructions = {
                     طويل: 'استخرج 10-15 مفهوم أساسي من الملف مع شرح مفصل لكل مفهوم. غطِ جميع أجزاء الملف.',
@@ -1782,7 +1590,6 @@
                 return prompt;
             }
             
-            // جداول الأسئلة والأجوبة - كما هي بدون تغيير
             else {
                 const lengthInstructions = {
                     طويل: 'استخرج 10-15 سؤال وجواب يغطون جميع محتويات الملف.',
@@ -1829,35 +1636,22 @@
         function formatText(text) {
             if (!text) return '';
             
-            // استخدام الدالة القوية لتحليل النص
             const parsed = parseAIResponse(text);
             
-            // تنظيف النص من التنسيقات الأخرى
             let cleanText = parsed.cleanText
                 .replace(/\\n/g, '\n')
                 .replace(/\\r/g, '')
                 .replace(/\\t/g, '    ');
             
-            // تطبيق التنسيقات الأساسية
             cleanText = cleanText
-                // معالجة العنوان
                 .replace(/\{\{(.*?)\}\}/g, '<div class="main-title">$1</div>')
-                
-                // معالجة عناوين الفقرات
                 .replace(/--»🔸\s*(.*?)\s*🔸/g, '<div class="section-title"><span class="special-symbol">--»🔸</span> $1 <span class="special-symbol">🔸</span></div>')
-                
-                // معالجة عناوين الأقسام
                 .replace(/««🔸\s*(.*?)\s*🔸»»/g, '<div class="subsection-title"><span class="special-symbol">««🔸</span> $1 <span class="special-symbol">🔸»»</span></div>')
-                
-                // معالجة الأمثلة
                 .replace(/×(\d+)»\s*(.*?)(?=\n|$)/g, '<div class="highlight-text">مثال $1: $2</div>')
-                
-                // معالجة النقاط الجوهرية
                 .replace(/(\d+)--⟩\s*(.*?)(?=\n\d+--⟩|\n*$)/gs, (match, num, content) => {
                     return `<div class="key-point-item"><span class="special-number">${num}</span> ${content.trim()}</div><div style="height: 10px;"></div>`;
                 });
             
-            // تحويل الفقرات
             const paragraphs = cleanText.split('\n\n');
             cleanText = paragraphs.map(p => {
                 if (p.trim() && !p.includes('<div') && !p.includes('class=')) {
@@ -1866,7 +1660,6 @@
                 return p;
             }).join('\n');
             
-            // تحويل السطور المفردة
             cleanText = cleanText.replace(/\n/g, '<br>');
             
             return cleanText;
@@ -1878,7 +1671,6 @@
             const resultContent = document.getElementById('resultContent');
             const fontControls = document.getElementById('fontControls');
             
-            // ضبط اتجاه الصفحة حسب اللغة
             if (currentSettings.language === 'انجليزي') {
                 document.documentElement.dir = 'ltr';
                 document.documentElement.lang = 'en';
@@ -1887,12 +1679,10 @@
                 document.documentElement.lang = 'ar';
             }
             
-            // عرض المحتوى حسب النوع
             if (currentSettings.format === 'مفاهيم') {
                 fontControls.style.display = 'none';
                 document.getElementById('resultHead').textContent = result.head || 'جدول المفاهيم';
                 
-                // عرض جدول المفاهيم
                 let tableHTML = `
                     <div class="table-container">
                         <table class="concepts-table">
@@ -1925,7 +1715,6 @@
                 fontControls.style.display = 'none';
                 document.getElementById('resultHead').textContent = result.head || 'أسئلة وأجوبة';
                 
-                // عرض جدول الأسئلة
                 let tableHTML = `
                     <div class="table-container">
                         <table class="qa-table">
@@ -1955,7 +1744,6 @@
             }
             
             else {
-                // تلخيص عادي - استخدم التنسيق الجديد
                 fontControls.style.display = 'flex';
                 
                 let content = '';
@@ -1965,23 +1753,19 @@
                 } else {
                     content = result;
                     
-                    // محاولة استخراج العنوان
                     const titleMatch = content.match(/\{\{(.*?)\}\}/);
                     if (titleMatch) {
                         document.getElementById('resultHead').textContent = titleMatch[1];
                     }
                 }
                 
-                // تطبيق التنسيق
                 resultContent.innerHTML = `<div class="result-text" id="resultText">${formatText(content)}</div>`;
                 
-                // تطبيق حجم الخط
                 const resultText = document.getElementById('resultText');
                 if (resultText) {
                     resultText.style.fontSize = fontSize + 'px';
                 }
                 
-                // عرض القوانين باستخدام KaTeX/MathJax
                 setTimeout(() => {
                     renderFormulas();
                 }, 100);
@@ -2033,7 +1817,6 @@
                     }
                 }
                 else {
-                    // إزالة الوسوم من النص للنسخ
                     let rawText = currentResult.page || currentResult.text || '';
                     textToCopy = rawText
                         .replace(/⟪FORMULA⟫/g, '')
@@ -2232,11 +2015,9 @@
 
         // ========== تهيئة التطبيق ==========
         function initApp() {
-            // عناصر الصفحة
             const fileInput = document.getElementById('fileInput');
             const uploadArea = document.getElementById('uploadArea');
             
-            // رفع الملف
             uploadArea.onclick = () => fileInput.click();
             
             uploadArea.ondragover = (e) => {
@@ -2262,7 +2043,6 @@
                 if (e.target.files[0]) handleFile(e.target.files[0]);
             };
             
-            // أزرار المعاينة
             document.getElementById('cancelBtn').onclick = () => {
                 fileInput.value = '';
                 selectedFile = null;
@@ -2282,7 +2062,6 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             };
             
-            // إعدادات الخيارات
             const setupOptions = () => {
                 document.querySelectorAll('.option-btn').forEach(btn => {
                     btn.onclick = function() {
@@ -2303,10 +2082,8 @@
             };
             setupOptions();
             
-            // زر التوليد
             document.getElementById('generateBtn').onclick = generateSummary;
             
-            // الصفحة الرئيسية
             document.getElementById('homeBtn').onclick = () => {
                 document.getElementById('uploadSection').style.display = 'block';
                 document.getElementById('settingsSection').style.display = 'none';
@@ -2318,7 +2095,6 @@
                 document.documentElement.lang = 'ar';
             };
             
-            // السجلات
             const modal = document.getElementById('recordsModal');
             const recordsBtn = document.getElementById('recordsBtn');
             const closeModal = document.getElementById('closeModal');
@@ -2336,9 +2112,8 @@
                 if (e.target === modal) modal.classList.remove('show');
             };
             
-            // تحكم حجم الخط - يعمل على النص فقط
             document.getElementById('increaseFont').onclick = () => {
-                if (fontSize < 30) { // زيادة الحد الأقصى
+                if (fontSize < 30) {
                     fontSize += 2;
                     const resultText = document.getElementById('resultText');
                     if (resultText) {
@@ -2348,7 +2123,7 @@
             };
             
             document.getElementById('decreaseFont').onclick = () => {
-                if (fontSize > 14) { // تقليل الحد الأدنى
+                if (fontSize > 14) {
                     fontSize -= 2;
                     const resultText = document.getElementById('resultText');
                     if (resultText) {
@@ -2357,7 +2132,6 @@
                 }
             };
             
-            // زر نسخ الكل
             document.getElementById('copyAllBtn').onclick = copyAllContent;
         }
 
@@ -2451,11 +2225,9 @@
                 let result;
                 const text = await response.text();
                 
-                // لو التلخيص عادي، خزن النص كما هو
                 if (currentSettings.format === 'عادي') {
                     result = text;
                 } else {
-                    // للجداول، حاول نحول لـ JSON
                     try {
                         const jsonMatch = text.match(/\{[\s\S]*\}/);
                         result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
@@ -2464,12 +2236,10 @@
                     }
                 }
                 
-                // خصم الرصيد
                 await database.ref(`users_Awn/${currentUser.id}/coin`).set(userCoins - fileInfo.cost);
                 userCoins -= fileInfo.cost;
                 document.getElementById('coinsCount').textContent = userCoins;
                 
-                // حفظ في السجلات
                 const newRecordRef = database.ref('records').push();
                 await newRecordRef.set({
                     userId: currentUser.id,
@@ -2483,7 +2253,6 @@
                 
                 console.log('تم حفظ السجل بنجاح:', newRecordRef.key);
                 
-                // عرض النتائج
                 displayResults(result);
                 
                 document.getElementById('settingsSection').style.display = 'none';
