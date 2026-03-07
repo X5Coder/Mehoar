@@ -10,11 +10,11 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     
-    <!-- KaTeX للمعادلات الرياضية (الأسرع) -->
+    <!-- KaTeX للمعادلات الرياضية -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     
-    <!-- MathJax كخطة بديلة إذا فشل KaTeX -->
+    <!-- MathJax كخطة بديلة -->
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -46,13 +46,8 @@
             --navbar: 70px;
             
             /* ألوان التنسيقات */
-            --title-gradient: linear-gradient(145deg, #8B7355, #A9927D);
-            --law-bg: #1E1E1E;
-            --law-text: #D4A574;
             --code-bg: #0D1117;
             --code-text: #E6EDF3;
-            --highlight-bg: #FFF3E0;
-            --number-bg: #8B7355;
         }
         
         body {
@@ -181,7 +176,7 @@
             width: 100%;
         }
         
-        /* البطاقات - للأقسام العادية (رفع الملف والإعدادات) */
+        /* البطاقات للأقسام العادية */
         .card {
             background: var(--white);
             border-radius: var(--radius-lg);
@@ -488,7 +483,7 @@
             margin-bottom: 1rem;
         }
         
-        /* ===== قسم النتائج الرئيسي - موسع بالكامل ===== */
+        /* ===== قسم النتائج الرئيسي - قالب واحد فقط ===== */
         .result-section {
             background: white;
             border-radius: var(--radius-lg);
@@ -568,100 +563,67 @@
             color: white;
         }
         
-        /* ===== حاوية النتائج الخارجية - موسعة ===== */
+        /* ===== حاوية النتائج الرئيسية - قالب واحد فقط ===== */
         .result-content {
             padding: 3rem;
-            background: #FAFAFA;
-            width: 100%;
-        }
-        
-        /* ===== حاوية النص الداخلية - موسعة ===== */
-        .result-text {
             background: white;
-            padding: 3rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(139, 115, 85, 0.1);
-            line-height: 2;
-            transition: font-size 0.3s;
-            word-wrap: break-word;
-            font-size: 18px;
             width: 100%;
-            max-width: 100%;
-            margin: 0 auto;
+            font-size: 18px;
+            line-height: 1.8;
+            transition: font-size 0.3s;
         }
         
-        /* تنسيق الفقرات داخل النص */
-        .result-text p {
-            margin-bottom: 1.5rem;
-            font-size: inherit;
-            line-height: inherit;
-        }
-        
-        /* العنوان الرئيسي */
+        /* تنسيقات النص */
         .main-title {
             text-align: center;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 900;
             color: var(--primary-dark);
             margin: 2rem 0 3rem 0;
             padding: 1rem;
-            position: relative;
             border-bottom: 3px solid var(--secondary);
-            width: 100%;
         }
         
-        /* العناوين الفرعية */
         .section-title {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             color: var(--primary-dark);
-            margin: 2.5rem 0 1.5rem 0;
-            padding-right: 1.5rem;
+            margin: 2rem 0 1rem 0;
+            padding-right: 1rem;
             border-right: 5px solid var(--secondary);
         }
         
-        /* العناوين الصغيرة */
         .subsection-title {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary);
-            margin: 2rem 0 1.2rem 0;
-            padding-right: 1rem;
-        }
-        
-        /* النص المميز */
-        .highlight-text {
-            display: inline-block;
-            background: var(--highlight-bg);
-            padding: 0.4rem 1.5rem;
-            border-radius: 40px;
-            font-weight: 600;
-            color: var(--primary-dark);
-            border-right: 4px solid var(--secondary);
-            margin: 0.8rem 0;
-            font-size: 1.1rem;
+            margin: 1.5rem 0 1rem 0;
+            padding-right: 0.5rem;
         }
         
         /* تنسيق القوانين - بدون خلفية */
         .formula-block {
-            margin: 1.5rem 0;
+            margin: 1rem 0;
             padding: 0.5rem 0;
             direction: ltr;
             text-align: center;
             overflow-x: auto;
-            font-size: 1.2rem;
+            border-bottom: 1px dashed var(--secondary);
+        }
+        
+        .formula-block:last-child {
+            border-bottom: none;
         }
         
         .formula-block .katex {
-            font-size: 1.3em;
+            font-size: 1.2em;
         }
         
         .formula-block .katex-display {
             margin: 0.5rem 0;
         }
         
-        /* الأكواد البرمجية - مع زر نسخ فقط */
+        /* الأكواد البرمجية */
         .code-block-wrapper {
             background: var(--code-bg);
             border-radius: 12px;
@@ -714,49 +676,25 @@
             background: var(--code-bg);
         }
         
-        /* الأرقام المميزة */
-        .special-number {
-            display: inline-block;
-            background: var(--number-bg);
-            color: white;
-            padding: 0.3rem 1rem;
-            border-radius: 40px;
-            font-weight: 800;
-            margin: 0 0.3rem;
-            font-size: 1.1rem;
-        }
-        
-        /* الرموز الخاصة */
-        .special-symbol {
-            color: var(--secondary);
-            font-weight: 900;
-            margin: 0 0.4rem;
-            font-size: 1.3em;
-        }
-        
-        /* النقاط الرئيسية */
-        .key-points-section {
-            margin-top: 3rem;
-            padding: 2rem;
-            background: rgba(139, 115, 85, 0.05);
-            border-radius: var(--radius);
-            border: 1px solid var(--secondary);
-        }
-        
-        .key-points-section h3 {
-            color: var(--primary-dark);
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
+        /* النقاط الجوهرية - بدون أشكال */
+        .key-points-list {
+            margin: 1rem 0;
         }
         
         .key-point-item {
-            background: white;
-            padding: 1.2rem 2rem;
+            margin: 0.5rem 0;
+            padding-right: 1rem;
+        }
+        
+        /* الأمثلة */
+        .example-item {
             margin: 1rem 0;
-            border-radius: 12px;
-            border-right: 5px solid var(--primary);
-            box-shadow: var(--shadow);
-            font-size: 1.1rem;
+        }
+        
+        .example-number {
+            font-weight: 700;
+            color: var(--primary);
+            margin-left: 0.5rem;
         }
         
         /* أنماط الجداول */
@@ -813,10 +751,6 @@
             font-weight: 700;
             color: var(--primary);
             width: 40%;
-        }
-        
-        .concept-def, .qa-answer {
-            color: var(--text);
         }
         
         /* الإشعارات */
@@ -926,10 +860,9 @@
             .card { padding: 1.5rem; }
             .card-title { font-size: 1.8rem; }
             .result-content { padding: 1.5rem; }
-            .result-text { padding: 1.5rem; }
-            .main-title { font-size: 2rem; }
-            .section-title { font-size: 1.6rem; }
-            .subsection-title { font-size: 1.4rem; }
+            .main-title { font-size: 1.8rem; }
+            .section-title { font-size: 1.5rem; }
+            .subsection-title { font-size: 1.3rem; }
             
             .notifications {
                 left: 1rem;
@@ -939,10 +872,6 @@
             
             .concepts-table, .qa-table {
                 min-width: 100%;
-            }
-            
-            .concepts-table td, .qa-table td {
-                padding: 0.8rem;
             }
         }
     </style>
@@ -1081,7 +1010,7 @@
             </button>
         </section>
         
-        <!-- قسم النتائج - موسع بالكامل -->
+        <!-- قسم النتائج - قالب واحد فقط -->
         <section class="result-section" id="resultSection">
             <div class="result-header">
                 <h2 id="resultHead">ملخص الملف</h2>
@@ -1096,7 +1025,7 @@
             </div>
             
             <div class="result-content" id="resultContent">
-                <!-- هنا يظهر المحتوى حسب نوع التلخيص -->
+                <!-- المحتوى يظهر هنا مباشرة -->
             </div>
         </section>
         
@@ -1202,18 +1131,14 @@
             let formulas = [];
             let codes = [];
             
-            // استخراج القوانين باستخدام Regex غير جشع
             const formulaRegex = /⟪FORMULA⟫([\s\S]*?)⟫FORMULA⟫/g;
-            // استخراج الأكواد باستخدام Regex غير جشع
             const codeRegex = /⟪CODE⟫([\s\S]*?)⟫CODE⟫/g;
             
-            // استبدال القوانين بعناصر HTML
             let cleanText = text.replace(formulaRegex, (match, formula) => {
                 formulas.push(formula.trim());
                 return `<div class="formula-block" data-latex="${encodeURIComponent(formula.trim())}"></div>`;
             });
             
-            // استبدال الأكواد بعناصر HTML مع زر نسخ
             cleanText = cleanText.replace(codeRegex, (match, code) => {
                 codes.push(code.trim());
                 const codeId = 'code_' + Math.random().toString(36).substr(2, 9);
@@ -1237,7 +1162,7 @@
             };
         }
 
-        // ========== دالة عرض القوانين باستخدام KaTeX أولاً ثم MathJax ==========
+        // ========== دالة عرض القوانين باستخدام KaTeX ==========
         function renderFormulas() {
             const elements = document.querySelectorAll(".formula-block");
             
@@ -1257,10 +1182,10 @@
                         el.innerHTML = "\\[" + latex + "\\]";
                         MathJax.typesetPromise([el]).catch(mathjaxError => {
                             console.error('MathJax also failed:', mathjaxError);
-                            el.innerHTML = `<div style="direction: ltr; text-align: center; padding: 1rem; background: #f5f5f5; border-radius: 8px;">${escapeHTML(latex)}</div>`;
+                            el.innerHTML = `<div style="direction: ltr; text-align: center; padding: 0.5rem;">${escapeHTML(latex)}</div>`;
                         });
                     } else {
-                        el.innerHTML = `<div style="direction: ltr; text-align: center; padding: 1rem; background: #f5f5f5; border-radius: 8px;">${escapeHTML(latex)}</div>`;
+                        el.innerHTML = `<div style="direction: ltr; text-align: center; padding: 0.5rem;">${escapeHTML(latex)}</div>`;
                     }
                 }
             });
@@ -1276,13 +1201,16 @@
 
         // ========== البرومت الجديد مع شرط طول النص ==========
         function getNormalSummaryPrompt() {
-            // تحديد الحد الأقصى للكلمات حسب طول التلخيص
             const maxWords = currentSettings.length === 'طويل' ? 1400 : 800;
             
             return `
-# ==================== المهمة
+====================
+المهمة
+====================
 
-اقرأ ملف PDF بالكامل من البداية إلى النهاية بدون تجاهل أي سطر. ابدأ التنفيذ مباشرة بدون أي مقدمة.
+اقرأ ملف PDF بالكامل من البداية إلى النهاية بدون تجاهل أي سطر.
+
+ابدأ التنفيذ مباشرة بدون أي مقدمة.
 
 اسم النظام: عَون
 
@@ -1292,23 +1220,35 @@
 الأسلوب: ${currentSettings.style}
 طول التلخيص: ${currentSettings.length}
 
-# ==================== شرط طول النص (شرط صارم)
+⚠️ يجب الالتزام بالمدخلات السابقة التزاماً كاملاً.
+⚠️ يمنع تغييرها أو تجاهلها.
+⚠️ يجب أن ينعكس تأثيرها في شكل التلخيص النهائي.
 
-يوجد حد أقصى لطول النص النهائي يجب الالتزام به بدقة:
+====================
+شرط طول النص (شرط صارم جداً)
+====================
+
+يوجد حد أقصى لطول النص النهائي ويجب الالتزام به بدقة.
 
 إذا كان طول التلخيص = طويل  
-يجب أن يكون النص النهائي بالكامل 1400 كلمة كحد أقصى ولا يسمح بتجاوز هذا الحد إطلاقاً.
+الحد الأقصى للنص النهائي هو 1400 كلمة فقط.
 
 إذا كان طول التلخيص = قصير  
-يجب أن يكون النص النهائي بالكامل 800 كلمة كحد أقصى ولا يسمح بتجاوز هذا الحد إطلاقاً.
+الحد الأقصى للنص النهائي هو 800 كلمة فقط.
 
 قواعد هذا الشرط:
+
 - يمنع تجاوز الحد المحدد حتى بكلمة واحدة.
 - يمكن أن يكون النص أقل من الحد لكن لا يمكن أن يتجاوزه.
-- يجب حساب الكلمات في النص النهائي بالكامل قبل الإرسال.
-- الحد يشمل كل شيء في الإخراج: الشرح + الأمثلة + القوانين + الأكواد + النقاط + الجملة التحفيزية.
+- يجب حساب الكلمات قبل إرسال الإجابة.
+- الحد يشمل جميع أجزاء الإخراج بدون استثناء.
 
-# ==================== ترتيب الإخراج الإجباري
+يشمل:
+الشرح + الأمثلة + القوانين + الأكواد + النقاط + الجملة التحفيزية.
+
+====================
+ترتيب الإخراج الإجباري
+====================
 
 يجب الالتزام بالترتيب التالي حرفياً:
 
@@ -1320,23 +1260,31 @@
 6- النقاط الجوهرية  
 7- الجملة التحفيزية
 
-ممنوع تغيير هذا الترتيب.
+⚠️ ممنوع تغيير هذا الترتيب.
 
-# ==================== العنوان
+====================
+العنوان
+====================
 
-أول سطر في الإجابة يجب أن يكون العنوان بالشكل التالي:
+أول سطر في الإجابة يجب أن يكون بالشكل التالي:
 
 {{العنوان}}
 
-يجب أن يكون العنوان مكوناً من خمس كلمات فقط ويعبر عن محتوى الملف بالكامل.
+قواعد العنوان:
 
-# ==================== الفقرات والشرح
+- يجب أن يكون بين {{ }}
+- يجب أن يتكون من خمس كلمات فقط
+- يجب أن يعبر عن محتوى الملف بالكامل
+
+====================
+الفقرات والشرح
+====================
 
 بعد العنوان مباشرة يبدأ التلخيص.
 
-يجب تقسيم التلخيص إلى فقرات حسب الفصول أو الأبواب أو الأجزاء كما وردت في الملف.
+يجب تقسيم التلخيص إلى فقرات حسب الفصول أو الأبواب أو الأجزاء الموجودة في الملف.
 
-شكل الفقرات يجب أن يكون كالتالي:
+شكل الفقرات:
 
 --»🔸 عنوان الفقرة 🔸 الشرح الخاص بها
 
@@ -1344,23 +1292,23 @@
 
 قواعد الفقرات:
 
-- كل عنوان فقرة يبدأ بالشكل: --»🔸
-- ينتهي عنوان الفقرة بالرمز 🔸
-- بعد العنوان مباشرة يأتي الشرح
+- كل عنوان يبدأ بـ --»🔸
+- ينتهي العنوان بالرمز 🔸
+- بعد العنوان يأتي الشرح مباشرة
 - لا تترك مسافات كبيرة بين الفقرات
 - الشرح يجب أن يكون مستنتجاً من محتوى الملف
 
 طريقة الشرح تعتمد على طول التلخيص:
 
-إذا كان طول التلخيص = طويل  
-اكتب شرحاً مفصلاً وطويلاً بحيث إذا قرأ المستخدم التلخيص لن يحتاج إلى قراءة الملف بالكامل.
+إذا كان التلخيص = طويل  
+اكتب شرحاً مفصلاً يغني عن قراءة الملف بالكامل.
 
-إذا كان طول التلخيص = قصير  
-اكتب شرحاً مختصراً مفيداً يعطي فكرة عامة واضحة عن محتوى الفصل.
+إذا كان التلخيص = قصير  
+اكتب شرحاً مختصراً يعطي فكرة واضحة وسريعة.
 
-# ==================== الأمثلة
-
-بعد الانتهاء من الشرح قد يكون من المفيد إضافة أمثلة تطبيقية لزيادة الفهم.
+====================
+الأمثلة
+====================
 
 إذا احتاج الملف إلى أمثلة اكتب أولاً:
 
@@ -1368,117 +1316,125 @@
 
 قواعد الأمثلة:
 
-- الحد الأقصى للأمثلة هو 5 أمثلة فقط.
-- يمكن أن يكون العدد أقل إذا كان ذلك كافياً.
-- إذا كان الملف لا يحتاج إلى أمثلة فلا تكتب هذا القسم نهائياً.
-- لا تكتب أمثلة للقوانين نفسها.
-- الأمثلة تكون لتوضيح المفاهيم أو التطبيقات فقط.
+- الحد الأقصى 5 أمثلة فقط
+- يمكن أن يكون العدد أقل
+- لا تكتب أمثلة للقوانين
+- الأمثلة لتوضيح المفاهيم فقط
 
-شكل كتابة الأمثلة يجب أن يكون كالتالي:
+الشكل:
 
 ×1» نص المثال  
-الشرح أو الحل تحت المثال مباشرة
+الشرح أو الحل
 
 ×2» نص المثال الثاني  
-الشرح أو الحل أو التفسير تحت المثال مباشرة
+الشرح أو الحل
 
 ×3» نص المثال الثالث  
-الشرح أو الحل أو التفسير
+الشرح أو الحل
 
-قواعد الأمثلة:
+====================
+القوانين
+====================
 
-- يمكن أن يحتوي المثال على شرح أو تفسير أو حل
-- ليس من الضروري أن يكون كل مثال مسألة حسابية
-- يمكن أن يكون مثالاً توضيحياً لفكرة أو مفهوم
-- يجب أن يكون المثال مرتبطاً بمحتوى الملف
-- لا تكتب أكثر من 5 أمثلة
-
-# ==================== القوانين
-
-إذا وجدت قوانين أو علاقات علمية داخل الملف اكتب أولاً:
+إذا وجدت قوانين داخل الملف اكتب:
 
 ««🔸 القوانين 🔸»»
 
-بعدها اكتب جميع القوانين الموجودة في الملف.
+⚠️ يجب استخراج جميع القوانين الموجودة في الملف بدون استثناء.
 
-يوجد نوعان من القوانين ويجب التفرقة بينهما:
+يوجد نوعان من القوانين:
 
-## النوع الأول: القوانين الرمزية
+====================
+القوانين الرمزية
+====================
 
 وهي القوانين المكتوبة برموز رياضية أو علمية.
 
 يجب إخراجها بصيغة LaTeX.
 
-مهم جداً: يجب كتابة القانون بصيغة LaTeX ولكن بنفس الشكل الموجود داخل الملف بدون أي تعديل أو تغيير.
+⚠️ تشديد صارم:
 
-ممنوع:
+- يجب نقل القانون كما هو تماماً.
+- يمنع تعديل أي رمز.
+- يمنع حذف أي جزء.
+- يمنع إضافة أي شيء.
+- يمنع شرح القانون.
 
-- شرح القانون
-- تبسيطه
-- إعادة صياغته
-- إضافة رموز
-- حذف أي جزء منه
+الشكل:
 
-طريقة الكتابة:
+⟪FORMULA⟫
+القانون بصيغة LaTeX كما ورد في الملف
+⟫FORMULA⟫
 
-⟪FORMULA⟫ القانون بصيغة LaTeX كما ورد في الملف ⟫FORMULA⟫
+قواعد:
 
-قواعد القوانين الرمزية:
+- كل قانون في كتلة منفصلة
+- لا تدمج قانونين معاً
+- لا تكتب أي نص داخل الوسوم
 
-- كل قانون داخل كتلة منفصلة
-- إذا وجد أكثر من قانون كرر نفس البنية لكل قانون
-- لا تدمج قانونين داخل نفس الكتلة
-- لا تكتب أي نص داخل الوسوم غير القانون فقط
+====================
+القوانين العربية
+====================
 
-## النوع الثاني: القوانين العربية
+إذا كان القانون مكتوباً بالعربية داخل الملف:
 
-إذا كان القانون مكتوباً بالعربية النصية داخل الملف وليس معادلة رمزية:
+اكتبه حرفياً كما هو.
 
-اكتبه كما هو حرفياً.
-
-قواعد القوانين العربية:
+⚠️ تشديد شديد:
 
 - يكتب كسطر مستقل
 - لا يوضع داخل ⟪FORMULA⟫
-- لا يتم تعديل صياغته
+- لا يتم تعديله
 - لا يتم شرحه
 
-ترتيب القوانين داخل القسم يكون كالتالي:
+ترتيب القوانين:
 
-1- القوانين الرمزية داخل ⟪FORMULA⟫  
-2- بعدها القوانين العربية النصية بدون أي وسوم
+1- القوانين الرمزية  
+2- بعدها القوانين العربية
 
-إذا لم توجد قوانين في الملف: لا تكتب قسم القوانين نهائياً.
+إذا لم توجد قوانين:
 
-# ==================== الأكواد البرمجية
+لا تكتب هذا القسم نهائياً.
 
-إذا وجدت أكواد في الملف اكتب أولاً:
+====================
+الأكواد البرمجية
+====================
+
+إذا وجدت أكواد داخل الملف اكتب:
 
 ««🔸 الاكواد البرمجية 🔸»»
 
-بعدها ضع الأكواد.
+⚠️ تشديد شديد جداً:
 
-كل كود يجب أن يكون بين العلامتين التاليتين:
+- يجب نقل الكود حرفياً
+- يمنع تعديل أي حرف
+- يمنع حذف أي سطر
+- يمنع إضافة أي تعليق
 
-⟪CODE⟫ الكود كما هو حرفياً بدون أي تعديل ⟫CODE⟫
+الشكل:
 
-قواعد الأكواد:
+⟪CODE⟫
+الكود كما هو حرفياً
+⟫CODE⟫
 
-- يمكن أن يوجد كود واحد أو عدة أكواد
-- إذا وجد أكثر من كود ضع كل كود في كتلة منفصلة
-- لا تدمج أكثر من كود داخل نفس الكتلة
-- يجب نقل الكود كما هو حرفياً
-- يمنع تعديل أي حرف في الكود
+قواعد:
 
-إذا لم توجد أكواد في الملف: لا تكتب كلمة الاكواد البرمجية ولا تكتب أي شيء متعلق بها.
+- كل كود في كتلة منفصلة
+- لا تدمج أكثر من كود
 
-# ==================== النقاط الجوهرية
+إذا لم توجد أكواد:
 
-بعد الانتهاء من الشرح والأمثلة والقوانين والأكواد اكتب أولاً:
+لا تكتب هذا القسم نهائياً.
+
+====================
+النقاط الجوهرية
+====================
+
+بعد الانتهاء اكتب:
 
 ««🔸 النقاط الجوهرية 🔸»»
 
-ثم اكتب 8 نقاط فقط مستخلصة من الملف بالكامل بالشكل التالي:
+ثم اكتب 8 نقاط فقط:
 
 1--⟩ النقطة الأولى
 
@@ -1496,23 +1452,25 @@
 
 8--⟩ النقطة الثامنة
 
-قواعد النقاط:
+قواعد:
 
-- يجب أن تكون بين كل نقطة والتي تليها مسافة سطر واحد
-- لا تحتوي على قوانين
-- لا تحتوي على معادلات
-- تمثل خلاصة أهم أفكار الملف
-- تكون مستنتجة من المحتوى نفسه
+- مسافة سطر بين كل نقطة
+- لا تحتوي قوانين
+- لا تحتوي معادلات
 
-# ==================== الجملة التحفيزية
+====================
+الجملة التحفيزية
+====================
 
 في النهاية اكتب:
 
 💕 الجملة التحفيذية 🔑
 
-ثم اكتب بعدها مباشرة جملة تحفيزية قصيرة بالتشكيل الكامل تشجع المستخدم على الاستمرار.
+ثم جملة تحفيزية قصيرة بالتشكيل الكامل.
 
-# ==================== قواعد صارمة
+====================
+قواعد صارمة
+====================
 
 - لا تستخدم Markdown
 - لا تستخدم JSON
@@ -1521,23 +1479,24 @@
 - لا تكتب أي نص داخل ⟪FORMULA⟫ غير القانون
 - لا تكتب أي نص داخل ⟪CODE⟫ غير الكود
 
-# ==================== التحقق قبل الإرسال
+====================
+التحقق قبل الإرسال
+====================
 
 تأكد من:
 
-- العنوان مكتوب بين {{ }}
+- العنوان بين {{ }}
+- العنوان خمس كلمات
 - الترتيب صحيح
-- الفقرات تبدأ بالشكل --»🔸 وتنتهي 🔸
-- الأمثلة لا تتجاوز 5
-- وجود 8 نقاط جوهرية فقط
-- وجود مسافة سطر واحد بين كل نقطة
-- كل قانون رمزي مكتوب بصيغة LaTeX
-- كل قانون رمزي داخل ⟪FORMULA⟫ و ⟫FORMULA⟫
-- القوانين العربية مكتوبة كما هي بدون وسوم
-- كل كود بين ⟪CODE⟫ و ⟫CODE⟫
-- عدم كتابة قسم القوانين إذا لم توجد قوانين
-- عدم كتابة قسم الأكواد إذا لم توجد أكواد
-- عدم كتابة قسم الأمثلة إذا لم يحتج الملف إلى أمثلة
+- الفقرات تبدأ بـ --»🔸
+- الأمثلة ≤ 5
+- النقاط = 8 فقط
+- القوانين الرمزية داخل ⟪FORMULA⟫
+- القوانين العربية بدون وسوم
+- الأكواد داخل ⟪CODE⟫
+- حذف قسم القوانين إن لم يوجد
+- حذف قسم الأكواد إن لم يوجد
+- حذف قسم الأمثلة إن لم يلزم
 
 ابدأ التنفيذ الآن.
 `;
@@ -1647,9 +1606,9 @@
                 .replace(/\{\{(.*?)\}\}/g, '<div class="main-title">$1</div>')
                 .replace(/--»🔸\s*(.*?)\s*🔸/g, '<div class="section-title"><span class="special-symbol">--»🔸</span> $1 <span class="special-symbol">🔸</span></div>')
                 .replace(/««🔸\s*(.*?)\s*🔸»»/g, '<div class="subsection-title"><span class="special-symbol">««🔸</span> $1 <span class="special-symbol">🔸»»</span></div>')
-                .replace(/×(\d+)»\s*(.*?)(?=\n|$)/g, '<div class="highlight-text">مثال $1: $2</div>')
+                .replace(/×(\d+)»\s*(.*?)(?=\n|$)/g, '<div class="example-item"><span class="example-number">مثال $1:</span> $2</div>')
                 .replace(/(\d+)--⟩\s*(.*?)(?=\n\d+--⟩|\n*$)/gs, (match, num, content) => {
-                    return `<div class="key-point-item"><span class="special-number">${num}</span> ${content.trim()}</div><div style="height: 10px;"></div>`;
+                    return `<div class="key-point-item">${num}--⟩ ${content.trim()}</div>`;
                 });
             
             const paragraphs = cleanText.split('\n\n');
@@ -1759,12 +1718,11 @@
                     }
                 }
                 
-                resultContent.innerHTML = `<div class="result-text" id="resultText">${formatText(content)}</div>`;
+                // نضع المحتوى مباشرة في resultContent بدون حاوية إضافية
+                resultContent.innerHTML = formatText(content);
                 
-                const resultText = document.getElementById('resultText');
-                if (resultText) {
-                    resultText.style.fontSize = fontSize + 'px';
-                }
+                // تطبيق حجم الخط على المحتوى بالكامل
+                resultContent.style.fontSize = fontSize + 'px';
                 
                 setTimeout(() => {
                     renderFormulas();
@@ -2115,9 +2073,9 @@
             document.getElementById('increaseFont').onclick = () => {
                 if (fontSize < 30) {
                     fontSize += 2;
-                    const resultText = document.getElementById('resultText');
-                    if (resultText) {
-                        resultText.style.fontSize = fontSize + 'px';
+                    const resultContent = document.getElementById('resultContent');
+                    if (resultContent) {
+                        resultContent.style.fontSize = fontSize + 'px';
                     }
                 }
             };
@@ -2125,9 +2083,9 @@
             document.getElementById('decreaseFont').onclick = () => {
                 if (fontSize > 14) {
                     fontSize -= 2;
-                    const resultText = document.getElementById('resultText');
-                    if (resultText) {
-                        resultText.style.fontSize = fontSize + 'px';
+                    const resultContent = document.getElementById('resultContent');
+                    if (resultContent) {
+                        resultContent.style.fontSize = fontSize + 'px';
                     }
                 }
             };
