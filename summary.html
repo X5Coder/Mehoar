@@ -483,7 +483,7 @@
             margin-bottom: 1rem;
         }
         
-        /* ===== قسم النتائج الرئيسي - قالب واحد فقط ===== */
+        /* ===== قسم النتائج الرئيسي ===== */
         .result-section {
             background: white;
             border-radius: var(--radius-lg);
@@ -501,7 +501,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 2rem;
+            padding: 1.5rem 2rem;
             border-bottom: 1px solid rgba(139, 115, 85, 0.1);
             flex-wrap: wrap;
             gap: 1rem;
@@ -509,68 +509,86 @@
         }
         
         .result-header h2 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             color: var(--primary);
             margin: 0;
         }
         
-        .font-controls {
+        /* ===== تحسين تصميم أزرار التحكم بالحجم ===== */
+        .control-panel {
             display: flex;
-            align-items: center;
             gap: 0.8rem;
-            background: rgba(139, 115, 85, 0.05);
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
+            align-items: center;
+            background: rgba(139, 115, 85, 0.08);
+            padding: 0.4rem;
+            border-radius: 50px;
+            border: 1px solid rgba(139, 115, 85, 0.15);
         }
         
-        .font-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            border: 1px solid rgba(139, 115, 85, 0.2);
+        .control-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 30px;
+            border: none;
             background: white;
             color: var(--primary);
             font-weight: 700;
             font-size: 1.3rem;
             cursor: pointer;
-            transition: 0.3s;
-        }
-        
-        .font-btn:hover {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .copy-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            border: 1px solid rgba(139, 115, 85, 0.2);
-            background: white;
-            color: var(--primary);
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            box-shadow: 0 2px 6px rgba(139, 115, 85, 0.1);
         }
         
-        .copy-btn:hover {
+        .control-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(139, 115, 85, 0.3);
+        }
+        
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .control-btn.copy-btn {
+            width: 42px;
+            height: 42px;
+            background: white;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .control-btn.copy-btn:hover {
             background: var(--primary);
             color: white;
         }
         
-        /* ===== حاوية النتائج الرئيسية - قالب واحد فقط ===== */
+        .font-size-indicator {
+            padding: 0 0.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.95rem;
+            background: rgba(139, 115, 85, 0.1);
+            height: 42px;
+            display: flex;
+            align-items: center;
+            border-radius: 30px;
+            min-width: 60px;
+            justify-content: center;
+        }
+        
+        /* ===== حاوية المحتوى الرئيسية ===== */
         .result-content {
             padding: 3rem;
             background: white;
             width: 100%;
             font-size: 18px;
             line-height: 1.8;
-            transition: font-size 0.3s;
+            transition: font-size 0.2s ease;
         }
         
         /* تنسيقات النص */
@@ -579,9 +597,15 @@
             font-size: 2.2rem;
             font-weight: 900;
             color: var(--primary-dark);
-            margin: 2rem 0 3rem 0;
-            padding: 1rem;
+            margin: 1rem 0 3rem 0;
+            padding: 0.5rem 1rem;
+            position: relative;
             border-bottom: 3px solid var(--secondary);
+            display: inline-block;
+            width: auto;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .section-title {
@@ -601,10 +625,10 @@
             padding-right: 0.5rem;
         }
         
-        /* تنسيق القوانين - بدون خلفية */
+        /* تنسيق القوانين */
         .formula-block {
             margin: 1rem 0;
-            padding: 0.5rem 0;
+            padding: 1rem 0;
             direction: ltr;
             text-align: center;
             overflow-x: auto;
@@ -676,22 +700,43 @@
             background: var(--code-bg);
         }
         
-        /* النقاط الجوهرية - بدون أشكال */
-        .key-points-list {
-            margin: 1rem 0;
+        /* النقاط الجوهرية */
+        .key-points-section {
+            margin: 2rem 0;
         }
         
         .key-point-item {
-            margin: 0.5rem 0;
-            padding-right: 1rem;
+            margin: 1rem 0;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
+        }
+        
+        .key-point-item:last-child {
+            border-bottom: none;
         }
         
         /* الأمثلة */
         .example-item {
             margin: 1rem 0;
+            padding: 0.5rem 1rem;
+            background: rgba(139, 115, 85, 0.03);
+            border-radius: 8px;
         }
         
         .example-number {
+            font-weight: 700;
+            color: var(--primary);
+            margin-left: 0.5rem;
+        }
+        
+        /* القوانين العربية */
+        .arabic-law-item {
+            margin: 1rem 0;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
+        }
+        
+        .law-number {
             font-weight: 700;
             color: var(--primary);
             margin-left: 0.5rem;
@@ -864,6 +909,22 @@
             .section-title { font-size: 1.5rem; }
             .subsection-title { font-size: 1.3rem; }
             
+            .control-panel {
+                padding: 0.3rem;
+            }
+            
+            .control-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 1.1rem;
+            }
+            
+            .font-size-indicator {
+                height: 38px;
+                min-width: 50px;
+                font-size: 0.85rem;
+            }
+            
             .notifications {
                 left: 1rem;
                 right: 1rem;
@@ -1010,17 +1071,21 @@
             </button>
         </section>
         
-        <!-- قسم النتائج - قالب واحد فقط -->
+        <!-- قسم النتائج -->
         <section class="result-section" id="resultSection">
             <div class="result-header">
                 <h2 id="resultHead">ملخص الملف</h2>
-                <div style="display: flex; gap: 0.8rem;">
-                    <button class="copy-btn" id="copyAllBtn" title="نسخ المحتوى كاملاً"><i class="fas fa-copy"></i></button>
-                    <div class="font-controls" id="fontControls">
-                        <button class="font-btn" id="decreaseFont">-</button>
-                        <span style="color: var(--primary); font-weight: 600; font-size: 1.1rem;">حجم الخط</span>
-                        <button class="font-btn" id="increaseFont">+</button>
-                    </div>
+                <div class="control-panel">
+                    <button class="control-btn copy-btn" id="copyAllBtn" title="نسخ المحتوى كاملاً">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <button class="control-btn" id="decreaseFont" title="تصغير الخط">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <span class="font-size-indicator" id="fontSizeIndicator">18px</span>
+                    <button class="control-btn" id="increaseFont" title="تكبير الخط">
+                        <i class="fas fa-plus"></i>
+                    </button>
                 </div>
             </div>
             
@@ -1126,6 +1191,11 @@
                 .replace(/'/g, "&#039;");
         }
 
+        // ========== دالة تصفية علامة $ من النص ==========
+        function removeDollarSigns(text) {
+            return text.replace(/\$/g, '');
+        }
+
         // ========== دالة تحليل رد الذكاء الاصطناعي ==========
         function parseAIResponse(text) {
             let formulas = [];
@@ -1154,6 +1224,9 @@
                     </div>
                 `;
             });
+            
+            // تصفية علامة $ من النص النظيف
+            cleanText = removeDollarSigns(cleanText);
             
             return {
                 cleanText: cleanText,
@@ -1199,9 +1272,9 @@
             return Math.round(cost * 10) / 10;
         }
 
-        // ========== البرومت الجديد مع شرط طول النص ==========
+        // ========== البرومت الجديد ==========
         function getNormalSummaryPrompt() {
-            const maxWords = currentSettings.length === 'طويل' ? 1400 : 800;
+            const maxWords = currentSettings.length === 'طويل' ? 1450 : 850;
             
             return `
 ====================
@@ -1220,30 +1293,24 @@
 الأسلوب: ${currentSettings.style}
 طول التلخيص: ${currentSettings.length}
 
-⚠️ يجب الالتزام بالمدخلات السابقة التزاماً كاملاً.
-⚠️ يمنع تغييرها أو تجاهلها.
-⚠️ يجب أن ينعكس تأثيرها في شكل التلخيص النهائي.
-
 ====================
-شرط طول النص (شرط صارم جداً)
+شرط طول النص النهائي (شرط صارم)
 ====================
 
-يوجد حد أقصى لطول النص النهائي ويجب الالتزام به بدقة.
+يوجد حد أقصى للنص النهائي يجب الالتزام به بدقة.
 
 إذا كان طول التلخيص = طويل  
-الحد الأقصى للنص النهائي هو 1400 كلمة فقط.
+يجب أن يكون الناتج النهائي بالكامل 1450 كلمة كحد أقصى.
 
 إذا كان طول التلخيص = قصير  
-الحد الأقصى للنص النهائي هو 800 كلمة فقط.
+يجب أن يكون الناتج النهائي بالكامل 850 كلمة كحد أقصى.
 
 قواعد هذا الشرط:
 
 - يمنع تجاوز الحد المحدد حتى بكلمة واحدة.
 - يمكن أن يكون النص أقل من الحد لكن لا يمكن أن يتجاوزه.
 - يجب حساب الكلمات قبل إرسال الإجابة.
-- الحد يشمل جميع أجزاء الإخراج بدون استثناء.
-
-يشمل:
+- الحد يشمل كل أجزاء الإخراج:
 الشرح + الأمثلة + القوانين + الأكواد + النقاط + الجملة التحفيزية.
 
 ====================
@@ -1260,7 +1327,7 @@
 6- النقاط الجوهرية  
 7- الجملة التحفيزية
 
-⚠️ ممنوع تغيير هذا الترتيب.
+ممنوع تغيير هذا الترتيب.
 
 ====================
 العنوان
@@ -1272,9 +1339,9 @@
 
 قواعد العنوان:
 
-- يجب أن يكون بين {{ }}
-- يجب أن يتكون من خمس كلمات فقط
-- يجب أن يعبر عن محتوى الملف بالكامل
+- يتكون من خمس كلمات فقط.
+- يعبر عن محتوى الملف بالكامل.
+- يجب أن يكون بين {{ }}.
 
 ====================
 الفقرات والشرح
@@ -1282,7 +1349,7 @@
 
 بعد العنوان مباشرة يبدأ التلخيص.
 
-يجب تقسيم التلخيص إلى فقرات حسب الفصول أو الأبواب أو الأجزاء الموجودة في الملف.
+يجب تقسيم التلخيص إلى فقرات حسب الفصول أو الأبواب أو الأجزاء كما وردت في الملف.
 
 شكل الفقرات:
 
@@ -1298,28 +1365,26 @@
 - لا تترك مسافات كبيرة بين الفقرات
 - الشرح يجب أن يكون مستنتجاً من محتوى الملف
 
-طريقة الشرح تعتمد على طول التلخيص:
-
 إذا كان التلخيص = طويل  
-اكتب شرحاً مفصلاً يغني عن قراءة الملف بالكامل.
+اكتب شرحاً مفصلاً يغني عن قراءة الملف.
 
 إذا كان التلخيص = قصير  
-اكتب شرحاً مختصراً يعطي فكرة واضحة وسريعة.
+اكتب شرحاً مختصراً واضحاً.
 
 ====================
 الأمثلة
 ====================
 
-إذا احتاج الملف إلى أمثلة اكتب أولاً:
+إذا احتاج الملف إلى أمثلة اكتب:
 
 ««🔸 أمثلة تطبيقية 🔸»»
 
 قواعد الأمثلة:
 
-- الحد الأقصى 5 أمثلة فقط
-- يمكن أن يكون العدد أقل
-- لا تكتب أمثلة للقوانين
-- الأمثلة لتوضيح المفاهيم فقط
+- الحد الأقصى 5 أمثلة.
+- يمكن أن يكون العدد أقل.
+- الأمثلة لتوضيح المفاهيم فقط.
+- لا تكتب أمثلة للقوانين.
 
 الشكل:
 
@@ -1336,11 +1401,11 @@
 القوانين
 ====================
 
-إذا وجدت قوانين داخل الملف اكتب:
+إذا وجد الملف قوانين يجب استخراج جميع القوانين الموجودة بالكامل بدون استثناء.
+
+اكتب أولاً:
 
 ««🔸 القوانين 🔸»»
-
-⚠️ يجب استخراج جميع القوانين الموجودة في الملف بدون استثناء.
 
 يوجد نوعان من القوانين:
 
@@ -1348,83 +1413,95 @@
 القوانين الرمزية
 ====================
 
-وهي القوانين المكتوبة برموز رياضية أو علمية.
+وهي القوانين المكتوبة برموز رياضية.
 
-يجب إخراجها بصيغة LaTeX.
+قواعد إخراجها:
 
-⚠️ تشديد صارم:
-
-- يجب نقل القانون كما هو تماماً.
+- يجب كتابتها بصيغة LaTeX.
+- يجب نقلها كما هي تماماً كما وردت في الملف.
 - يمنع تعديل أي رمز.
 - يمنع حذف أي جزء.
-- يمنع إضافة أي شيء.
-- يمنع شرح القانون.
 
-الشكل:
+طريقة الكتابة:
 
+1-
 ⟪FORMULA⟫
-القانون بصيغة LaTeX كما ورد في الملف
+القانون كما ورد في الملف
 ⟫FORMULA⟫
 
-قواعد:
+2-
+⟪FORMULA⟫
+القانون التالي
+⟫FORMULA⟫
 
-- كل قانون في كتلة منفصلة
-- لا تدمج قانونين معاً
-- لا تكتب أي نص داخل الوسوم
+قواعد إضافية:
+
+- كل قانون في كتلة منفصلة.
+- القوانين مرقمة.
+- يجب ترك سطر فارغ بين كل قانون والذي يليه.
 
 ====================
 القوانين العربية
 ====================
 
-إذا كان القانون مكتوباً بالعربية داخل الملف:
+إذا وجد قوانين مكتوبة باللغة العربية داخل الملف:
 
-اكتبه حرفياً كما هو.
+يجب استخراج جميع القوانين العربية بالكامل.
 
-⚠️ تشديد شديد:
+قواعد إخراجها:
 
-- يكتب كسطر مستقل
-- لا يوضع داخل ⟪FORMULA⟫
-- لا يتم تعديله
-- لا يتم شرحه
+- تكتب كما هي حرفياً.
+- لا يتم تعديلها.
+- لا يتم شرحها.
+- لا توضع داخل وسوم.
 
-ترتيب القوانين:
+يجب أن تكون:
+
+- مرقمة
+- كل قانون في سطر مستقل
+- يوجد سطر فارغ بين كل قانون والذي يليه
+
+مثال الشكل:
+
+1- نص القانون العربي
+
+2- نص القانون العربي التالي
+
+ترتيب القوانين داخل القسم:
 
 1- القوانين الرمزية  
 2- بعدها القوانين العربية
 
-إذا لم توجد قوانين:
-
-لا تكتب هذا القسم نهائياً.
+إذا لم توجد قوانين في الملف لا تكتب هذا القسم نهائياً.
 
 ====================
 الأكواد البرمجية
 ====================
 
-إذا وجدت أكواد داخل الملف اكتب:
+إذا وجد الملف أكواد برمجية يجب استخراج جميع الأكواد بالكامل بدون استثناء.
+
+اكتب أولاً:
 
 ««🔸 الاكواد البرمجية 🔸»»
 
-⚠️ تشديد شديد جداً:
+قواعد الأكواد:
 
-- يجب نقل الكود حرفياً
-- يمنع تعديل أي حرف
-- يمنع حذف أي سطر
-- يمنع إضافة أي تعليق
+- يجب نقل الكود كما هو حرفياً.
+- يمنع تعديل أي حرف.
+- يمنع حذف أي سطر.
 
-الشكل:
+كل كود يوضع بالشكل التالي:
 
 ⟪CODE⟫
-الكود كما هو حرفياً
+الكود كما هو
 ⟫CODE⟫
 
-قواعد:
+قواعد إضافية:
 
-- كل كود في كتلة منفصلة
-- لا تدمج أكثر من كود
+- كل كود في كتلة منفصلة.
+- إذا وجد أكثر من كود يجب استخراجهم جميعاً.
 
-إذا لم توجد أكواد:
-
-لا تكتب هذا القسم نهائياً.
+إذا لم توجد أكواد في الملف لا تكتب هذا القسم نهائياً.
 
 ====================
 النقاط الجوهرية
@@ -1452,11 +1529,11 @@
 
 8--⟩ النقطة الثامنة
 
-قواعد:
+قواعد النقاط:
 
-- مسافة سطر بين كل نقطة
-- لا تحتوي قوانين
-- لا تحتوي معادلات
+- يجب وجود سطر فارغ بين كل نقطة.
+- لا تحتوي على قوانين.
+- لا تحتوي على معادلات.
 
 ====================
 الجملة التحفيزية
@@ -1466,7 +1543,7 @@
 
 💕 الجملة التحفيذية 🔑
 
-ثم جملة تحفيزية قصيرة بالتشكيل الكامل.
+ثم جملة تحفيزية قصيرة بالتشكيل الكامل تشجع المستخدم على الاستمرار.
 
 ====================
 قواعد صارمة
@@ -1488,15 +1565,14 @@
 - العنوان بين {{ }}
 - العنوان خمس كلمات
 - الترتيب صحيح
-- الفقرات تبدأ بـ --»🔸
 - الأمثلة ≤ 5
 - النقاط = 8 فقط
 - القوانين الرمزية داخل ⟪FORMULA⟫
-- القوانين العربية بدون وسوم
+- القوانين العربية مرقمة ومفصولة بسطر
 - الأكواد داخل ⟪CODE⟫
-- حذف قسم القوانين إن لم يوجد
-- حذف قسم الأكواد إن لم يوجد
-- حذف قسم الأمثلة إن لم يلزم
+- عدم كتابة قسم القوانين إذا لم توجد
+- عدم كتابة قسم الأكواد إذا لم توجد
+- عدم كتابة قسم الأمثلة إذا لم يحتج الملف
 
 ابدأ التنفيذ الآن.
 `;
@@ -1608,8 +1684,14 @@
                 .replace(/««🔸\s*(.*?)\s*🔸»»/g, '<div class="subsection-title"><span class="special-symbol">««🔸</span> $1 <span class="special-symbol">🔸»»</span></div>')
                 .replace(/×(\d+)»\s*(.*?)(?=\n|$)/g, '<div class="example-item"><span class="example-number">مثال $1:</span> $2</div>')
                 .replace(/(\d+)--⟩\s*(.*?)(?=\n\d+--⟩|\n*$)/gs, (match, num, content) => {
-                    return `<div class="key-point-item">${num}--⟩ ${content.trim()}</div>`;
+                    return `<div class="key-point-item"><span class="law-number">${num}--⟩</span> ${content.trim()}</div>`;
                 });
+            
+            // معالجة القوانين العربية المرقمة
+            const arabicLawRegex = /(\d+)- (.*?)(?=\n\d+-|\n*$)/gs;
+            cleanText = cleanText.replace(arabicLawRegex, (match, num, content) => {
+                return `<div class="arabic-law-item"><span class="law-number">${num}-</span> ${content.trim()}</div>`;
+            });
             
             const paragraphs = cleanText.split('\n\n');
             cleanText = paragraphs.map(p => {
@@ -1629,6 +1711,11 @@
             currentResult = result;
             const resultContent = document.getElementById('resultContent');
             const fontControls = document.getElementById('fontControls');
+            const fontSizeIndicator = document.getElementById('fontSizeIndicator');
+            
+            if (fontSizeIndicator) {
+                fontSizeIndicator.textContent = fontSize + 'px';
+            }
             
             if (currentSettings.language === 'انجليزي') {
                 document.documentElement.dir = 'ltr';
@@ -1639,7 +1726,6 @@
             }
             
             if (currentSettings.format === 'مفاهيم') {
-                fontControls.style.display = 'none';
                 document.getElementById('resultHead').textContent = result.head || 'جدول المفاهيم';
                 
                 let tableHTML = `
@@ -1671,7 +1757,6 @@
             }
             
             else if (currentSettings.format === 'اسئلة') {
-                fontControls.style.display = 'none';
                 document.getElementById('resultHead').textContent = result.head || 'أسئلة وأجوبة';
                 
                 let tableHTML = `
@@ -1703,8 +1788,6 @@
             }
             
             else {
-                fontControls.style.display = 'flex';
-                
                 let content = '';
                 if (typeof result === 'object' && result !== null) {
                     content = result.page || result.text || '';
@@ -1718,10 +1801,7 @@
                     }
                 }
                 
-                // نضع المحتوى مباشرة في resultContent بدون حاوية إضافية
                 resultContent.innerHTML = formatText(content);
-                
-                // تطبيق حجم الخط على المحتوى بالكامل
                 resultContent.style.fontSize = fontSize + 'px';
                 
                 setTimeout(() => {
@@ -1780,14 +1860,16 @@
                         .replace(/⟪FORMULA⟫/g, '')
                         .replace(/⟫FORMULA⟫/g, '')
                         .replace(/⟪CODE⟫/g, '')
-                        .replace(/⟫CODE⟫/g, '');
+                        .replace(/⟫CODE⟫/g, '')
+                        .replace(/\$/g, ''); // إزالة علامة $
                 }
             } else {
                 textToCopy = currentResult
                     .replace(/⟪FORMULA⟫/g, '')
                     .replace(/⟫FORMULA⟫/g, '')
                     .replace(/⟪CODE⟫/g, '')
-                    .replace(/⟫CODE⟫/g, '');
+                    .replace(/⟫CODE⟫/g, '')
+                    .replace(/\$/g, ''); // إزالة علامة $
             }
             
             navigator.clipboard.writeText(textToCopy).then(() => {
@@ -1975,6 +2057,7 @@
         function initApp() {
             const fileInput = document.getElementById('fileInput');
             const uploadArea = document.getElementById('uploadArea');
+            const fontSizeIndicator = document.getElementById('fontSizeIndicator');
             
             uploadArea.onclick = () => fileInput.click();
             
@@ -2077,6 +2160,9 @@
                     if (resultContent) {
                         resultContent.style.fontSize = fontSize + 'px';
                     }
+                    if (fontSizeIndicator) {
+                        fontSizeIndicator.textContent = fontSize + 'px';
+                    }
                 }
             };
             
@@ -2086,6 +2172,9 @@
                     const resultContent = document.getElementById('resultContent');
                     if (resultContent) {
                         resultContent.style.fontSize = fontSize + 'px';
+                    }
+                    if (fontSizeIndicator) {
+                        fontSizeIndicator.textContent = fontSize + 'px';
                     }
                 }
             };
