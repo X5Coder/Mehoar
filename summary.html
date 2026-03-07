@@ -9,9 +9,11 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- إضافة MathJax لعرض الصيغ الرياضية -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
     
     <style>
         * {
@@ -546,131 +548,34 @@
             color: white;
         }
         
-        /* ===== أنماط التنسيقات الجديدة ===== */
-        .result-content {
-            padding: 2rem;
-            background: #FAFAFA;
-        }
-        
-        .result-text {
-            background: white;
-            padding: 2rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(139, 115, 85, 0.1);
-            line-height: 1.8;
-            transition: font-size 0.3s;
-            word-wrap: break-word;
-            font-size: 16px;
-        }
-        
-        /* العنوان الرئيسي */
-        .summary-title {
-            text-align: center;
-            font-size: 2.2rem;
-            font-weight: 900;
-            color: var(--primary-dark);
-            margin: 1rem 0 3rem 0;
+        /* أنماط MathJax للصيغ الرياضية */
+        .formula-container {
+            margin: 1rem 0;
             padding: 1rem;
-            position: relative;
-            border-bottom: 3px solid var(--secondary);
-            width: 100%;
-        }
-        
-        /* قسم الفصول */
-        .sections-container {
-            margin: 2rem 0;
-        }
-        
-        .section-card {
             background: rgba(139, 115, 85, 0.02);
             border-radius: var(--radius);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(139, 115, 85, 0.1);
-        }
-        
-        .section-name {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--primary-dark);
-            margin-bottom: 1.5rem;
-            padding-right: 1rem;
             border-right: 5px solid var(--secondary);
-        }
-        
-        .section-explanation {
-            color: var(--text);
-            line-height: 1.8;
-            font-size: 1rem;
-        }
-        
-        /* قسم القوانين */
-        .formulas-section {
-            margin: 3rem 0;
-            padding: 2rem;
-            background: var(--law-bg);
-            border-radius: var(--radius);
-            border: 2px solid var(--secondary);
-        }
-        
-        .formulas-section h3 {
-            color: var(--law-text);
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
-            text-align: center;
+            overflow-x: auto;
         }
         
         .formula-item {
-            background: rgba(212, 165, 116, 0.1);
-            padding: 1.5rem;
             margin: 1rem 0;
-            border-radius: 8px;
+            padding: 0.5rem;
+            font-size: 1.1rem;
             text-align: center;
-            border-bottom: 1px solid rgba(212, 165, 116, 0.2);
         }
         
-        .formula-item:last-child {
-            border-bottom: none;
+        .formula-separator {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+            margin: 1.5rem 0;
         }
         
-        .formula-item .math {
-            color: var(--law-text);
-            font-size: 1.3rem;
-            direction: ltr;
-        }
-        
-        .arabic-formula {
-            color: var(--law-text);
-            font-size: 1.2rem;
-            font-family: 'Almarai', sans-serif;
-            direction: rtl;
-        }
-        
-        /* قسم الأكواد */
-        .codes-section {
-            margin: 3rem 0;
-        }
-        
-        .codes-section h3 {
-            color: var(--primary-dark);
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
-        }
-        
-        .code-item {
-            margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
-            padding-bottom: 2rem;
-        }
-        
-        .code-item:last-child {
-            border-bottom: none;
-        }
-        
+        /* أنماط الأكواد */
         .code-block {
             background: var(--code-bg);
             border-radius: 12px;
+            margin: 1.5rem 0;
             overflow: hidden;
             box-shadow: 0 8px 25px rgba(0,0,0,0.4);
             border: 1px solid #30363d;
@@ -717,65 +622,119 @@
             text-align: left;
         }
         
-        /* قسم النقاط الرئيسية */
-        .points-section {
-            margin: 3rem 0;
+        /* أنماط الفقرات */
+        .paragraph-section {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: rgba(139, 115, 85, 0.02);
+            border-radius: var(--radius);
+        }
+        
+        .paragraph-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin: 1.5rem 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .paragraph-title::before {
+            content: "🔸";
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+        
+        .paragraph-title::after {
+            content: "🔸";
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+        
+        .paragraph-content {
+            line-height: 1.8;
+            color: var(--text);
+            padding: 0 1rem;
+        }
+        
+        /* أنماط النقاط الجوهرية */
+        .key-points-container {
+            margin: 2rem 0;
             padding: 2rem;
             background: rgba(139, 115, 85, 0.05);
             border-radius: var(--radius);
             border: 1px solid var(--secondary);
         }
         
-        .points-section h3 {
-            color: var(--primary-dark);
+        .key-points-title {
             font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            text-align: center;
             margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
         }
         
-        .point-item {
+        .key-points-title::before {
+            content: "🔸";
+            color: var(--secondary);
+            font-size: 2rem;
+        }
+        
+        .key-points-title::after {
+            content: "🔸";
+            color: var(--secondary);
+            font-size: 2rem;
+        }
+        
+        .key-point-item {
             background: white;
-            padding: 1.2rem 1.8rem;
-            margin: 1rem 0;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
             border-radius: 12px;
             border-right: 5px solid var(--primary);
             box-shadow: var(--shadow);
             font-size: 1.1rem;
-            position: relative;
         }
         
-        .point-item::before {
-            content: "•";
-            color: var(--primary);
+        .key-point-item::before {
+            content: "⟩";
+            color: var(--secondary);
             font-weight: 900;
-            font-size: 1.5rem;
-            position: absolute;
-            right: -10px;
-            top: 50%;
-            transform: translateY(-50%);
+            margin-left: 0.5rem;
+            font-size: 1.2rem;
         }
         
-        /* جملة تحفيزية */
+        /* أنماط التحفيز */
         .motivation-section {
-            margin: 3rem 0 1rem;
+            margin: 2rem 0 1rem;
             padding: 2rem;
-            background: linear-gradient(145deg, var(--primary), var(--primary-light));
+            background: linear-gradient(145deg, rgba(139, 115, 85, 0.1), rgba(212, 165, 116, 0.1));
             border-radius: var(--radius);
             text-align: center;
-            color: white;
+            border: 1px solid var(--secondary);
+        }
+        
+        .motivation-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
         
         .motivation-text {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary);
             line-height: 2;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        /* الفواصل الشفافة */
-        .transparent-separator {
-            height: 1px;
-            background: linear-gradient(to right, transparent, rgba(139, 115, 85, 0.3), transparent);
-            margin: 2rem 0;
+            font-weight: 600;
         }
         
         /* الإشعارات */
@@ -878,8 +837,6 @@
             .main { padding-left: 1rem; padding-right: 1rem; }
             .card { padding: 1.5rem; }
             .card-title { font-size: 1.6rem; }
-            .summary-title { font-size: 1.8rem; }
-            .section-name { font-size: 1.5rem; }
             
             .notifications {
                 left: 1rem;
@@ -1137,150 +1094,352 @@
             return Math.round(cost * 10) / 10;
         }
 
-        // ========== البرومت الجديد ==========
-        function getNewPrompt() {
+        // ========== البرومت الجديد للتلخيص العادي (حسب الطلب) ==========
+        function getNormalSummaryPrompt() {
             return `
-مهم جداً: التزم بالبنية التالية حرفياً.
-
-أي نص خارج البنية يعتبر خطأ.
-
 ====================
+
 المهمة
+
 ====================
 
 اقرأ ملف PDF بالكامل من البداية إلى النهاية بدون تجاهل أي سطر.
 
 ابدأ التنفيذ مباشرة بدون أي مقدمة.
 
+
 اسم النظام: عَون
+
 
 الإعدادات:
 
 الشخصية: ${currentSettings.persona}
+
 اللغة: ${currentSettings.language}
+
 الأسلوب: ${currentSettings.style}
+
 طول التلخيص: ${currentSettings.length}
 
-====================
-قواعد الإخراج
-====================
-
-ممنوع كتابة أي نص خارج الوسوم المحددة.
 
 ====================
-هيكل الإخراج
+
+ترتيب الإخراج الإجباري
+
 ====================
 
-[[TITLE]]
-اكتب عنوان مكون من خمس كلمات فقط يوضح محتوى الملف بالكامل.
-[[/TITLE]]
 
-[[SECTIONS]]
+يجب الالتزام بالترتيب التالي حرفياً:
 
-لكل فصل أو باب أو جزء في الملف حسب تقسيمة الملف استخدم الشكل التالي:
 
-[[SECTION]]
-[[NAME]]
-اسم الفصل او الباب حسب تقسيمة الملف كما ورد في الملف
-[[/NAME]]
+1- العنوان  
 
-[[EXPLANATION]]
-شرح هذا الفصل.
+2- الفقرات والشرح  
 
-إذا كان طول التلخيص = طويل
-اكتب شرحًا مفصلًا وطويلا و يكون كل جزء بشكل كافي وافي و طويل و يهيئ المستخدم اذا قرأ النص لن يحتاج الى قرائة الملف بالكامل
+3- القوانين (إذا وجدت فقط)  
 
-إذا كان طول التلخيص = قصير
-اكتب شرحًا مختصرًا مفيدا ومستنتج من داخل الملف بحيث اذا قرأه المساخدم ياخذ فكرة عامله عن كل محتوى الملف بالكامل
-[[/EXPLANATION]]
-[[/SECTION]]
+4- الأكواد البرمجية (إذا وجدت فقط)  
 
-كرر نفس البنية لكل الفصول.
+5- النقاط الجوهرية  
 
-[[/SECTIONS]]
+6- الجملة التحفيزية  
 
-[[FORMULAS]]
 
-إذا وجدت قوانين في الملف:
+ممنوع تغيير هذا الترتيب.
 
-اكتب كل قانون بالشكل التالي:
 
-[[FORMULA]]
+====================
+
+العنوان
+
+====================
+
+
+أول سطر في الإجابة يجب أن يكون العنوان بالشكل التالي:
+
+
+{{العنوان}}
+
+
+يجب أن يكون العنوان مكوناً من خمس كلمات فقط ويعبر عن محتوى الملف بالكامل.
+
+
+====================
+
+الفقرات والشرح
+
+====================
+
+
+بعد العنوان مباشرة يبدأ التلخيص.
+
+
+يجب تقسيم التلخيص إلى فقرات حسب الفصول أو الأبواب أو الأجزاء كما وردت في الملف.
+
+
+شكل الفقرات يجب أن يكون كالتالي:
+
+
+--»🔸 عنوان الفقرة 🔸  
+
+الشرح الخاص بها
+
+
+--»🔸 عنوان الفقرة التالية 🔸  
+
+الشرح الخاص بها
+
+
+قواعد الفقرات:
+
+- كل عنوان فقرة يبدأ بالشكل: --»🔸
+
+- ينتهي عنوان الفقرة بالرمز 🔸
+
+- بعد العنوان مباشرة يأتي الشرح
+
+- لا تترك مسافات كبيرة بين الفقرات
+
+- الشرح يجب أن يكون مستنتجاً من محتوى الملف
+
+
+طريقة الشرح تعتمد على طول التلخيص:
+
+
+إذا كان طول التلخيص = طويل  
+
+اكتب شرحاً مفصلاً وطويلاً بحيث إذا قرأ المستخدم التلخيص لن يحتاج إلى قراءة الملف بالكامل.
+
+
+إذا كان طول التلخيص = قصير  
+
+اكتب شرحاً مختصراً مفيداً يعطي فكرة عامة واضحة عن محتوى الفصل.
+
+
+====================
+
+القوانين
+
+====================
+
+
+إذا وجدت قوانين في الملف اكتب أولاً:
+
+
+««🔸 القوانين 🔸»»
+
+
+بعدها ضع القوانين.
+
+
+كل قانون يجب أن يكون بين العلامتين التاليتين فقط:
+
+
+⟪FORMULA⟫
+
 القانون بصيغة LaTeX الصحيحة
-[[/FORMULA]]
 
-الشروط:
-- كل قانون في وسم منفصل
-- لا تشرح القانون
+⟫FORMULA⟫
+
+
+قواعد القوانين:
+
+- يمكن أن يوجد قانون واحد أو عدة قوانين
+
+- إذا وجد أكثر من قانون ضع كل قانون في كتلة منفصلة
+
+- لا تدمج قانونين داخل نفس الكتلة
+
+- لا تشرح القوانين
+
 - لا تضف قوانين غير موجودة
+
 - لا تكرر القوانين
-- لا تعدل صيغة القانون
 
-إذا لم توجد قوانين لا تكتبها نهائيا ولا تكتب الوسوم بتاعتها
+- لا تعدل صيغة القوانين
 
-[[/FORMULAS]]
+- لا تضع أي نص داخل العلامتين غير القانون فقط
 
-[[CODES]]
 
-في حالة وجدت أكواد:
+إذا لم توجد قوانين في الملف:
 
-[[CODE]]
-ضع الكود كما هو حرفيًا بدون تعديل اي شيئ كما في الملف بالظبط
-[[/CODE]]
+لا تكتب كلمة القوانين ولا تكتب أي شيء متعلق بها.
 
-كرر لكل كود بشكل منفصل
 
-[[/CODES]]
+====================
 
-اذا لم تجد اكواد لا تكتب اكواد نهائيا ولا تكتب الوسوم الخاصه بها ايضا 
+الأكواد البرمجية
 
-[[KEY_POINTS]]
+====================
 
-اكتب 8 نقاط جوهرية فقط مستخلصة من الملف بالكامل.
 
-كل نقطة بالشكل التالي:
+إذا وجدت أكواد في الملف اكتب أولاً:
 
-[[POINT]]
-النقطة الجوهرية
-[[/POINT]]
 
-شروط كتابة النقاط الجوهرية :
+««🔸 الاكواد البرمجية 🔸»»
+
+
+بعدها ضع الأكواد.
+
+
+كل كود يجب أن يكون بين العلامتين التاليتين:
+
+
+⟪CODE⟫
+
+الكود كما هو حرفياً بدون أي تعديل
+
+⟫CODE⟫
+
+
+قواعد الأكواد:
+
+- يمكن أن يوجد كود واحد أو عدة أكواد
+
+- إذا وجد أكثر من كود ضع كل كود في كتلة منفصلة
+
+- لا تدمج أكثر من كود داخل نفس الكتلة
+
+- يجب نقل الكود كما هو حرفياً
+
+- يمنع تعديل أي حرف في الكود
+
+
+إذا لم توجد أكواد في الملف:
+
+لا تكتب كلمة الاكواد البرمجية ولا تكتب أي شيء متعلق بها.
+
+
+====================
+
+النقاط الجوهرية
+
+====================
+
+
+بعد الانتهاء من الشرح والقوانين والأكواد اكتب أولاً:
+
+
+««🔸 النقاط الجوهرية 🔸»»
+
+
+ثم اكتب 8 نقاط فقط مستخلصة من الملف بالكامل بالشكل التالي:
+
+
+1--⟩ النقطة الأولى
+
+
+2--⟩ النقطة الثانية
+
+
+3--⟩ النقطة الثالثة
+
+
+4--⟩ النقطة الرابعة
+
+
+5--⟩ النقطة الخامسة
+
+
+6--⟩ النقطة السادسة
+
+
+7--⟩ النقطة السابعة
+
+
+8--⟩ النقطة الثامنة
+
+
+قواعد النقاط:
+
+- يجب أن تكون بين كل نقطة والتي تليها مسافة سطر واحد
+
 - لا تحتوي على قوانين
+
 - لا تحتوي على معادلات
-- يجب أن تكون خلاصة الملف
--يجب ان تكون مستنتجه من الملف وتكون مهمه جدا اهم الاجزاء في الملف بالكامل
 
-[[/KEY_POINTS]]
+- تمثل خلاصة أهم أفكار الملف
 
-[[MOTIVATION]]
-اكتب جملة تحفيزية أو دينية قصيرة بالتشكيل تشجع المستخدم على الاستمرار و تكون مأخوذه من ايه قرأنيه او حديث او مقوله او اي شيئ مشهور و يحفذ المستخدم على الاستمرار
-[[/MOTIVATION]]
+- تكون مستنتجة من المحتوى نفسه
+
 
 ====================
+
+الجملة التحفيزية
+
+====================
+
+
+في النهاية اكتب السطر التالي:
+
+
+💕 الجملة التحفيذية 🔑
+
+
+ثم اكتب بعده مباشرة جملة تحفيزية قصيرة بالتشكيل الكامل تشجع المستخدم على الاستمرار.
+
+
+يمكن أن تكون:
+
+- آية قرآنية
+
+- حديث
+
+- حكمة
+
+- مقولة مشهورة
+
+
+====================
+
 قواعد صارمة
+
 ====================
+
 
 - لا تستخدم Markdown
+
 - لا تستخدم JSON
-- لا تضف عناوين
+
 - لا تكتب أي تعليق
-- لا تكتب أي نص خارج الوسوم
+
 - لا تضف أمثلة
+
 - لا تكرر القوانين
 
+- لا تكتب أي نص داخل ⟪FORMULA⟫ غير القانون
+
+- لا تكتب أي نص داخل ⟪CODE⟫ غير الكود
+
+
 ====================
+
 التحقق قبل الإرسال
-====================
-
-قبل إرسال الإجابة تأكد من:
-
-- وجود عنوان واحد فقط
-- وجود 8 نقاط جوهرية بالضبط
-- كل قانون داخل [[FORMULA]]
-- كل كود داخل [[CODE]]
-- عدم وجود نص خارج الوسوم
 
 ====================
+
+
+تأكد من:
+
+
+- العنوان مكتوب بين {{ }}
+
+- الترتيب صحيح
+
+- الفقرات تبدأ بالشكل --»🔸 وتنتهي 🔸
+
+- وجود 8 نقاط جوهرية فقط
+
+- وجود مسافة سطر واحد بين كل نقطة
+
+- كل قانون بين ⟪FORMULA⟫ و ⟫FORMULA⟫
+
+- كل كود بين ⟪CODE⟫ و ⟫CODE⟫
+
+- عدم كتابة قسم القوانين إذا لم توجد قوانين
+
+- عدم كتابة قسم الأكواد إذا لم توجد أكواد
+
 
 ابدأ التنفيذ الآن.
 `;
@@ -1290,7 +1449,7 @@
         function createPrompt() {
             // التلخيص العادي - استخدم البرومت الجديد
             if (currentSettings.format === 'عادي') {
-                return getNewPrompt();
+                return getNormalSummaryPrompt();
             }
             
             // جداول المفاهيم - كما هي بدون تغيير
@@ -1378,155 +1537,159 @@
             }
         }
 
-        // ========== دالة تنسيق النص للتلخيص العادي (المحسنة) ==========
-        function formatNewSummary(text) {
-            if (!text) return '<p>لا يوجد محتوى</p>';
+        // ========== دالة تنسيق النص للتلخيص العادي ==========
+        function formatText(text) {
+            if (!text) return '';
             
-            // تنظيف النص من أحرف carriage return
-            text = text.replace(/\r/g, '').trim();
+            let formatted = text
+                .replace(/\\n/g, '\n')
+                .replace(/\\r/g, '')
+                .replace(/\\t/g, '    ');
             
-            let html = '';
+            // تخزين الأقسام المختلفة
+            let title = '';
+            let mainContent = formatted;
+            let formulasHtml = '';
+            let codesHtml = '';
+            let keyPointsHtml = '';
+            let motivationHtml = '';
             
-            // ========= دالة مساعدة لاستخراج وسم واحد =========
-            function extract(tag) {
-                const regex = new RegExp(`\\[\\[${tag}\\]\\]([\\s\\S]*?)\\[\\[\\/${tag}\\]\\]`, 'i');
-                const match = text.match(regex);
-                return match ? match[1].trim() : null;
+            // 1. استخراج العنوان من {{ }}
+            const titleMatch = formatted.match(/\{\{(.*?)\}\}/);
+            if (titleMatch) {
+                title = `<div class="main-title">${titleMatch[1].trim()}</div>`;
+                mainContent = mainContent.replace(/\{\{.*?\}\}/, '');
             }
             
-            // ========= دالة مساعدة لاستخراج جميع وسوم متكررة =========
-            function extractAll(tag) {
-                const regex = new RegExp(`\\[\\[${tag}\\]\\]([\\s\\S]*?)\\[\\[\\/${tag}\\]\\]`, 'gi');
-                const results = [];
-                let match;
-                while ((match = regex.exec(text)) !== null) {
-                    results.push(match[1].trim());
-                }
-                return results;
+            // 2. استخراج القوانين من ⟪FORMULA⟫ و ⟫FORMULA⟫
+            const formulaRegex = /⟪FORMULA⟫\s*([\s\S]*?)\s*⟫FORMULA⟫/g;
+            let formulaMatch;
+            let formulas = [];
+            
+            while ((formulaMatch = formulaRegex.exec(formatted)) !== null) {
+                formulas.push(formulaMatch[1].trim());
             }
             
-            // ================= TITLE =================
-            const title = extract('TITLE');
-            if (title) {
-                html += `<div class="summary-title">${title}</div>`;
-            }
-            
-            // ================= SECTIONS =================
-            const sectionsBlock = extract('SECTIONS');
-            if (sectionsBlock) {
-                const sectionRegex = /\[\[SECTION\]\]([\s\S]*?)\[\[\/SECTION\]\]/gi;
-                let sectionsHTML = '<div class="sections-container">';
-                let match;
-                
-                while ((match = sectionRegex.exec(sectionsBlock)) !== null) {
-                    const sectionText = match[1];
-                    
-                    // استخراج اسم القسم
-                    const nameMatch = sectionText.match(/\[\[NAME\]\]([\s\S]*?)\[\[\/NAME\]\]/i);
-                    // استخراج الشرح
-                    const expMatch = sectionText.match(/\[\[EXPLANATION\]\]([\s\S]*?)\[\[\/EXPLANATION\]\]/i);
-                    
-                    const sectionName = nameMatch ? nameMatch[1].trim() : "قسم";
-                    const explanation = expMatch ? expMatch[1].trim().replace(/\n/g, "<br>") : "";
-                    
-                    sectionsHTML += `
-                        <div class="section-card">
-                            <div class="section-name">${sectionName}</div>
-                            <div class="section-explanation">${explanation}</div>
-                        </div>
-                    `;
-                }
-                
-                sectionsHTML += "</div>";
-                html += sectionsHTML;
-            }
-            
-            // ================= FORMULAS =================
-            const formulas = extractAll('FORMULA');
             if (formulas.length > 0) {
-                html += `<div class="formulas-section"><h3>📐 القوانين والصيغ الرياضية</h3>`;
-                
-                formulas.forEach(f => {
-                    // التحقق إذا كان القانون بالعربية
-                    if (/[أ-ي]/.test(f)) {
-                        html += `
-                            <div class="formula-item">
-                                <div class="arabic-formula">${f}</div>
-                            </div>
-                        `;
-                    } else {
-                        html += `
-                            <div class="formula-item">
-                                <div class="math">\\(${f}\\)</div>
-                            </div>
-                        `;
+                formulasHtml = '<div class="laws-section"><h3 class="paragraph-title">🔸 القوانين 🔸</h3><div class="formula-container">';
+                formulas.forEach((formula, index) => {
+                    // إضافة فاصل بين القوانين (شبه شفاف)
+                    if (index > 0) {
+                        formulasHtml += '<div class="formula-separator"></div>';
                     }
+                    formulasHtml += `<div class="formula-item">\\(${formula}\\)</div>`;
                 });
+                formulasHtml += '</div></div>';
                 
-                html += `</div>`;
-                
-                // تحديث MathJax بعد إضافة القوانين
-                setTimeout(() => {
-                    if (window.MathJax) {
-                        MathJax.typesetPromise();
-                    }
-                }, 100);
+                // إزالة القوانين من المحتوى الرئيسي
+                mainContent = mainContent.replace(/««🔸 القوانين 🔸»»[\s\S]*?(?=««🔸 الاكواد البرمجية 🔸»»|««🔸 النقاط الجوهرية 🔸»»|💕|$)/g, '');
+                mainContent = mainContent.replace(/⟪FORMULA⟫[\s\S]*?⟫FORMULA⟫/g, '');
             }
             
-            // ================= CODES =================
-            const codes = extractAll('CODE');
+            // 3. استخراج الأكواد من ⟪CODE⟫ و ⟫CODE⟫
+            const codeRegex = /⟪CODE⟫\s*([\s\S]*?)\s*⟫CODE⟫/g;
+            let codeMatch;
+            let codes = [];
+            
+            while ((codeMatch = codeRegex.exec(formatted)) !== null) {
+                codes.push(codeMatch[1].trim());
+            }
+            
             if (codes.length > 0) {
-                html += `<div class="codes-section"><h3>💻 الأكواد البرمجية</h3>`;
-                
-                codes.forEach(code => {
-                    const id = "code_" + Math.random().toString(36).slice(2);
-                    
-                    html += `
-                        <div class="code-item">
-                            <div class="code-block" id="${id}">
-                                <div class="code-header">
-                                    <span><i class="fas fa-code"></i> كود برمجي</span>
-                                    <button class="copy-code-btn" onclick="copyCodeFromElement('${id}')">
-                                        <i class="fas fa-copy"></i> نسخ
-                                    </button>
-                                </div>
-                                <pre>${code}</pre>
+                codesHtml = '<div><h3 class="paragraph-title">🔸 الاكواد البرمجية 🔸</h3>';
+                codes.forEach((code, index) => {
+                    const codeId = 'code_' + Math.random().toString(36).substr(2, 9);
+                    codesHtml += `
+                        <div class="code-block" id="${codeId}">
+                            <div class="code-header">
+                                <span><i class="fas fa-code"></i> كود برمجي ${index + 1}</span>
+                                <button class="copy-code-btn" onclick="copyCodeFromElement('${codeId}')">
+                                    <i class="fas fa-copy"></i> نسخ
+                                </button>
                             </div>
+                            <pre>${escapeHtml(code)}</pre>
                         </div>
                     `;
                 });
+                codesHtml += '</div>';
                 
-                html += "</div>";
+                // إزالة الأكواد من المحتوى الرئيسي
+                mainContent = mainContent.replace(/««🔸 الاكواد البرمجية 🔸»»[\s\S]*?(?=««🔸 النقاط الجوهرية 🔸»»|💕|$)/g, '');
+                mainContent = mainContent.replace(/⟪CODE⟫[\s\S]*?⟫CODE⟫/g, '');
             }
             
-            // ================= KEY POINTS =================
-            const points = extractAll('POINT');
-            if (points.length > 0) {
-                html += `<div class="points-section"><h3>✨ النقاط الرئيسية</h3>`;
+            // 4. استخراج النقاط الجوهرية
+            const keyPointsRegex = /««🔸 النقاط الجوهرية 🔸»»\s*([\s\S]*?)(?=💕|$)/;
+            const keyPointsMatch = mainContent.match(keyPointsRegex);
+            
+            if (keyPointsMatch) {
+                let keyPointsText = keyPointsMatch[1].trim();
+                const points = keyPointsText.split(/\d+--⟩/).filter(p => p.trim().length > 0);
                 
-                points.forEach(point => {
-                    html += `<div class="point-item">${point}</div>`;
+                keyPointsHtml = '<div class="key-points-container"><h3 class="key-points-title">🔸 النقاط الجوهرية 🔸</h3>';
+                points.forEach((point, index) => {
+                    if (index < 8) { // نضمن فقط 8 نقاط
+                        keyPointsHtml += `<div class="key-point-item">${point.trim()}</div>`;
+                    }
                 });
+                keyPointsHtml += '</div>';
                 
-                html += "</div>";
+                // إزالة النقاط الجوهرية من المحتوى الرئيسي
+                mainContent = mainContent.replace(/««🔸 النقاط الجوهرية 🔸»»[\s\S]*?(?=💕|$)/g, '');
             }
             
-            // ================= MOTIVATION =================
-            const motivation = extract('MOTIVATION');
-            if (motivation) {
-                html += `
+            // 5. استخراج الجملة التحفيزية
+            const motivationRegex = /💕 الجملة التحفيذية 🔑\s*([\s\S]*?)$/;
+            const motivationMatch = formatted.match(motivationRegex);
+            
+            if (motivationMatch) {
+                const motivationText = motivationMatch[1].trim();
+                motivationHtml = `
                     <div class="motivation-section">
-                        <div class="motivation-text">${motivation}</div>
+                        <div class="motivation-title">💕 الجملة التحفيذية 🔑</div>
+                        <div class="motivation-text">${motivationText}</div>
                     </div>
                 `;
+                
+                // إزالة الجملة التحفيزية من المحتوى الرئيسي
+                mainContent = mainContent.replace(/💕 الجملة التحفيذية 🔑[\s\S]*?$/g, '');
             }
             
-            // fallback لو لم يتم العثور على أي وسوم
-            if (!html) {
-                html = `<pre>${text}</pre>`;
+            // 6. تنسيق الفقرات
+            let paragraphsHtml = '';
+            const paragraphRegex = /--»🔸(.*?)🔸\s*([\s\S]*?)(?=--»🔸|««🔸|💕|$)/g;
+            let paragraphMatch;
+            
+            while ((paragraphMatch = paragraphRegex.exec(mainContent)) !== null) {
+                const paraTitle = paragraphMatch[1].trim();
+                const paraContent = paragraphMatch[2].trim();
+                
+                paragraphsHtml += `
+                    <div class="paragraph-section">
+                        <div class="paragraph-title">🔸 ${paraTitle} 🔸</div>
+                        <div class="paragraph-content">${paraContent.replace(/\n/g, '<br>')}</div>
+                    </div>
+                `;
+                
+                // إزالة هذه الفقرة من المحتوى الرئيسي
+                mainContent = mainContent.replace(paragraphMatch[0], '');
             }
             
-            return html;
+            // 7. إذا بقي أي نص عادي، نضيفه
+            let remainingContent = mainContent.trim();
+            if (remainingContent) {
+                paragraphsHtml += `<div class="paragraph-content">${remainingContent.replace(/\n/g, '<br>')}</div>`;
+            }
+            
+            // تجميع كل الأقسام بالترتيب الصحيح
+            return title + paragraphsHtml + formulasHtml + codesHtml + keyPointsHtml + motivationHtml;
+        }
+
+        // دالة مساعدة لتحويل النص إلى HTML آمن
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // ========== عرض النتائج حسب نوع التلخيص ==========
@@ -1549,7 +1712,7 @@
                 fontControls.style.display = 'none';
                 document.getElementById('resultHead').textContent = result.head || 'جدول المفاهيم';
                 
-                // عرض جدول المفاهيم
+                // عرض جدول المفاهيم - كما هو بدون تغيير
                 let tableHTML = `
                     <div class="table-container">
                         <table class="concepts-table">
@@ -1582,7 +1745,7 @@
                 fontControls.style.display = 'none';
                 document.getElementById('resultHead').textContent = result.head || 'أسئلة وأجوبة';
                 
-                // عرض جدول الأسئلة
+                // عرض جدول الأسئلة - كما هو بدون تغيير
                 let tableHTML = `
                     <div class="table-container">
                         <table class="qa-table">
@@ -1612,17 +1775,33 @@
             }
             
             else {
-                // تلخيص عادي - استخدم التنسيق الجديد المحسن
+                // تلخيص عادي - استخدم التنسيق الجديد
                 fontControls.style.display = 'flex';
                 
-                // تطبيق التنسيق الجديد على النص
-                const formattedContent = formatNewSummary(result);
+                let content = '';
+                if (typeof result === 'object' && result !== null) {
+                    content = result.page || result.text || '';
+                    document.getElementById('resultHead').textContent = result.head || 'ملخص الملف';
+                } else {
+                    content = result;
+                    
+                    // محاولة استخراج العنوان من {{ }}
+                    const titleMatch = content.match(/\{\{(.*?)\}\}/);
+                    if (titleMatch) {
+                        document.getElementById('resultHead').textContent = titleMatch[1];
+                    }
+                }
                 
-                resultContent.innerHTML = `<div class="result-text" id="resultText">${formattedContent}</div>`;
-                
+                // تطبيق التنسيق
+                resultContent.innerHTML = `<div class="result-text" id="resultText">${formatText(content)}</div>`;
                 const resultText = document.getElementById('resultText');
                 if (resultText) {
                     resultText.style.fontSize = fontSize + 'px';
+                }
+                
+                // تحديث MathJax لعرض الصيغ
+                if (window.MathJax) {
+                    MathJax.typesetPromise();
                 }
             }
         }
@@ -1673,9 +1852,22 @@
                 }
                 else {
                     textToCopy = currentResult.page || currentResult.text || '';
+                    
+                    // تنظيف النص من الوسوم الخاصة
+                    textToCopy = textToCopy
+                        .replace(/\{\{(.*?)\}\}/g, '$1')
+                        .replace(/--»🔸/g, '')
+                        .replace(/🔸/g, '')
+                        .replace(/««🔸/g, '')
+                        .replace(/⟪FORMULA⟫|⟫FORMULA⟫|⟪CODE⟫|⟫CODE⟫/g, '');
                 }
             } else {
-                textToCopy = currentResult;
+                textToCopy = currentResult
+                    .replace(/\{\{(.*?)\}\}/g, '$1')
+                    .replace(/--»🔸/g, '')
+                    .replace(/🔸/g, '')
+                    .replace(/««🔸/g, '')
+                    .replace(/⟪FORMULA⟫|⟫FORMULA⟫|⟪CODE⟫|⟫CODE⟫/g, '');
             }
             
             navigator.clipboard.writeText(textToCopy).then(() => {
@@ -2080,7 +2272,7 @@
                 
                 // لو التلخيص عادي، خزن النص كما هو
                 if (currentSettings.format === 'عادي') {
-                    result = text; // نخزن النص الخام
+                    result = text;
                 } else {
                     // للجداول، حاول نحول لـ JSON
                     try {
