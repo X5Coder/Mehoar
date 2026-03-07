@@ -44,10 +44,6 @@
             --radius: 20px;
             --radius-lg: 28px;
             --navbar: 70px;
-            
-            /* ألوان التنسيقات */
-            --code-bg: #0D1117;
-            --code-text: #E6EDF3;
         }
         
         body {
@@ -643,59 +639,6 @@
             margin: 0.5rem 0;
         }
         
-        /* الأكواد البرمجية */
-        .code-block-wrapper {
-            background: var(--code-bg);
-            border-radius: 12px;
-            margin: 2rem 0;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-            border: 1px solid #30363d;
-            direction: ltr;
-        }
-        
-        .code-header {
-            background: #161b22;
-            padding: 0.8rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #30363d;
-            color: #8b949e;
-        }
-        
-        .copy-code-btn {
-            background: #21262d;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-            padding: 0.5rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .copy-code-btn:hover {
-            background: #30363d;
-            color: white;
-        }
-        
-        .code-block-wrapper pre {
-            margin: 0;
-            padding: 1.5rem;
-            color: var(--code-text);
-            font-family: 'Fira Code', monospace;
-            font-size: 1rem;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            direction: ltr;
-            text-align: left;
-            background: var(--code-bg);
-        }
-        
         /* النقاط الجوهرية - 5 نقاط فقط */
         .key-point-item {
             margin: 1rem 0;
@@ -733,20 +676,6 @@
             font-weight: 700;
             color: var(--primary);
             margin-left: 0.5rem;
-        }
-        
-        /* الجملة التحفيزية */
-        .motivation-sentence {
-            margin: 2rem 0;
-            padding: 1.5rem;
-            background: linear-gradient(145deg, rgba(139, 115, 85, 0.05), rgba(212, 165, 116, 0.1));
-            border-radius: var(--radius);
-            text-align: center;
-            font-size: 1.2rem;
-            line-height: 2;
-            border-right: 5px solid var(--secondary);
-            font-weight: 600;
-            color: var(--primary-dark);
         }
         
         /* أنماط الجداول */
@@ -1206,10 +1135,8 @@
         // ========== دالة تحليل رد الذكاء الاصطناعي ==========
         function parseAIResponse(text) {
             let formulas = [];
-            let codes = [];
             
             const formulaRegex = /⟪FORMULA⟫([\s\S]*?)⟫FORMULA⟫/g;
-            const codeRegex = /⟪CODE⟫([\s\S]*?)⟫CODE⟫/g;
             
             let cleanText = text.replace(formulaRegex, (match, formula) => {
                 // إزالة أي علامات $ من القانون قبل حفظه
@@ -1218,29 +1145,12 @@
                 return `<div class="formula-block" data-latex="${encodeURIComponent(cleanFormula)}"></div>`;
             });
             
-            cleanText = cleanText.replace(codeRegex, (match, code) => {
-                codes.push(code.trim());
-                const codeId = 'code_' + Math.random().toString(36).substr(2, 9);
-                return `
-                    <div class="code-block-wrapper" id="${codeId}">
-                        <div class="code-header">
-                            <span><i class="fas fa-code"></i> كود برمجي</span>
-                            <button class="copy-code-btn" onclick="copyCodeFromElement('${codeId}')">
-                                <i class="fas fa-copy"></i> نسخ
-                            </button>
-                        </div>
-                        <pre>${escapeHTML(code.trim())}</pre>
-                    </div>
-                `;
-            });
-            
             // تصفية أي علامات $ متبقية في النص
             cleanText = removeDollarSigns(cleanText);
             
             return {
                 cleanText: cleanText,
-                formulas: formulas,
-                codes: codes
+                formulas: formulas
             };
         }
 
@@ -1281,193 +1191,131 @@
             return Math.round(cost * 10) / 10;
         }
 
-        // ========== البرومت الجديد ==========
+        // ========== البرومت الجديد (بدون أكواد) ==========
         function getNormalSummaryPrompt() {
             const maxWords = currentSettings.length === 'طويل' ? 1450 : 850;
             
             return `
-====================
-المهمة
-====================
-
+# ==================== المهمة
+ 
 اقرأ ملف PDF بالكامل بدون تجاهل أي سطر.
-
+ 
 ابدأ التنفيذ مباشرة.
-
+ 
 اسم النظام: عَون
-
-اعدادات النظام:
-الشخصية: ${currentSettings.persona}
-اللغة: ${currentSettings.language}
-الأسلوب: ${currentSettings.style}
-طول التلخيص: ${currentSettings.length}
-
-====================
-استخراج إلزامي للقوانين والأكواد
-====================
-
+ 
+اعدادات النظام: الشخصية: ${currentSettings.persona} اللغة: ${currentSettings.language} الأسلوب: ${currentSettings.style} طول التلخيص: ${currentSettings.length}
+ 
+# ==================== استخراج إلزامي للقوانين
+ 
 يجب فحص الملف بالكامل.
-
+ 
 لو وجد أي قانون (رياضي أو علمي أو نصي):
-
+ 
 يجب استخراج جميع القوانين بالكامل.
-
-لو وجد أكواد برمجية:
-
-يجب استخراج جميع الأكواد بالكامل.
-
+ 
 ممنوع حذف أي قانون.
-
-ممنوع تجاهل أي كود.
-
+ 
 لو لم توجد قوانين:
-
+ 
 لا تكتب قسم القوانين.
-
-لو لم توجد أكواد:
-
-لا تكتب قسم الأكواد.
-
-====================
-شرط الحد الأقصى للكلمات اجباري
-====================
-
-لو طول التلخيص = طويل  
-الحد الأقصى = 1450 كلمة ويمكن ان يكون اقل
-
-لو طول التلخيص = قصير  
-الحد الأقصى = 850 كلمة ويمكن ان يكون اقل
-
+ 
+# ==================== شرط الحد الأقصى للكلمات اجباري
+ 
+لو طول التلخيص = طويل الحد الأقصى = 1450 كلمة ويمكن ان يكون اقل
+ 
+لو طول التلخيص = قصير الحد الأقصى = 850 كلمة ويمكن ان يكون اقل
+ 
 يشمل الحد:
-
-الشرح + الأمثلة + القوانين + الأكواد + النقاط + الجملة التحفيزية.
-
+ 
+الشرح + الأمثلة + القوانين + النقاط.
+ 
 لو اقترب النص من الحد:
-
+ 
 قلل حجم الشرح فقط.
-
-القوانين والأكواد لا تُحذف.
-
-====================
-الترتيب الإجباري
-====================
-
+ 
+القوانين لا تُحذف.
+ 
+# ==================== الترتيب الإجباري
+ 
 1- العنوان  
-2- الفقرات والشرح (اساسية)
-3- الأمثلة (إن وجدت داخل الملف)  
+2- الفقرات والشرح (اساسية)  
+3- الأمثلة (اساسية)  
 4- القوانين (إن وجدت داخل الملف)  
-5- الأكواد (إن وجدت داخل الملف)  
-6- النقاط الجوهرية (اساسية 5 فقط)
-7- الجملة التحفيزية(اساسية)
-
+5- النقاط الجوهرية (اساسية 5 فقط)
+ 
 لا يجوز تغيير الترتيب.
-
-====================
-العنوان
-====================
-
+ 
+# ==================== العنوان
+ 
 {{العنوان}}
-
+ 
 قواعد:
-
+ 
 - خمس كلمات فقط
+ 
 - يعبر عن محتوى الملف بالكامل
+ 
 - يجب ان يوضع بين {{}}
-
-====================
-الفقرات والشرح
-====================
-
---»🔸 عنوان الفقرة 🔸 
-الشرح تقسيم حسب محتوى الملف.
-
+ 
+# ==================== الفقرات والشرح
+ 
+--»🔸 عنوان الفقرة 🔸
+ الشرح يقسم حسب محتوى الملف المرسل
+ 
 شرح مختصر إذا اقتربنا من الحد.
-
-====================
-الأمثلة
-====================
-
+ 
+# ==================== الأمثلة
+ 
 ««🔸 أمثلة تطبيقية 🔸»
-
+ 
 الحد الأقصى 3 أمثلة.
 
-لا تكتب القسم لو لم يكن هناك امثلة داخل الملف
-
-====================
-القوانين
-====================
-
+# ==================== القوانين
+ 
 ««🔸 القوانين 🔸»
-
+ 
 القوانين الرمزية:
-
+ 
 ⟪FORMULA⟫
-القانون كما ورد في ملف PDF باستخدام صيغة LaTeX بدون علامة $
+ القانون كما ورد في ملف PDF باستخدام صيغة LaTeX بدون علامة $ 
 ⟫FORMULA⟫
-
-يجب ان يكتب كل قانون بين الوسوم المحدده
-ويجب ان يكتب كل قانون في سطر منفرد
-
+ 
+يجب ان يكتب كل قانون بين الوسوم المحدده ويجب ان يكتب كل قانون في سطر منفرد
+ 
 القوانين العربية:
-
-1- نص القانون كما هو بدون اي تغيير وبدون اي وسوم
+ 
+1- نص القانون كما هو بدون اي تغيير وبدون اي وسوم  
 2- نص القانون التالي
-
+ 
 كل قانون في سطر مستقل ومرقمين
-
-====================
-الأكواد
-====================
-
-««🔸 الاكواد البرمجية 🔸»
-
-⟪CODE⟫
-الكود كما ورد في ملف PDF بدون تغيير
-⟫CODE⟫
-
-كل كود في كتلة منفصلة بين الوسوم
-
-====================
-النقاط الجوهرية
-====================
-
+ 
+# ==================== النقاط الجوهرية
+ 
 5 نقاط فقط:
-
+ 
 1--⟩ النقطة الأولى
-
+ 
 2--⟩ النقطة الثانية
-
+ 
 3--⟩ النقطة الثالثة
-
+ 
 4--⟩ النقطة الرابعة
-
+ 
 5--⟩ النقطة الخامسة
-
-ويكون من اهم النقاط الي داخل الملف التي يحتاج ان قرأها المستخدم لانها تلخص الملخص نفسو و تجيب اهم اهم اهم حجات في الملف بالكامل 
-
-ايضا لا بجب ان تحتوي على اي نوع من القوانين 
-
+ 
+ويكون من اهم الافكار الي داخل الملف التي يحتاج ان يقرأها المستخدم لانها تلخص الملخص نفسو و تجيب اهم اهم اهم افكار في الملف بالكامل
+ 
+ايضا لا بجب ان تحتوي على اي نوع من القوانين
+ 
 ايضا يجب ان تكون عباره عن جمل
-
-====================
-الجملة التحفيزية
-====================
-
-💕 الجملة التحفيذية 🔑
-
-جملة قصيرة بالتشكيل تكون مأخوذه من ايه قرأنيه تحس على السعي في طلب العلم او ذكر او حديث او اي مقوله تشجع المستخدم
-
-ايضا يجب ان تكون 1 جملة فقط لا اكثر
-
-====================
-قواعد صارمة
-====================
-
+ 
+# ==================== قواعد صارمة
+ 
 لا Markdown  
 لا JSON  
 لا شرح خارج المطلوب  
-لا حذف للقوانين أو الأكواد
-لا تضع علامة الدولار مع القوانين $
+لا حذف للقوانين  
 ابدأ التنفيذ الآن.
 `;
         }
@@ -1587,12 +1435,6 @@
                 return `<div class="arabic-law-item"><span class="law-number">${num}-</span> ${content.trim()}</div>`;
             });
             
-            // معالجة الجملة التحفيزية
-            const motivationRegex = /💕 الجملة التحفيذية 🔑\s*(.*?)(?=\n|$)/g;
-            cleanText = cleanText.replace(motivationRegex, (match, sentence) => {
-                return `<div class="motivation-sentence">💕 ${sentence}</div>`;
-            });
-            
             const paragraphs = cleanText.split('\n\n');
             cleanText = paragraphs.map(p => {
                 if (p.trim() && !p.includes('<div') && !p.includes('class=')) {
@@ -1709,25 +1551,6 @@
             }
         }
 
-        // ========== دالة نسخ الكود ==========
-        window.copyCodeFromElement = function(elementId) {
-            const element = document.getElementById(elementId);
-            const codeElement = element.querySelector('pre');
-            if (codeElement) {
-                const code = codeElement.textContent;
-                navigator.clipboard.writeText(code).then(() => {
-                    const btn = element.querySelector('.copy-code-btn');
-                    btn.innerHTML = '<i class="fas fa-check"></i> تم';
-                    setTimeout(() => {
-                        btn.innerHTML = '<i class="fas fa-copy"></i> نسخ';
-                    }, 2000);
-                    showNotification('تم نسخ الكود بنجاح', 'success');
-                }).catch(() => {
-                    showNotification('فشل في نسخ الكود', 'error');
-                });
-            }
-        };
-
         // ========== نسخ المحتوى كاملاً ==========
         function copyAllContent() {
             if (!currentResult) return;
@@ -1758,16 +1581,12 @@
                     textToCopy = rawText
                         .replace(/⟪FORMULA⟫/g, '')
                         .replace(/⟫FORMULA⟫/g, '')
-                        .replace(/⟪CODE⟫/g, '')
-                        .replace(/⟫CODE⟫/g, '')
                         .replace(/\$/g, '');
                 }
             } else {
                 textToCopy = currentResult
                     .replace(/⟪FORMULA⟫/g, '')
                     .replace(/⟫FORMULA⟫/g, '')
-                    .replace(/⟪CODE⟫/g, '')
-                    .replace(/⟫CODE⟫/g, '')
                     .replace(/\$/g, '');
             }
             
